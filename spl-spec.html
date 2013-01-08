@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+
+<head>
+	<meta charset="UTF-8">
+	
+	<!-- Remove this line if you use the .htaccess -->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+	<meta name="viewport" content="width=device-width">
+	
+	<meta name="description" content="Designa Studio, a HTML5 / CSS3 template.">
+	<meta name="author" content="Sylvain Lafitte, Web Designer, sylvainlafitte.com">
+	
+	<title>Documentation // eXperimental Operating System</title>
+	
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+	<link rel="shortcut icon" type="image/png" href="favicon.png">
+	
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="css/style.css">
+	
+	<!--[if lt IE 9]>
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+</head>
+
+
+
+<body>
+<!-- Prompt IE 7 users to install Chrome Frame -->
+<!--[if lt IE 8]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
+
+<div class="container">
+
+	<header id="navtop">
+		<a href="index.html" class="logo fleft">
+			<img src="img/logo.png" alt="Designa Studio">
+		</a>
+		
+		<nav class="fright">
+			<ul><li><a href="index.html" >Home</a></li>
+				<li><a href="about.html">About</a></li>
+				<li><a href="documentation.html" class="navactive">Documentation</a></li>
+				<li><a href="downloads.html">Downloads</a></li>
+				<li><a href="roadmap.html">Roadmap</a></li></ul>
+			</ul>
+		</nav>
+	</header>
+
+
+	<div class="services-page main grid-wrap">
+
+		<header class="grid col-full">
+			<hr>
+			<p class="fleft">System Programmer’s Language (SPL)</p>
+			<br/><br/>
+					<a href="doc/spl.pdf" class="button"> Download as PDF </a>
+		</header>
+
+
+		<aside class="grid col-one-quarter mq2-col-full">
+		
+			<menu>
+				<ul>
+					<li><a href="#navintro" class="sec" >Introduction</a></li>
+					<li><a href="#navlex" class="sec" >Lexical Elements</a></li>
+						<li><a href="#navlex" class="subsec" >Comments and White Spaces</a></li>
+						<li><a href="#navkeywords" class="subsec" >Keywords</a></li>
+						<li><a href="#navoperators" class="subsec" >Operators and Delimiters</a></li>
+						<li><a href="#navregisters" class="subsec" >Registers</a></li>
+						<li><a href="#navidentifiers" class="subsec" >Identifiers</a></li>
+						<li><a href="#navliterals" class="subsec" >Literals</a></li>
+					<li><a href="#navregset" class="sec" >Register Set</a></li>
+						<li><a href="#navalias" class="subsec" >Aliasing</a></li>
+					<li><a href="#navconst" class="sec" >Constants</a></li>
+						<li><a href="#navpreconst" class="subsec" >Predefined Constants</a></li>
+					<li><a href="#navexpressions" class="sec" >Expressions</a></li>
+						<li><a href="#navarithexp" class="subsec" >Arithmetic Expressions</a></li>
+						<li><a href="#navlogicexp" class="subsec" >Logical Expressions</a></li>
+						<li><a href="#navstringcomp" class="subsec" >String Comparison</a></li>
+						<li><a href="#navaddrexp" class="subsec" >Addressing Expressions</a></li>
+					<li><a href="#navstatements" class="sec" >Statements</a></li>
+						<li><a href="#navdefinestmt" class="subsec" >Define Statement</a></li>
+						<li><a href="#navaliasstmt" class="subsec" >Alias Statement</a></li>
+						<li><a href="#navassignstmt" class="subsec" >Assignment Statement</a></li>
+						<li><a href="#navstrcpystmt" class="subsec" >strcpy Statement</a></li>
+						<li><a href="#navifstmt" class="subsec" >If Statement</a></li>
+						<li><a href="#navwhilestmt" class="subsec" >While Statement</a></li>
+						<li><a href="#navbreakstmt" class="subsec" >Break Statement</a></li>
+						<li><a href="#navcontinuestmt" class="subsec" >Continue Statement</a></li>
+						<li><a href="#naviretstmt" class="subsec" >ireturn Statement</a></li>
+						<li><a href="#navlsstmt" class="subsec" >Load/Store Statement</a></li>
+						<li><a href="#navbreakpointstmt" class="subsec" >breakpoint Statement</a></li>
+				</ul>
+			</menu>
+		</aside>
+		
+		<section class="grid col-three-quarters mq2-col-full">
+		
+			
+			
+			<div class="grid-wrap">
+			<article  id="navintro" class="grid col-full">
+				<h2>Introduction</h2>
+				<p>	<b>SPL</b> or <i>System Programmer’s Language</i> is an untyped programming language designed for implementation of an operating system on <b>XSM</b> 
+				<i>(Experimental String Machine)</i> architecture. The language is minimalistic and consists only of basic constructs required for the implementation. 
+				Programming using SPL requires a basic understanding of the underlying XSM architecture and operating system concepts.</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>			
+			
+			<article  id="navlex" class="grid col-full">
+				<h2>Lexical Elements</h2>
+				<h4>Comments and White Spaces</h4>
+				<p> SPL allows only single line comments. Comments start with the character sequence // and stop at the end of the line. 
+				White spaces in the program including tabs, newline and horizontal spaces are ignored.</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navkeywords" class="grid col-full">
+				<h4>Keywords</h4>
+				<p>	The following are the reserved words in SPL and it cannot be used as identifiers.
+				<tt>
+				<table style="text-align:center; width:50%">
+					<tr><td>alias </td> <td>else</td> <td>if</td> <td>store</td> <td>while</td></tr>
+					<tr><td>define</td> <td>endif </td> <td>ireturn</td> <td>strcmp</td> <td>continue</td></tr>
+					<tr><td>break</td> <td>do</td> <td>endwhile</td> <td>load</td> <td>then</td></tr>
+				</table>
+				</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navoperators" class="grid col-full">
+				<h4>Operators and Delimiters</h4>
+				<p>	The following are the operators and delimiters in SPL
+				<table style="text-align:center; width:50%">
+					<tr> <td>(</td> <td>)</td> <td>;</td> <td>[</td> <td>]</td> <td>/</td> <td>*</td> <td>+</td> <td>-</td> <td>%</td> </tr>
+					<tr> <td>></td> <td><</td> <td>>=</td> <td><=</td> <td>!=</td> <td>==</td> <td>=</td> <td>&&</td> <td>||</td> <td>!</td> </tr>
+				</table>
+				</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navregisters" class="grid col-full">
+				<h4>Registers</h4>
+				<p>	SPL allows the use of 21 registers for various operations. (<tt>R0-R15, BP, SP, IP, PTBR, PTLR</tt>)</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navidentifiers" class="grid col-full">
+				<h4>Identifiers</h4>
+				<p>	Identifiers are used as symbolic names for constants and aliases for registers.
+				Identifiers should start with an alphabet but may contain alphabets, digits and/or underscore ( _ ). 
+				No other special characters are allowed in identifiers.</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navliterals" class="grid col-full">
+				<h4>Literals</h4>
+				<p>	Only integer literals are permitted in SPL. An integer literal is a sequence of digits representing an integer. 
+				Negative integers are represented with a negative sign preceding the sequence of digits.</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navregset" class="grid col-full">
+				<h2>Register Set</h2>
+				<p>	SPL doesn’t allow the use of declared variables. Instead a fixed set of registers is provided. 
+				The register set in SPL contains 26 registers. There is a direct mapping between these registers and the machine registers in XSM.</p>
+				
+				<img src="doc/register-set.png" style="width:40%"/>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navalias" class="grid col-full">
+				<h4>Aliasing</h4>
+				<p>	Any register can be referred to by using a different name. A name is assigned to a particular register using the <b>alias</b> keyword. 
+				Each register can be assigned to only one alias at any particular point of time. However, a register can be reassigned to a different alias at a later point. 
+				Aliasing can also be done inside the <b>if</b> and <b>while</b> block. However, the alias will only be valid within the if and while block it is defined in. 
+				The already defined alias for the register(if any) will only be hidden inside if and while blocks. No two registers can have the same alias name simultaneously.</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navconst" class="grid col-full">
+				<h2>Constants</h2>
+				<p>	Symbolic names can be assigned to values using the <b>define</b> keyword. 
+				Unlike aliasing, two or more names can be assigned to the same value. 
+				A constant can only be defined once in a program.</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navpreconst" class="grid col-full">
+				<h4>Predefined Constants</h4>
+				<p>	SPL provides a set of predefined constants. 
+				These predefined constants can be assigned to different values explicitly by the user using <b>define</b> keyword.
+				These constants are mostly starting addresses of various OS components in the memory.
+				The predefined set of constants provided in SPL are</p>
+				
+				<img src="doc/predefined-constants.png" style="width:40%"/>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navexpressions" class="grid col-full">
+				<h2>Expressions</h2>
+				<p>	An expression specifies the computation of a value by applying operators to operands. SPL supports arithmetic and logical expressions.</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navarithexp" class="grid col-full">
+				<h4>Arithmetic Expressions</h4>
+				<p>	Registers, constants, and 2 or more arithmetic expressions connected using arithmetic operators are categorized as arithmetic expressions. 
+				SPL provides five arithmetic operators, viz., +, -, *, / (Integer Division) and % (Modulo operator) through which arithmetic expressions may be combined. 
+				Expression syntax and semantics are similar to standard practice in programming languages and normal rules of precedence, associativity and paranthesization hold.</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navlogicexp" class="grid col-full">
+				<h4>Logical Expressions</h4>
+				<p>	Logical expressions may be formed by combining arithmetic expressions using relational operators. 
+				The relational operators supported by SPL are<br/>
+				<tt>
+				>, <, >=, <=, !=, ==
+				</tt><br/>
+				Standard meanings apply to these operators. A relational operator will take in two arguments and return 1 if the relation is valid and 0 otherwise.
+				Logical expressions themselves may be combined using logical operators, && (logical and) , || (logical or) and ! (not).</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navstringcomp" class="grid col-full">
+				<h4>String Comparison</h4>
+				<p>	The only operation that can be performed on strings stored in memory is string camparison. 
+				<b>strcmp</b> is used to compare two strings whose address is stored in the registers that are given as operands.<br/>
+				e.g. <tt>strcmp(R2,R5)</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navaddrexp" class="grid col-full">
+				<h4>Addressing Expressions</h4>
+				<p>	Memory of the meachine can be directly accessed in an SPL program. 
+				A word in the memory is accessed by specifying the addressing element, i.e. memory location within [ ]. 
+				This corresponds to the value stored in the given address. An arithmetic expression or an addressing expression can be used to specify the address.<br/>
+				Examples of addressing expressions:<br/>
+				<tt>[1024], [R3], [R5+[R7]+128], [FAT + R2] </tt>etc.</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navstatements" class="grid col-full">
+				<h2>Statements</h2>
+				<p>	Statements control the execution of the program. All statements in SPL are terminated with a semicolon ;</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navdefinestmt" class="grid col-full">
+				<h4>Define Statement</h4>
+				<p>	Define statement is used to define a symbolic name for a value. Define statements should be used before any other statment in an SPL program. 
+				The keyword <b>define</b> is used to associate a literal to a symbolic name.<br/>
+				
+				<tt>&nbsp&nbsp&nbsp <b>define</b> constant name value;</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navaliasstmt" class="grid col-full">
+				<h4>Alias Statement</h4>
+				<p>	An <b>alias</b> statement is used to associate a register with a name. 
+				Alias statements can be used anywhere in the program except within <b>if</b> and <b>while</b> statements.<br/>
+				
+				<tt>&nbsp&nbsp&nbsp <b>alias</b> alias_name register_name ;</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navassignstmt" class="grid col-full">
+				<h4>Assignment Statement</h4>
+				<p>	The SPL assignment statement assigns the value of an expression or value stored in a memory address to a register or a memory address. 
+				= is the assignment operator used in SPL. The operand on the right hand side of the operator is assigned to the left hand side. 
+				The general syntax is as follows<br/>
+				
+				<tt>&nbsp&nbsp&nbsp Register / Alias / [Address] = Expression / [Address] ;</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navstrcpystmt" class="grid col-full">
+				<h4>strcpy Statement</h4>
+				<p>	The SPL <b>strcpy</b> statement copies a string in one memory location to another memory location. 
+				Registers which store the memory location of the destination and the source are given as Rd and Rs respectively.<br/>
+				
+				<tt>&nbsp&nbsp&nbsp <b>strcpy</b>(Rd, Rs);</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navifstmt" class="grid col-full">
+				<h4>If Statment</h4>
+				<p>	<b>If</b> statements specify the conditional execution of two branches according to the value of a logical expression. 
+				If the expression evaluates to 1, the <b>if</b> branch is executed, otherwise the <b>else</b> branch is executed. The <b>else</b> part is optional. 
+				The general syntax is as follows<br/>
+				
+				<tt>&nbsp&nbsp&nbsp
+				<b>if</b> (logical expression) <b>then</b><br/>
+					&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp statements;<br/>
+				<b>&nbsp&nbsp&nbsp else</b><br/>
+					&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp statements;<br/>
+				<b>&nbsp&nbsp&nbsp endif</b>;</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navwhilestmt" class="grid col-full">
+				<h4>While Statement</h4>
+				<p>	<b>While</b> statement iteratively executes a set of statements based on a condition. 
+				The condition is defined using a logical expression. 
+				The statements are iteratively executed as long as the condition is true.<br/>
+				
+				<tt>&nbsp&nbsp&nbsp
+				<b>while</b> (logical expression) <b>do</b><br/>
+					&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp statements;<br/>
+				<b>&nbsp&nbsp&nbsp endwhile</b>;</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navbreakstmt" class="grid col-full">
+				<h4>Break Statement</h4>
+				<p>	<b>Break</b> statement is a statement which is used in a while loop block. 
+				This statement stops the execution of the loop in which it is used and passes the control of execution to the next statement after the loop. 
+				This statement cannot be used anywhere else other than while loop. The syntax is as follows<br/>
+				
+					<tt>&nbsp&nbsp&nbsp<b>break</b> ;</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navcontinuestmt" class="grid col-full">
+				<h4>Continue Statement</h4>
+				<p>	<b>Continue statement</b> is a statement which is also used only in a while loop block. 
+				This statement skips the current iteration of the loop and passes the control to the next iteration after checking the loop condition. 
+				The syntax is as follows<br/>
+					
+					<tt>&nbsp&nbsp&nbsp<b>continue</b> ;</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="naviretstmt" class="grid col-full">
+				<h4>ireturn Statement</h4>
+				<p>	<b>ireturn</b> statement is used to pass control from kernel mode to user mode.
+				The <b>ireturn</b> is generally used at the end of an interrupt code.<br/>
+				
+					<tt>&nbsp&nbsp&nbsp<b>ireturn</b>;</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navlsstmt" class="grid col-full">
+				<h4>Load/Store Statement</h4>
+				<p>	Loading and storing between filesystem and memory is accomplished using <b>load</b> and <b>store</b> statements in SPL. 
+				<b>load</b> statement loads the block specified by <i>block_number</i> from the disk to the the page speficied by the <i>page_number</i> in the memory. 
+				<b>store</b> statement stores the page specified by <i>page_number</i> in the memory to the the block speficied by the <i>block_number</i> in the disk.
+				The <i>page_number</i> and <i>block_number</i> can be specified using arithmetic expressions.<br/>
+				
+				<tt>&nbsp&nbsp&nbsp
+					<b>load</b> (page_number, block_number);<br/>
+					&nbsp&nbsp&nbsp&nbsp<b>store</b> (page_number, block_number);</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+
+			<article  id="navbreakpointstmt" class="grid col-full">
+				<h4>breakpoint Statement</h4>
+				<p>	<b>breakpoint</b> statement displays the contents of registers and memory locations at the point where the statement is used.<br/>
+				
+					<tt>&nbsp&nbsp&nbsp<b>breakpoint</b>;</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			
+			</div> <!-- 100%articles-->
+
+		
+		</section>	
+		
+		
+		
+	</div> <!--main-->
+<div class="divide-top">
+	<footer class="grid-wrap">
+		<ul class="grid col-one-third social">
+			<li><a href="http://github.com/XOS-NITC">Github</a></li>
+		</ul>
+	
+		<div class="up grid col-one-third ">
+			<a href="#navtop" title="Go back up">&uarr;</a>
+		</div>
+		
+		<nav class="grid col-one-third ">
+			<ul><li><a href="index.html" >Home</a></li>
+				<li><a href="about.html">About</a></li>
+				<li><a href="documentation.html">Documentation</a></li>
+				<li><a href="downloads.html">Downloads</a></li>
+				<li><a href="roadmap.html">Roadmap</a></li></ul>
+			</ul>
+		</nav>
+	</footer>
+</div>
+
+</div>
+
+<!-- Javascript - jQuery -->
+<script src="http://code.jquery.com/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="js/jquery-1.7.2.min.js"><\/script>')</script>
+
+<!--[if (gte IE 6)&(lte IE 8)]>
+<script src="js/selectivizr.js"></script>
+<![endif]-->
+
+<script src="js/scripts.js"></script>
+
+<!-- Asynchronous Google Analytics snippet. Change UA-XXXXX-X to be your site's ID. -->
+<script>
+  var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+</body>
+</html>

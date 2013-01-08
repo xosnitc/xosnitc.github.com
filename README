@@ -1,0 +1,8 @@
+Documentation for
+
+1) Machine Specification (eXperimental String Machine - XSM)
+	machine/
+2) Operating System Specification (eXPerimental Operating System - XOS)
+	os/
+3) Roadmap to building operating system
+	roadmap/

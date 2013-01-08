@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+
+<head>
+	<meta charset="UTF-8">
+	
+	<!-- Remove this line if you use the .htaccess -->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+	<meta name="viewport" content="width=device-width">
+	
+	<meta name="description" content="Designa Studio, a HTML5 / CSS3 template.">
+	<meta name="author" content="Sylvain Lafitte, Web Designer, sylvainlafitte.com">
+	
+	<title>Documentation // eXperimental Operating System</title>
+	
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+	<link rel="shortcut icon" type="image/png" href="favicon.png">
+	
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="css/style.css">
+	
+	<!--[if lt IE 9]>
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+</head>
+
+
+
+<body>
+<!-- Prompt IE 7 users to install Chrome Frame -->
+<!--[if lt IE 8]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
+
+<div class="container">
+
+	<header id="navtop">
+		<a href="index.html" class="logo fleft">
+			<img src="img/logo.png" alt="Designa Studio">
+		</a>
+		
+		<nav class="fright">
+			<ul><li><a href="index.html" >Home</a></li>
+				<li><a href="about.html">About</a></li>
+				<li><a href="documentation.html" class="navactive">Documentation</a></li>
+				<li><a href="downloads.html">Downloads</a></li>
+				<li><a href="roadmap.html">Roadmap</a></li></ul>
+			</ul>
+		</nav>
+	</header>
+
+
+	<div class="services-page main grid-wrap">
+
+		<header class="grid col-full">
+			<hr>
+			<p class="fleft">File System (XFS)</p>			<br/><br/>
+					<a href="doc/xfs.pdf" class="button"> Download as PDF </a>
+		</header>
+
+
+		<aside class="grid col-one-quarter mq2-col-full">
+		
+			<menu>
+				<ul>
+					<li><a href="#navintro" class="sec" >Intro</a></li>
+					<li><a href="#navdiskorg" class="sec">Disk Organization</a></li>
+					<li><a href="#navfile" class="sec">File</a></li>
+					<li><a href="#navfat" class="sec" >File Allocation Table (FAT)</a></li>				
+					<li><a href="#navdfl" class="sec" >Disk Free Lists</a></li>
+				</ul>
+			</menu>
+		</aside>
+		
+		<section class="grid col-three-quarters mq2-col-full">
+		
+			
+			
+			<div class="grid-wrap">
+			<article  id="navintro" class="grid col-full">
+				<h2>Introduction</h2>
+				<p>
+				XFS or Experimental File System is a file system architecture designed for XOS (Experimental Operating System). 
+				XFS is a simple filesystem which has no directory structure. </br>
+				XFS spans the entire disk in XSM (Experimental String Machine). 
+				The disk consists of a linear sequence of 512 blocks. 
+				The basic unit of disk in XSM is a <b><i>block</i></b>. 
+				The size of the block is equal to that of page in memory (512 words). 
+				The total capacity of the disk is 512 * 512  = <b>262144</b> words. </br>
+				Any particular block in the disk is addressed by the corresponding number in the sequence 0 to 511 known as the <em>block number</em>. 
+
+				</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>			
+			
+			<article id="navdiskorg" class="grid col-full">			
+				<h2>Disk Organization</h2>
+				<p>The disk is organized by the file system as shown below.</p>
+				
+				<table class="doctable">
+					<tr> <th>Block No</th> <th>Contents</th> </tr>
+					<tr> <td>0</td> <td>OS Startup Code</td> </tr>
+					<tr> <td>1</td> <td>Page Fault Handler</td> </tr>
+					<tr> <td>2</td> <td>Timer Interrupt Routine </td> </tr>
+					<tr> <td>3</td> <td>Interrupt 1 Routine </td> </tr>
+					<tr> <td>...</td> <td>...</td> </tr>
+					<tr> <td>9</td> <td>Interrupt 7 Routine </td> </tr>
+					<tr> <td>10</td> <td>File Allocation Table (FAT) </td> </tr>
+					<tr> <td>11</td> <td>Disk Free List </td> </tr>
+					<tr> <td>12</td> <td>Unallocated </td> </tr>
+					<tr> <td>13 -- 15</td> <td>INIT Code </td> </tr>
+					<tr> <td>16 -- 447</td> <td>User Blocks </td> </tr>
+					<tr> <td>448 -- 511</td> <td>Swap Area </td> </tr>
+				</table>
+				
+				<br/><br/>
+				<ul style="list-style-type:disc">
+					<li> <p> <b>OS Startup Code</b> : Block 0 is the location of operating system code required during machine boot.  </p> </li>
+					<li> <p> <b>Exception and Interrupt Handler</b> : Blocks from 1 - 9 is intended for ISR (Interrupt Service Routines) for interrupt and exception handling which is done by the Operating System. </p> </li>
+					<li> <p> <b>FAT</b> or File Allocation table contains details about the files stored on the disk. </p> </li>
+					<li> <p> <b>Disk Free List</b> has 512 entries, one entry for each block in the disk, indicating whether it is used or unused. </p> </li>
+					<li> <p> <b>INIT</b> Code It has the code for INIT process, which is the first user program run by the OS after startup. </p> </li>
+					<li> <p> <b>User Blocks</b>. Blocks from 16 to 447 are used to store user data files and user programs. </p> </li>
+					<li> <p> <b>Swap Area</b> The file system also provides a swap area for the operating system to implement demand paging. Swap Area is reserved exclusively for use by the operating system. </p> </li>
+				</ul>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>
+
+			
+			<article id="navfile" class="grid col-full">			
+				<h2>File</h2>
+				<p>A file is a collection of blocks identified by a name. 
+				Every file in the disk has a <i>Basic Block</i> and several <i>Data Blocks</i>. 
+				They are defined as follows:</p>
+				<ul style="list-style-type:disc">
+					<li><p> <b>Data Blocks</b> : These blocks contain the actual data of a file. </p></li>
+					<li><p> <b>Basic Block</b> : It consists of information about the data in a file. </p>
+						<table class="doctable">
+							<tr> <td><b>Index</b></td> <td> 0--255 </td><td> 256--511 </td></tr>
+							<tr> <td><b>Content</b></td> <td> Block List </td><td> Header </td></tr>
+						</table>
+						<br/>
+						<ul>
+							<li> <b>Block List</b> : It contains block addresses of all data blocks in the file.
+								<ul>
+									<li>The block list consists of 256 entries.</li>
+									<li>Each entry is of size one word.</li>
+									<li>The value contained in an entry of the block list gives the	block number of the corresponding data block in the disk.
+									All invalid entries are marked with 0.</li>
+								</ul>
+							</li>
+							<li> <b>Header</b>  The header contains the meta information relating to the file. The header fields is 256 words long. It can be used to store details like permissions, ownership etc related to a file, similar to inode in Linux and UNIX operating systems. However XOS does not use the header field.
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<img src="doc/address_translation.png" width="20%" />
+				<br/><b> Example </b>
+				<ul>
+					<li>Consider the example illustrated by figure 3. From the figure, we infer the following.</li>
+					<li>The zeroth data block of the file resides in the disk in block number 240</li>
+					<li>The first data block of the file resides in the disk in block number 420. The second data block of the file resides in the disk in block number  The third data block of the file resides in the disk in block number 315 </li>
+					<li> There are no more data blocks for the file. So rest of the entries of the
+basic block are marked as 0 </li>
+				</ul>
+				<h3>File Types</h3>
+				There are two types of files in the XSM architecture. They are:
+				<br/>
+				<h5>Data files</h5>
+					These files contain data or information that is used by the programs. They can occupy a maximum of 257 blocks (1  basic block + maximum 256 data blocks). Data files have an extension <b>.dat</b> in the filename.
+
+				<h5>Executable files</h5>
+					These contain programs that the user wishes to run on the machine. They occupy 4 blocks (1 basic block + 3 data blocks) of the disk. Executable files have an extension .xsm in the filename.
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>
+
+
+
+			<div class="up grid col-one-third ">
+			<a href="#navtop" title="Go back up">&uarr;</a>
+			</div>
+			<article id="navfat" class="grid col-full">		
+			<h2>File Allocation Table (FAT)</h2> 
+			File allocation table (FAT) is a table that has an entry for each file present in the disk. FAT of the filesystem consists of 64 entries. Thus there can be a maximum of 64 files.
+			<ul>
+			<li<Each entry is of size 8 words. </li>
+			<li>Total size of the FAT is thus 512 words, which occupies 1 block.</li>
+			<li>It is a disk data structure and occupies block number 10 on the disk.</li>
+			</ul>
+				<h4>Structure of FAT</h4>
+				The structure of a FAT entry is shown below: <br/>
+				<table class="doctable">
+				<tr><th>0</th><th>1</th><th>2</th><th>3  - 7</th> </tr>
+				<tr><td> File Name </td> <td> File Size </td> <td> Block# of Basic Block </td> <td> ... </td> </tr>
+				<tr></tr>
+				</table>
+
+				<br/><br/>
+				The FAT entry consists of  <br/>
+				1. <b>File Name</b> : It is an identification of a file. It can be of maxi-
+				mum 15 characters (and thus requires 1 word). Typical file names are
+				student.dat, calc.xsm.
+				<br/>
+				2. <b>File Size</b> : It indicates the number of words required for the data
+				blocks of the file. The number of data blocks of the file can vary from
+				0 to 256, and so the maximum file size is 131072 words (256 × 512).
+				It occupies one word in the FAT entry. <br/>
+				3. <b>Block number of basic block</b> : It contains the block number where
+				the basic block of a file resides in the disk. It occupies one word in the
+				FAT entry.
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>
+
+			<article id="navdfl"  class="grid col-full">			
+		<h2>Disk Free List</h2>
+			The Disk Free List is a data structure used for keeping tracking of unused blocks in the disk.
+			<ul>
+			<li>The Free List of the disk consists of 512 entries. Each entry is of size
+			one word.</li>
+			<li>The size of the free list is thus 1 block or 512 words.<li>
+			<li>It is present in blocks 11 of the disk. Refer figure 1.</li>
+			<li>For each block in the disk there is an entry in the Disk Free List which
+			contains a value of either 0 or 1 indicating whether the corresponding
+			block in the disk is free or used respectively. Each entry in the Disk
+			Free List is of size one word.</li>
+			<li>Blocks 0 to 12 are system reserved and are marked as 1 in the Disk
+			Free List so that they cannot be used for saving user files. The file
+			system also ensures that user files are not stored on the Swap Area.</li>
+			</ul>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>
+			</div> <!-- 100%articles-->
+
+		
+		</section>	
+		
+		
+		
+	</div> <!--main-->
+<div class="divide-top">
+	<footer class="grid-wrap">
+		<ul class="grid col-one-third social">
+			<li><a href="http://github.com/XOS-NITC">Github</a></li>
+		</ul>
+	
+		<div class="up grid col-one-third ">
+			<a href="#navtop" title="Go back up">&uarr;</a>
+		</div>
+		
+		<nav class="grid col-one-third ">
+			<ul><li><a href="index.html" >Home</a></li>
+				<li><a href="about.html">About</a></li>
+				<li><a href="documentation.html">Documentation</a></li>
+				<li><a href="downloads.html">Downloads</a></li>
+				<li><a href="roadmap.html">Roadmap</a></li></ul>
+			</ul>
+		</nav>
+	</footer>
+</div>
+
+</div>
+
+<!-- Javascript - jQuery -->
+<script src="http://code.jquery.com/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="js/jquery-1.7.2.min.js"><\/script>')</script>
+
+<!--[if (gte IE 6)&(lte IE 8)]>
+<script src="js/selectivizr.js"></script>
+<![endif]-->
+
+<script src="js/scripts.js"></script>
+
+<!-- Asynchronous Google Analytics snippet. Change UA-XXXXX-X to be your site's ID. -->
+<script>
+  var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+</body>
+</html>

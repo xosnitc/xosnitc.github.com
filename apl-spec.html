@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+
+<head>
+	<meta charset="UTF-8">
+	
+	<!-- Remove this line if you use the .htaccess -->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+	<meta name="viewport" content="width=device-width">
+	
+	<meta name="description" content="Designa Studio, a HTML5 / CSS3 template.">
+	<meta name="author" content="Sylvain Lafitte, Web Designer, sylvainlafitte.com">
+	
+	<title>Documentation // eXperimental Operating System</title>
+	
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+	<link rel="shortcut icon" type="image/png" href="favicon.png">
+	
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="css/style.css">
+	
+	<!--[if lt IE 9]>
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+</head>
+
+
+
+<body>
+<!-- Prompt IE 7 users to install Chrome Frame -->
+<!--[if lt IE 8]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
+
+<div class="container">
+
+	<header id="navtop">
+		<a href="index.html" class="logo fleft">
+			<img src="img/logo.png" alt="Designa Studio">
+		</a>
+		
+		<nav class="fright">
+			<ul><li><a href="index.html" >Home</a></li>
+				<li><a href="about.html">About</a></li>
+				<li><a href="documentation.html" class="navactive">Documentation</a></li>
+				<li><a href="downloads.html">Downloads</a></li>
+				<li><a href="roadmap.html">Roadmap</a></li></ul>
+			</ul>
+		</nav>
+	</header>
+
+
+	<div class="services-page main grid-wrap">
+
+		<header class="grid col-full">
+			<hr>
+			<p class="fleft">Application Programmer's Language (APL)</p> <br/><br/>
+					<a href="doc/apl.pdf" class="button"> Download as PDF </a>
+		</header>
+
+
+		<aside class="grid col-one-quarter mq2-col-full">
+		
+			<menu>
+				<ul>
+					<li><a href="#navintro" class="sec" >Introduction</a></li>
+					<li><a href="#navlexical" class="sec" >Lexical Elements</a></li>
+						<li><a href="#navlexical" class="subsec" >Comments and White Spaces</a></li>
+						<li><a href="#navkeywords" class="subsec" >Keywords</a></li>
+						<li><a href="#navoperators" class="subsec" >Operators and Delimiters</a></li>
+						<li><a href="#navidentifiers" class="subsec" >Identifiers</a></li>
+						<li><a href="#navliterals" class="subsec" >Literals</a></li>
+					<li><a href="#navdatatypes" class="sec" >Data Types</a></li>
+						<li><a href="#navdatatypes" class="subsec" >Primitive Types</a></li>
+						<li><a href="#navarrays" class="subsec" >Arrays</a></li>
+					<li><a href="#navdecl" class="sec" >Declarations and Scope</a></li>
+						<li><a href="#navglobalvar" class="subsec" >Global Variables</a></li>
+						<li><a href="#navfuncdecl" class="subsec" >Function Declaration</a></li>
+						<li><a href="#navlocalvar" class="subsec" >Local Variables</a></li>
+					<li><a href="#navfunc" class="sec" >Function Definition and Main Function</a></li>
+						<li><a href="#navmain" class="subsec" >main()</a></li>          
+					<li><a href="#navexpressions" class="sec" >Expressions</a></li>
+						<li><a href="#navarithexp" class="subsec" >Arithmetic Expressions</a></li>
+						<li><a href="#navlogicexp" class="subsec" >Logical Expressions</a></li>
+						<li><a href="#navfunccall" class="subsec" >Function Call</a></li>
+					<li><a href="#navstatements" class="sec" >Statements</a></li>
+						<li><a href="#navassignstmt" class="subsec" >Assignment Statement</a></li>
+						<li><a href="#navifstmt" class="subsec" >If Statement</a></li>
+						<li><a href="#navwhilestmt" class="subsec" >While Statement</a></li>
+						<li><a href="#navbreakstmt" class="subsec" >Break Statement</a></li>
+						<li><a href="#navcontinuestmt" class="subsec" >Continue Statement</a></li>
+						<li><a href="#navreturnstmt" class="subsec" >Return Statement</a></li>
+						<li><a href="#navrwstmt" class="subsec" >Read/Write Statement</a></li>
+					<li><a href="#navsyscalls" class="sec" >System Calls</a></li>
+						<li><a href="#navcreate" class="subsec" >Create</a></li>
+						<li><a href="#navopen" class="subsec" >Open</a></li>
+						<li><a href="#navread" class="subsec" >Read</a></li>
+						<li><a href="#navwrite" class="subsec" >Write</a></li>
+						<li><a href="#navseek" class="subsec" >Seek</a></li>
+						<li><a href="#navclose" class="subsec" >Close</a></li>
+						<li><a href="#navdelete" class="subsec" >Delete</a></li>
+						<li><a href="#navfork" class="subsec" >Fork</a></li>
+						<li><a href="#navexec" class="subsec" >Exec</a></li>
+						<li><a href="#navexit" class="subsec" >Exit</a></li>
+						<li><a href="#navhalt" class="subsec" >Halt</a></li>
+				</ul>
+			</menu>
+		</aside>
+		
+		<section class="grid col-three-quarters mq2-col-full">
+		
+			
+			
+			<div class="grid-wrap">
+			<article  id="navintro" class="grid col-full">
+				<h2>Introduction</h2>
+				<p><b>APL</b> or <i>Application Programmer’s Language</i> is a simple and strongly typed programming language. 
+				The features and constructs of this language are minimal and mainly intended for testing an experimental operating system. 
+				The compiler of APL runs on <b>XSM</b> <i>(eXperimental String Machine)</i> architecture. This document describes briefly describe the programming constructs, 
+				syntax and semantics of APL. The structure of APL is similar in some aspects to programming languages like C and Java.
+				A typical APL program is orgnaized in the following way.<br/>
+				<tt>
+					&nbsp&nbsp&nbspGlobal Declarations<br/>
+					&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp...<br/>
+					&nbsp&nbsp&nbspFunction Definitions<br/>
+					&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp...<br/>
+					&nbsp&nbsp&nbspMain Function</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>			
+			
+			<article  id="navlexical" class="grid col-full">
+				<h2>Lexical Elements</h2>
+				<h4>Comments and White Spaces</h4>
+				<p>APL allows only line comments. Line comments start with the character sequence // and stop at the end of the line. 
+				White spaces in the program including tabs, newline and horizontal spaces are ignored.</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navkeywords" class="grid col-full">
+				<h4>Keywords</h4>
+				<p>The following are the reserved words in APL and it cannot be used as identifiers. 
+				<table style="text-align:center; width:80%">
+					<tr> <td>read</td> <td>write</td> <td>if</td> <td>then</td> <td>else</td> <td>endif</td> </tr>
+					<tr> <td>while</td> <td>do</td> <td>endwhile</td> <td>break</td> <td>continue</td> <td>integer</td> </tr>
+					<tr> <td>string</td> <td>main</td> <td>return</td> <td>decl</td> <td>enddecl</td> <td>Create</td> </tr>
+					<tr> <td>Open</td> <td>Write</td> <td>Seek</td> <td>Read</td> <td>Close</td> <td>Delete</td> </tr>
+					<tr> <td>Fork</td> <td>Exec</td> <td>Exit</td> <td></td> <td></td> <td></td> </tr>
+				</table>
+				
+				</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navoperators" class="grid col-full">
+				<h4>Operators and Delimiters</h4>
+				<p>The following are the operators and delimiters in APL
+				<tt>
+				<table style="text-align:center; width:60%">
+					<tr> <td>(</td> <td>)</td> <td>{</td> <td>}</td> <td>[</td> <td>]</td> <td>/</td> <td>*</td> <td>+</td> <td>-</td> <td>%</td></tr>
+					<tr> <td>></td> <td><</td> <td>>=</td> <td><=</td> <td>!=</td> <td>==</td> <td>;</td> <td>=</td> <td>&&</td> <td>||</td> <td>!</td> </tr>
+				</table></tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navidentifiers" class="grid col-full">
+				<h4>Identifiers</h4>
+				<p>Identifiers are names of variables and user-defined functions. Identifiers should start with an alphabet, and may contain both alphabets and digits. 
+				Special characters are not allowed in identifiers.<br/>
+				<tt>&nbsp&nbsp&nbsp identifier -> (alphabet)(alphabet | digit)*</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navliterals" class="grid col-full">
+				<h4>Literals</h4>
+				<p>There are integer literals and string literals in APL. An integer literal is a sequence of digits representing an integer. 
+				Negative integers are represented with a negative sign preceding the sequence of digits. 
+				Any sequence of characters enclosed within double quotes (”) are considered as string literals. 
+				However APL restricts string literals to size of atmost 16 characters including the ’\0’ character which is implicitly appended at the end of a string value.<br/>
+				Examples of literals are <tt>19, -35, "Hello World"</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navdatatypes" class="grid col-full">
+				<h2>Data Types</h2>
+				<h4>Primitive Data Types</h4>
+				<p>There are two primitive datatypes in APL.</p>
+				
+				<ol style="list-style-type:decimal">
+					<li><p> <b>Integer</b> : An integer value can range from -32767 to +32768. An integer type variable is declared using the keyword integer</p></li>
+					<li><p> <b>String</b> : A string type represents the set of string values. A string value can be atmost 16 characters long. 
+					String type variables is declared using the keyword string.</p></li>
+				</ol>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navarrays" class="grid col-full">
+				<h4>Arrays</h4>
+				<p>Arrays are sequence of elements of a single type. Arrays can be of <b>integer</b> or <b>string</b> data types.
+				APL allows the use of single-dimensional arrays only, i.e. linear arrays. 
+				Array elements are accessed by the array name followed an index value within square brackets ( e.g. arr[10] ).</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navdecl" class="grid col-full">
+				<h2>Declarations and Scope</h2>
+				<p>Declarations should be made for variables and functions defined in the APL program.</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navglobalvar" class="grid col-full">
+				<h4>Global Variables</h4>
+				<p>Global variables are declared in the first section of the program within a <b>decl ... enddecl</b> block.
+				Global variables can be accessed from any function in the program. Global variables can be of integer, string, integer array or string array datatypes. 
+				Global variables are declared with its datatype followed by the variable name. 
+				If the variable refers to an array the size of the array must be given in square brackets. 
+				The general form of declarations is as follows<br/>
+				
+					<tt>&nbsp&nbsp&nbsp type variable name;<br/>
+					&nbsp&nbsp&nbsp type variable name[size];</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navfuncdecl" class="grid col-full">
+				<h4>Function Declaration</h4>
+				<p>For every function except the <b>main()</b> function defined in a APL program, there must be a declaration. 
+				All functions have global scope and is declared in the first section within <b>decl ... enddecl</b> block, along with the global variables.<br/>
+				&nbsp&nbsp&nbsp A function declaration should specify the name of the function, the name and type of each of its arguments and the return type of the function. 
+				A function can have integer/string arguments. Parameters may be passed by value or reference. Arrays cannot be passed as arguments. 
+				If a global variable name appears as an argument, then within the scope of the function, the new declaration will be valid and global variable declaration is suppressed. 
+				Different functions may have arguments of the same name. For arguments that are passed by reference, the argument name is preceded by an ampersand(&) in the 
+				function declaration. The return type of a function must be either integer or string. <br/>
+				The general form of declarations is as follows<br/>
+				
+					<tt>&nbsp&nbsp&nbsp type function name (type1 argument1,argument2,...; type2 argument1,argument2,...;...);</tt><br/>
+				Examples for global declarations<br/>
+				<tt>&nbsp&nbsp&nbsp
+				decl<br/>
+				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp integer x, y, a[10], b[20];<br/>
+				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp integer f1(integer a1, a2; string b1; integer &c1), f2();<br/>
+				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp string t, q[10], f3(integer x);<br/>
+				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp integer swap(inter\ger &x, &y);	<br/>			
+				&nbsp&nbsp&nbsp enddecl</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navlocalvar" class="grid col-full">
+				<h4>Local Variables</h4>
+				<p>Local variables can be declared anywhere inside a function definition except in the body of <b>if</b> and <b>while</b>. 
+				Local variables will have a function scope, i.e. it can only be accessed in the function in which it is declared. 
+				Arguments of a function are treated as local variables. Local variables can be integer or string. Arrays cannot be declared locally. 
+				All globally declared variables are visible inside a function, unless suppressed by a re-declaration. 
+				The general form of declarations is as follows<br/>
+					<tt>&nbsp&nbsp&nbsp type variable name;</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navfunc" class="grid col-full">
+				<h2>Function Definition and Main Function</h2>
+				<p>Every APL program must have a <b>main()</b> function and zero or more user-defined functions. 
+				Every function other than the <b>main()</b> function must be declared within the <b>decl ... enddecl</b> block. 
+				The general form of a function definition is given below<br/>
+				<tt>&nbsp&nbsp&nbsp
+					type function name(ArgumentList)<br/>
+					&nbsp&nbsp&nbsp {<br/>
+						&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Function Body<br/>
+					&nbsp&nbsp&nbsp }</tt><br/>
+					The function body must contain a return statement and the return value must be of the return type of the function. 
+					The arguments and return type of each function definition should match exactly with the corresponding declaration. 
+					Every declared function must have a definition. The signature of the function in the delcaration should match the definition of the function 
+					which includes the return type, and the names, passing method and datatypes of the arguments. The language supports recursion and static scope rules apply.
+					</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navmain" class="grid col-full">
+				<h4>main()</h4>
+				<p>The <b>main()</b> function must be a zero argument function of type integer. Program execution begins from the body of the <b>main()</b> function. 
+				The <b>main()</b> function need not be declared. The <b>main()</b> function definition follows all user-defined function definitions. 
+				The definition part of <b>main()</b> should be given in the same format as any other function.</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navexpressions" class="grid col-full">
+				<h2>Expressions</h2>
+				<p>An expression specifies the computation of a value by applying operators and functions to operands.
+				Function call in APL are treated as expressions, and the value of the expression is its return value.
+				APL supports arithmetic and logical expressions</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navarithexp" class="grid col-full">
+				<h4>Arithmetic Expressions</h4>
+				<p>Any integer value, variable, function returning an integer or 2 or more arithmetic expressions connected by arithmetic operators 
+				termed as arithmetic expressions. APL provides five arithmetic operators, viz., +, -, *, / (Integer Division) and % (Modulo operator) 
+				through which arithmetic expressions may be combined. Expression syntax and semantics are similar to standard practice in programming languages 
+				and normal rules of precedence, associativity and paranthesization hold. APL is strongly typed, and hence the types of the oprands must match the operation.</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navlogicexp" class="grid col-full">
+				<h4>Logical Expressions</h4>
+				<p>Logical expressions may be formed by combining arithmetic expressions using relational operators. The relational operators supported by APL are<br/>
+				<tt>&nbsp&nbsp&nbsp <, >, <=, >=, ==, !=</tt><br/>
+				Standard meanings apply to these operators. The operators take two arithmetic expressions as operands and the result will be a boolean value, 
+				either of 1(true) or 0(false). Only realational operator that can be applied to two strings is == (to check equality). 
+				This also considered as a Logical expression. Logical expressions themselves may be combined using logical operators, && (logical and) , || (logical or) and ! (not).</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navfunccall" class="grid col-full">
+				<h4>Function Call</h4>
+				<p>All functions except the <b>main()</b> function can be invoked from any other function including itself.The general form of a function call is<br/>
+						<tt>&nbsp&nbsp&nbsp function name(value1,value1...)</tt>;<br/>
+					Function calls are treated as expressions. The function takes in the values of its arguments and returns a value of type equal to the return type of the function. 
+					This value is treated as the evaluated result of the function call.</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navstatements" class="grid col-full">
+				<h2>Statements</h2>
+				<p>Statements control the execution of the program. All statements in APL are terminated with a semicolon ;</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navassignstmt" class="grid col-full">
+				<h4>Assignment Statement</h4>
+				<p>The APL assignment statement assigns the value of an expression to a variable, 
+				or an indexed array of the same type or a string value to a string variable. = is known as the assignment operator.
+				Initialization during declaration is not allowed in APL. The general syntax is as follows<br/>
+					<tt>&nbsp&nbsp&nbsp variable name = string value / array variable / expression</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navifstmt" class="grid col-full">
+				<h4>If Statement</h4>
+				<p><b>If</b> statements specify the conditional execution of two branches according to the value of a boolean expression. 
+				If the expression evaluates to true, the <b>if</b> branch is executed, otherwise, if present, the <b>else</b>  branch is executed. 
+				The <b>else</b>  part is optional. The general syntax is as follows<br/>
+				<tt>&nbsp&nbsp&nbsp
+					<b>if</b> (logical expression) <b>then</b><br/>
+						&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp statements;<br/>
+					&nbsp&nbsp&nbsp <b>else</b> <br/>
+						&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp statements;<br/>
+					&nbsp&nbsp&nbsp <b>endif</b>;</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navwhilestmt" class="grid col-full">
+				<h4>While Statement</h4>
+				<p><b>While</b>  statement iteratively executes a set of statements based on a condition which is a logical expression. 
+				The statements are iteratively executed as long as the logical expression evaluates to true.<br/>
+				<tt>&nbsp&nbsp&nbsp
+					<b>while</b>  (logical expression) <b>do</b><br/>
+					&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp	statements;<br/>
+					&nbsp&nbsp&nbsp&nbsp<b>endwhile</b>;</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navbreakstmt" class="grid col-full">
+				<h4>Break Statement</h4>
+				<p><b>Break</b> statement is a statement which is used in a <b>while</b>  loop block. This statement stops the execution of the loop 
+				in which it is used and passes the control of execution to the next statement after the loop. 
+				This statement cannot be used anywhere else other than <b>while</b>  loop. The syntax is as follows<br/>
+				<tt>&nbsp&nbsp&nbsp
+					<b>break</b> ;</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navcontinuestmt" class="grid col-full">
+				<h4>Continue Statement</h4>
+				<p><b>Continue</b> statement is a statement which is also used only in a <b>while</b>  loop block. 
+				This statement skips the current iteration of the loop and passes the control to the next iteration after checking the loop condition. 
+				The syntax is as follows<br/>
+				<tt>&nbsp&nbsp&nbsp
+					<b>continue</b> ;</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navreturnstmt" class="grid col-full">
+				<h4>Return Statement</h4>
+				<p><b>Return</b> statement in a function passes the control from the callee to the caller function and returns a value to the caller function. 
+				All functions including the <b>main()</b> must have exactly one <b>return</b> statement and it should be the last statement in the funtion body. 
+				The return type of the function should match the type of the expression. The return type of main is integer. The syntax is as follows<br/>
+				<tt>&nbsp&nbsp&nbsp
+					<b>return</b> expression;</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navrwstmt" class="grid col-full">
+				<h4>Read/Write Statement</h4>
+				<p>The standard input and output statements in APL are <b>read</b> and <b>write</b> respectively. 
+				The read statement reads an integer value from the standard input device into an integer variable or 
+				an indexed array variable or a string value into a string variable. The write statement outputs a string literal 
+				or the value of string variable or an arithmetic expression into the standard output.<br/>
+				<tt>&nbsp&nbsp&nbsp	
+					<b>read</b> variable name;<br/>
+					&nbsp&nbsp&nbsp	<b>write</b> expression / string;</tt></p><br/>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navsyscalls" class="grid col-full">
+				<h2>System Calls</h2>
+				<p>System Calls allow the programs written in APL to interact with the operating system running on the XSM architecture. 11 System Calls are supported by APL.</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navcreate" class="grid col-full">
+				<h4>Create</h4>
+				<p><b>Create</b> s a file with the specified filename in the filesystem. The return value of this system call is 0 in case of success 
+				and the appropriate error code in case of failure.<br/>
+				<tt>&nbsp&nbsp&nbsp	
+					integer <b>Create</b> (string filename);</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navopen" class="grid col-full">
+				<h4>Open</h4>
+				<p>Returns a file descriptor of the file in the filesystem with the specified filename. 
+				The file descriptor is an integer value. If the <b>Open</b>  fails, an appropriate error code is returned. <br/>
+				<tt>&nbsp&nbsp&nbsp	
+					integer <b>Open</b> (string fileName);</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navread" class="grid col-full">
+				<h4>Read</h4>
+				<p>Reads the specified number of words(16 bytes) from a file which has the specified file descriptor into a string array. 
+				The return value of this system call is the number of words successfully read. If the <b>Read</b>  fails, an appropriate error code is returned.<br/>
+				<tt>&nbsp&nbsp&nbsp	
+					integer <b>Read</b> (integer fileDescriptor, string buffer[], integer numWords);</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navwrite" class="grid col-full">
+				<h4>Write</h4>
+				<p>Writes the specified number of words from the string buffer to a file in the filesystem with the specified file descriptor. 
+				The return value of this system call is the number of words successfully written. If the <b>Write</b>  fails, an appropriate error code is returned.<br/>
+				<tt>&nbsp&nbsp&nbsp	
+					integer <b>Write</b> (integer fileDescriptor, string buffer[], integer numWords);</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navseek" class="grid col-full">
+				<h4>Seek</h4>
+				<p><b>Seek</b>  is used to change the read/write head position in a file. 
+				It moves the head to the specified number of words from the beginning of the file. 
+				The return value of this system call is 0 in case of success and the appropriate error code in case of failure.<br/>
+				<tt>&nbsp&nbsp&nbsp	
+					integer <b>Seek</b> (integer fileDescriptor, integer numWords);</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navclose" class="grid col-full">
+				<h4>Close</h4>
+				<p>This system call is used to close an open file. 
+				The return value of this system call is 0 in case of success and the appropriate error code in case of failure.<br/>
+				<tt>&nbsp&nbsp&nbsp	
+					integer <b>Close</b> (integer fileDescriptor);</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navdelete" class="grid col-full">
+				<h4>Delete</h4>
+				<p>This system call is used to delete the file from the file system whose name is specified in the argument. 
+				The return value of this system call is 0 in case of success and the appropriate error code in case of failure.<br/>
+				<tt>&nbsp&nbsp&nbsp	
+					integer <b>Delete</b> (string fileName);</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navfork" class="grid col-full">
+				<h4>Fork</h4>
+				<p>This system call is used to create a copy of the current process in the system. 
+				The return value of this system call is the PID of the child process for the parent, and 0 for the child.<br/>
+				<tt>&nbsp&nbsp&nbsp	
+					integer <b>Fork</b> ();</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navexec" class="grid col-full">
+				<h4>Exec</h4>
+				<p>This system call is used to load the program, whose name is specified in the argument, 
+				in the memory space of the current process and start its execution. The return value of this system call is 1 in case of failure. <br/>
+				<tt>&nbsp&nbsp&nbsp	
+					integer <b>Exec</b> (string fileName);</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navexit" class="grid col-full">
+				<h4>Exit</h4>
+				<p>This system call is used to terminate the execution of the process which invoked it and remove it from the memory.<br/>
+				<tt>&nbsp&nbsp&nbsp	
+					void <b>Exit</b> ();</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>
+			
+			<article  id="navhalt" class="grid col-full">
+				<h4>Halt</h4>
+				<p>This system call is used to halt the machine.<br/>
+				<tt>&nbsp&nbsp&nbsp	
+					void <b>Halt</b> ();</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>
+			
+
+			</div> <!-- 100%articles-->
+
+		
+		</section>	
+		
+		
+		
+	</div> <!--main-->
+<div class="divide-top">
+	<footer class="grid-wrap">
+		<ul class="grid col-one-third social">
+			<li><a href="http://github.com/XOS-NITC">Github</a></li>
+		</ul>
+	
+		<div class="up grid col-one-third ">
+			<a href="#navtop" title="Go back up">&uarr;</a>
+		</div>
+		
+		<nav class="grid col-one-third ">
+			<ul><li><a href="index.html" >Home</a></li>
+				<li><a href="about.html">About</a></li>
+				<li><a href="documentation.html">Documentation</a></li>
+				<li><a href="downloads.html">Downloads</a></li>
+				<li><a href="roadmap.html">Roadmap</a></li></ul>
+			</ul>
+		</nav>
+	</footer>
+</div>
+
+</div>
+
+<!-- Javascript - jQuery -->
+<script src="http://code.jquery.com/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="js/jquery-1.7.2.min.js"><\/script>')</script>
+
+<!--[if (gte IE 6)&(lte IE 8)]>
+<script src="js/selectivizr.js"></script>
+<![endif]-->
+
+<script src="js/scripts.js"></script>
+
+<!-- Asynchronous Google Analytics snippet. Change UA-XXXXX-X to be your site's ID. -->
+<script>
+  var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+</body>
+</html>

@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+
+<head>
+	<meta charset="UTF-8">
+	
+	<!-- Remove this line if you use the .htaccess -->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+	<meta name="viewport" content="width=device-width">
+	
+	<meta name="description" content="Designa Studio, a HTML5 / CSS3 template.">
+	<link rel="shortcut icon" type="image/png" href="favicon.png">
+	
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="css/style.css">
+	
+	<!--[if lt IE 9]>
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+</head>
+
+
+
+<body>
+<!-- Prompt IE 7 users to install Chrome Frame -->
+<!--[if lt IE 8]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
+
+<div class="container">
+
+	<header id="navtop">
+		<a href="index.html" class="logo fleft">
+			<img src="img/logo.png" alt="Designa Studio">
+		</a>
+		
+		<nav class="fright">
+			<ul><li><a href="index.html" >Home</a></li>
+				<li><a href="about.html">About</a></li>
+				<li><a href="documentation.html" class="navactive">Documentation</a></li>
+				<li><a href="downloads.html">Downloads</a></li>
+				<li><a href="roadmap.html">Roadmap</a></li></ul>
+			</ul>
+		</nav>
+	</header>
+
+
+	<div class="services-page main grid-wrap">
+
+		<header class="grid col-full">
+			<hr>
+			<p class="fleft">Operating System (XOS)</p>
+						<br/><br/>
+					<a href="doc/xos.pdf" class="button"> Download as PDF </a>
+		</header>
+
+
+		<aside class="grid col-one-quarter mq2-col-full">
+		
+			<menu>
+				<ul>
+					<li><a href="#navintro" class="sec" >Introduction</a></li>
+					<li><a href="#navmemorg" class="sec">Memory Organization</a></li>
+					<li><a href="#navpromgmt" class="sec">Process Management</a></li>
+						<li><a href="#navpromgmt_intro" class="subsec">Introduction</a></li>
+						<li><a href="#navpromgmt_prostruct" class="subsec">Process Structure</a></li>
+						<li><a href="#navpromgmt_pcb" class="subsec">Process Control Block (PCB)</a></li>
+						<li><a href="#navpromgmt_readylist" class="subsec">Ready List</a></li>
+						<li><a href="#navpromgmt_pagetbl" class="subsec">The Per-Process Page Tables</a></li>
+						<li><a href="#navpromgmt_multiprog" class="subsec">Multiprogramming</a></li>
+						<li><a href="#navpromgmt_init" class="subsec">INIT and User Processes</a></li>
+					
+					<li><a href="#navmemmgmt" class="sec" >Memory Management</a></li>	
+						<li><a href="#navmemmgmt_intro" class="subsec" >Introduction</a></li>
+						<li><a href="#navmemmgmt_paging" class="subsec" >Paging</a></li>
+						<li><a href="#navmemmgmt_mfl" class="subsec" >Memory Free List</a></li>
+						<li><a href="#navmemmgmt_vm" class="subsec" >Virtual Memory</a></li>	
+											
+					<li><a href="#navfiles" class="sec" >Files</a></li>
+						<li><a href="#navfiles_fat" class="subsec" >File Allocation Table (FAT)</a></li>
+						<li><a href="#navfiles_dfl" class="subsec" >Disk Free List</a></li>
+						<li><a href="#navfiles_swoft" class="subsec" >System Wide Open File Table</a></li>
+						<li><a href="#navfiles_scratchpad" class="subsec" >Scratchpad</a></li>
+					
+					<li><a href="#navsyscalls" class="sec" >System Calls</a></li>
+						<li><a href="#navsyscalls_intro" class="subsec" >Introduction</a></li>
+						<li><a href="#navsyscalls_machine" class="subsec" >Machine System Calls</a></li>
+						<li><a href="#navsyscalls_file" class="subsec" >File System Calls</a></li>
+						<li><a href="#navsyscalls_process" class="subsec" >Process System Calls</a></li>
+						
+					<li><a href="#navsysroutines" class="sec" >System Routines</a></li>
+						<li><a href="#navsysroutines_osstartup" class="subsec" >OS Startup Code</a></li>
+						<li><a href="#navsysroutines_exhandler" class="subsec" >Exception Handler</a></li>
+						<li><a href="#navsysroutines_timer" class="subsec" >Timer Interrupt Routine</a></li>
+						<li><a href="#navsysroutines_interrupt" class="subsec" >Interrupt Routines</a></li>
+				</ul>
+			</menu>
+		</aside>
+		
+		<section class="grid col-three-quarters mq2-col-full">
+		
+			
+			
+			<div class="grid-wrap">
+			<article  id="navintro" class="grid col-full">
+				<h2>Introduction</h2>
+				<p>
+				XOS (Experimental Operating System) is an experimental operating system  which is designed to be run on the  XSM  (Experimental String Machine) architecture which is a simulated machine hardware. XOS is 	intended as an instructional tool to help students learn various aspects about operating systems.
+				</p>
+				<p>
+				XOS is programmed using a custom language, SPL (System Programmer's Language) which compiles to XSM compatible code. (Refer <a href="spl-spec.html" target="_blank" >SPL Specification</a>) Application programs for XSM are written in APL (Application Programmer's Language). (Refer <a href="apl-spec.html" target="_blank" >APL Specification</a>) 
+				</p>
+				<p>
+				The programs, data and operating system code is stored on a disk which has an XFS (Experimental File 					System) in it. (Refer <a href="xfs-spec.html" target="_blank" >XFS Specification</a>)
+				</p>
+				
+				
+				The various functionalities of XOS include
+				<ul>
+				<li> <b>Process Management</b>, includes scheduling and dispatching processes to the CPU. XOS is 					capable of \textit{multiprogramming} (the ability to run more than one process simultaneously).	 					(Refer <a href="#navpromgmt" >Process Management</a>)
+				</li>
+				<li> <b>Memory Management</b>, involves allocating memory for processes, demand paging (loading 				memory pages from the disk as and when required). (Refer <a href="#navmemmgmt"  >Memory 				Management</a>) </li>
+				<li> <b>System Calls</b>. XOS provides various system calls for the user processes to execute certain 					kernel level operations. (Refer <a href="#navsyscalls"  >System Calls</a> ) </li>
+				</ul>
+
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>			
+			
+			
+			<article id="navmemorg" class="grid col-full">			
+				<h2>Memory Organization</h2>
+				<p>The operating system organizes memory as given below</p>
+				<img src="doc/memorg.png" />
+				<ul>
+				<li> <a href="#navsysroutines_osstartup" >OS Startup Code</a> loads the INIT process to memory, data structures like FAT and Disk Free List, and Interrupt Routines from the disk.</li>
+				<li>  <a href="#navpromgmt_pagetbl" >The Per-Process Page Tables</a>. used for address translation of logical addresses to physical address. </li>
+				<li><a href="#navmemmgmt_mfl">Memory Free List</a> is a list of free memory locations in the memory. </li>
+				<li><a href="#navfiles_swoft" >System Wide Open File Table</a>  contains a details of files which are opened by the processes.  </li>
+				<li><a href="#navpromgmt_readylist" >Ready List</a> of <a href="#navpromgmt_pcb" >Process Control Block (PCB)</a>s, is a list of Process Control Blocks, which indicates the ready and terminated processes.</li>
+				<li><a href="#navfiles_fat" >File Allocation Table (FAT)</a>contains details about files stored on the disk.</li>
+				<li> <a href="#navfiles_dfl" >Disk Free List</a>  contains details about used and used blocks in the disk. </li>
+				<li><a href="#navsysroutines_exhandler" >Exception Handler</a>  contains the kernel code to be executed during various exceptions. </li>
+				<li> <a href="#navsysroutines_timer" >Timer Interrupt Routine</a> contains the kernel code to be executed during a timer interrupt. </li>
+				<li> <a href="#navsysroutines_interrupt" >Interrupt Routines</a> contains kernel code to be executed during interrupts (1 to 7). </li>
+				<li> <a href="#navpromgmt_init" >INIT and User Processes</a> is the memory space allocated for user pro- grams in execution.  </li>
+				</ul>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>			
+			
+			
+			
+			<article id="navpromgmt" class="grid col-full">
+			<h2>Process Management</h2>
+			</article>					
+		
+				<article id="navpromgmt_intro" class="grid col-full">
+				<h4>Introduction</h4>
+				<p>Any program in its execution is called a <b>process</b>. Processes will be loaded into memory before they start their execution. Each process occupies at most 4 pages in of the memory. The processor generates logical addresses with respect to a process during execution, which is translated to the physical address. This translation is done by the machine using page tables, Refer <a href="xsm-spec.html#navaddr" target="blank"> Address Translation (XSM Specification)</a></p>
+				
+				
+				<p>The XSM architecture supports demand paging and so the machine does not fix the number of processes that can be run on it. However XOS has limited the number of process running simultaneously to 32, due to limitations in number of <a href="#navpromgmt_pcb" >PCB</a>s in the Ready List and the number of <a href="#navpromgmt_pagetbl" ">Per-Process Page Tables</a>.</p>
+				</article>			
+				<div class="up grid col-one-third" style="float:right">
+				<a href="#navtop" title="Go back up"> top &uarr;</a>
+				</div>		
+	
+				<article id="navpromgmt_prostruct" class="grid col-full">
+				<h4>Process Structure</h4>
+				A process in the memory has the following structure.
+				<ul>
+				<li><b>Code Area</b> : These are pages of the memory that contain the executable code loaded from the disk.</li>
+				<li><b>Stack</b> : This is the user stack used for program execution. The variables and data used during execution of program is stored in the stack. It grows in the direction of increasing word address.</li> 
+				</ul>
+				The structure of a process is as shown<br/>
+				<img src="doc/prostruct.png"/>
+				</article>			
+				<div class="up grid col-one-third" style="float:right">
+				<a href="#navtop" title="Go back up"> top &uarr;</a>
+				</div>		
+				
+				
+			
+				<article id="navpromgmt_pcb" class="grid col-full">
+				<h4>Process Control Block (PCB)</h4>
+				It contains data pertaining to the current state of the process. The size of the PCB is 32 words. 
+				<br/> Structure of a PCB is given below<br /><br/>
+				<table class="doctable"><tr><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7-14</th><th>15-30</th><th>31</th></tr>
+				<tr><td><tt>PID</tt></td><td><tt>STATE</tt></td><td><tt>BP</tt></td><td><tt>SP</tt></td><td><tt>IP</tt></td><td><tt>PTBR</tt></td><td><tt>PTLR</tt></td><td><tt>R0 - R7</tt></td><td><tt>Per-Process <br/>Open File Table</tt></td><td><tt>...Free...</tt></td></tr>
+				</table>			
+				
+				<br/>
+				<h5>Process Identifier (<tt>PID</tt>) </h5>	
+				The process identifier is a number from 0 to 31, which identifies the processes in memory. The PID of the current process can be calculated from the PTBR register.
+		
+				</br></br>
+					<h5>Process State (<tt>STATE</tt>)</h5>
+					The process state corresponding to a process, indicated by STATE in the PCB stores the state of that process in the memory. A process can be in one of the following states.
+					<ul>
+					<li>0 for terminated, i.e. process has completed execution</li>
+					<li>1 for ready, i.e. process is waiting for the CPU to start execution.</li>
+					<li>2 for running, i.e. the process is currently running in the CPU</li>
+					</ul>
+				
+					<h5>Registers</h5>
+					<ul>	
+					<li><tt>IP</tt>: The word address of the currently executing instruction is stored in the IP (Instruction Pointer) register. The value of this instruction cannot be changed explicitly by any instruction. </li>
+					<li><tt>BP</tt>: The base address of the user stack is stored in the BP (Base Pointer)register.</li>
+					<li><tt>SP</tt>: The address of the stack top is stored in the SP (Stack Pointer)</li>
+					<li><tt>PTBR</tt>: TThe physical address of the Per-Process Page Table of the process is stored in the PTBR (Page Table Base Register).</li>
+					<li><tt>PTLR</tt>: The length of the Per-Process Page Table (No. of entries) is stored in the PTLR (Page Table Length Register). It is fixed as 4 for every process in XOS.</li>		
+					</ul>		
+					<p>Each process has its own set of values for the various registers. Words 2 – 6 in
+	the PCB stores the values of the registers associated with the process .</p>
+	
+	
+					<h5>Per-Process Open File Table </h5>
+					The Per-Process Open File Table contains details of files opened by the corre sponding process. Every entry in this  table occupies 2 words. A maximum of 8 files can be opened by a process at a time, i.e. up to 8 entries in the PCB. It is stored in the PCB from words 15 to 30. Its structure is given below 1 word Pointer to system-wide open file table entry 1 word LSEEK position
+					</br>
+					</br>
+					<table class="doctable" style="width:50%">
+					<tr><td>Pointer to system-wide </br> open file table entry</td><td><tt>LSEEK</tt> position</td>	</tr>			
+					</table>
+					<ul>
+					<li>The OS maintains a system wide open file table which contains details of all the files that are opened by processes (Refer <a href="#navfiles_swoft" >System Wide Open File Table</a>). The entry	in the Per-Process File Table points to the System-wide Open File Table entry corresponding to the file.</li>		
+					<li>
+					It also stores the LSEEK position for the file, which indicates the word in
+	the file to which the process currently points to for read/write operations.
+					</li>		
+					</ul>
+				</article>			
+				<br/><br/> <br/> 
+				<div class="up grid col-one-third" style="float:right">
+				<a href="#navtop" title="Go back up"> top &uarr;</a>
+				</div>		
+			
+				<article id="navpromgmt_readylist" class="grid col-full">
+				<h4>Ready List</h4>
+				<p>The list of PCBs stored in the memory is used as a Ready List by the operating system to schedule processes to CPU. The STATE in the PCB indicates whether a process is ready for execution or not. A new process in memory is scheduled for execution by circularly traversing through the list of PCBs stored in memory and selecting the first Ready process after the PCB of the currently running process in the list.</p>
+
+				<table class="doctable" style="width:50%">
+				<tr><td>Physical Page Number</td><td> Auxiliary Information</td>	</tr>			
+				</table>
+				</br>
+	<p>  
+A	 maximum of 32 PCBs can be stored in the memory, and hence the maximum number of processes that can be run simultaneously is limited to 32. The PCB list is stored in pages 3 and 4 in the memory (words 1536 – 2559)
+</p>
+				</article>			
+				<div class="up grid col-one-third" style="float:right">
+				<a href="#navtop" title="Go back up"> top &uarr;</a>
+				</div>		
+
+				<article id="navpromgmt_pagetbl" class="grid col-full">
+				<h4>The Per-Process Page Tables</h4>
+				<p>TEvery process in XOS has a Per-Process Page Table. A total of 32 PCBs and 32 Page Tables in total are  available, 		which limits the number of processes that can be run to 32.</p>
+				<p>  
+				The Per-Process Page Table stores the physical page number corresponding to each logical page associated with the process. The logical page number can vary from 0 to 3 for each process. Therefore, each process has 4 entries in the page table. Per-Process Page Tables are stored in Page 2, words 1024 – 1279 in the memory (256 words = 32 processes × 4 pages )
+				</p>
+				<p>
+					When a process is loaded only the disk addresses of the program are stored, and by demand paging (Refer <a href="#navmemmgmt_paging" >Paging</a>) pages are loaded/allocated for the process. Once all pages are loaded, each entry contains the page number where the data specified by the logical address resides in the memory and auxiliary information which includes valid/invalid bit, reference bit etc.
+				</p>
+				</article>			
+				<div class="up grid col-one-third" style="float:right">
+				<a href="#navtop" title="Go back up"> top &uarr;</a>
+				</div>	
+
+				<article id="navpromgmt_multiprog" class="grid col-full">
+				<h4>Multiprogramming</h4>
+				<p>The operating system allows multiple processes to be run on the machine and manages the system resources among these processes. This process of simultaneous execution of multiple processes is known as multiprogramming.
+				</p>
+				<p>  
+				To support multiprogramming in the system, the kernel makes use of the scheduler which is present in the Timer Interrupt Service Routine in Page 8 of the memory.
+				</p>
+				</article>			
+				<div class="up grid col-one-third" style="float:right">
+				<a href="#navtop" title="Go back up"> top &uarr;</a>
+				</div>	
+				
+				<article id="navpromgmt_init" class="grid col-full">
+				<h4><tt>INIT</tt> and other user programs</h4>
+The INIT process is the first user program that is loaded by the OS after start up. The INIT and other user processes uses the memory pages 16 - 63 for execution (Code Area and Stack).
+
+				</article>			
+				<div class="up grid col-one-third" style="float:right">
+				<a href="#navtop" title="Go back up"> top &uarr;</a>
+				</div>	
+			<br/><br/>
+				
+				
+			<article id="navmemmgmt" class="grid col-full">
+			<h2>Memory Management</h2>
+			</article>					
+		
+				<article id="navmemmgmt_intro" class="grid col-full">
+				<h4>Introduction</h4>
+				<p>XSM uses a paging mechanism for address translation (Refer <a href="xsm-spec.html#navaddr" target="blank"> Address Translation in XSM Specification </a>). XOS supports virtual memory, i.e. it supports execution of processes that are not completely in memory. It follows pure demand paging strategy for memory management. Pages are allocated as and when required during execution.
+				</p>
+				</article>			
+				<div class="up grid col-one-third" style="float:right">
+				<a href="#navtop" title="Go back up"> top &uarr;</a>
+				</div>		
+	
+				<article id="navmemmgmt_paging" class="grid col-full">
+				<h4>Paging</h4>
+				<p>Paging is the memory management scheme that permits the physical address space of a process to be non-contiguous. Each process has its own page table (Refer <a href="#navpromgmt_pagetbl" >The Per-Process Page Tables</a>), which is used for paging.
+				</p>
+				<p>Paging is the memory management scheme that permits the physical address space of a process to be non-contiguous. Each process has its own page table (Refer <a href="#navpromgmt_pagetbl" >The Per-Process Page Tables</a>), which is used for paging.
+				</p>
+				<p>The Per-Process Page Table contains information relating to the actual location in the memory. Each valid entry of a page table contains the page number in the memory where the data specified by the logical address resides. The address of Page Table of the currently executing process is stored in PTBR and length of the page table is set to 4 in PTLR of the machine. 
+				</br>
+				The structure of an entry in the page table is given below.
+				</p>
+				<table class="doctable" style="width:50%">
+				<tr><td>Physical Page Number</td><td>Auxiliary Information</td>	</tr>			
+				</table>
+				
+				<ul>
+				<li><i>Physical Page Number</i>: The logical page numbers generated by the CPU for a process can be in the range 0 to 3. The actual location of these logical pages are given by the physical page number. Address translation is done by the machine (Refer <a href="xsm-spec.html#navaddr" target="blank"> Address Translation in XSM Specification </a>) </li>				
+				<li><i>Auxiliary Information:</i>: The logical page numbers generated by the CPU for a process can be in the range 0 to 3. The actual location of these logical pages are given by the physical page number. Address translation is done by the machine (Refer <a href="xsm-spec.html#navaddr" target="blank"> Address Translation in XSM Specification </a>)  </li>		
+					<img src="doc/auxinfo.png" />
+					<ul>
+					<li> <i>Valid/Invalid Bit (VI) </i> is a value 1 or 0 for valid and invalid respectively. It is valid if and only if the entry is a physical memory location. It is invalid if either the entry points to location on the disk or if its not in the logical address space of the process.</li>
+					<li> <i>Reference Bit (R)</i>: This bit is set to 1 by the machine every time a page is accessed. This bit is used for page replacement by the OS
+					</li>
+					</ul>		
+				</ul>
+				</article>			
+				<div class="up grid col-one-third" style="float:right">
+				<a href="#navtop" title="Go back up"> top &uarr;</a>
+				</div>		
+				
+				
+			<article id="navmemmgmt_mfl" class="grid col-full">
+				<h4>Memory Free List</h4>
+				<p>PThe free list of the memory consists of 64 entries. Each entry is of size one word. Thus, the total size of the free list is thus 64 words. It is present in words 1280 to 1343 in memory. (words 256 to 319 of Page ) of the memory. Each entry of the free list contains a value of either 0 or 1 indicating whether the corresponding page in the memory is free or not respectively.</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article id="navmemmgmt_vm" class="grid col-full">
+				<h4>Virtual Memory</h4>
+				<p>XOS allows virtual memory management, i.e. running processes without having all the pages in memory. It makes use of a backing store or swap in the disk to replace pages from the memory and allocate the emptied memory to another process. This increases the total number of processes that can be run simulta neously on the OS.</p>
+				<p>
+				XOS starts executing a process with no pages of that process in memory. Pages are loaded into the memory from the disk only when it is required by the CPU. This strategy is known as pure demand paging. The page table is loaded with the disk address of the data blocks corresponding to the process and all entries are set as invalid and not referenced initially (‘00’ as auxiliary information).		</p>
+				<p>
+				Page Fault Exceptions occur when a required page is not currently loaded into the memory. In this case the Exception Handler Routine is responsible for loading the required page to the memory from the disk. If no free memory is available a page replacement technique is used to find a victim page. The page replacement technique used in XOS is a second chance algorithm(Refer Silberschatz, Galvin, Gagne: Operating System Concepts) which uses the reference 12 bits in the auxiliary information. The victim page is swapped out to to the disk (swap area) to accommodate the required page.</p>
+			</article> 
+			</br></br>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+		
+
+
+			<article id="navfiles" class="grid col-full">
+			<h2>Files</h2>
+			<p>The operating system requires accessing the file system (XFS) while loading programs, and reading data from the files. The operating system maintains a memory copy of the file system data structures like FAT(File Allocation Table) and Disk Free List. It is loaded from the disk to the memory during operating system boot. </p>
+			<p>
+Apart from the file system data structures XOS maintains details about files opened by all processes in the System-wide Open File Table. XOS uses a scratchpad to access files in the memory which will be explained further in this chapter.	</p>
+			</article>	
+			</br>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>			
+			
+			<article id="navfiles_fat" class="grid col-full">
+			<h4>File Allocation Table</h4>
+			<p> <i>File allocation table (FAT)</i> is a table that has an entry for each file present in the disk. FAT is stored in page number 5 in the memory. </p>
+			<p>The structure of FAT entry is given below</p>
+			<table class="doctable" >
+			<tr><th>0</th><th>1</th><th>2</th><th>3 - 7</th></tr>
+			<tr><td>File Name</td><td>File Size</td><td>Block# of Basic Block</td><td>...Unused...</td>
+			</table>
+			</article>	
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>		
+			
+
+			<article id="navfiles_dfl" class="grid col-full">
+			<h4>Disk Free List</h4>
+			<p> The Disk Free List is a data structure used for keeping track of unused blocks in the disk. The memory copy of Disk Free List is stored in the <i>page number</i> 6. It is stored in <i>block number</i> 11 in the disk.
+ </p>	
+			</article>	
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>		
+	
+	
+			<article id="navfiles_swoft" class="grid col-full">	
+			<h4>System-Wide Open File Table </h4>
+			<p>This data structure maintains details about all open files in the system. It is located from words 1344 to 1471 of the memory (in Page 2). System Wide Open File Table consists of a maximum of 64 entries. Therefore, there can be at most 64 open files in the system at any time. Each entry of the System Wide Open File Table occupies 2 words. 
+</p>
+			<table class="doctable" style="width:50%">
+			<tr><td>FAT Index Entry </td> <td>File Open Count</td></tr>			
+			</table>
+			<ul>
+			<li> <b>FAT index entry</b>: It stores the index of the corresponding file in the FAT. </li>		
+			<li>  <b>File Open Count</b> : File Open Count is the number of open instances of the file. When this becomes zero, the entry for the file can be removed from the System Wide Open File Table.</li>		
+			</ul>
+			
+			<p>	The Per-Process Open File Table in the PCB of each process stores information about files opened by the corresponding process. Each entry in the Per-Process Open File Table has the index to the file’s entry in the System-wide Open File Table.</p>
+			</article>			
+			<br/><br/> <br/> 
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>			
+
+			<article id="navfiles_scratchpad" class="grid col-full">
+				<h4>Scratchpad</h4>
+				<p>There is a specific page of the memory which is reserved to store temporary data. This page is known as the Scratchpad. The scratchpad is required since any block of the disk cannot be accessed directly by a process. It has to be present in the memory for access. Hence, any disk block that has to be read or written into is first brought into the scratchpad. It is then read or modified and written back into the disk.</p>
+				<p>	The page number 1 of the memory is used as the scratchpad. Once the OS has booted up there is no need for the OS startup code. So this page can be reused as the scratchpad.</p>
+			</article> 
+			</br></br>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+		
+		
+		<article id="navsyscalls" class="grid col-full">
+		<h2>System Calls</h2>
+		</article>					
+	
+			<article id="navsyscalls_intro" class="grid col-full">
+			<h4>Introduction</h4>
+			<p>System calls are interfaces through which a process communicates with the OS. Each system call has a unique name associated with it (Halt, Open, Read, Fork etc). Each of these names maps to a unique system call number. Each system call in turn causes an interrupt to occur. Note that multiple system calls can be mapped to the same interrupt.</p>
+			<p> All the arguments to the system call are pushed into the user stack of the process which invokes the system call. The system call number is pushed as the last argument. (Refer <a href="apl-spec.html" target="_blank" >APL Specification</a>)  </p>
+			</article>			
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article id="navsyscalls_machine" class="grid col-full">
+			<h4>Machine System Calls</h4>
+			<b>Halt </b></br>
+			<i>APL Syntax </i>: <tt>halt()</tt> <br/>
+			<i>System Call No. </i>: 0 <br/>
+			<p>The Halt system call is used to halt the machine. Halt system call calls the interrupt <tt>INT 5</tt>. </p>
+			</article>			
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>			
+
+
+			<article id="navsyscalls_file" class="grid col-full">
+			<h4>File System Calls</h4>
+			<p>File system calls are used by a process when it has to create, delete or manipulate Data files that reside on the disk(file system). There are seven file system calls. An interrupt is associated with each system call. All the necessary arguments for a system call are available in the user stack with the system call number as the last argument. </p>
+			
+			<b>Create</b></br>
+			<i>APL Syntax </i>: <tt>int Create(fileName)</tt> <br/>
+			<i>System Call No. </i>: 1 <br/>
+			
+			<p>This system call is used to create a new file in the file system whose name is specified in the argument. The return value of the <tt>Create()</tt> system call is 0 if it is a success, and an error code otherwise. It calls Interrupt 1 Routine. </p>
+
+			<b>Delete</b></br>
+			<i>APL Syntax </i>: <tt>int Delete(fileDescriptor)</tt> <br/>
+			<i>System Call No. </i>: 2 <br/>
+			
+			<p>This system call is used to delete the file from the file system whose name is specified in the argument. The return value of the  <tt>Delete()</tt> system call is 0 if it is a success, and an error code otherwise. It calls Interrupt 1 Routine.</p>
+			
+			<b>Open</b></br>
+			<i>APL Syntax </i>: <tt>int Open(fileName)</tt> <br/>
+			<i>System Call No. </i>: 3 <br/>
+			
+			<p>This system call is used to open an existing file whose name is specified in the argument. It calls Interrupt 2 Routine. The return value of the <tt>Open()</tt> system call is an integer value called FileDescriptor, which is the index of the corresponding file’s entry in the Per-Process Open File Table. </p>
+			
+			<b>Close</b></br>
+			<i>APL Syntax </i>: <tt>int Close(fileName)</tt> <br/>
+			<i>System Call No. </i>: 4 <br/>
+			
+			<p>his system call is used to close an open file. The file can only be closed by the process which opened it. FileDescriptor is an integer value returned by the corresponding <tt>Open()</tt> system call. The return value of the <tt>Close()</tt> system call is 0 if it is a success, and an error code otherwise. It calls Interrupt 2 Routine. </p>
+			
+			<b>Seek</b></br>
+			<i>APL Syntax </i>: <tt>iint Seek(FileDescriptor, lseek)</tt> <br/>
+			<i>System Call No. </i>: 5 <br/>
+			
+			<p>This system call is used to change the current value of the seek position in the global file table entry of a file. The return value of the <tt>Seek()</tt> system call is 0 if it is a success, and an error code otherwise. It calls Interrupt 3 Routine. </p>
+			
+			<b>Read</b></br>
+			<i>APL Syntax </i>: <tt>int Read(fileDescriptor, memoryLocation, numWords)</tt> <br/>
+			<i>System Call No. </i>: 6 <br/>
+			
+			<p>This system call is used to read data from an open file (identified by fileDescriptor)
+to the memory (identified by memoryLocation). The return value of the <tt>Read()</tt> system call is the number of words successfully read from the file or an error code otherwise. It calls Interrupt 3 Routine. </p>
+			
+			<b>Write</b></br>
+			<i>APL Syntax </i>: <tt>int Write(fileDescriptor, memoryLocation, numWords)</tt> <br/>
+			<i>System Call No. </i>: 7 <br/>
+			
+			<p>This system call is used to write data into an open file (identified by fileDescriptor)
+to the memory (identified by memoryLocation). The return value of the <tt>Write()</tt> system call is the number of words successfully written to the file or an error code otherwise. It calls Interrupt 4 Routine. </p>
+
+			</article>	
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+						
+			<article id="navsyscalls_process" class="grid col-full">
+			<h4>Process System Calls</h4>
+			<p>Process system calls are used by a process when it has to duplicate itself, execute a new process in its place or when it has to terminate itself. There are three process system calls. An interrupt is associated with each system call. All the necessary arguments for a system call are available in the user stack with the system call number as the last argument. </p>
+			
+			<b>Fork</b></br>
+			<i>APL Syntax </i>: <tt>int Fork()</tt> <br/>
+			<i>System Call No. </i>: 8 <br/>
+			
+			<p>This system call is used to replicate the process which invoked this system call in the memory. The new process which is created is known as the child and the process which invoked this system call is known as its parent. The return value of the <tt>Fork()</tt> system call is ystem call to the parent process is the PID (process identifier) of the child process.It calls Interrupt 5 Routine </p>
+
+			<b>Exec</b></br>
+			<i>APL Syntax </i>: <tt>int Exec(filename)</tt> <br/>
+			<i>System Call No. </i>: 9 <br/>
+			
+			<p>This system call is used to load the program, whose name is specified in the argument, in the memory space of the current process and start its execution. The return value of the <tt>Exec()</tt> system call is 1 if it is a success, and and 0 otherwise. It calls Interrupt 6 Routine.</p>
+			
+			<b>Exit</b></br>
+			<i>APL Syntax </i>: <tt>Exit()</tt> <br/>
+			<i>System Call No. </i>: 10 <br/>
+			
+			<p>This system call is used to terminate the execution of the process which invoked it and removes it from the memory . It loads the next available process. It calls Interrupt 7 Routine.</p>
+			
+			</article>			
+					
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+
+
+			<article id="navsysroutines" class="grid col-full">
+			<h2>System Routines</h2>
+			<p>The Operating System apart from its various data structures and interfaces it provides to the user processes, has certain routines to execute while start up and during interrupts. These routines are included as the Operating System Routines. </p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+						
+			<article id="navsysroutines_osstartup" class="grid col-full">
+			<h4>OS Startup Code</h4>
+			<p>The OS Startup Code resides in the page 1 in the memory. When the machine boots up the ROM Code (Refer XSM Specification) loads the OS Startup Code from the disk . The OS Startup code initializes all data structures required for the OS, loads the FAT and Disk Free List from file system into the memory and starts execution of the <tt>INIT</tt> process. </p>
+			</article>		
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article id="navsysroutines_exhandler" class="grid col-full">
+			<h4>Exception Handler</h4>
+			<p>When the machine encounters an exception it sets EFR (Exception Flag Register) with details corresponding to the exception and calls the exception handler routine (Page No. 7 in memory). (Refer <a href="xsm-spec.html#navexcep" target="blank"> Exceptions in XSM</a>) </p>
+			
+			<img src="doc/EFR-structure.png" style="width:40%" width="20%">
+			<p>XOS handles all exceptions other than Page Fault by killing the process
+which caused the exception.
+			<h5> Page Fault Exceptions </h5>
+			<p>The Cause field of EFR for Page Fault Exceptions is 0. Once a page fault occurs, the Exception Handler Routine loads the required page to the memory from the 20 disk, if it does not exist. The corresponding entry for the logical page which caused the exception to occur (indicated by BadVAddr field in EFR ) will be invalid in the page table of the process. </p>
+			</article>		
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+
+			<article id="navsysroutines_timer" class="grid col-full">
+			<h4>Timer Interrupt Routine</h4>
+			<p>The Timer Interrupt Routine is responsible for context switch, i.e. storing the state (values of the registers) of the currently executing process to the PCB, and setting the registers with values from the PCB of the next ready process in the Ready List of PCBs. A scheduler is responsible for selecting a ready process from this list. The Scheduler code is also contained in the Timer Interrupt Routine.</p>
+			</article>		
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article id="navsysroutines_interrupt" class="grid col-full">
+			<h4>Interrupt Routines</h4>
+			<p>The Interrupts from 1 to 7 are invoked by the user processes through system calls. Each interrupt routine has code corresponding to one or more system calls. Refer <a href="#navsyscalls" >System Calls</a>. </p>
+			</article>		
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>				 		
+									
+		</div> <!-- 100%articles-->
+
+		
+		</section>	
+		
+		
+		
+	</div> <!--main-->
+<div class="divide-top">
+	<footer class="grid-wrap">
+		<ul class="grid col-one-third social">
+			<li><a href="http://github.com/XOS-NITC">Github</a></li>
+		</ul>
+	
+		<div class="up grid col-one-third ">
+			<a href="#navtop" title="Go back up">&uarr;</a>
+		</div>
+		
+		<nav class="grid col-one-third ">
+			<ul><li><a href="index.html" >Home</a></li>
+				<li><a href="about.html">About</a></li>
+				<li><a href="documentation.html">Documentation</a></li>
+				<li><a href="downloads.html">Downloads</a></li>
+				<li><a href="roadmap.html">Roadmap</a></li></ul>
+			</ul>
+		</nav>
+	</footer>
+</div>
+</div>
+
+<!-- Javascript - jQuery -->
+<script src="http://code.jquery.com/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="js/jquery-1.7.2.min.js"><\/script>')</script>
+
+<!--[if (gte IE 6)&(lte IE 8)]>
+<script src="js/selectivizr.js"></script>
+<![endif]-->
+
+<script src="js/scripts.js"></script>
+
+<!-- Asynchronous Google Analytics snippet. Change UA-XXXXX-X to be your site's ID. -->
+<script>
+  var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+</body>
+</html>
+

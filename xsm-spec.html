@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+
+<head>
+	<meta charset="UTF-8">
+	
+	<!-- Remove this line if you use the .htaccess -->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+	<meta name="viewport" content="width=device-width">
+	
+	<meta name="description" content="Designa Studio, a HTML5 / CSS3 template.">
+	<meta name="author" content="Sylvain Lafitte, Web Designer, sylvainlafitte.com">
+	
+	<title>Documentation // eXperimental Operating System</title>
+	
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+	<link rel="shortcut icon" type="image/png" href="favicon.png">
+	
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="css/style.css">
+	
+	<!--[if lt IE 9]>
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+</head>
+
+
+
+<body>
+<!-- Prompt IE 7 users to install Chrome Frame -->
+<!--[if lt IE 8]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
+
+<div class="container">
+
+	<header id="navtop">
+		<a href="index.html" class="logo fleft">
+			<img src="img/logo.png" alt="Designa Studio">
+		</a>
+		
+		<nav class="fright">
+			<ul><li><a href="index.html" >Home</a></li>
+				<li><a href="about.html">About</a></li>
+				<li><a href="documentation.html" class="navactive">Documentation</a></li>
+				<li><a href="downloads.html">Downloads</a></li>
+				<li><a href="roadmap.html">Roadmap</a></li></ul>
+			</ul>
+		</nav>
+	</header>
+
+
+	<div class="services-page main grid-wrap">
+
+		<header class="grid col-full">
+			<hr>
+			<p class="fleft">Machine (XSM) </p>			<br/><br/>
+					<a href="doc/xsm.pdf" class="button"> Download as PDF </a>
+		</header>
+
+
+		<aside class="grid col-one-quarter mq2-col-full">
+		
+			<menu>
+				<ul>
+					<li><a href="#navintro" class="sec" >Introduction</a></li>
+							<li><a href="#navintro" class="subsec" >Brief Machine Description</a></li>
+							<li><a href="#navcomp" class="subsec" >Components of the Machine</a></li>
+							<li><a href="#navdatatype" class="subsec" >Supported Datatypes</a></li>
+					<li><a href="#navreg" class="sec">Registers</a></li>
+							<li><a href="#navreg" class="subsec" >Introduction</a></li>
+							<li><a href="#navregset" class="subsec" >Register Set</a></li>
+					<li><a href="#navmem" class="sec">Memory</a></li>
+							<li><a href="#navmem" class="subsec" > Introduction</a></li>
+							<li><a href="#navaddr" class="subsec" > Address Translation</a></li>
+							<li><a href="#navrom" class="subsec" > ROM Code</a></li>
+					<li><a href="#navdisk" class="sec" >Disk Storage</a></li>		
+					<li><a href="#navinstr" class="sec" >Instructions</a></li>		
+							<li><a href="#navinstr" class="subsec" > Introduction</a></li>
+							<li><a href="#navclassf" class="subsec" > Classification</a></li>
+							<li><a href="#navmodes" class="subsec" > Privilege Modes</a></li>
+					<li><a href="#navintrrupt" class="sec" >Interrupts</a></li>
+							<li><a href="#navexcep" class="subsec" > Exceptions</a></li>
+							<li><a href="#navtimer" class="subsec" > Timer Interrupt</a></li>
+							<li><a href="#navsoft" class="subsec" > Software Interrupt</a></li>
+				</ul>
+			</menu>
+		</aside>
+		
+		<section class="grid col-three-quarters mq2-col-full">
+		
+			
+			
+			<div class="grid-wrap">
+			
+			<article  id="navintro" class="grid col-full">
+				<h2>Introduction</h2>
+				<h4>Brief Machine Description</h4>
+				<p>
+				The machine simulator is known as Experimental String Machine (XSM).
+				It is an interrupt driven uniprocessor machine. The machine handles data as strings. 
+				A string is a sequence of characters terminated by ’\0’. 
+				The length of a string is at most 16 characters including ’\0’. 
+				Each of these strings is stored in a <b>word</b>. <a href="#navmem">(Refer Section : Memory)</a>
+				The machine interprets a single character also as a string.
+
+				</p>
+			</article>
+			
+			
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>			
+			
+			<article  id="navcomp" class="grid col-full">
+				<h4>Components of the Machine</h4>
+				<ul style="list-style-type:disc">
+					<li><p> <b>Disk</b> : It is a non-volatile storage that stores user programs (executables) and data files. 
+							The Operating System code is also stored in the disk. </p></li>
+					<li><p> <b>Memory</b> : It is a volatile storage that stores the programs to be run on the machine as well as the operating system that manages the various programs.</p></li>
+					<li><p> <b>Processor</b> : It is the main computational unit that is used to execute the instructions. </p></li>
+					<li><p> <b>Timer</b> : It is a device that interrupts the processor after a pre-defined specific time interval. </p></li>
+					<li><p> <b>Load/Store</b> : It is a macro that performs the functionalities of DMA (Direct Memory Access) controller. <a href="#navinstr">(Refer Section : Instructions)</a> </p></li>
+				</ul>
+			<img src="doc/block.png" width="20%" />	
+			</article>
+			
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<br/>
+			<article  id="navdatatype" class="grid col-full">
+				<h4>Supported Datatypes</h4>
+				<p>XSM supports 2 different datatypes and their operations, namely <b>Strings</b> and <b>Integers</b>. 
+				However in the lowest level both integers and strings are internally stored as strings.</p>
+				<ul style="list-style-type:disc">
+					<li><p> <b>Strings</b> :<br/>Strings are sequence of characters which may include alphabets, numerals and special characters. 
+					        Every string is terminated with a <i>null character</i> (’\0’). 
+					        Operations that can be performed on strings include lexicographic comparisons. </p></li>
+					<li><p> <b>Integers</b> :<br/>Apart from strings, XSM supports integers and its operations. 
+							The operations that can be performed on integers include arithmetic operations and comparison operations. 
+							A jump can also performed by checking if a register has 0 in it. </p></li>
+				</ul>
+			</article>
+			
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navreg" class="grid col-full">
+				<h2>Registers</h2>
+				<h4>Introduction</h4>
+				<p>
+				The XSM architecture maintains 26 registers (each one <b>word</b>).
+				</p>
+			</article>
+			
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>
+			
+			<article  id="navregset" class="grid col-full">
+				<h4>Register Set</h4>
+				<p>
+				There are 16 General Purpose Registers (GPR), R0 - R15, of which R0 - R7 are Program Registers and R8 - R15 are Kernel Registers. 
+				There are 4 temporary registers T0 - T3 which are reserved for code translation. 
+				The registers T0 - T3 are not intended to be used by the system programmer.
+				In addition to these 20 registers there are 6 Special Purpose Registers(SPR) namely BP (Base Pointer), SP (Stack Pointer), 
+				IP (Instruction Pointer), PTBR (Page Table Base Register) and PTLR (Page Table Length Register) and the EFR (Exception Flag Register).
+				</p>
+				
+				<table class="doctable">
+					<tr> <th>Name</th> <th>Register</th> </tr>
+					<tr> <td>Program Registers</td> <td>R0 - R7</td> </tr>
+					<tr> <td>Kernel Registers</td> <td>R8 - R15</td> </tr>
+					<tr> <td>Temporary Registers</td> <td>T0 - T3</td> </tr>
+					<tr> <td>Base Pointer</td> <td>BP </td> </tr>
+					<tr> <td>Stack Pointer</td> <td>SP</td> </tr>
+					<tr> <td>Instruction Pointer</td> <td>IP </td> </tr>
+					<tr> <td>Page Table Base Register</td> <td>PTBR </td> </tr>
+					<tr> <td>Page Table Length Register</td> <td>PTLR </td> </tr>
+					<tr> <td>Exception Flag Register</td> <td>EFR </td> </tr>
+				</table>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<br/><a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>
+			
+			
+			<article id="navmem" class="grid col-full">			
+				<h2>Memory</h2>
+				<h4>Introduction</h4>
+				
+				<ul style="list-style-type:disc">
+					<li> <p> The basic unit of memory in XSM is a <b>word</b> (length = 16 bytes).  </p> </li>
+					<li> <p> The machine memory can be thought of as a linear sequence of <b>words</b>. </p> </li>
+					<li> <p> A collection of 512 contiguous <b>words</b> is known as a <b>page</b>. </p> </li>
+					<li> <p> The total size of the memory is 64 <b>pages</b> or 32768 (512 × 64) <b>words</b>. </p> </li>
+					<li> <p> Each <b>word</b> in the memory is identified by the <i>word address</i> in the range 0 to 32767. 
+							Similarly, each <b>page</b> in the memory is identified by the <i>page number</i> in the range 0 to 63. </p> </li>
+					<li> <p> The page number corresponding to a word is obtained by the formula, <i>page number</i> = floor(<i>word address</i>/512)</p> </li>
+				</ul>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>
+
+			<article id="navaddr" class="grid col-full">
+				<h4>Address Translation</h4>
+				<p>
+				There are two kinds of memory addresses,
+				</p>
+				<ul style="list-style-type:disc">
+					<li><p> Logical address : When a process runs, CPU generates address for the data accessed by this process. 
+							This address is called the Logical address. </p></li>
+					<li><p> Physical address : It is the actual location of the data in the main memory. </p></li>
+				</ul>
+				<p>
+				Address translation is the process of obtaining the physical address from the logical address. 
+				It is done by the machine in the following way.
+				</p>
+				
+				<ol style="list-style-type:decimal">
+					<li><p> The logical address generated by the CPU is divided by the page size (512) to get the <b>logical page number</b>. 
+							The remainder is the <b>offset</b> of the data within that page.</p></li>
+					<li><p> A <b>page table</b> is used for address translation. 
+							It resides in the memory, the location of which is pointed to by <b>PTBR</b> (Page Table Base Register ). 
+							The number of entries in the page table is stored in <b>PTLR</b> (Page Table Length Register). 
+							Each entry of the page table is two words long.
+							<ul>
+								<li><p> First word contains physical page number corresponding to a logical page number.</p></li>
+								<li><p> The second word can be used as flags. 
+										The first two positions in this word is used as <i>valid/invalid</i> bit (if the entry is a valid 
+										physical memory location or not) and <i>reference bit</i> (its set to 1 every time a page is accessed) respectively.</p></li>
+							</ul>
+						<p>The logical page number is used to index the page table to get the corresponding physical page number.</p>
+							
+ 					</p></li>
+					<li><p>The <b>offset</b> is then used to refer to the word in the physical page containing the data. </p></li>
+				</ol>
+				</br>
+				<p>The example below shows the address translation corresponding to the logical address 13532.</p>
+
+				<img src="doc/address_translation.png" width="20%" />	
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>
+			
+			<article id="navrom" class="grid col-full">			
+				<h4>ROM Code</h4>
+				<p>
+				It is a hard coded assembly level code present in page 0 of the memory.
+				It is known as the ROM (Read Only Memory) code because in an actual machine it is burnt in the hardware. 
+				When the machine boots up, this code is executed. 
+				This code has the basic functionality of loading block 0 of the disk (which generally contains the OS startup code) 
+				into page 1 of the memory and to set the <tt>IP</tt> register value to 512.
+				</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>
+			
+			
+			<article id="navdisk" class="grid col-full">			
+				<h2>Disk Structure</h2>
+				<p>
+				<b>Block</b> : It is the basic unit of storage in the disk.
+				The disk can be thought of as consisting of a linear sequence of 512 <b>blocks</b>. 
+				The size of each <b>block</b> is equal to that of a page in the memory(512 words). 
+				The total disk capacity is 512 × 512 = 262144 <b>words</b>.
+				Any particular <b>block</b> in the disk is addressed by the corresponding number in the sequence 0 to 511 known as the <i>block number</i>.
+				</p>
+				
+				<table class="doctable">
+					<tr> <th>0 - 511</th> <th>512 - 1023</th> <th> ... </th> <th>261632 - 262143</th></tr>
+					<tr> <td>Block 0</td> <td>Block 1</td> <td> ... </td> <td>Block 511 </td> </tr>
+				</table>
+				
+			</article>
+			
+			<div class="up grid col-one-third" style="float:right">
+			<br/><a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>
+			
+			<article id="navinstr" class="grid col-full">			
+				<h2>Instructions</h2>
+				<h4>Introduction</h4>
+				<p>
+				Every instruction in XSM is 2 words long. The instructions provided by the XSM architecture can be classified into privileged 
+				and unprivileged instructions.
+				</p>
+				
+				<table class="doctable">
+					<tr> <th>0 - 511</th> <th>512 - 1023</th> <th> ... </th> <th>261632 - 262143</th></tr>
+					<tr> <td>Block 0</td> <td>Block 1</td> <td> ... </td> <td>Block 511 </td> </tr>
+				</table>
+				
+			</article>
+			
+			<div class="up grid col-one-third" style="float:right">
+			<br/><a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>
+			
+			
+			<article id="navclassf" class="grid col-full">			
+				<h4>Classification</h4>
+				<h5>Unprivileged Instructions</h5>
+				<ol style="list-style-type:decimal">
+					<li> 
+						<p> MOV </p> 
+						<ul style="list-style-type:disc">
+							<li> <p> Register Addressing:<br/>
+							<i>Syntax</i> : <tt> MOV Ri, Rj</tt><br/>
+							Copies the contents of the register <tt>Rj</tt> to <tt>Ri</tt>.</p> </li>
+							<li> <p> Immediate Addressing:<br/>
+							<i>Syntax</i> : <tt>MOV Ri, INTEGER/STRING</tt> <br/>
+							Copies the <tt>INTEGER/STRING</tt> to the register <tt>Ri</tt>.</p> </li>
+							<li> <p> Register Indirect Addressing:<br/>
+							<i>Syntax</i> : <tt>MOV Ri, [Rj]</tt><br/>
+							Copy contents of memory location pointed by <tt>Rj</tt> to register <tt>Ri</tt>.<br/>
+							<i>Syntax</i> : <tt>MOV [Ri], Rj</tt><br/>
+							Copy contents of <tt>Rj</tt> to the location whose address is in <tt>Ri</tt>.</p> </li>
+							<li> <p> Direct Addressing:<br/>
+							<i>Syntax</i> : <tt>MOV [LOC], Rj</tt><br/>
+							Copy contents of <tt>Rj</tt> to the memory address <tt>LOC</tt>.<br/>
+							<i>Syntax</i> : <tt>MOV Rj, [LOC]</tt><br/>
+							Copy contents of the memory location <tt>LOC</tt> to the register <tt>Rj</tt>.</p> </li>
+							<li> <p> Direct Indexed Addressing:<br/>
+							<i>Syntax</i> : <tt>MOV [LOC] Rj, Ri</tt><br/>
+							Copy contents of <tt>Ri</tt> to the memory address <tt>LOC + (value in Rj)</tt><br/>
+							<i>Syntax</i> : <tt>MOV [LOC] Index, Rj</tt><br/>
+							Copy contents of <tt>Ri</tt> to the memory address <tt>LOC + Index</tt>. <tt>Index</tt> must be an integer value.<br/>
+							<i>Syntax</i> : <tt>MOV Ri, [LOC] Rj</tt><br/>
+							Copy contents in the memory address <tt>LOC + (value in Rj)</tt> to the register <tt>Ri</tt><br/>
+							<i>Syntax</i> : <tt>MOV Ri, [LOC] Index</tt><br/>
+							Copy contents of the memory address <tt>LOC + Index</tt> to the register <tt>Ri</tt>. <tt>Index</tt> must be an integer value.</p> </li>
+						</ul>
+					</li>
+					
+					<li> <p> <b>Arithmetic Instructions</b> <br/>
+					Arithmetic Instructions perform arithmetic operations on registers containing integers. 
+					If the register contains a non-integer value, an exception is raised. <a href="#navexcep"> (Refer Section: Exceptions)</a></p> 
+						<ul style="list-style-type:disc">
+							<li> <p> <tt>ADD, SUB, MUL, DIV and MOD</tt>.<br/>
+							<i>General Syntax</i> : <tt>OP Ri, Rj</tt><br/>
+							The result of <tt>Ri op Rj</tt> is stored in <tt>Ri</tt>.</p> </li>
+							<li> <p> <tt>INR</tt><br/>
+							<i>Syntax</i> : <tt>INR Ri</tt><br/>
+							Increments the value of register <tt>Ri</tt> by 1.</p> </li>
+							<li> <p> <tt>DCR</tt><br/>
+							<i>Syntax</i> : <tt>DCR Ri</tt><br/>
+							Decrements the value of register <tt>Ri</tt> by 1.</p> </li>
+						</ul>
+					</li>
+					
+					<li> <p> <b>Logical Instructions </b><br/>
+					Logical instructions are used for comparing values in registers. 
+					Strings can also be compared according to the lexicographic ordering of ASCII.</p> 
+						<ul style="list-style-type:disc">
+							<li> <p> <tt>LT</tt><br/>
+							<i>Syntax</i> : <tt>LT Ri, Rj</tt><br/>
+							Stores 1 in <tt>Ri</tt> if the value stored in <tt>Ri</tt> is less than that in <tt>Rj</tt>. <tt>Ri</tt> is set to 0 otherwise.</p> </li>
+							<li> <p> <tt>GT</tt><br/>
+							<i>Syntax</i> : <tt>GT Ri, Rj</tt><br/>
+							Stores 1 in <tt>Ri</tt> if the value stored in <tt>Ri</tt> is greater than that in <tt>Rj</tt>. <tt>Ri</tt> set to 0 otherwise.</p> </li>
+							<li> <p> <tt>EQ</tt><br/>
+							<i>Syntax</i> : <tt>EQ Ri, Rj</tt><br/>
+							Stores 1 in <tt>Ri</tt> if the value stored in <tt>Ri</tt> is equal to that in <tt>Rj</tt>. Set to 0 otherwise.</p> </li>
+							<li> <p> <tt>NE</tt><br/>
+							<i>Syntax</i> : <tt>NE Ri, Rj</tt><br/>
+							Stores 1 in <tt>Ri</tt> if the value stored in <tt>Ri</tt> is not equal to that in <tt>Rj</tt>. Set to 0 otherwise.</p> </li>
+							<li> <p> <tt>GE</tt><br/>
+							<i>Syntax</i> : <tt>GE Ri, Rj</tt><br/>
+							Stores 1 in <tt>Ri</tt> if the value stored in <tt>Ri</tt> is greater than or equal to that in <tt>Rj</tt>. Set to 0 otherwise.</p> </li>
+							<li> <p> <tt>LE</tt><br/>
+							<i>Syntax</i> : <tt>LE Ri, Rj</tt><br/>
+							Stores 1 in <tt>Ri</tt> if the value stored in <tt>Ri</tt> is less than or equal to that in <tt>Rj</tt>. Set to 0 otherwise.</p> </li>
+						</ul>
+					</li>
+			
+					<li> <p> <b>Labels</b> <br/>
+					<i>Syntax</i> : <tt>LABEL labelname</tt><br/>
+					Creates a label with a <tt>labelname</tt> which is a string. Labels are used in branching instruction to specify 
+					memory location of target instructions.</p> </li>
+					
+					<li> <p> <b>Branching Instructions</b> <br/>
+					Branching is achieved by changing the value of the <tt>IP</tt> to the address of a specified labelname.</p> 
+						<ul style="list-style-type:disc">
+							<li> <p> <tt>JZ</tt><br/>
+							<i>Syntax</i> : <tt>JZ Ri, labelname</tt><br/>
+							Jumps to <tt>labelname</tt> if the contents of <tt>Ri</tt> is zero.</p> </li>
+							<li> <p> <tt>JNZ</tt><br/>
+							<i>Syntax</i> : <tt>JNZ Ri, labelname</tt><br/>
+							Jumps to <tt>labelname</tt> if the contents of <tt>Ri</tt> is not zero.</p> </li>
+							<li> <p> <tt>JMP</tt><br/>
+							<i>Syntax</i> : <tt>JMP labelname</tt><br/>
+							Unconditional jump to address specified by <tt>labelname</tt></p> </li>
+						</ul>
+					</li>
+		
+					<li> <p> <b>Stack Instructions</b></p> 
+						<ul style="list-style-type:disc">
+							<li> <p> <tt>PUSH</tt><br/>
+							<i>Syntax</i> : <tt>PUSH Ri</tt><br/>
+							Increment <tt>SP</tt> by 1 and copy contents of <tt>Ri</tt> to the location pointed to by <tt>SP</tt>.</p> </li>
+							<li> <p> <tt>POP</tt><br/>
+							<i>Syntax</i> : <tt>POP Ri</tt><br/>
+							Copy contents of the location pointed to by <tt>SP</tt> into <tt>Ri</tt> and decrement <tt>SP</tt> by 1.<br/>
+							For both these instructions <tt>Ri</tt> may be any register except <tt>IP</tt>.</p> </li>
+						</ul>
+					</li>
+
+					<li> <p> <b>Subroutine Instructions</b> <br/>
+					The <tt>CALL</tt> instruction copies the address of the next instruction to be fetched on to location <tt>SP + 1</tt>. 
+					It also increments <tt>SP</tt> by one and transfers control to the labelname specified. 
+					The address of the instruction to be fetched is in <tt>IP + 2</tt> (each instruction is 2 memory words). 
+					The <tt>RET</tt> instruction restores the <tt>IP</tt> value stored at location pointed by <tt>SP</tt>,
+					decrements <tt>SP</tt> by one and continues execution fetching the next instruction pointed to by <tt>IP</tt>. 
+					The subroutine instructions provide a neat mechanism for procedure evocations.
+					</p> 
+						<ul style="list-style-type:disc">
+							<li> <p> <tt>CALL</tt><br/>
+							<i>Syntax</i> : <tt>CALL labelname</tt><br/>
+							Increments <tt>SP</tt> by 1, transfers <tt>IP + 2</tt> to location pointed to by <tt>SP</tt> and jumps to <tt>LABEL</tt></p> </li>
+							<li> <p> <tt>RET</tt><br/>
+							<i>Syntax</i> : <tt>RET</tt><br/>
+							Sets <tt>IP</tt> to the value pointed to by <tt>SP</tt> and decrements <tt>SP</tt>.</p> </li>
+						</ul>
+					</li>
+					
+					<li> <p> <b>Input/Output Instructions</b></p> 
+						<ul style="list-style-type:disc">
+							<li> <p> <tt>IN</tt><br/>
+							<i>Syntax</i> : <tt>IN Ri</tt><br/>
+							Transfers the contents of the standard input to <tt>Ri</tt>.</p> </li>
+							<li> <p> <tt>OUT</tt><br/>
+							<i>Syntax</i> : <tt>OUT Ri</tt><br/>
+							Transfers the contents of <tt>Ri</tt> to the standard output.</p> </li>
+						</ul>
+					</li>
+
+					<li> <p><b>Debug Instruction</b><br/>
+					<i>Syntax</i> : <tt>BRKP</tt><br/>
+					Displays contents of all registers and memory locations at the time when the instruction is invoked.
+					This instruction can be used for debugging system code. </p> </li>
+					
+					<li> <p> <tt>END</tt><br/>
+					<i>Syntax</i> : <tt>END</tt><br/>
+					This instruction is marks the end of a program.</p> </li>
+					
+					<li> <p> <tt>INT</tt><br/>
+					<i>Syntax</i> : <tt>INT n</tt><br/>
+					Generates an interrupt to the kernel with n (1 to 6) as a parameter.
+					It also disables the interrupts. <a href="#navintrrupt"> (Refer Section: Interrupts)</a></p> </li>
+				</ol>
+				<br/>
+				<br/>
+				<h5>Privileged Instructions</h5>
+				<p> There are four privileged instructions. They can only be executed in kernel mode <a href="#navmodes"> (Refer Section:Privilege Modes)</a> These instructions are:</p>
+				<ol style="list-style-type:decimal">
+					<li> <p> <tt>IRET</tt><br/>
+					<i>Syntax</i> : <tt>IRET</tt><br/>
+					Set <tt>IP</tt> to the value pointed by <tt>SP</tt> and decrements <tt>SP</tt> by one. 
+					<tt>IRET</tt> does the same action as <tt>RET</tt>, but it tells the processor that the interrupt handler has finished. 
+					With the execution of the <tt>IRET</tt> instruction, interrupts are enabled. <a href="#navintrrupt"> (Refer Section: Interrupts)</a></p> </li>
+					
+					<li> <p> <tt>LOAD</tt><br/>
+					<i>Syntax</i> : <tt>LOAD pagenum blocknum</tt><br/>
+					This instruction loads the block specified by the <tt>blocknum</tt> , from the disk, to the page specified by the <tt>pagenum</tt> in the memory. 
+					<tt>blocknum</tt> and <tt>pagenum</tt> should be numbers or registers containing numbers. 
+					An excpetion is raised  <a href="#navexcep"> (Refer Section: Exceptions)</a> for invalid arguments or illegal memory access.</p> </li>
+					
+					<li> <p> <tt>STORE</tt><br/>
+					<i>Syntax</i> : <tt>STORE blocknum pagenum</tt><br/>
+					This instruction stores the page specified by the <tt>pagenum</tt> , from the memory, to the block specified by the <tt>blocknum</tt> in the disk. 
+					<tt>blocknum</tt> and <tt>pagenum</tt> should be numbers or registers containing numbers. 
+					An excpetion is raised  <a href="#navexcep"> (Refer Section: Exceptions)</a> for invalid arguments or illegal memory access.<br/>
+					The below example will store the 31st page in memory to the 64th block in the disk. 
+					It will then load it to the 15th page in memory.<br/>
+					<tt>MOV R1, 64<br/>
+					STORE R1, 31<br/>
+					LOAD 15, R1</tt></p> </li>
+					
+					<li> <p> <tt>HALT</tt><br/>
+					<i>Syntax</i> : <tt>HALT</tt><br/>
+					This instruction causes the machine to halt immediately.</p> </li>
+				</ol>
+		
+			</article>
+			
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>
+			
+			<article id="navmodes" class="grid col-full">			
+				<h4>Privilege Modes</h4>
+				<p>
+				The XSM architecture is interrupt driven and uses a single processor. 
+				There are two privilege modes of execution, the user mode and the kernel mode.
+				The privilege mode of execution is determined by the value of <tt>IP</tt>, i.e. the area in memory where the currently executing code executes.
+				</p>
+					<ul style="list-style-type:disc">
+							<li> <p> User mode : Only unprivileged instructions can be executed in this mode. 
+							Only registers <tt>R0 to R7</tt>, <tt>SP</tt> and <tt>BP</tt> are allowed to be used in any instruction in this mode.</p> </li>
+							<li> <p> Kernel mode : Both privileged and unprivileged instructions can be executed in this mode. 
+							The value of <tt>IP</tt> and <tt>EFR</tt> cannot be explicitly changed by any instruction. 
+							Also these registers cannot be used in addressing memory locations. 
+							All other registers can be used in Kernel Mode.</p> </li>
+					</ul>
+					
+				<table class="doctable">
+					<tr> <th>Page Number</th> <th>Privilege Level</th></tr>
+					<tr> <td>0</td> <td>ROM Code</td> </tr>
+					<tr> <td>1 - 15</td> <td>Kernel</td> </tr>
+					<tr> <td>16 - 63</td> <td>User</td> </tr>
+				</table>
+				
+			</article>
+			
+			<div class="up grid col-one-third" style="float:right">
+			<br/><a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>
+			
+			
+			<article id="navintrrupt" class="grid col-full">		
+				<h2>Interrupts</h2> 
+				<p> Interrupts are mechanisms by which the machine interrupts the execution of the processor and 
+				passes control to the kernel to execute interrupt (or exception) handler code. 
+				Interrupts might indicate errors, such as a memory access violation (page fault), a timer interrupt or 
+				a software interrupt invocation from a running program. 
+				The process saves its current state before starting execution of the handler, and then resumes the state once the handler finishes its execution.
+				Interrupts are disabled when the interrupt handler code is executing.</p>			
+				
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>
+			
+			<article id="navexcep" class="grid col-full">		
+				<h4>Exceptions</h4> 
+				<p> Exceptions are anomalous situations which changes the normal flow of execution. 
+				There is a flag associated with each exception and the details corresponding to the exception that occured is stored in <tt>EFR</tt>. 
+				If an exception occurs in User Mode, the machine transfers control of execution, i.e. 
+				changes the value of <tt>IP</tt> to page number 7 (address = 3584) where the Exception Handler Routine resides. 
+				However in Kernel Mode, the machine halts when it encounters an exception.<br/>
+				The structure of <tt>EFR</tt> is given below</p>			
+				
+				<img src="doc/EFR-structure.png" style="width:40%" width="20%" />	
+				
+				<ul>
+					<li><p> <b>Value of IP</b>: Stores the value of <tt>IP</tt> at the point where the exception occured. 
+					The maximum length of <tt>IP</tt> is 5 digits.</p></li>
+					<li><p> <b>BadVAddr</b> (Bad Virtual Address). This field is relevant when a Page Fault Exception occurs. 
+					The logical page number which caused a page fault exception is stored here. The length of this field is 2 characters.</p></li>
+					<li><p> <b>Cause</b>: This field indicates the code corresponding to the cause of the exception. The length of this field is 1 character.</p></li>
+				</ul>
+				
+				<p>Exceptions can be caused when the following events occur.</p>
+				
+				<ol style="list-style-type:decimal">
+					<li><p> <b>Page Fault</b> : occurs when the page table entry corresponding to the logical address is invalid. 
+					The code for this exception stored in the cause field of <tt>EFR</tt> is 0.</p></li>
+					<li><p> <b>Illegal instruction</b> : occurs when an attempt is made to execute an instruction not belonging to the instruction set
+					 and also when the operands to the instruction is not legal. 
+					 Eg: <tt>MOV 4 R0, MOV IP 4 </tt>when executed in user mode. These instructions are considered illegal. 
+					 The code for this exception stored in the cause field of <tt>EFR</tt> is 1.</p></li>
+					<li><p> <b>Illegal memory access</b> : occurs when any address generated by the process lies outside its logical address space. 
+					The logical page number generated should be between 0 and the value of PTLR. 
+					The code for this exception stored in the cause field of <tt>EFR</tt> is 2.</p></li>
+					<li><p> <b>Arithmetic exception</b> : occurs when divisor is 0. 
+					The code for this exception stored in the cause field of <tt>EFR</tt> is 3.</p></li>
+					<li><p> <b>Illegal operands</b> : occurs when operands contain invalid data corresponding to the instruction. 
+					The code for this exception stored in the cause field of <tt>EFR</tt> is 4.</p></li>
+				
+				</ol>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>
+			
+			<article id="navtimer" class="grid col-full">		
+				<h4>Timer Interrupt</h4> 
+				<p> Timer Interrupt is generated by the machine, usually at set timer intervals.
+				This interrupt cannot be invoked from the user/kernel mode.
+				It transfers control of execution, i.e. changes the value of <tt>IP</tt> to page number 8 (address = 4096). 
+				This is the timer interrupt which interrupts the processor. 
+				Generally it is supposed to contain the code for the scheduler of the operating system, 
+				which schedules the CPU time among the various active processes.</p>			
+				
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>
+			
+			
+
+
+			<article id="navsoft" class="grid col-full">		
+				<h4>Software Interrupts</h4> 
+				<p> Software Interrupts interrupts are unprivileged and can be called from user mode. 
+				7 Interrupt instructions are provided by the machine which causes the execution of ISR (Interrupt Service Routines) 
+				in 7 different pages in the memory.</p>
+				
+				<p> <b>The <tt>INT</tt> instruction</b><br/>
+				The instruction used to generate a software interrupt is <tt>INT</tt>.<br/>
+				Syntax : <tt>INT n</tt><br/>
+				The <tt>INT</tt> instruction passes control to the Interrupt Service Routine (ISR) for this interrupt located at the 
+				physical address computed using the value n. 
+				The physical address of the ISR corresponding to interrupt number n is given by:<br/>
+					<tt>Physical Address = (8 + n) x Page Size </tt><br/>
+				Note that the interrupts are disabled once this instruction is executed as interrupts cannot be executed in kernel mode.<br/>
+				The 7 <tt>INT</tt> instructions are :</p>
+				
+				<ul>
+					<li><p> <tt>INT 1</tt><br/>
+					It transfers control of execution to page number 9 (address = 4608) </p></li>
+					<li><p> <tt>INT 2</tt><br/>
+					It transfers control of execution to page number 10 (address = 5120) </p></li>
+					<li><p> <tt>INT 3</tt><br/>
+					It transfers control of execution to page number 11 (address = 5632) </p></li>
+					<li><p> <tt>INT 4</tt><br/>
+					It transfers control of execution to page number 12 (address = 6144) </p></li>
+					<li><p> <tt>INT 5</tt><br/>
+					It transfers control of execution to page number 13 (address = 6656) </p></li>
+					<li><p> <tt>INT 6</tt><br/>
+					It transfers control of execution to page number 14 (address = 7168) </p></li>
+					<li><p> <tt>INT 7</tt><br/>
+					It transfers control of execution to page number 15 (address = 7680). </p></li>
+				</ul>
+				<br/>
+				Brief memory outline for XSM is given below.<br/><br/>
+				<img src="doc/Interrupt-layout.png" style="width:70%" width="5%" />	
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>
+
+			</div> <!-- 100%articles-->
+
+		
+		</section>	
+		
+		
+		
+	</div> <!--main-->
+
+<div class="divide-top">
+	<footer class="grid-wrap">
+		<ul class="grid col-one-third social">
+			<li><a href="http://github.com/XOS-NITC">Github</a></li>
+		</ul>
+	
+		<div class="up grid col-one-third ">
+			<a href="#navtop" title="Go back up">&uarr;</a>
+		</div>
+		
+		<nav class="grid col-one-third ">
+			<ul><li><a href="index.html" >Home</a></li>
+				<li><a href="about.html">About</a></li>
+				<li><a href="documentation.html">Documentation</a></li>
+				<li><a href="downloads.html">Downloads</a></li>
+				<li><a href="roadmap.html">Roadmap</a></li></ul>
+			</ul>
+		</nav>
+	</footer>
+</div>
+
+</div>
+
+<!-- Javascript - jQuery -->
+<script src="http://code.jquery.com/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="js/jquery-1.7.2.min.js"><\/script>')</script>
+
+<!--[if (gte IE 6)&(lte IE 8)]>
+<script src="js/selectivizr.js"></script>
+<![endif]-->
+
+<script src="js/scripts.js"></script>
+
+<!-- Asynchronous Google Analytics snippet. Change UA-XXXXX-X to be your site's ID. -->
+<script>
+  var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+</body>
+</html>

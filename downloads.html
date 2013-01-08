@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+
+<head>
+	<meta charset="UTF-8">
+	
+	<!-- Remove this line if you use the .htaccess -->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+	<meta name="viewport" content="width=device-width">
+	
+	<meta name="description" content="Designa Studio, a HTML5 / CSS3 template.">
+	<meta name="author" content="Sylvain Lafitte, Web Designer, sylvainlafitte.com">
+	
+	<title>Downloads // eXperimental Operating System</title>
+	
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+	<link rel="shortcut icon" type="image/png" href="favicon.png">
+	
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="css/style.css">
+	
+	<!--[if lt IE 9]>
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+</head>
+
+
+
+<body>
+<!-- Prompt IE 7 users to install Chrome Frame -->
+<!--[if lt IE 8]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
+
+<div class="container">
+
+	<header id="navtop">
+		<a href="index.html" class="logo fleft">
+			<img src="img/logo.png" alt="Designa Studio">
+		</a>
+		
+		<nav class="fright">
+			<ul><li><a href="index.html" >Home</a></li>
+				<li><a href="about.html">About</a></li>
+				<li><a href="documentation.html" >Documentation</a></li>
+				<li><a href="downloads.html" class="navactive">Downloads</a></li>
+				<li><a href="roadmap.html">Roadmap</a></li></ul>
+			</ul>
+		</nav>
+	</header>
+
+
+	<div class="services-page main grid-wrap">
+
+		<header class="grid col-full">
+			<hr>
+			<p class="fleft">Download</p>
+		</header>
+
+<section class="grid col-three-quarters mq2-col-full">
+		
+			
+			
+			<div class="grid-wrap">
+
+			<article id="navtabs" class="grid col-full">
+
+				<div class="">
+					<ul class="tabs clearfix">
+					    <li><a href="#tab1">SPL Compiler</a></li>
+					    <li><a href="#tab2">APL Compiler</a></li>
+					    <li><a href="#tab3">XFS Interface</a></li>
+					    <li><a href="#tab4">XSM Simulator</a></li>
+					</ul>
+					<div class="tab_container">
+					    <article id="tab1" class="tab_content">
+					        <p>SPL or System Programmer's Language is a high level language for programming XOS.  </p>
+					    <h5> Prerequisites </h5>
+					    <ul>
+					    <li> GCC </li>
+					    <li> Flex / Lex </li>
+					    <li> Bison / Yacc </li>
+					    </ul>
+					    <h5> Using the compiler </h5>
+					    
+					    1.  <tt> make </tt> </li> <br/>
+					    2. <tt> ./spl < <i>path-to-file</i> </tt></li> <br/>
+					    </ol>
+					    </br></br>
+					    <a href="files/spl-master.zip" class="button"> Download </a>
+					    </article>
+					    
+						<article id="tab2" class="tab_content">
+		        		<p> APL or Application Programmer's Language is a high level language for writing application programs which run on XOS (Experimental Operating System).   </p>
+					    <h5> Prerequisites </h5>
+					    <ul>
+					    <li> GCC </li>
+					    <li> Flex / Lex </li>
+					    <li> Bison / Yacc </li>
+					    </ul>
+					    <h5> Using the compiler </h5>
+					    
+					    1.  <tt> make </tt> </li> <br/>
+					    2. <tt> ./apl < <i>path-to-file</i> </tt></li> <br/>
+					    </ol>
+					    </br></br>
+					    <a href="files/apl-master.zip" class="button"> Download </a>
+					    </article>
+					    
+					    <article id="tab3" class="tab_content">
+				        <p> XFS-Interface is used an interface to access XFS Filesystem from UNIX. The interface has functionalities to load, remove, copy, and list files in an XFS formatted disk.   </p>
+					    <h5> Prerequisites </h5>
+					    <ul>
+					    <li> GCC </li>
+					    </ul>
+						<h5> Using the interface </h5>
+					    
+					    1.  <tt> make </tt> </li> <br/>
+					    2. <tt> ./fileSystem </tt> <br/>
+					    3. Type <tt>"help"</tt> for list of commands.
+					    </ol>
+					    </br></br>
+					    <a href="files/xfs-interface-master.zip" class="button"> Download </a>
+					    
+					    </article>
+					    
+						<article id="tab4" class="tab_content">
+				        <p>XSM Machine simulator simulates XSM hardware. </p>
+				  	  	<h5> Prerequisites </h5>
+				  		<ul>
+					    <li> GCC </li>
+					    <li> Flex / Lex </li>
+					    <li> Bison / Yacc </li>
+					    </ul>
+						<h5> Running the machine simulator </h5>
+					    
+					    1.  <tt> make </tt> </li> <br/>
+					    2. <tt> ./xsm  < path-to-disk-file </tt> <br/>
+					    </ol>
+					    </br></br>
+					    <a href="files/xsm-master.zip" class="button"> Download </a>
+					    					    
+
+					   
+					    </article>
+					 </div>
+				  </div>
+			</article>
+			
+			</div> <!-- 100%articles-->
+		
+		</section>	
+		
+		
+		
+	</div> <!--main-->
+
+<div class="divide-top">
+	<footer class="grid-wrap">
+		<ul class="grid col-one-third social">
+			<li><a href="http://github.com/XOS-NITC">Github</a></li>
+		</ul>
+	
+		<div class="up grid col-one-third ">
+			<a href="#navtop" title="Go back up">&uarr;</a>
+		</div>
+		
+		<nav class="grid col-one-third ">
+			<ul><li><a href="index.html" >Home</a></li>
+				<li><a href="about.html">About</a></li>
+				<li><a href="documentation.html">Documentation</a></li>
+				<li><a href="downloads.html">Downloads</a></li>
+				<li><a href="roadmap.html">Roadmap</a></li></ul>
+			</ul>
+		</nav>
+	</footer>
+</div>
+
+</div>
+
+<!-- Javascript - jQuery -->
+<script src="http://code.jquery.com/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="js/jquery-1.7.2.min.js"><\/script>')</script>
+
+<!--[if (gte IE 6)&(lte IE 8)]>
+<script src="js/selectivizr.js"></script>
+<![endif]-->
+
+<script src="js/scripts.js"></script>
+
+<!-- Asynchronous Google Analytics snippet. Change UA-XXXXX-X to be your site's ID. -->
+<script>
+  var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+</body>
+</html>

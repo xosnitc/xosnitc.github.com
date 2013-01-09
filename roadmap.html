@@ -17,8 +17,6 @@
 	<meta name="description" content="Build a simple opearting system">
 	
 	<title>Roadmap // eXperimental Operating System</title>
-	
-	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 	<link rel="shortcut icon" type="image/png" href="favicon.png">
 	
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
@@ -61,28 +59,159 @@
 		</header>
 
 
-
+		<aside class="grid col-one-quarter mq2-col-full">
+		
+			<menu>
+				<ol style="list-style-type:decimal">
+					<li><a href="#navstage1" class="sec" >Understanding the Filesystem</a></li>
+					<li><a href="#navstage2" class="sec">Starting the machine</a></li>
+					<li><a href="#navstage3" class="sec">Running a user program</a></li>
+					<li><a href="#navstage4" class="sec">Playing with files</a></li>
+					<li><a href="#navstage5" class="sec">The INIT process</a></li>
+					<li><a href="#navstage6" class="sec">The Exec System Call</a></li>
+					<li><a href="#navstage7" class="sec">Multiprogramming</a></li>
+					<li><a href="#navstage8" class="sec">Process System Calls</a></li>
+					<li><a href="#navstage9" class="sec">Exception Handling</a></li>
+					<li><a href="#navstage10" class="sec">Making a console</a></li>
+				
+				</ol>
+			</menu>
+		</aside>
 		
 		<section class="grid col-three-quarters mq2-col-full">
 		
 			
 			
 			<div class="grid-wrap">
-			<article id="navbutton" class="grid col-full">
-			<h2>Page Under Construction.</h2>
+			<article  id="navstage1" class="grid col-full">
+			<h2>Stage 1: Understanding the Filesystem </h2>
+			<p> The first stage of building XOS begins with understanding the underlying XFS Filesystem interface. </p>
+			
+			<ul>
+			<li> Download the XFS-Interface from the <a href="downloads.html">downloads</a> page and compile the program following the instructions given in the page.</li>
+			<li> Start by formatting the disk in the XFS interface using <b>fdisk</b> command. A file named <i>disk.xfs</i> is created, which simulates the hard disk.</li>
+			<li> Load a data file to the XFS formatted disk from your UNIX machine.  Read about  <a href="xfs-spec.html#navfile" >Files</a> in XFS</li>
+			<li> Find out the FAT entry corresponding to the loaded file. Use the <b>copy</b> command to copy FAT entries to a file in your PC. See <a href="xfs-spec.html#navdiskorg">disk organization</a> of XFS Disk.  </li>
+			<li> Check the <a href="xfs-spec.html#navfat">FAT entry</a> and find the basic block. Copy it to get the data blocks used by this file.</li>
+			<li> Copy the data blocks and display the file </li>
+			</ul>
+
+
+			
 			</article>
-			</div> <!-- 100%articles-->
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navstage2" class="grid col-full">
+			<h2>Stage 2: Starting the machine </h2>
+			<p> The next stage is to make the machine display <i>"Hello World"</i> on startup.    </p>
+			<ul>
+			<li>
+			Create a "Hello World" program using <a href="spl-spec.html">SPL</a> (System Programmer's Language).
+			The code snippet is given below. 
+			<div class="syntax"> 
+			R0 = "Hello World"; </br>
+			print R0 ;</br>
+			</div>
+			</li>
+			<li>
+			Load it as the startup code to <tt>disk.xfs</tt> using the XFS Interface. 
+			</li>
+			<li> Download the XSM Simulator from the <a href="downloads.html">downloads</a> page. Unzip the directory.</li>
+			<li> Place the <b>xfs-interface</b> directory in same directory as <b>xsm</b> directory. ( or change the <b>DISK_NAME</b>  to the path of <tt>disk.xfs</tt> in <b>disk.h</b> in <b>xsm</b> directory) </li>
+			<li> Follow the instructions in README to compile the machine simulator </li>
+			<li> cd to xsm directory. Run the machine using the command <tt>./xsm -id </tt>.
+			
+			</ul>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>			
+
+			<article  id="navstage3" class="grid col-full">
+			<h2>Stage 3: Running a user program </h2>
+			<p> User programs or application programs are programmed using <a href="apl-spec.html">APL</a> or Application Programmer's Language. In this stage, an application program in APL is compiled and loaded to the disk as the init process. An OS Startup code is written in SPL to load this program to the memory on machine startup. 		  </p>
+			<ul>
+			<li> Write a program in APL to print all prime numbers lesser than a number taken as input. See <a href="apl-spec.html#navexamples">Examples</a> of APL programs</li>
+			</ul>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+
+
+			<article  id="navstage4" class="grid col-full">
+			<h2>Stage 4: Playing with files </h2>
+			<p> Not Available </p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+
+
+			<article  id="navstage5" class="grid col-full">
+			<h2>Stage 5: The INIT process </h2>
+			<p>  Not Available. </p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+
+			<article  id="navstage6" class="grid col-full">
+			<h2>Stage 6: The Exec System Call</h2>
+			<p>  Not Available  </p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+
+			<article  id="navstage7" class="grid col-full">
+			<h2>Stage 7: Multiprogramming</h2>
+			<p>  Not Available . </p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navstage8" class="grid col-full">
+			<h2>Stage 8: Process System Calls  </h2>
+			<p>  Not Available . </p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>		
+			
+			<article  id="navstage9" class="grid col-full">
+			<h2>Stage 9: Exception Handling </h2>
+			<p>  Not Available  </p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>		
+			
+			<article  id="navstage10" class="grid col-full">
+			<h2>Stage 10: Making a console </h2>
+			<p> Not Available  </p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>					
+							
+		</div> <!-- 100%articles-->
+
 		
 		</section>	
 		
 		
 		
 	</div> <!--main-->
-
 <div class="divide-top">
 	<footer class="grid-wrap">
 		<ul class="grid col-one-third social">
-			<li><a href="http://github.com/xosnitc">Github</a></li>
+			<li><a href="http://github.com/XOS-NITC">Github</a></li>
 		</ul>
 	
 		<div class="up grid col-one-third ">
@@ -99,7 +228,6 @@
 		</nav>
 	</footer>
 </div>
-
 </div>
 
 <!-- Javascript - jQuery -->
@@ -121,3 +249,4 @@
 </script>
 </body>
 </html>
+

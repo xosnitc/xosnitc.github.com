@@ -300,19 +300,19 @@ nav a, menu a { text-decoration: none; color: #555; }
 header .arrow {color: #999; font-style: italic;}
 .arrow:hover {color: #0078CF; }
 
-a.sec:
+ul li a.sec:
 {
 padding:0;
 margin:0;
 float:left;
 }
-a.sec:before{
+ul li a.sec:before{
 	content:"\27a4  "
 }
-a.subsec:before{
+ul li a.subsec:before{
 	content:" \00A0 \00A0 \00A0 \00A0 \00A0 \2794 \00A0  \00A0"
 }
-a.subsubsec:before{
+ul li a.subsubsec:before{
 	content:"\00A0 \00A0 \00A0 \00A0 \00A0 \00A0 \00A0 \00A0 \00A0 \00A0 -  \00A0  \00A0 "
 }
 
@@ -322,7 +322,10 @@ padding-top: 10px;
 padding-bottom: 10px;
 padding-left: 20px;
 margin-right: 10px;
-background-color: #EEE;
+margin-bottom: 20px;
+margin-top: 20px;
+background-color: #efefef	;
+width:90%;
 border-radius: 3px;
 -moz-border-radius: 3px;
 font-family: "Courier New", "sans serif";

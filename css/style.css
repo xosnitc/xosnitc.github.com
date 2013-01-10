@@ -262,7 +262,7 @@ body{width:100%; }
 ------------------------------------------------------------- */
 figure { max-height: 100%; overflow: hidden;}
 figure figcaption { }
-img { max-width: 80%; height: auto; width: auto; margin-left:10%;}
+img { max-width: 90%; height: auto; margin-left:5%; width:auto;}
 a img {
     -webkit-transition: opacity 1s ease;
     -moz-transition: opacity 1s ease;

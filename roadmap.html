@@ -67,12 +67,11 @@
 					<li><a href="#navstage2" class="sec">Starting the machine</a></li>
 					<li><a href="#navstage3" class="sec">Running a user program</a></li>
 					<li><a href="#navstage4" class="sec">Playing with files</a></li>
-					<li><a href="#navstage5" class="sec">The INIT process</a></li>
-					<li><a href="#navstage6" class="sec">The Exec System Call</a></li>
-					<li><a href="#navstage7" class="sec">Multiprogramming</a></li>
-					<li><a href="#navstage8" class="sec">Process System Calls</a></li>
-					<li><a href="#navstage9" class="sec">Exception Handling</a></li>
-					<li><a href="#navstage10" class="sec">Making a console</a></li>
+					<li><a href="#navstage5" class="sec">The Exec System Call</a></li>
+					<li><a href="#navstage6" class="sec">Multiprogramming</a></li>
+					<li><a href="#navstage7" class="sec">Process System Calls</a></li>
+					<li><a href="#navstage8" class="sec">Exception Handling</a></li>
+					<li><a href="#navstage9" class="sec">Making a console</a></li>
 				
 				</ol>
 			</menu>
@@ -199,16 +198,38 @@
 
 			<article  id="navstage4" class="grid col-full">
 			<h2>Stage 4: Playing with files </h2>
-			<p> Not Available </p>
+			<p> In this stage, you will implement file system calls  <b>Create, Delete, Open, Close, Seek, Read</b> and <b> Write </b>. The following tasks should be done in this stage </p>
+			<h6> Modifying the OS Startup Code</h6>
+			<ul>
+			<li> Load FAT and Disk Free List from the disk blocks to corresponding memory pages. Refer <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization </a>. </li>
+			</li>
+			<li>
+			Set the <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a> entries to -1 (invalid initially). 	</li>
+			<div class="syntax">
+			<pre>
+alias counter R8;	// R8 - R15 is used by system programmers.
+counter = 0;
+while ( counter <=  128) do
+	[ FILE_TABLE + counter] = -1;
+endwhile;						</pre>
+			</div>
+			<li> Set all words in the <a href="xos-spec.html#navpromgmt_pcb">Per-Process Open-File Table in the PCB</a> of INIT to -1  </li>
+			
+			<li> 
+			<a href="xos-spec.html#navsyscalls_file">File System Calls</a> are implemented in Interrupt 1 (Create & Delete),  2 (Open & Close), 3 (Seek & Read) and 4 (Write) Routines. These 4 interrupt routines must be programmed in SPL, compiled and loaded into the disk in the corresponding locations using the XFS-Interface. These interrupt routines must be loaded from the disk to corresponding memory pages by the OS Startup Code.
+			</li>
+			</ul>
+			Each system call will be invoked from a user program which invokes the <tt> INT </tt> instruction after pushing the registers, arguments and system call number into the stack.  <img src="doc/syscallstack.png" style="width:150%">
+			<h5> Interrupt Routine 1 </h5>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>	
-
+			
 
 			<article  id="navstage5" class="grid col-full">
-			<h2>Stage 5: The INIT process </h2>
-			<p>  Not Available. </p>
+			<h2>Stage 5: The Exec System Call</h2>
+			<p>  Not Available  </p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -216,40 +237,31 @@
 			
 
 			<article  id="navstage6" class="grid col-full">
-			<h2>Stage 6: The Exec System Call</h2>
-			<p>  Not Available  </p>
-			</article>
-			<div class="up grid col-one-third" style="float:right">
-			<a href="#navtop" title="Go back up"> top &uarr;</a>
-			</div>	
-			
-
-			<article  id="navstage7" class="grid col-full">
-			<h2>Stage 7: Multiprogramming</h2>
+			<h2>Stage 6: Multiprogramming</h2>
 			<p>  Not Available . </p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>	
+			
+			<article  id="navstage7" class="grid col-full">
+			<h2>Stage 7: Process System Calls  </h2>
+			<p>  Not Available . </p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>		
 			
 			<article  id="navstage8" class="grid col-full">
-			<h2>Stage 8: Process System Calls  </h2>
-			<p>  Not Available . </p>
+			<h2>Stage 8: Exception Handling </h2>
+			<p>  Not Available  </p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>		
 			
 			<article  id="navstage9" class="grid col-full">
-			<h2>Stage 9: Exception Handling </h2>
-			<p>  Not Available  </p>
-			</article>
-			<div class="up grid col-one-third" style="float:right">
-			<a href="#navtop" title="Go back up"> top &uarr;</a>
-			</div>		
-			
-			<article  id="navstage10" class="grid col-full">
-			<h2>Stage 10: Making a console </h2>
+			<h2>Stage 9: Making a console </h2>
 			<p> Not Available  </p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">

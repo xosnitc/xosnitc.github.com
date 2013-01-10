@@ -116,7 +116,7 @@
 			</div>
 			</li>
 			<li>
-			Load it as the startup code to <tt>disk.xfs</tt> using the XFS Interface. 
+			Load it as the OS startup code to <tt>disk.xfs</tt> using the XFS Interface. 
 			</li>
 			<li> Download the XSM Simulator from the <a href="downloads.html">downloads</a> page. Unzip the directory.</li>
 			<li> Place the <b>xfs-interface</b> directory in same directory as <b>xsm</b> directory. ( or change the <b>DISK_NAME</b>  to the path of <tt>disk.xfs</tt> in <b>disk.h</b> in <b>xsm</b> directory) </li>
@@ -131,10 +131,41 @@
 
 			<article  id="navstage3" class="grid col-full">
 			<h2>Stage 3: Running a user program </h2>
-			<p> User programs or application programs are programmed using <a href="apl-spec.html">APL</a> or Application Programmer's Language. In this stage, an application program in APL is compiled and loaded to the disk as the init process. An OS Startup code is written in SPL to load this program to the memory on machine startup. 		  </p>
+			<p> User programs or application programs are programmed using <a href="apl-spec.html">APL</a> or Application Programmer's Language. In this stage, an application program in APL is compiled and loaded to the disk as the init process. An OS Startup code is written in <a href="spl-spec.html">SPL</a> to load this program to the memory on machine startup. 		  </p>
 			<ul>
 			<li> Write a program in APL to print all prime numbers lesser than a number taken as input. See <a href="apl-spec.html#navexamples">Examples</a> of APL programs</li>
+			<li> Download APL Compiler from the <a href="downloads.html">downloads</a> page. Unzip and install the compiler following the instructions in the README </li>
+			<li> Compile your APL program using <b> ./apl < <i>path-to-your-program</i> > </b>. </li>
+			<li> Load it to <b>disk.xfs</b> as <b>INIT program</b> using XFS interface </li>
+			<li> For for the machine to halt when it runs a user program, <b>INT 7</b> and <b>Exception handler</b> of the <b>disk.xfs</b> must be loaded with a file containing just the <tt>HALT</tt> instruction.
+			<br/><br/>
+			<h6>OS Startup Code</h6>
+			These executables in  must be loaded to the memory from the XFS disk by the OS Startup Code when the machine starts. The OS Startup Code must be written in <a href="spl-spec.html">SPL</a>, compiled and loaded to the disk as done in the previous stage. The new OS Startup Code must do the following tasks. 
+			<li> Load Exception Handler (disk block 1 and memory page 7) and INT 7 (disk block 9 and memory page 15) from  the disk to the memory using<a href="spl-spec.html#navlsstmt" > load</a> instruction.  
+			<div class="syntax">
+			 load (page_number, block_number);
+			</div> </li>
+			<li>
+			Load the <b>INIT process</b> from the disk to the memory. Loading blocks 13-15 from disk to memory pages 16 - 19 in the memory.
+			</li>
+			<li> 
+			Setup page tables for the INIT process in the followin way. (Read about <a href="xsm-spec.html#navaddr"> Address Translation </a>).
+		 		<ul>
+		 		<li>Set PTBR to 1024, which is the starting address of process page tables (See <a href="xos-spec.html#navmemorg" >Memory Organization</a>) and PTLR to 4. Set stack pointer (SP) and base pointer (BP) to </li>
+		 		<li> Each page table entry contains 2 words. Set these words to corresponding memory address and set the flag as <b>11</b>. Refer <a href="xos-spec.html#navmemmgmt_paging">Paging</a> to see the structure of page table entry. </li>
+			<li> Setup entries for memory pages 16 to 19 in the page table as well as one entry for the stack </li>
+			Setting up the stack can be done in the following way
+			<div class="syntax">
+			 [PTBR + 6] = 20; <br/>
+			 [PTBR + 7] = 11; <br/>
+			</div>
+			</li>
+			<li> Push the value 0 to stack, using
+		 		
+		 		</ul>
+			</li>
 			</ul>
+			
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>

@@ -106,6 +106,7 @@
 						<li><a href="#navexec" class="subsec" >Exec</a></li>
 						<li><a href="#navexit" class="subsec" >Exit</a></li>
 						<li><a href="#navhalt" class="subsec" >Halt</a></li>
+					<li><a href="#navexamples" class="sec" >Sample Programs</a></li>
 				</ul>
 			</menu>
 		</aside>
@@ -581,7 +582,56 @@
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>
 			
-
+			<article  id="navexamples" class="grid col-full">
+			<h2>Sample Programs</h2>
+			<p>Write a program to input 4 numbers and find the largest of them </p> 
+			<div class="syntax">
+			<pre>
+decl
+	integer a,b,c,d;
+enddecl
+integer main(){
+	read(a);
+	read(b);
+	read(c);
+	read(d);
+	if(a>b) then 
+		if(a>c) then 
+			if(a>d) then 
+				write(a);
+			else	
+				write(d); 
+			endif;
+		else 
+			if(c>d) then 
+				 write(c);
+			 	else 
+			 		write(d); 
+			 	endif;
+		endif;
+	else
+		 if(b>c) then 
+			if(b>d) then 
+				write(b);
+			else 
+				write(d); 
+			endif;
+		else
+			if(c>d) then 
+				write(c);
+				else
+					write(d);
+				endif; 
+		endif;
+	endif;
+	return 0;
+}
+			</pre>
+			</div>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>
 			</div> <!-- 100%articles-->
 
 		

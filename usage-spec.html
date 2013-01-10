@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+
+<head>
+	<meta charset="UTF-8">
+	
+	<!-- Remove this line if you use the .htaccess -->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+	<meta name="viewport" content="width=device-width">
+	
+	<meta name="description" content="Build a simple opearting system">
+	
+	<title>Documentation // eXperimental Operating System</title>
+	
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+	<link rel="shortcut icon" type="image/png" href="favicon.png">
+	
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="css/style.css">
+	
+	<!--[if lt IE 9]>
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+</head>
+
+
+
+<body>
+<!-- Prompt IE 7 users to install Chrome Frame -->
+<!--[if lt IE 8]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
+
+<div class="container">
+
+	<header id="navtop">
+		<a href="index.html" class="logo fleft">
+			<img src="img/logo.png" alt="Designa Studio">
+		</a>
+		
+		<nav class="fright">
+			<ul><li><a href="index.html" >Home</a></li>
+				<li><a href="about.html">About</a></li>
+				<li><a href="documentation.html" class="navactive">Documentation</a></li>
+				<li><a href="downloads.html">Downloads</a></li>
+				<li><a href="roadmap.html">Roadmap</a></li></ul>
+			</ul>
+		</nav>
+	</header>
+
+
+	<div class="services-page main grid-wrap">
+
+		<header class="grid col-full">
+			<hr>
+			<p class="fleft">Usage Documentation</p> <br/><br/>
+					
+		</header>
+
+
+		<aside class="grid col-one-quarter mq2-col-full">
+		
+			<menu>
+				<ul>
+					<li><a href="#navintro" class="sec" >Introduction</a></li>
+					<li><a href="#navspl" class="sec" >SPL Compiler</a></li>
+						<li><a href="#navspl" class="subsec" >Introduction</a></li>
+						<li><a href="#navsplinstall" class="subsec" >Installation</a></li>
+					<li><a href="#navapl" class="sec" >APL Compiler</a></li>
+						<li><a href="#navapl" class="subsec" >Introduction</a></li>
+						<li><a href="#navaplinstall" class="subsec" >Installation</a></li>
+					<li><a href="#navxfs" class="sec" >XFS Interface</a></li>
+						<li><a href="#navxfs" class="subsec" >Introduction</a></li>
+						<li><a href="#navxfsinstall" class="subsec" >Installation</a></li>
+						<li><a href="#navxfscommands" class="subsec" >Commands</a></li>
+					<li><a href="#navxsm" class="sec" >XSM Simulator</a></li>
+						<li><a href="#navxsm" class="subsec" >Introduction</a></li>
+						<li><a href="#navxsminstall" class="subsec" >Installation</a></li>
+				</ul>
+			</menu>
+		</aside>
+		
+		<section class="grid col-three-quarters mq2-col-full">
+		
+			
+			
+			<div class="grid-wrap">
+			<article  id="navintro" class="grid col-full">
+				<h2>Introduction</h2>
+				
+				<p>This documentation describes the usage instructions for <b>SPL Compiler</b> (System Programmer’s Language Compiler), 
+				<b>APL Compiler</b> (Application Programmer’s Language Compiler) , <b>XFS Interface</b> (eXperimental File System Interface) and 
+				<b>XSM Simulator</b> (eXperimental String Machine).</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>			
+			
+			<article  id="navspl" class="grid col-full">
+				<h2>SPL Compiler</h2>
+				<h4>Introduction</h4>
+				<p><b>SPL Compiler</b> (System Programmer’s Language Compiler) is used in the implementation of an operating system on 
+				XSM (eXperimental String Machine). The compiler compiles the code written in SPL and translates it 
+				into machine code which is simulated on the machine.</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navsplinstall" class="grid col-full">
+				<h4>Installation</h4>
+				<h6> Prerequisites </h6>
+				<ul>
+					<li><p> GCC (GNU project C and C++ compiler) </p></li>
+					<li><p> Flex / Lex (Fast Lexical Analyser Generator) </p></li>
+					<li><p> Bison / Yacc (GNU Project Parser Generator) </p></li>
+				</ul> <br/>
+				
+				<h6> Compiling and Running </h6>
+				<p> Run the following commands to compile and run the SPL compiler </p>
+				<ul>
+					<li><p> <tt>make </tt></p></li>
+					<li><p> <tt>./spl &ltpath-to-file&gt </tt></p></li>
+				</ul> 
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			
+			<article  id="navapl" class="grid col-full">
+				<h2>APL Compiler</h2>
+				<h4>Introduction</h4>
+				<p><b>APL Compiler</b> (Application Programmer’s Language Compiler) is used to write programs which can be run on 
+				XOS (eXperimental Operating System). The compiler compiles the program written in APL and translates it 
+				into machine code which is simulated on the machine.</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navaplinstall" class="grid col-full">
+				<h4>Installation</h4>
+				<h6> Prerequisites </h6>
+				<ul>
+					<li><p> GCC (GNU project C and C++ compiler) </p></li>
+					<li><p> Flex / Lex (Fast Lexical Analyser Generator) </p></li>
+					<li><p> Bison / Yacc (GNU Project Parser Generator) </p></li>
+				</ul> <br/>
+				
+				<h6> Compiling and Running </h6>
+				<p> Run the following commands to compile and run the APL compiler </p>
+				<ul>
+					<li><p> <tt>make </tt></p></li>
+					<li><p> <tt>./apl &ltpath-to-file&gt </tt></p></li>
+				</ul> 
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			
+			
+			<article  id="navxfs" class="grid col-full">
+				<h2>XFS Interface</h2>
+				<h4>Introduction</h4>
+				<p><b>XFS Interface</b> (eXperimental File System Interface) is an external interface to access the filesystem of the XOS. 
+				The filesystem is simulated on a binary file called <b>”disk.xfs”</b>. The interface can format the disk, 
+				load/remove files, list files and copy blocks to a UNIX file.</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navxfsinstall" class="grid col-full">
+				<h4>Installation</h4>
+				<h6> Prerequisites </h6>
+				<ul>
+					<li><p> GCC (GNU project C and C++ compiler) </p></li>
+				</ul> <br/>
+				
+				<h6> Compiling and Running </h6>
+				<p> Run the following commands to compile and run the interface </p>
+				<ul>
+					<li><p> <tt>make </tt></p></li>
+					<li><p> <tt>./fileSystem </tt></p></li>
+				</ul> 
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			
+			<article  id="navxfscommands" class="grid col-full">
+				<h4>Commands</h4>
+				<p> Type the command <b>help</b> in the interface to display the list of commands. </p>
+				
+				<h6> Format the disk </h6>
+				<p>The command <b>fdisk</b> is used to create the disk (”disk.xfs”) or to format the disk if already created. 
+				On a newly created disk or formatted disk the Disk Free List and FAT entries are initialized. 
+				Also a FAT entry is created for the file ”init.xsm” (INIT code).<br/>
+				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt>fdisk </tt></p>
+				
+				<h6> Load Files </h6>
+				<p>The command load is used to load files to the filesystem from a UNIX file.
+				The types of file that is loaded is specified by the first argument. The second argument &ltpathname&gt 
+				is the path to the UNIX file which is to be loaded to the filesystem. <br/>
+				The command checks the size of the file (executable or data files) and allocates blocks to it. 
+				The corresponding FAT entry is created for the file. For the OS Startup code, Interrupt routines and 
+				Exception Handler, the file is loaded to the corresponding location in the disk.</p>
+				
+				<ul>
+					<li><p> <i>Syntax :</i> <tt>load --exec &ltpathname&gt </tt><br/>
+					&nbsp&nbsp&nbsp&nbsp Loads an executable file to XFS disk </p></li>
+					<li><p> <i>Syntax :</i> <tt>load --init &ltpathname&gt </tt><br/>
+					&nbsp&nbsp&nbsp&nbsp Loads INIT code to XFS disk </p></li>
+					<li><p> <i>Syntax :</i> <tt>load --data &ltpathname&gt </tt><br/>
+					&nbsp&nbsp&nbsp&nbsp Loads a data file to XFS disk </p></li>
+					<li><p> <i>Syntax :</i> <tt>load --os &ltpathname&gt </tt><br/>
+					&nbsp&nbsp&nbsp&nbsp Loads OS startup code to XFS disk </p></li>
+					<li><p> <i>Syntax :</i> <tt>load --int=timer &ltpathname&gt </tt><br/>
+					&nbsp&nbsp&nbsp&nbsp Loads Timer Interrupt routine to XFS disk </p></li>
+					<li><p> <i>Syntax :</i> <tt>load --int=[1-7] &ltpathname&gt </tt><br/>
+					&nbsp&nbsp&nbsp&nbsp Loads the specified Interrupt routine to XFS disk </p></li>
+					<li><p> <i>Syntax :</i> <tt>load --exhandler &ltpathname&gt </tt><br/>
+					&nbsp&nbsp&nbsp&nbsp Loads exception handler routine to XFS disk</p></li>
+				</ul>
+				
+				<h6> Remove Files </h6>
+				<p> The command rm is used to remove files from the filesystem. The first argument specifies the type of file 
+				to be removed. The argument &ltxfs_filename&gt specifies the file which is to be removed.<br/>
+				The command searches the FAT entries for the file (executable/data file) and clears the blocks 
+				corresponding to the file. In the case of OS Startup code, Interrupt routines and Exception Handler 
+				the corresponding blocks in the disk are cleared. </p>
+				<ul>
+					<li><p> <i>Syntax :</i> <tt>rm --exec &ltxfs_filename&gt </tt><br/>
+					&nbsp&nbsp&nbsp&nbsp Removes an executable file from XFS disk </p></li>
+					<li><p> <i>Syntax :</i> <tt>rm --init &ltxfs_filename&gt </tt><br/>
+					&nbsp&nbsp&nbsp&nbsp Removes INIT code from XFS disk </p></li>
+					<li><p> <i>Syntax :</i> <tt>rm --data &ltxfs_filename&gt </tt><br/>
+					&nbsp&nbsp&nbsp&nbsp Removes a data file from XFS disk </p></li>
+					<li><p> <i>Syntax :</i> <tt>rm --os </tt><br/>
+					&nbsp&nbsp&nbsp&nbsp Removes OS startup code from XFS disk </p></li>
+					<li><p> <i>Syntax :</i> <tt>rm --int=timer </tt><br/>
+					&nbsp&nbsp&nbsp&nbsp Removes the Timer Interrupt routine from XFS disk </p></li>
+					<li><p> <i>Syntax :</i> <tt>rm --int=[1-7] </tt><br/>
+					&nbsp&nbsp&nbsp&nbsp Removes the specified Interrupt routine from XFS disk </p></li>
+					<li><p> <i>Syntax :</i> <tt>rm --exhandler </tt><br/>
+					&nbsp&nbsp&nbsp&nbsp Removes the exception handler routine from XFS disk </p></li>
+				</ul>
+
+
+				<h6> List Files </h6>
+				<p>The command ls lists all the files which are loaded into the filesystem. 
+				The size of the file is also displayed in number of words.
+				The FAT entries are traversed and all the files and their corresponding sizes are displayed.<br/>
+				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt>ls</tt></p>
+				
+				<h6> Display Disk Free List </h6>
+				<p>The command df displays the disk free list. 
+				It also displays the total number of blocks and the number of free blocks.<br/>
+				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt>df</tt></p>
+				
+				<h6> Display File contents </h6>
+				<p>The command cat displays the contents of a file in the filesystem with the corresponding word number.
+				The FAT entries are searched to get the blocks corresponding to the file. The blocks are displayed.<br/>
+				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt>cat &ltxfs_filename&gt</tt></p>
+				
+				<h6> Copy contents of File </h6>
+				<p>The command copy copies the contents of specified blocks from a file in the filesystem to an 
+				external UNIX file. The arguments &ltstart_block&gt and &ltend_block&gt denotes the range of blocks to be copied 
+				(including both). &ltunix_filename&gt specifes the destination UNIX file to which the contents are copied to.<br/>
+				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt>copy &ltstart_block&gt &ltend_block&gt &ltunix_filename&gt</tt></p>
+				
+				<h6> Display help </h6>
+				<p>The command help displays the general syntax and function of all the commands.<br/>
+				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt>help</tt></p>
+				
+				<h6> Exit Interface </h6>
+				<p>The command exit quits the inteface.<br/>
+				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt>exit</tt></p>
+				
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			
+			<article  id="navxsm" class="grid col-full">
+				<h2>XSM Simulator</h2>
+				<h4>Introduction</h4>
+				<p><b>The XSM Simulator</b> (eXperimental String Machine) is used to simulate the XSM hardware.</p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navxsminstall" class="grid col-full">
+				<h4>Installation</h4>
+				<h6> Prerequisites </h6>
+				<ul>
+					<li><p> GCC (GNU project C and C++ compiler) </p></li>
+					<li><p> Flex / Lex (Fast Lexical Analyser Generator) </p></li>
+					<li><p> Bison / Yacc (GNU Project Parser Generator) </p></li>
+				</ul> <br/>
+				
+				<h6> Compiling and Running </h6>
+				<p> Run the following commands to compile and run the simulator </p>
+				<ul>
+					<li><p> <tt>make</tt> </p></li>
+					<li><p> <tt>./xsm &ltoptional-flags&gt &ltpath-to-file&gt</tt></p></li>
+				</ul> 
+				<p>The <tt>&ltoptional-flags&gt</tt> can be : </p>
+				<ul>
+					<li><p> <tt>--id </tt>: This flag disables the timer interrupt for the machine </p></li>
+					<li><p> <tt>--db </tt>: This flag sets the machine into DEBUG mode </p></li>
+				</ul>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			
+			</div> <!-- 100%articles-->
+
+		
+		</section>	
+		
+		
+		
+	</div> <!--main-->
+<div class="divide-top">
+	<footer class="grid-wrap">
+		<ul class="grid col-one-third social">
+			<li><a href="http://github.com/xosnitc">Github</a></li>
+		</ul>
+	
+		<div class="up grid col-one-third ">
+			<a href="#navtop" title="Go back up">&uarr;</a>
+		</div>
+		
+		<nav class="grid col-one-third ">
+			<ul><li><a href="index.html" >Home</a></li>
+				<li><a href="about.html">About</a></li>
+				<li><a href="documentation.html">Documentation</a></li>
+				<li><a href="downloads.html">Downloads</a></li>
+				<li><a href="roadmap.html">Roadmap</a></li></ul>
+			</ul>
+		</nav>
+	</footer>
+</div>
+
+</div>
+
+<!-- Javascript - jQuery -->
+<script src="http://code.jquery.com/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="js/jquery-1.7.2.min.js"><\/script>')</script>
+
+<!--[if (gte IE 6)&(lte IE 8)]>
+<script src="js/selectivizr.js"></script>
+<![endif]-->
+
+<script src="js/scripts.js"></script>
+
+<!-- Asynchronous Google Analytics snippet. Change UA-XXXXX-X to be your site's ID. -->
+<script>
+  var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+</body>
+</html>

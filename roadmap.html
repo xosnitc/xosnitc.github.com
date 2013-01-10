@@ -168,7 +168,19 @@
 			
 			</ul>
 			
-			<li> Once the control gets transferred to the user program, all addresses are logical addresses. Therefore <b>SP</b> must be set to 3*512 (stack is allocated with logical page number 3).   </li>
+			<li> The next structure to setup is the INIT's Process Control Block. (See <a href="xos-spec.html#navpromgmt_pcb"> PCB </a> ). The starting address of INIT's PCB is <b>1536</b>. SPL has a predefined constant <tt>READY_LIST</tt> with this value stored. Setup the PCB with each corresponding entry. 
+				<ul>
+				<li> Set the 1st word with the PID which is 0 for INIT Process </li>
+				<div class="syntax">
+				 [READY_LIST + 0] = 0 // Sets the entry for PID as 0
+				</div>
+				<li> Similarly, <tt>STATE</tt> of INIT process is set to 2 (running) </li>
+				<li> The remaining entries need not be set by the OS startup code and will be done in subsequent stages.  </li>
+				
+				</ul> <br/>
+			
+			
+			<li> Once the control gets transferred to the user program, all addresses are logical addresses. Therefore <b>SP</b> (Stack Pointer) must be set to 3*512 (stack is allocated with logical page number 3). And <b>BP</b> (Base Pointer) is   </li>
 			<li> Store 0 in the stack (page number 19 in memory). This value gets stored in IP after an <b>ireturn</b> instruction. 
 			<div class="syntax">
 			[19*512] = 0;

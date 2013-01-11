@@ -93,7 +93,7 @@
 						<li><a href="#navbreakstmt" class="subsec" >Break Statement</a></li>
 						<li><a href="#navcontinuestmt" class="subsec" >Continue Statement</a></li>
 						<li><a href="#navreturnstmt" class="subsec" >Return Statement</a></li>
-						<li><a href="#navrwstmt" class="subsec" >Read/Write Statement</a></li>
+						<li><a href="#navrwstmt" class="subsec" >Read/Print Statement</a></li>
 					<li><a href="#navsyscalls" class="sec" >System Calls</a></li>
 						<li><a href="#navcreate" class="subsec" >Create</a></li>
 						<li><a href="#navopen" class="subsec" >Open</a></li>
@@ -148,7 +148,7 @@
 				<h4>Keywords</h4>
 				<p>The following are the reserved words in APL and it cannot be used as identifiers. 
 				<table style="text-align:center; width:80%">
-					<tr> <td>read</td> <td>write</td> <td>if</td> <td>then</td> <td>else</td> <td>endif</td> </tr>
+					<tr> <td>read</td> <td>print</td> <td>if</td> <td>then</td> <td>else</td> <td>endif</td> </tr>
 					<tr> <td>while</td> <td>do</td> <td>endwhile</td> <td>break</td> <td>continue</td> <td>integer</td> </tr>
 					<tr> <td>string</td> <td>main</td> <td>return</td> <td>decl</td> <td>enddecl</td> <td>Create</td> </tr>
 					<tr> <td>Open</td> <td>Write</td> <td>Seek</td> <td>Read</td> <td>Close</td> <td>Delete</td> </tr>
@@ -419,7 +419,7 @@
 			<article  id="navcontinuestmt" class="grid col-full">
 				<h4>Continue Statement</h4>
 				<p><b>Continue</b> statement is a statement which is also used only in a <b>while</b>  loop block. 
-				This statement skips the current iteration of the loop and passes the control to the next iteration after checking the loop condition. 
+				This statement skips the current iteration of the loop and passes the control to the next iteration after checking the loop condition.      
 				The syntax is as follows<br/>
 				<tt>&nbsp&nbsp&nbsp
 					<b>continue</b> ;</tt></p>
@@ -441,14 +441,14 @@
 			</div>	
 			
 			<article  id="navrwstmt" class="grid col-full">
-				<h4>Read/Write Statement</h4>
-				<p>The standard input and output statements in APL are <b>read</b> and <b>write</b> respectively. 
+				<h4>Read/Print Statement</h4>
+				<p>The standard input and output statements in APL are <b>read</b> and <b>print</b> respectively. 
 				The read statement reads an integer value from the standard input device into an integer variable or 
-				an indexed array variable or a string value into a string variable. The write statement outputs a string literal 
+				an indexed array variable or a string value into a string variable. The Print statement outputs a string literal 
 				or the value of string variable or an arithmetic expression into the standard output.<br/>
 				<tt>&nbsp&nbsp&nbsp	
 					<b>read</b> variable name;<br/>
-					&nbsp&nbsp&nbsp	<b>write</b> expression / string;</tt></p><br/>
+					&nbsp&nbsp&nbsp	<b>print</b> expression / string;</tt></p><br/>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -598,29 +598,29 @@ integer main(){
 	if(a>b) then 
 		if(a>c) then 
 			if(a>d) then 
-				write(a);
+				print(a);
 			else	
-				write(d); 
+				print(d); 
 			endif;
 		else 
 			if(c>d) then 
-				 write(c);
+				 print(c);
 			 	else 
-			 		write(d); 
+			 		print(d); 
 			 	endif;
 		endif;
 	else
 		 if(b>c) then 
 			if(b>d) then 
-				write(b);
+				print(b);
 			else 
-				write(d); 
+				print(d); 
 			endif;
 		else
 			if(c>d) then 
-				write(c);
+				print(c);
 				else
-					write(d);
+					print(d);
 				endif; 
 		endif;
 	endif;

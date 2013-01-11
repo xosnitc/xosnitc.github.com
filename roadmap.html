@@ -300,14 +300,17 @@ endif;</pre>
 
 		<h6> int Open(filename) </h6>
 		<ul>
-			<li> FAT is searched for the <tt>filename</tt>. If the entry is not found, -1 is returned. Otherwise, store the FAT Index in a register .</li>
+			<li> FAT is searched for the <tt>filename</tt>. If the entry is not found, -1 is returned. Otherwise, store the index of the FAT entry in a register.</li>
+			<li>Then, the <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a> is searched for the FAT Index entry found in the previous step. If there is no free entry (indicated by -1). Otherwise a new entry is created in the System-Wide Open File Table as follows: </li>
+				<ul>
+					<li> FAT </li>
 
 
 
 
 		<li>  A free entry is searched in the <a href="xos-spec.html#navpromgmt_pcb">per-process open file table in the PCB</a> of the process. A free entry is indicated by -1 in the first field (Pointer to <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a>). If there are no free entries, -1 is returned by the system call. </li>
 		
-		<li> Then, the <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a> is searched for , indicated by -1. If there is no free entry, -1 is returned. Otherwise a new entry is created in the System-Wide Open File Table as follows:
+		<li> Th
 		<ul>
 			<li>
 

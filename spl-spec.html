@@ -82,18 +82,17 @@
 					<li><a href="#navexpressions" class="sec" >Expressions</a></li>
 						<li><a href="#navarithexp" class="subsec" >Arithmetic Expressions</a></li>
 						<li><a href="#navlogicexp" class="subsec" >Logical Expressions</a></li>
-						<li><a href="#navstringcomp" class="subsec" >String Comparison</a></li>
 						<li><a href="#navaddrexp" class="subsec" >Addressing Expressions</a></li>
 					<li><a href="#navstatements" class="sec" >Statements</a></li>
 						<li><a href="#navdefinestmt" class="subsec" >Define Statement</a></li>
 						<li><a href="#navaliasstmt" class="subsec" >Alias Statement</a></li>
 						<li><a href="#navassignstmt" class="subsec" >Assignment Statement</a></li>
-						<li><a href="#navstrcpystmt" class="subsec" >strcpy Statement</a></li>
 						<li><a href="#navifstmt" class="subsec" >If Statement</a></li>
 						<li><a href="#navwhilestmt" class="subsec" >While Statement</a></li>
 						<li><a href="#navbreakstmt" class="subsec" >Break Statement</a></li>
 						<li><a href="#navcontinuestmt" class="subsec" >Continue Statement</a></li>
 						<li><a href="#naviretstmt" class="subsec" >ireturn Statement</a></li>
+						<li><a href="#navreadprintstmt" class="subsec" >Read/Print Statements</a></li>
 						<li><a href="#navlsstmt" class="subsec" >Load/Store Statement</a></li>
 						<li><a href="#navbreakpointstmt" class="subsec" >breakpoint Statement</a></li>
 				</ul>
@@ -131,8 +130,9 @@
 				<tt>
 				<table style="text-align:center; width:50%">
 					<tr><td>alias </td> <td>else</td> <td>if</td> <td>store</td> <td>while</td></tr>
-					<tr><td>define</td> <td>endif </td> <td>ireturn</td> <td>strcmp</td> <td>continue</td></tr>
-					<tr><td>break</td> <td>do</td> <td>endwhile</td> <td>load</td> <td>then</td></tr>
+					<tr><td>define</td> <td>endif </td> <td>ireturn</td> <td>break</td> <td>continue</td></tr>
+					<tr><td>do</td> <td>endwhile</td> <td>load</td> <td>then</td> <td>read</td></tr>
+					<tr> <td>print</td> </tr>
 				</table>
 				</tt></p>
 			</article>
@@ -173,8 +173,12 @@
 			
 			<article  id="navliterals" class="grid col-full">
 				<h4>Literals</h4>
-				<p>	Only integer literals are permitted in SPL. An integer literal is a sequence of digits representing an integer. 
-				Negative integers are represented with a negative sign preceding the sequence of digits.</p>
+				<p>	Integer and String literals are permitted in SPL. An integer literal is a sequence of digits representing an integer. 
+				Negative integers are represented with a negative sign preceding the sequence of digits. <br/>
+				A string literal is a sequence of characters which are enclosed within double quotes (" ").
+				  eg : <tt> "alice"</tt>
+
+				</p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -250,23 +254,17 @@
 				<tt>
 				>, <, >=, <=, !=, ==
 				</tt><br/>
-				Standard meanings apply to these operators. A relational operator will take in two arguments and return 1 if the relation is valid and 0 otherwise.
+				Standard meanings apply to these operators. A relational operator will take in two arguments and return 1 if the relation is valid and 0 otherwise. <br/>
+				The relational operators can also be applied to strings. <tt> <, >, <=, >= </tt> compares two strings lexicographically. <tt>!= </tt> and <tt>==</tt> checks for equality in the case of strings. eg:<br/>
+				&nbsp&nbsp&nbsp&nbsp <tt> "adam" < "apple"      // This returns 1 </tt> <br/>
+				&nbsp&nbsp&nbsp&nbsp <tt> "hansel" == "gretel"     // This returns 0 </tt><br/>
 				Logical expressions themselves may be combined using logical operators, && (logical and) , || (logical or) and ! (not).</p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>	
 			
-			<article  id="navstringcomp" class="grid col-full">
-				<h4>String Comparison</h4>
-				<p>	The only operation that can be performed on strings stored in memory is string camparison. 
-				<b>strcmp</b> is used to compare two strings whose address is stored in the registers that are given as operands.<br/>
-				e.g. <tt>strcmp(R2,R5)</tt></p>
-			</article>
-			<div class="up grid col-one-third" style="float:right">
-			<a href="#navtop" title="Go back up"> top &uarr;</a>
-			</div>	
-			
+						
 			<article  id="navaddrexp" class="grid col-full">
 				<h4>Addressing Expressions</h4>
 				<p>	Memory of the meachine can be directly accessed in an SPL program. 
@@ -315,22 +313,13 @@
 				= is the assignment operator used in SPL. The operand on the right hand side of the operator is assigned to the left hand side. 
 				The general syntax is as follows<br/>
 				
-				<tt>&nbsp&nbsp&nbsp Register / Alias / [Address] = Expression / [Address] ;</tt></p>
+				<tt>&nbsp&nbsp&nbsp Register / Alias / [Address] = Register / Number / String / Expression / [Address] ;</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>	
 			
-			<article  id="navstrcpystmt" class="grid col-full">
-				<h4>strcpy Statement</h4>
-				<p>	The SPL <b>strcpy</b> statement copies a string in one memory location to another memory location. 
-				Registers which store the memory location of the destination and the source are given as Rd and Rs respectively.<br/>
 				
-				<tt>&nbsp&nbsp&nbsp <b>strcpy</b>(Rd, Rs);</tt></p>
-			</article>
-			<div class="up grid col-one-third" style="float:right">
-			<a href="#navtop" title="Go back up"> top &uarr;</a>
-			</div>	
 			
 			<article  id="navifstmt" class="grid col-full">
 				<h4>If Statment</h4>
@@ -399,6 +388,18 @@
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>	
 			
+			<article  id="navreadprintstmt" class="grid col-full">
+				<h4>Read/Print Statements</h4>
+				<p>	The <b>read</b> and <b>print</b> statements are used as standard input and output statements. The <b>read</b> statement reads a value from the standard input device and stores it in a register. 
+					<br/>
+					The <b>print</b> statement outputs value of a register or an integer/string literal or value of a memory location.<br/>
+					<tt>&nbsp&nbsp&nbsp<b>read</b> Register;</tt> <br/>
+					<tt>&nbsp&nbsp&nbsp<b>print</b> Register / Number / String / Expression / [Address];</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+
 			<article  id="navlsstmt" class="grid col-full">
 				<h4>Load/Store Statement</h4>
 				<p>	Loading and storing between filesystem and memory is accomplished using <b>load</b> and <b>store</b> statements in SPL. 

@@ -58,7 +58,7 @@
 		<header class="grid col-full">
 			<hr>
 			<p class="fleft">Usage Documentation</p> <br/><br/>
-					
+					<a href="doc/usage.pdf" class="button"> Download as PDF </a>
 		</header>
 
 
@@ -203,10 +203,10 @@
 				<p>The command <b>fdisk</b> is used to create the disk (”disk.xfs”) or to format the disk if already created. 
 				On a newly created disk or formatted disk the Disk Free List and FAT entries are initialized. 
 				Also a FAT entry is created for the file ”init.xsm” (INIT code).<br/>
-				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt>fdisk </tt></p>
+				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt><b>fdisk</b> </tt></p>
 				
 				<h6> Load Files </h6>
-				<p>The command load is used to load files to the filesystem from a UNIX file.
+				<p>The command <b>load</b> is used to load files to the filesystem from a UNIX file.
 				The types of file that is loaded is specified by the first argument. The second argument &ltpathname&gt 
 				is the path to the UNIX file which is to be loaded to the filesystem. <br/>
 				The command checks the size of the file (executable or data files) and allocates blocks to it. 
@@ -214,75 +214,75 @@
 				Exception Handler, the file is loaded to the corresponding location in the disk.</p>
 				
 				<ul>
-					<li><p> <i>Syntax :</i> <tt>load --exec &ltpathname&gt </tt><br/>
+					<li><p> <i>Syntax :</i> <tt><b>load</b> --exec &ltpathname&gt </tt><br/>
 					&nbsp&nbsp&nbsp&nbsp Loads an executable file to XFS disk </p></li>
-					<li><p> <i>Syntax :</i> <tt>load --init &ltpathname&gt </tt><br/>
+					<li><p> <i>Syntax :</i> <tt><b>load</b> --init &ltpathname&gt </tt><br/>
 					&nbsp&nbsp&nbsp&nbsp Loads INIT code to XFS disk </p></li>
-					<li><p> <i>Syntax :</i> <tt>load --data &ltpathname&gt </tt><br/>
+					<li><p> <i>Syntax :</i> <tt><b>load</b> --data &ltpathname&gt </tt><br/>
 					&nbsp&nbsp&nbsp&nbsp Loads a data file to XFS disk </p></li>
-					<li><p> <i>Syntax :</i> <tt>load --os &ltpathname&gt </tt><br/>
+					<li><p> <i>Syntax :</i> <tt><b>load</b> --os &ltpathname&gt </tt><br/>
 					&nbsp&nbsp&nbsp&nbsp Loads OS startup code to XFS disk </p></li>
-					<li><p> <i>Syntax :</i> <tt>load --int=timer &ltpathname&gt </tt><br/>
+					<li><p> <i>Syntax :</i> <tt><b>load</b> --int=timer &ltpathname&gt </tt><br/>
 					&nbsp&nbsp&nbsp&nbsp Loads Timer Interrupt routine to XFS disk </p></li>
-					<li><p> <i>Syntax :</i> <tt>load --int=[1-7] &ltpathname&gt </tt><br/>
+					<li><p> <i>Syntax :</i> <tt><b>load</b> --int=[1-7] &ltpathname&gt </tt><br/>
 					&nbsp&nbsp&nbsp&nbsp Loads the specified Interrupt routine to XFS disk </p></li>
-					<li><p> <i>Syntax :</i> <tt>load --exhandler &ltpathname&gt </tt><br/>
+					<li><p> <i>Syntax :</i> <tt><b>load</b> --exhandler &ltpathname&gt </tt><br/>
 					&nbsp&nbsp&nbsp&nbsp Loads exception handler routine to XFS disk</p></li>
 				</ul>
 				
 				<h6> Remove Files </h6>
-				<p> The command rm is used to remove files from the filesystem. The first argument specifies the type of file 
+				<p> The command <b>rm</b> is used to remove files from the filesystem. The first argument specifies the type of file 
 				to be removed. The argument &ltxfs_filename&gt specifies the file which is to be removed.<br/>
 				The command searches the FAT entries for the file (executable/data file) and clears the blocks 
 				corresponding to the file. In the case of OS Startup code, Interrupt routines and Exception Handler 
 				the corresponding blocks in the disk are cleared. </p>
 				<ul>
-					<li><p> <i>Syntax :</i> <tt>rm --exec &ltxfs_filename&gt </tt><br/>
+					<li><p> <i>Syntax :</i> <tt><b>rm</b> --exec &ltxfs_filename&gt </tt><br/>
 					&nbsp&nbsp&nbsp&nbsp Removes an executable file from XFS disk </p></li>
-					<li><p> <i>Syntax :</i> <tt>rm --init &ltxfs_filename&gt </tt><br/>
+					<li><p> <i>Syntax :</i> <tt><b>rm</b> --init &ltxfs_filename&gt </tt><br/>
 					&nbsp&nbsp&nbsp&nbsp Removes INIT code from XFS disk </p></li>
-					<li><p> <i>Syntax :</i> <tt>rm --data &ltxfs_filename&gt </tt><br/>
+					<li><p> <i>Syntax :</i> <tt><b>rm</b> --data &ltxfs_filename&gt </tt><br/>
 					&nbsp&nbsp&nbsp&nbsp Removes a data file from XFS disk </p></li>
-					<li><p> <i>Syntax :</i> <tt>rm --os </tt><br/>
+					<li><p> <i>Syntax :</i> <tt><b>rm</b> --os </tt><br/>
 					&nbsp&nbsp&nbsp&nbsp Removes OS startup code from XFS disk </p></li>
-					<li><p> <i>Syntax :</i> <tt>rm --int=timer </tt><br/>
+					<li><p> <i>Syntax :</i> <tt><b>rm</b> --int=timer </tt><br/>
 					&nbsp&nbsp&nbsp&nbsp Removes the Timer Interrupt routine from XFS disk </p></li>
-					<li><p> <i>Syntax :</i> <tt>rm --int=[1-7] </tt><br/>
+					<li><p> <i>Syntax :</i> <tt><b>rm</b> --int=[1-7] </tt><br/>
 					&nbsp&nbsp&nbsp&nbsp Removes the specified Interrupt routine from XFS disk </p></li>
-					<li><p> <i>Syntax :</i> <tt>rm --exhandler </tt><br/>
+					<li><p> <i>Syntax :</i> <tt><b>rm</b> --exhandler </tt><br/>
 					&nbsp&nbsp&nbsp&nbsp Removes the exception handler routine from XFS disk </p></li>
 				</ul>
 
 
 				<h6> List Files </h6>
-				<p>The command ls lists all the files which are loaded into the filesystem. 
+				<p>The command <b>ls</b> lists all the files which are loaded into the filesystem. 
 				The size of the file is also displayed in number of words.
 				The FAT entries are traversed and all the files and their corresponding sizes are displayed.<br/>
-				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt>ls</tt></p>
+				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt><b>ls</b></tt></p>
 				
 				<h6> Display Disk Free List </h6>
-				<p>The command df displays the disk free list. 
+				<p>The command <b>df</b> displays the disk free list. 
 				It also displays the total number of blocks and the number of free blocks.<br/>
-				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt>df</tt></p>
+				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt><b>df</b></tt></p>
 				
 				<h6> Display File contents </h6>
-				<p>The command cat displays the contents of a file in the filesystem with the corresponding word number.
+				<p>The command <b>cat</b> displays the contents of a file in the filesystem with the corresponding word number.
 				The FAT entries are searched to get the blocks corresponding to the file. The blocks are displayed.<br/>
-				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt>cat &ltxfs_filename&gt</tt></p>
+				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt><b>cat</b> &ltxfs_filename&gt</tt></p>
 				
 				<h6> Copy contents of File </h6>
-				<p>The command copy copies the contents of specified blocks from a file in the filesystem to an 
+				<p>The command <b>copy</b> copies the contents of specified blocks from a file in the filesystem to an 
 				external UNIX file. The arguments &ltstart_block&gt and &ltend_block&gt denotes the range of blocks to be copied 
 				(including both). &ltunix_filename&gt specifes the destination UNIX file to which the contents are copied to.<br/>
-				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt>copy &ltstart_block&gt &ltend_block&gt &ltunix_filename&gt</tt></p>
+				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt><b>copy</b> &ltstart_block&gt &ltend_block&gt &ltunix_filename&gt</tt></p>
 				
 				<h6> Display help </h6>
-				<p>The command help displays the general syntax and function of all the commands.<br/>
-				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt>help</tt></p>
+				<p>The command <b>help</b> displays the general syntax and function of all the commands.<br/>
+				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt><b>help</b></tt></p>
 				
 				<h6> Exit Interface </h6>
-				<p>The command exit quits the inteface.<br/>
-				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt>exit</tt></p>
+				<p>The command <b>exit</b> quits the inteface.<br/>
+				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt><b>exit</b></tt></p>
 				
 			</article>
 			<div class="up grid col-one-third" style="float:right">

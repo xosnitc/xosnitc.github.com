@@ -639,7 +639,9 @@ endif;</pre>
 			
 			<article  id="navstage8" class="grid col-full">
 			<h2>Stage 8: Exception Handling </h2>
-			<p>  Not Available  </p>
+			<p> 
+				<a href="xos-spec.html#navsysroutines_exhandler">Exception Handler</a> in XOS handles exceptions caused by machine. When an exception occurs, the machine sets the <tt>EFR</tt> (Exception Flag Register) and calls the Exception Handler in 
+			</p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -647,12 +649,20 @@ endif;</pre>
 			
 			<article  id="navstage9" class="grid col-full">
 			<h2>Stage 9: Making a console </h2>
-			<p> Not Available  </p>
-			</article>
+			<p> 
+				The final stage is to make the INIT  process act like a console. INIT written in APL, should be an infinite loop, which takes in  filenames. This filename should correspond to the program to be executed.
+				It should <a href="apl-spec.html#navfork"><b>Fork</b></a> itself and <a href="apl-spec.html#navexec"><b>Exec</b></a> using the filename. Appropriate errors must be reported. To have  a time delay between asking for filenames as input, a time-consuming loop may be added  :) 
+			 </p>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
-			</div>					
+			</div>		
+			
+			 <br/><br/>
+ 			<center><h6>AND THAT'S YOUR OWN </h6><img src="img/logo-img.jpeg" style="margin:0;  width:40px"></center>
+			</article>
 							
+							
+			
 		</div> <!-- 100%articles-->
 
 		

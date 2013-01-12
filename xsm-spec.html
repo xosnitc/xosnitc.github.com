@@ -413,7 +413,7 @@
 
 					<li> <p> <b>Subroutine Instructions</b> <br/>
 					The <tt>CALL</tt> instruction copies the address of the next instruction to be fetched on to location <tt>SP + 1</tt>. 
-					It also increments <tt>SP</tt> by one and transfers control to the instruction specified by the line_number. 
+					It also increments <tt>SP</tt> by one and transfers control to the instruction specified by the <tt>&lttarget_address&gt</tt>. 
 					The address of the instruction to be fetched is in <tt>IP + 2</tt> (each instruction is 2 memory words). 
 					The <tt>RET</tt> instruction restores the <tt>IP</tt> value stored at location pointed by <tt>SP</tt>,
 					decrements <tt>SP</tt> by one and continues execution fetching the next instruction pointed to by <tt>IP</tt>. 
@@ -421,8 +421,8 @@
 					</p> 
 						<ul style="list-style-type:disc">
 							<li> <p> <tt>CALL</tt><br/>
-							<i>Syntax</i> : <tt>CALL line_number</tt><br/>
-							Increments <tt>SP</tt> by 1, transfers <tt>IP + 2</tt> to location pointed to by <tt>SP</tt> and jumps to instruction specified by <tt>line_number</tt></p> </li>
+							<i>Syntax</i> : <tt>CALL <tt>&lttarget_address&gt</tt></tt><br/>
+							Increments <tt>SP</tt> by 1, transfers <tt>IP + 2</tt> to location pointed to by <tt>SP</tt> and jumps to instruction specified by <tt><tt>&lttarget_address&gt</tt></tt></p> </li>
 							<li> <p> <tt>RET</tt><br/>
 							<i>Syntax</i> : <tt>RET</tt><br/>
 							Sets <tt>IP</tt> to the value pointed to by <tt>SP</tt> and decrements <tt>SP</tt>.</p> </li>

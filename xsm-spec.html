@@ -461,8 +461,7 @@
 				<ol style="list-style-type:decimal">
 					<li> <p> <tt>IRET</tt><br/>
 					<i>Syntax</i> : <tt>IRET</tt><br/>
-					Set <tt>IP</tt> to the value pointed by <tt>SP</tt> and decrements <tt>SP</tt> by one. 
-					<tt>IRET</tt> does the same action as <tt>RET</tt>, but it tells the processor that the interrupt handler has finished. 
+					IRET switches the mode from kernel to user mode. It then sets <tt>IP</tt> to the value pointed by <tt>SP</tt> and decrements <tt>SP</tt> by one. 
 					With the execution of the <tt>IRET</tt> instruction, interrupts are enabled. <a href="#navintrrupt"> (Refer Section: Interrupts)</a></p> </li>
 					
 					<li> <p> <tt>LOAD</tt><br/>

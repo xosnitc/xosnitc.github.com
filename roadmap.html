@@ -120,7 +120,7 @@
 			<li> Download the XSM Simulator from the <a href="downloads.html">downloads</a> page. Unzip the directory.</li>
 			<li> Place the <b>xfs-interface</b> directory in same directory as <b>xsm</b> directory. ( or change the <b>DISK_NAME</b>  to the path of <tt>disk.xfs</tt> in <b>disk.h</b> in <b>xsm</b> directory) </li>
 			<li> Follow the instructions in README to compile the machine simulator </li>
-			<li> cd to xsm directory. Run the machine using the command <tt>./xsm -id </tt>.
+			<li> cd to xsm directory. Run the machine using the command <tt>./xsm --disable-timer </tt>.
 			
 			</ol>
 			</article>
@@ -509,8 +509,8 @@ endif;</pre>
 
 			<article  id="navstage6" class="grid col-full">
 			<h2>Stage 6: Multiprogramming</h2>
-			<p>  <a href="xos-spec.html#navpromgmt_multiprog">Multiprogramming</a> refers to running more than one process simultaneously. A machine capable of multiprogramming will have a timer which interrupts after a fixed interval. In XSM, the timer interrupts after every instruction and the control is passed to Page 8, i.e. the timer interrupt routine.  </p>
-			Run the machine  without the <b>-id</b> flag to enable the timer. <br/>
+			<p>  <a href="xos-spec.html#navpromgmt_multiprog">Multiprogramming</a> refers to running more than one process simultaneously. In XSM, the timer interrupts after every instruction and the control is passed to Page 8, i.e. the timer interrupt routine.  </p>
+			Run the machine  without disabling the timer. <br/>
 			<tt> ./xsm </tt>
 
 			<p>The task to be done in this stage, is to program the Timer Interrupt in SPL, compile it and load it to the disk. </p>
@@ -519,13 +519,13 @@ endif;</pre>
 			The timer interrupt routine must perform the following actions:
 			<ol>
 				<li> Find the ProcessID or PID using the PTBR. </li>
-				<li> Using the PID find the PCB of the process. Store the values of the current process in its <a href="xos-spec.html#navpromgmt_pcb">PCB</a></li> 
+				<li> Using the PID find the PCB of the process. Store the values of the current process in its <a href="xos-spec.html#navpromgmt_pcb">PCB</a> as shown below.</li>
 					<div class="syntax">
 						<pre>
 [ PCB_Start + 0 ] = ProcessID;		//PID
 [ PCB_Start + 1 ] = 1 			// STATE : Waiting for the CPU
 [ PCB_Start + 2 ] = BP 					
-[ PCB_Start + 3 ] = SP - 1           	
+[ PCB_Start + 3 ] = SP            	
 [ PCB_Start + 4 ] = [absoluteSP - 1] 	// IP gets stored in SP by machine
 [ PCB_Start + 5 ] = PTBR	
 [ PCB_Start + 6 ] = PTLR		
@@ -534,10 +534,10 @@ endif;</pre>
 	.
 [ PCB_Start + 14] = R7			</pre>	</div>	
 
-				<li>Scan the <a href="xos-spec.html#navpromgmt_readylist">Ready List of PCBs</a> from the PCB of current process to check for the next process with STATE 1 (Waiting for the CPU). Store this in a register.
+				<li>Scan the <a href="xos-spec.html#navpromgmt_readylist">Ready List of PCBs</a> in a circular manner from the PCB of current process to check for the next process with STATE 1 (Waiting for the CPU). Store the address of the PCB found in a register.
 				</li>
-				<li> Load the fields from this new PCB  to the corresponding registers. </lI>
-				<li> Find the physical address of SP corresponding to this process, and store 0 in it. </li>
+				<li> Load the fields from this  PCB  to the corresponding registers.	</li>
+				<li> Find the physical address of SP corresponding to newly found PCB. Store IP from this PCB to the location pointed by the physical address of SP. </li>
 				<li> Use <b>ireturn</b> instruction to return to USER Mode</li>
 	
 			</ol>
@@ -551,12 +551,17 @@ endif;</pre>
 						<li> To print all odd numbers from 1 to n (taken as input)</li>
 					</ul>
 				<li> Load one of the programs as INIT and the 2nd program as an executable to <b>disk.xfs</b></li>
+			</ol>
+			<b> OS Startup Code </b>
+			<ol>
 				<li> Modify the startup code, to load both the programs, one as INIT (already done in Stage 2) and other from locations 20 to 22 and page 23 for stack. </li>
 				<li> Setup the Per-Process Page Tables and PCB for the 2nd process as done in Stage 2. See <a href="xos-spec.html#navmemorg">Memory Organization</a> to get the locations of the page table and PCB of the 2nd process </li>
 				<li> Load the Timer Interrupt Routine from the disk to the memory. </li>
-
 			</ol> 
 
+
+
+			Run the machine without disabling the timer.
 
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -564,8 +569,30 @@ endif;</pre>
 			</div>	
 			
 			<article  id="navstage7" class="grid col-full">
-			<h2>Stage 7: Process System Calls  </h2>
-			<p>  Not Available . </p>
+			<h2>Stage 7: Fork , Exit and Halt System Calls </h2>
+
+			<h6>Fork</h6>
+			<i>System Call No</i>: 7 <br/>
+			<i>Interrupt Routine No</i>: 3 <br/>
+			<i>Arguments</i>: 1) fileDescriptor 2) Variable<br/>
+			<i>Return Value</i>: 0 (success) and -1 (failure) </br>
+			<br/>
+			Reads a word from a file to the variable passed as argument
+
+		  	<ol>
+		  		<li> Get the arguments to registers from the stack </li>
+				<li> Get the address of PCB of the process. </li>
+				<li> Index into the per-process open file table using <tt>fileDescriptor</tt>. Return from the system call with -1 (failure) if the <tt>fileDescriptor</tt> is invalid or its corresponding entry is invalid.</li>
+				<li> Otherwise, store the LSEEK position to a register.</li>
+				<li> Using the <tt>Pointer to System Wide Open File Table Entry</tt> field, index to the System Wide Open File Table to get the FAT Index Entry.   </li>
+				<li> Fetch the <tt>basic block</tt> from the FAT and load it to the scratchpad
+				</li>
+				<li> Using LSEEK position find the block number to be read from. Find its location in the disk from the basic block. If entry for the block is invalid, return with value -1 (indicating failure).</li>
+				<li> Else,  fetch this block from the disk to the scratchpad. </li>
+				<li> Read from this block using the offset calculated using LSEEK position. </li>
+				<li> This value is stored in the stack in position of Argument 2. Store the word read to absoluteSP - 2.</li>
+				<li> Return with 0, indicating success </li>
+		  	</ol>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>

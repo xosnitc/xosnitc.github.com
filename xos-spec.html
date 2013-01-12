@@ -461,7 +461,7 @@ Apart from the file system data structures XOS maintains details about files ope
 			<i>APL Syntax </i>: <tt>int Create(fileName)</tt> <br/>
 			<i>System Call No. </i>: 1 <br/>
 			
-			<p>This system call is used to create a new file in the file system whose name is specified in the argument. The return value of the <tt>Create()</tt> system call is 0 if it is a success, and an error code otherwise. It calls Interrupt 1 Routine. </p>
+			<p>This system call is used to create a new file in the file system whose name is specified in the argument. The return value of the <tt>Create()</tt> system call is 0 if it is a success, and an error code otherwise. If the file already exists, the system call returns 0 (success). It calls Interrupt 1 Routine. </p>
 
 			<b>Delete</b></br>
 			<i>APL Syntax </i>: <tt>int Delete(fileDescriptor)</tt> <br/>

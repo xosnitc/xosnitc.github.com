@@ -166,7 +166,7 @@
 				<p>Any program in its execution is called a <b>process</b>. Processes will be loaded into memory before they start their execution. Each process occupies at most 4 pages in of the memory. The processor generates logical addresses with respect to a process during execution, which is translated to the physical address. This translation is done by the machine using page tables, Refer <a href="xsm-spec.html#navaddr" target="blank"> Address Translation (XSM Specification)</a></p>
 				
 				
-				<p>The XSM architecture supports demand paging and so the machine does not fix the number of processes that can be run on it. However XOS has limited the number of process running simultaneously to 32, due to limitations in number of <a href="#navpromgmt_pcb" >PCB</a>s in the Ready List and the number of <a href="#navpromgmt_pagetbl" ">Per-Process Page Tables</a>.</p>
+				<p>The XSM architecture supports demand paging and so the machine does not fix the number of processes that can be run on it. However XOS has limited the number of process running simultaneously to 32, due to limitations in number of <a href="#navpromgmt_pcb" >PCB</a>s in the Ready List and the number of <a href="#navpromgmt_pagetbl" >Per-Process Page Tables</a>.</p>
 				</article>			
 				<div class="up grid col-one-third" style="float:right">
 				<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -245,10 +245,7 @@
 				<h4>Ready List</h4>
 				<p>The list of PCBs stored in the memory is used as a Ready List by the operating system to schedule processes to CPU. The STATE in the PCB indicates whether a process is ready for execution or not. A new process in memory is scheduled for execution by circularly traversing through the list of PCBs stored in memory and selecting the first Ready process after the PCB of the currently running process in the list.</p>
 
-				<table class="doctable" style="width:50%">
-				<tr><td>Physical Page Number</td><td> Auxiliary Information</td>	</tr>			
-				</table>
-				</br>
+
 	<p>  
 A	 maximum of 32 PCBs can be stored in the memory, and hence the maximum number of processes that can be run simultaneously is limited to 32. The PCB list is stored in pages 3 and 4 in the memory (words 1536 – 2559)
 </p>
@@ -260,6 +257,11 @@ A	 maximum of 32 PCBs can be stored in the memory, and hence the maximum number 
 				<article id="navpromgmt_pagetbl" class="grid col-full">
 				<h4>The Per-Process Page Tables</h4>
 				<p>TEvery process in XOS has a Per-Process Page Table. A total of 32 PCBs and 32 Page Tables in total are  available, 		which limits the number of processes that can be run to 32.</p>
+
+				<table class="doctable" style="width:50%">
+				<tr><td>Physical Page Number</td><td> Auxiliary Information</td>	</tr>			
+				</table>
+				</br>
 				<p>  
 				The Per-Process Page Table stores the physical page number corresponding to each logical page associated with the process. The logical page number can vary from 0 to 3 for each process. Therefore, each process has 4 entries in the page table. Per-Process Page Tables are stored in Page 2, words 1024 – 1279 in the memory (256 words = 32 processes × 4 pages )
 				</p>
@@ -610,8 +612,8 @@ which caused the exception.
 </div>
 </div>
 
-<!-- Javascript - jQuery -->
-<script src="http://code.jquery.com/jquery.min.js"></script>
+<!-- Javascript - jQuery
+<script src="http://code.jquery.com/jquery.min.js"></script> -->
 <script>window.jQuery || document.write('<script src="js/jquery-1.7.2.min.js"><\/script>')</script>
 
 <!--[if (gte IE 6)&(lte IE 8)]>

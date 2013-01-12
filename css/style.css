@@ -17,6 +17,12 @@
 /* -------------------------------------------------------------
 ======	RESET
 ------------------------------------------------------------- */
+
+@font-face{
+	font-family: 'Open sans';
+	url: 'OpenSans-Regular.ttf';
+
+}
 article, aside, details, figcaption, figure, 
 footer, header, hgroup, menu, nav, section {display: block}
 audio, canvas, video { display: inline-block; *display: inline; *zoom: 1; }
@@ -67,7 +73,8 @@ sup{top:-0.5em}
 sub{bottom:-0.25em}
 dd{margin:0 0 0 40px} dt{font-weight: 700;}
 
-aside ul, header ul, footer ul, ol{list-style:none; list-style-image:none; margin:0; padding:0;}
+aside ul, header ul, footer ul, aside ol, header ol, footer ol{list-style:none; list-style-image:none; margin:0; padding:0;}
+article ol{list-style:decimal; }
 img{border:0; -ms-interpolation-mode:bicubic; vertical-align:middle}
 svg:not(:root){overflow:hidden}
 figure{margin:0}

@@ -260,11 +260,16 @@ endif;	</pre>
 			</div>
 
 			Now we'll implement the system calls in its corresponding Interrupt Routine Code. <br/><br/>
-			<h6> int Create(filename) </h6>
+		
+
+		<h6> int Create(filename) </h6>
+		
 		<ol>
 		<li> First of all, the memory copy of the <a href="xfs-spec.html#navdfl">disk free list</a> is searched to find a free block number (indicated by a 0). This block is used as the <a href="xfs-spec.html#navfile">basic block</a> of the file to be created. It's entry is set to 1. The block number is stored to a register. If no free block is found return -1 (as done in the previous step). </li>
 
 		<li> The <tt>filename</tt> specified as argument is stored in the stack at absoluteSP - 2. Fetch it and store it to a register. </li>
+		<li> The memory copy of the <a href="xfs-spec.html#navfat">FAT</a> is to be searched for the <tt>filename</tt> to check if the file already exists. If it exists return from the sytem call with 0 (success).
+		</li>
 
 		<li> Next, the memory copy of the <a href="xfs-spec.html#navfat">FAT</a> is searched for a free entry. A free entry in the FAT is indicated by -1 in the entry for basic block (Word 2 of each FAT entry). If no free entry is found put -1 in the return value space of the stack (absoluteSP - 12, See figure above). Then return to USER Mode using <b>ireturn</b> instruction. Address of FAT is stored in a <a href="spl-spec.html#navconst">predefined constant</a> in <tt>FAT</tt> in SPL. </li>
 		<li><tt>filename</tt> and the <tt>free block number</tt> obtained  in the previous steps are stored in the <em>Filename</em> field and <em>basic block number</em> field of the free <a href="xfs-spec.html#navfat">FAT</a> entry respectively.</li>
@@ -299,9 +304,13 @@ endif;</pre>
 		<li>Use an <b>ireturn</b> instruction to transfer control back to USER Mode.</li>
 		</ol>
 
+
+
+
+
 		<h6> int Open(filename) </h6>
 		<ol>
-			<li> FAT is searched for the <tt>filename</tt>. If the entry is not found, -1 is returned. Otherwise, store the index of the FAT entry in a register.</li>
+			<li> FAT is searched for the <tt>filename</tt> (get the <tt>filename</tt> from stack as explained in the Create system call) . If the entry is not found, -1 is returned. Otherwise, store the index of the FAT entry in a register.</li>
 
 			<li>Then, the <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a> is searched for the FAT Index  found in the previous step. If an entry is found, increment the <a href="xos-spec.html#navfiles_swoft"><tt>File Open Count</tt></a>.</li>
 
@@ -330,30 +339,31 @@ endif;</pre>
 		</ol>
 
 
+		<h6> int Close(fileDescriptor) </h6>
+		<ol> 
+			<li> Get the PCB of the process as in the Open System Call implementation.</li>
+			<li> Index into the per-process open file table using the argument <tt>fileDescriptor</tt>. Return from the system call with -1 (failure) if the <tt>fileDescriptor</tt> is invalid or its corresponding entry is invalid.</li>
+			<li> Using the <tt>Pointer to System Wide Open File Table Entry</tt> field, index to the System Wide Open File Table </tt> and decrement <tt>File Open Count</tt> by one. If it becomes 0, invalidate the entry by setting both the fields to -1. </li>
+			<li> Now invalidate the Per-Process Open File Table entry, by setting the fields to -1</li>
+			<li> Return from system call with 0 (success). </li>
+		</ol>
 
-
-
-		
-		<h6> int Delete(filename) </h6>
+		<h6> int Delete (fileName) </h6>
 		<ol>
-		<li> The memory copy of the FAT is searched using the <tt>fileName</tt> to get the corresponding FAT entry. If no entry is found, -1 is returned.</li>
-		
-		<li> If the file is already open, -1 is returned. We adopt the following steps to check if the file is open.
-		<ul>
-			<li> The <em>FAT index entry</em> of each global file table entry is used to fetch the filename of the corresponding open file from the memory copy of the FAT.
-			
-			</li><li> Each of the filenames obtained in the previous step is compared with the <tt>fileName</tt>. If match is found, we conclude that the file is currently in open.
-		</li></ul>
-		</li><li> The <em>basic block number</em> field in this FAT entry obtained, is then used to load the basic block of the file into the scratchpad.
-		
-		</li><li> Each entry in the block list of the basic block is used to find the data blocks of the file. Then, entries in the memory copy of the disk free list corresponding to these data blocks are set to zero, thereby freeing them.
-		
-		</li><li> Finally, the FAT entry of the file is removed.
-		
-		</li><li> The updated copies of FAT and disk free list in the memory are committed to the disk.
-		
-		</li><li> The return value of this system call is 0 in case of success and the appropriate error code in case of failure.
-	</li></ol>
+			<li> Search the memory copy of <a href="xfs-spec.html#navfat">FAT</a> for the <tt>filename</tt> specified as argument. If it is not found, return from the system call with -1 (failure). </li>
+			<li> If an entry is found, store the index in a register. </li>
+			<li> Search the System Wide Open File Table to see if the file has been opened. If it is opened, return from the system call with -1 (failure) </li>
+			<li> Otherwise, follow the steps to invalidate and delete the file <li>
+				<ul>
+				<li>Load the <a href="xfs-spec.html#navfile"><tt>Basic Block</tt></a> to the <a href="xos-spec.html#navfiles_scratchpad">Scratchpad</a>. </li>
+				<li> For each block used by the file (specified in the Basic Block), invalidate the corresponding block's entry (Setting -1) in the memory copy of the <a href="xfs-spec.html#navdf">Disk Free List</a></li>
+				<li> Invalidate the entry for the basic block in the Disk Free List by setting -1.</li>
+				<li> Invalidate the <a href="xfs-spec.html#navfat">FAT</a> entry by setting -1 in the <tt>Block # of Basic Block</tt> field.</li>
+				</ul>
+			<li> Store back  the FAT and Disk Free List from the memory to the disk.</li>
+			<li> Return from the system call with 0 (success)</li>
+		</ol>
+
 
 
 			</article>

@@ -448,7 +448,7 @@ Apart from the file system data structures XOS maintains details about files ope
 			<b>Halt </b></br>
 			<i>APL Syntax </i>: <tt>halt()</tt> <br/>
 			<i>System Call No. </i>: 0 <br/>
-			<p>The Halt system call is used to halt the machine. Halt system call calls the interrupt <tt>INT 7</tt>. </p>
+			<p>The Halt system call is used to halt the machine. This system call works only when there is one process running. Halt system call calls the interrupt <tt>INT 7</tt>. </p>
 			</article>			
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -527,7 +527,7 @@ Apart from the file system data structures XOS maintains details about files ope
 			<i>APL Syntax </i>: <tt>Exit()</tt> <br/>
 			<i>System Call No. </i>: 10 <br/>
 			
-			<p>This system call is used to terminate the execution of the process which invoked it and removes it from the memory . It loads the next available process. It calls Interrupt 7 Routine.</p>
+			<p>This system call is used to terminate the execution of the process which invoked it and removes it from the memory . It loads the next available process. When there is only one process running, it halts the machine. It calls Interrupt 7 Routine.</p>
 			
 			</article>			
 					

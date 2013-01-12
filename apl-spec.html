@@ -485,10 +485,13 @@
 			
 			<article  id="navread" class="grid col-full">
 				<h4>Read</h4>
-				<p>Reads the specified number of words(16 bytes) from a file which has the specified file descriptor into a string array. 
-				The return value of this system call is the number of words successfully read. If the <b>Read</b>  fails, an appropriate error code is returned.<br/>
+				<p>
+					Reads one word(16 bytes) from a file which has the specified file descriptor, into a string/integer variable. The return value of this system call is 0, if it is a success. 
+					If the <b>Read</b> fails, an appropriate error code is returned.
+
+					<br/>
 				<tt>&nbsp&nbsp&nbsp	
-					integer <b>Read</b> (integer fileDescriptor, string buffer[], integer numWords);</tt></p>
+					integer <b>Read</b> (integer fileDescriptor, string/integer variable);</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -496,10 +499,12 @@
 			
 			<article  id="navwrite" class="grid col-full">
 				<h4>Write</h4>
-				<p>Writes the specified number of words from the string buffer to a file in the filesystem with the specified file descriptor. 
-				The return value of this system call is the number of words successfully written. If the <b>Write</b>  fails, an appropriate error code is returned.<br/>
+				<p>
+					Writes one word from a string/integer variable, to a file in the filesystem with the specified file descriptor. The return value of this system call is 0, if it is a success. 
+					If the  <b>Write</b> fails, an appropriate error code is returned.
+					<br/>
 				<tt>&nbsp&nbsp&nbsp	
-					integer <b>Write</b> (integer fileDescriptor, string buffer[], integer numWords);</tt></p>
+					integer <b>Write</b> (integer fileDescriptor, string/integer variable);</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>

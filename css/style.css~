@@ -19,9 +19,14 @@
 ------------------------------------------------------------- */
 
 @font-face{
+<<<<<<< HEAD
+	font-family:  Museo Sans;
+	src:  url ('MuseoSans-300.otf');
+
+=======
 	font-family: Museo Sans;
 	src: url('MuseoSans-300.otf');
-
+>>>>>>> 99a154628771b7d939d30cfb40b42d6a061228a3
 }
 
 article, aside, details, figcaption, figure, 
@@ -33,7 +38,11 @@ html { font-size: 100%; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 10
 
 
 html, button, input, select, textarea {
+<<<<<<< HEAD
+	font-family: Museo Sans, "Helvetica Neue", "HelveticaNeue", Helvetica, Arial, sans-serif;
+=======
 	font-family: Museo Sans;
+>>>>>>> 99a154628771b7d939d30cfb40b42d6a061228a3
 	font-weight: 400; /* normal */
 	color: #555; 
 	font-smooth:always;

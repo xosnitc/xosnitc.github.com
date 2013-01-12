@@ -222,12 +222,13 @@
 	
 	
 					<h5>Per-Process Open File Table </h5>
-					The Per-Process Open File Table contains details of files opened by the corre sponding process. Every entry in this  table occupies 2 words. A maximum of 8 files can be opened by a process at a time, i.e. up to 8 entries in the PCB. It is stored in the PCB from words 15 to 30. Its structure is given below 1 word Pointer to system-wide open file table entry 1 word LSEEK position
+					The Per-Process Open File Table contains details of files opened by the corresponding process. Every entry in this  table occupies 2 words. A maximum of 8 files can be opened by a process at a time, i.e. up to 8 entries in the PCB. It is stored in the PCB from words 15 to 30. Its structure is given below 
 					</br>
 					</br>
 					<table class="doctable" style="width:50%">
 					<tr><td>Pointer to system-wide </br> open file table entry</td><td><tt>LSEEK</tt> position</td>	</tr>			
-					</table>
+					</table> <br/>
+					For an invalid entry, the value of pointer to system wide open file table is set to -1.
 					<ul>
 					<li>The OS maintains a system wide open file table which contains details of all the files that are opened by processes (Refer <a href="#navfiles_swoft" >System Wide Open File Table</a>). The entry	in the Per-Process File Table points to the System-wide Open File Table entry corresponding to the file.</li>		
 					<li>
@@ -403,10 +404,10 @@ Apart from the file system data structures XOS maintains details about files ope
 			<p>This data structure maintains details about all open files in the system. It is located from words 1344 to 1471 of the memory (in Page 2). System Wide Open File Table consists of a maximum of 64 entries. Therefore, there can be at most 64 open files in the system at any time. Each entry of the System Wide Open File Table occupies 2 words. 
 </p>
 			<table class="doctable" style="width:50%">
-			<tr><td>FAT Index Entry </td> <td>File Open Count</td></tr>			
+			<tr><td>FAT Index </td> <td>File Open Count</td></tr>			
 			</table>
 			<ul>
-			<li> <b>FAT index entry</b>: It stores the index of the corresponding file in the FAT. </li>		
+			<li> <b>FAT index </b>: It stores the index of the corresponding file in the FAT. An invalid entry is denoted by -1. </li>		
 			<li>  <b>File Open Count</b> : File Open Count is the number of open instances of the file. When this becomes zero, the entry for the file can be removed from the System Wide Open File Table.</li>		
 			</ul>
 			
@@ -461,13 +462,13 @@ Apart from the file system data structures XOS maintains details about files ope
 			<i>APL Syntax </i>: <tt>int Create(fileName)</tt> <br/>
 			<i>System Call No. </i>: 1 <br/>
 			
-			<p>This system call is used to create a new file in the file system whose name is specified in the argument. The return value of the <tt>Create()</tt> system call is 0 if it is a success, and an error code otherwise. If the file already exists, the system call returns 0 (success). It calls Interrupt 1 Routine. </p>
+			<p>This system call is used to create a new file in the file system whose name is specified in the argument. The return value of the <tt>Create()</tt> system call is 0 if it is a success, and -1 otherwise. If the file already exists, the system call returns 0 (success). It calls Interrupt 1 Routine. </p>
 
 			<b>Delete</b></br>
 			<i>APL Syntax </i>: <tt>int Delete(fileDescriptor)</tt> <br/>
 			<i>System Call No. </i>: 2 <br/>
 			
-			<p>This system call is used to delete the file from the file system whose name is specified in the argument. The return value of the  <tt>Delete()</tt> system call is 0 if it is a success, and an error code otherwise. It calls Interrupt 1 Routine.</p>
+			<p>This system call is used to delete the file from the file system whose name is specified in the argument. The return value of the  <tt>Delete()</tt> system call is 0 if it is a success, and -1 otherwise. It calls Interrupt 1 Routine.</p>
 			
 			<b>Open</b></br>
 			<i>APL Syntax </i>: <tt>int Open(fileName)</tt> <br/>
@@ -479,27 +480,25 @@ Apart from the file system data structures XOS maintains details about files ope
 			<i>APL Syntax </i>: <tt>int Close(fileName)</tt> <br/>
 			<i>System Call No. </i>: 4 <br/>
 			
-			<p>his system call is used to close an open file. The file can only be closed by the process which opened it. FileDescriptor is an integer value returned by the corresponding <tt>Open()</tt> system call. The return value of the <tt>Close()</tt> system call is 0 if it is a success, and an error code otherwise. It calls Interrupt 2 Routine. </p>
+			<p>This system call is used to close an open file. The file can only be closed by the process which opened it. FileDescriptor is an integer value returned by the corresponding <tt>Open()</tt> system call. The return value of the <tt>Close()</tt> system call is 0 if it is a success, and -1 otherwise. It calls Interrupt 2 Routine. </p>
 			
 			<b>Seek</b></br>
 			<i>APL Syntax </i>: <tt>int Seek(FileDescriptor, newLseek)</tt> <br/>
 			<i>System Call No. </i>: 5 <br/>
 			
-			<p>This system call is used to change the current value of the seek position in the global file table entry of a file to the <tt>newLseek</tt> value. The return value of the <tt>Seek()</tt> system call is 0 if it is a success, and an error code otherwise. It calls Interrupt 3 Routine. </p>
+			<p>This system call is used to change the current value of the seek position in the global file table entry of a file to the <tt>newLseek</tt> value. The return value of the <tt>Seek()</tt> system call is 0 if it is a success, and -1 otherwise. It calls Interrupt 3 Routine. </p>
 			
 			<b>Read</b></br>
-			<i>APL Syntax </i>: <tt>int Read(fileDescriptor, memoryLocation, numWords)</tt> <br/>
+			<i>APL Syntax </i>: <tt>int Read(fileDescriptor, destVariable)</tt> <br/>
 			<i>System Call No. </i>: 6 <br/>
 			
-			<p>This system call is used to read data from an open file (identified by fileDescriptor)
-to the memory (identified by memoryLocation). The return value of the <tt>Read()</tt> system call is the number of words successfully read from the file or an error code otherwise. It calls Interrupt 3 Routine. </p>
+			<p>This system call is used to read one word from an open file ( identified by <tt>fileDescriptor</tt> ) and store the word to a string/integer variable ( identified by <tt>destVariable</tt> ). The return value of the <tt>Read()</tt> system call is 0 if it is a success or -1 otherwise. It calls Interrupt 3 Routine. </p>
 			
 			<b>Write</b></br>
-			<i>APL Syntax </i>: <tt>int Write(fileDescriptor, memoryLocation, numWords)</tt> <br/>
+			<i>APL Syntax </i>: <tt>int Write(fileDescriptor, sourceVariable)</tt> <br/>
 			<i>System Call No. </i>: 7 <br/>
 			
-			<p>This system call is used to write data into an open file (identified by fileDescriptor)
-to the memory (identified by memoryLocation). The return value of the <tt>Write()</tt> system call is the number of words successfully written to the file or an error code otherwise. It calls Interrupt 4 Routine. </p>
+			<p>This system call is used to write one word into an open file ( identified by <tt>fileDescriptor</tt> ) from a string/integer variable ( identified by <tt>sourceVariable</tt> ). The return value of the <tt>Write()</tt> system call is 0 if it is a success or -1 otherwise. It calls Interrupt 4 Routine. </p>
 
 			</article>	
 			<div class="up grid col-one-third" style="float:right">
@@ -515,7 +514,7 @@ to the memory (identified by memoryLocation). The return value of the <tt>Write(
 			<i>APL Syntax </i>: <tt>int Fork()</tt> <br/>
 			<i>System Call No. </i>: 8 <br/>
 			
-			<p>This system call is used to replicate the process which invoked this system call in the memory. The new process which is created is known as the child and the process which invoked this system call is known as its parent. The return value of the <tt>Fork()</tt> system call is ystem call to the parent process is the PID (process identifier) of the child process.It calls Interrupt 5 Routine </p>
+			<p>This system call is used to replicate the process which invoked this system call in the memory. The new process which is created is known as the child and the process which invoked this system call is known as its parent. The return value of the <tt>Fork()</tt> system call to the parent process is the PID (process identifier) of the child process.It calls Interrupt 5 Routine </p>
 
 			<b>Exec</b></br>
 			<i>APL Syntax </i>: <tt>int Exec(filename)</tt> <br/>

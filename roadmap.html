@@ -345,7 +345,7 @@ endif;</pre>
 			<li> Index into the per-process open file table using the argument <tt>fileDescriptor</tt>. Return from the system call with -1 (failure) if the <tt>fileDescriptor</tt> is invalid or its corresponding entry is invalid.</li>
 			<li> Using the <tt>Pointer to System Wide Open File Table Entry</tt> field, index to the System Wide Open File Table </tt> and decrement <tt>File Open Count</tt> by one. If it becomes 0, invalidate the entry by setting both the fields to -1. </li>
 			<li> Now invalidate the Per-Process Open File Table entry, by setting the fields to -1</li>
-			<li> Return from system call with 0 (success) </li>
+			<li> Return from system call with 0 (success). </li>
 		</ol>
 
 		<h6> int Delete (fileName) </h6>

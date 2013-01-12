@@ -404,10 +404,10 @@ Apart from the file system data structures XOS maintains details about files ope
 			<p>This data structure maintains details about all open files in the system. It is located from words 1344 to 1471 of the memory (in Page 2). System Wide Open File Table consists of a maximum of 64 entries. Therefore, there can be at most 64 open files in the system at any time. Each entry of the System Wide Open File Table occupies 2 words. 
 </p>
 			<table class="doctable" style="width:50%">
-			<tr><td>FAT Index Entry </td> <td>File Open Count</td></tr>			
+			<tr><td>FAT Index </td> <td>File Open Count</td></tr>			
 			</table>
 			<ul>
-			<li> <b>FAT index entry</b>: It stores the index of the corresponding file in the FAT. </li>		
+			<li> <b>FAT index </b>: It stores the index of the corresponding file in the FAT. An invalid entry is denoted by -1. </li>		
 			<li>  <b>File Open Count</b> : File Open Count is the number of open instances of the file. When this becomes zero, the entry for the file can be removed from the System Wide Open File Table.</li>		
 			</ul>
 			

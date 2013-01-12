@@ -267,8 +267,27 @@ A	 maximum of 32 PCBs can be stored in the memory, and hence the maximum number 
 				The Per-Process Page Table stores the physical page number corresponding to each logical page associated with the process. The logical page number can vary from 0 to 3 for each process. Therefore, each process has 4 entries in the page table. Per-Process Page Tables are stored in Page 2, words 1024 – 1279 in the memory ( 256 words = 32 processes × 4 entries )
 				</p>
 				<p>
-					When a process is loaded only the disk addresses of the program are stored, and by demand paging (Refer <a href="#navmemmgmt_paging" >Paging</a>) pages are loaded/allocated for the process. Once all pages are loaded, each entry contains the page number where the data specified by the logical address resides in the memory and auxiliary information which includes valid/invalid bit, reference bit etc.
+					When a process is loaded only the disk addresses of the program are stored, and by demand paging (Refer <a href="#navmemmgmt_paging" >Paging</a>) pages are loaded/allocated for the process. Once all pages are loaded, each entry contains the page number where the data specified by the logical address resides in the memory and auxiliary information which includes valid/invalid bit, reference bit etc. <br/>
+					Eg :
 				</p>
+
+				<table class="doctable" style="width:50%">
+					<tr>  <th>Physical Page Number</th>  <th> Auxiliary information (valid bit)</th> </tr>
+					<tr> <td>36</td> <td>1</td> </tr>
+					<tr> <td>311</td> <td> 0</td> </tr>
+					<tr> <td> 54</td> <td> 1</td></tr>
+					<tr> <td>490</td> <td>0</td></tr>
+				</table>
+
+				In the above example : 
+				<ul>
+					<li> The 1st entry is a valid page in memory as the valid bit is 1.</li>
+					<li> The 2nd entry is invalid (valid bit is 0) and the disk block no corresponding to that entry is stored (311).</li>
+					<li> The 3rd entry is also a valid page (valid bit is 1). </li>
+					<li> The 4th entry is invalid and the disk block no stored is 490. This corresponds to a page in the swap area.</li>
+
+				</ul>
+
 				</article>			
 				<div class="up grid col-one-third" style="float:right">
 				<a href="#navtop" title="Go back up"> top &uarr;</a>

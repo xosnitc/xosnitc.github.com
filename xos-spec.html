@@ -462,13 +462,13 @@ Apart from the file system data structures XOS maintains details about files ope
 			<i>APL Syntax </i>: <tt>int Create(fileName)</tt> <br/>
 			<i>System Call No. </i>: 1 <br/>
 			
-			<p>This system call is used to create a new file in the file system whose name is specified in the argument. The return value of the <tt>Create()</tt> system call is 0 if it is a success, and an error code otherwise. If the file already exists, the system call returns 0 (success). It calls Interrupt 1 Routine. </p>
+			<p>This system call is used to create a new file in the file system whose name is specified in the argument. The return value of the <tt>Create()</tt> system call is 0 if it is a success, and -1 otherwise. If the file already exists, the system call returns 0 (success). It calls Interrupt 1 Routine. </p>
 
 			<b>Delete</b></br>
 			<i>APL Syntax </i>: <tt>int Delete(fileDescriptor)</tt> <br/>
 			<i>System Call No. </i>: 2 <br/>
 			
-			<p>This system call is used to delete the file from the file system whose name is specified in the argument. The return value of the  <tt>Delete()</tt> system call is 0 if it is a success, and an error code otherwise. It calls Interrupt 1 Routine.</p>
+			<p>This system call is used to delete the file from the file system whose name is specified in the argument. The return value of the  <tt>Delete()</tt> system call is 0 if it is a success, and -1 otherwise. It calls Interrupt 1 Routine.</p>
 			
 			<b>Open</b></br>
 			<i>APL Syntax </i>: <tt>int Open(fileName)</tt> <br/>
@@ -480,27 +480,27 @@ Apart from the file system data structures XOS maintains details about files ope
 			<i>APL Syntax </i>: <tt>int Close(fileName)</tt> <br/>
 			<i>System Call No. </i>: 4 <br/>
 			
-			<p>his system call is used to close an open file. The file can only be closed by the process which opened it. FileDescriptor is an integer value returned by the corresponding <tt>Open()</tt> system call. The return value of the <tt>Close()</tt> system call is 0 if it is a success, and an error code otherwise. It calls Interrupt 2 Routine. </p>
+			<p>his system call is used to close an open file. The file can only be closed by the process which opened it. FileDescriptor is an integer value returned by the corresponding <tt>Open()</tt> system call. The return value of the <tt>Close()</tt> system call is 0 if it is a success, and -1 otherwise. It calls Interrupt 2 Routine. </p>
 			
 			<b>Seek</b></br>
 			<i>APL Syntax </i>: <tt>int Seek(FileDescriptor, newLseek)</tt> <br/>
 			<i>System Call No. </i>: 5 <br/>
 			
-			<p>This system call is used to change the current value of the seek position in the global file table entry of a file to the <tt>newLseek</tt> value. The return value of the <tt>Seek()</tt> system call is 0 if it is a success, and an error code otherwise. It calls Interrupt 3 Routine. </p>
+			<p>This system call is used to change the current value of the seek position in the global file table entry of a file to the <tt>newLseek</tt> value. The return value of the <tt>Seek()</tt> system call is 0 if it is a success, and -1 otherwise. It calls Interrupt 3 Routine. </p>
 			
 			<b>Read</b></br>
 			<i>APL Syntax </i>: <tt>int Read(fileDescriptor, memoryLocation, numWords)</tt> <br/>
 			<i>System Call No. </i>: 6 <br/>
 			
 			<p>This system call is used to read data from an open file (identified by fileDescriptor)
-to the memory (identified by memoryLocation). The return value of the <tt>Read()</tt> system call is the number of words successfully read from the file or an error code otherwise. It calls Interrupt 3 Routine. </p>
+to the memory (identified by memoryLocation). The return value of the <tt>Read()</tt> system call is the number of words successfully read from the file or -1 otherwise. It calls Interrupt 3 Routine. </p>
 			
 			<b>Write</b></br>
 			<i>APL Syntax </i>: <tt>int Write(fileDescriptor, memoryLocation, numWords)</tt> <br/>
 			<i>System Call No. </i>: 7 <br/>
 			
 			<p>This system call is used to write data into an open file (identified by fileDescriptor)
-to the memory (identified by memoryLocation). The return value of the <tt>Write()</tt> system call is the number of words successfully written to the file or an error code otherwise. It calls Interrupt 4 Routine. </p>
+to the memory (identified by memoryLocation). The return value of the <tt>Write()</tt> system call is the number of words successfully written to the file or -1 otherwise. It calls Interrupt 4 Routine. </p>
 
 			</article>	
 			<div class="up grid col-one-third" style="float:right">
@@ -516,7 +516,7 @@ to the memory (identified by memoryLocation). The return value of the <tt>Write(
 			<i>APL Syntax </i>: <tt>int Fork()</tt> <br/>
 			<i>System Call No. </i>: 8 <br/>
 			
-			<p>This system call is used to replicate the process which invoked this system call in the memory. The new process which is created is known as the child and the process which invoked this system call is known as its parent. The return value of the <tt>Fork()</tt> system call is ystem call to the parent process is the PID (process identifier) of the child process.It calls Interrupt 5 Routine </p>
+			<p>This system call is used to replicate the process which invoked this system call in the memory. The new process which is created is known as the child and the process which invoked this system call is known as its parent. The return value of the <tt>Fork()</tt> system call to the parent process is the PID (process identifier) of the child process.It calls Interrupt 5 Routine </p>
 
 			<b>Exec</b></br>
 			<i>APL Syntax </i>: <tt>int Exec(filename)</tt> <br/>

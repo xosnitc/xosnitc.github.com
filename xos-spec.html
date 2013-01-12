@@ -482,10 +482,10 @@ Apart from the file system data structures XOS maintains details about files ope
 			<p>his system call is used to close an open file. The file can only be closed by the process which opened it. FileDescriptor is an integer value returned by the corresponding <tt>Open()</tt> system call. The return value of the <tt>Close()</tt> system call is 0 if it is a success, and an error code otherwise. It calls Interrupt 2 Routine. </p>
 			
 			<b>Seek</b></br>
-			<i>APL Syntax </i>: <tt>iint Seek(FileDescriptor, lseek)</tt> <br/>
+			<i>APL Syntax </i>: <tt>int Seek(FileDescriptor, newLseek)</tt> <br/>
 			<i>System Call No. </i>: 5 <br/>
 			
-			<p>This system call is used to change the current value of the seek position in the global file table entry of a file. The return value of the <tt>Seek()</tt> system call is 0 if it is a success, and an error code otherwise. It calls Interrupt 3 Routine. </p>
+			<p>This system call is used to change the current value of the seek position in the global file table entry of a file to the <tt>newLseek</tt> value. The return value of the <tt>Seek()</tt> system call is 0 if it is a success, and an error code otherwise. It calls Interrupt 3 Routine. </p>
 			
 			<b>Read</b></br>
 			<i>APL Syntax </i>: <tt>int Read(fileDescriptor, memoryLocation, numWords)</tt> <br/>

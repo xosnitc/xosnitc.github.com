@@ -19,7 +19,7 @@
 	<title>Roadmap // eXperimental Operating System</title>
 	<link rel="shortcut icon" type="image/png" href="favicon.png">
 	
-	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	<!--<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>-->
 	<link rel="stylesheet" href="css/style.css">
 	
 	<!--[if lt IE 9]>
@@ -86,14 +86,14 @@
 			<h2>Stage 1: Understanding the Filesystem </h2>
 			<p> The first stage of building XOS begins with understanding the underlying XFS Filesystem interface. </p>
 			
-			<ul>
+			<ol>
 			<li> Download the XFS-Interface from the <a href="downloads.html">downloads</a> page and compile the program following the instructions given in the page.</li>
 			<li> Start by formatting the disk in the XFS interface using <b>fdisk</b> command. A file named <i>disk.xfs</i> is created, which simulates the hard disk.</li>
 			<li> Load a data file to the XFS formatted disk from your UNIX machine.  Read about  <a href="xfs-spec.html#navfile" >Files</a> in XFS</li>
 			<li> Find out the FAT entry corresponding to the loaded file. Use the <b>copy</b> command to copy FAT entries to a file in your PC. See <a href="xfs-spec.html#navdiskorg">disk organization</a> of XFS Disk.  </li>
 			<li> Check the <a href="xfs-spec.html#navfat">FAT entry</a> and find the basic block. Copy it to get the data blocks used by this file.</li>
 			<li> Copy the data blocks and display the file </li>
-			</ul>
+			</ol>
 
 
 			
@@ -105,7 +105,7 @@
 			<article  id="navstage2" class="grid col-full">
 			<h2>Stage 2: Starting the machine </h2>
 			<p> The next stage is to make the machine display <i>"Hello World"</i> on startup.    </p>
-			<ul>
+			<ol>
 			<li>
 			Create a "Hello World" program using <a href="spl-spec.html">SPL</a> (System Programmer's Language).
 			The code snippet is given below. 
@@ -122,7 +122,7 @@
 			<li> Follow the instructions in README to compile the machine simulator </li>
 			<li> cd to xsm directory. Run the machine using the command <tt>./xsm -id </tt>.
 			
-			</ul>
+			</ol>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -131,14 +131,16 @@
 			<article  id="navstage3" class="grid col-full">
 			<h2>Stage 3: Running a user program </h2>
 			<p> User programs or application programs are programmed using <a href="apl-spec.html">APL</a> or Application Programmer's Language. In this stage, an application program in APL is compiled and loaded to the disk as the init process. An OS Startup code is written in <a href="spl-spec.html">SPL</a> to load this program to the memory on machine startup. 		  </p>
-			<ul>
+			<ol>
 			<li> Download APL Compiler from the <a href="downloads.html">downloads</a> page. Unzip and install the compiler following the instructions in the README </li>
 			<li> Write a program in APL to print all prime numbers lesser than a number taken as input. See <a href="apl-spec.html#navexamples">Examples</a> of APL programs</li>
 			<li> Compile your APL program using <b> ./apl < <i>path-to-your-program</i> > </b>. </li>
 			<li> Load it to <b>disk.xfs</b> as <b>INIT program</b> using XFS interface </li>
 			<li> For for the machine to halt when it runs a user program, <b>INT 7</b> and <b>Exception handler</b> of the <b>disk.xfs</b> must be loaded with a file containing just the <tt>HALT</tt> instruction. 
 			<br/><br/>
+			</ol>
 			<h6>OS Startup Code</h6>
+			<ol>
 			The executable files in <b>INT 7</b>, <b> Exception Handler</b> and the program to print primes  must be loaded to the memory from the XFS disk by the OS Startup Code when the machine starts. The OS Startup Code must be written in <a href="spl-spec.html">SPL</a>, compiled and loaded to the disk as done in the previous stage. The new OS Startup Code must do the following tasks. </br><br/>
 			<li> Load Exception Handler (disk block 1 and memory page 7) and INT 7 (disk block 9 and memory page 15) from  the disk to the memory using<a href="spl-spec.html#navlsstmt" > load</a> instruction.  
 			<div class="syntax">
@@ -162,12 +164,11 @@
 			   .	<br/>
 			 [PTBR + 6] = 19;  // Memory address of stack <br/>
 			 [PTBR + 7] = 11;	<br/>
-			</div>
-			</li>
+				</div>
+				</li>
+				</ul>
 			
-			</ul>
-			
-			<li> The next structure to setup is the INIT's Process Control Block. (See <a href="xos-spec.html#navpromgmt_pcb"> PCB </a> ). The starting address of INIT's PCB is <b>1536</b>. SPL has a predefined constant <tt>READY_LIST</tt> with this value stored. Setup the PCB with each corresponding entry. 
+			<li> The next structure to setup is the INIT's Process Control Block. (See <a href="xos-spec.html#navpromgmt_pcb"> PCB </a> ). The starting address of INIT's PCB is <b>1536</b>. SPL has a <a href="spl-spec.html#navconst">predefined constant</a> <tt>READY_LIST</tt> with this value stored. Setup the PCB with each corresponding entry. 
 				<ul>
 				<li> Set the 1st word with the PID which is 0 for INIT Process </li>
 				<div class="syntax">
@@ -189,7 +190,7 @@
 		 		
 		 		
 			</li>
-			</ul>
+			</ol>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -200,7 +201,7 @@
 			<h2>Stage 4: Playing with files </h2>
 			<p> In this stage, you will implement file system calls  <b>Create, Delete, Open, Close, Seek, Read</b> and <b> Write </b>. The following tasks should be done in this stage </p>
 			<h6> Modifying the OS Startup Code</h6>
-			<ul>
+			<ol>
 			<li> Load FAT and Disk Free List from the disk blocks to corresponding memory pages. Refer <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization </a>. </li>
 			</li>
 			<li>
@@ -218,7 +219,7 @@ endwhile;						</pre>
 			<li> 
 			<a href="xos-spec.html#navsyscalls_file">File System Calls</a> are implemented in Interrupt 1 (Create & Delete),  2 (Open & Close), 3 (Seek & Read) and 4 (Write) Routines. These 4 interrupt routines must be programmed in SPL, compiled and loaded into the disk in the corresponding locations using the XFS-Interface. These interrupt routines must be loaded from the disk to corresponding memory pages by the OS Startup Code.
 			</li>
-			</ul>
+			</ol>
 			Each system call will be invoked from a user program which invokes the <tt> INT </tt> instruction after pushing the registers, arguments and system call number into the stack.  <img src="doc/syscallstack.png" style="width:150%">
 			
 			<br/><br/>
@@ -260,12 +261,12 @@ endif;	</pre>
 
 			Now we'll implement the system calls in its corresponding Interrupt Routine Code. <br/><br/>
 			<h6> int Create(filename) </h6>
-		<ul>
+		<ol>
 		<li> First of all, the memory copy of the <a href="xfs-spec.html#navdfl">disk free list</a> is searched to find a free block number (indicated by a 0). This block is used as the <a href="xfs-spec.html#navfile">basic block</a> of the file to be created. It's entry is set to 1. The block number is stored to a register. If no free block is found return -1 (as done in the previous step). </li>
 
 		<li> The <tt>filename</tt> specified as argument is stored in the stack at absoluteSP - 2. Fetch it and store it to a register. </li>
 
-		<li> Next, the memory copy of the <a href="xfs-spec.html#navfat">FAT</a> is searched for a free entry. A free entry in the FAT is indicated by -1 in the entry for basic block (Word 2 of each FAT entry). If no free entry is found put -1 in the return value space of the stack (absoluteSP - 12, See figure above). Then return to USER Mode using <b>ireturn</b> instruction. Address of FAT is stored in a predefined constant in <tt>FAT</tt> in SPL. </li>
+		<li> Next, the memory copy of the <a href="xfs-spec.html#navfat">FAT</a> is searched for a free entry. A free entry in the FAT is indicated by -1 in the entry for basic block (Word 2 of each FAT entry). If no free entry is found put -1 in the return value space of the stack (absoluteSP - 12, See figure above). Then return to USER Mode using <b>ireturn</b> instruction. Address of FAT is stored in a <a href="spl-spec.html#navconst">predefined constant</a> in <tt>FAT</tt> in SPL. </li>
 		<li><tt>filename</tt> and the <tt>free block number</tt> obtained  in the previous steps are stored in the <em>Filename</em> field and <em>basic block number</em> field of the free <a href="xfs-spec.html#navfat">FAT</a> entry respectively.</li>
 			<li> The <em>file size</em> field of the FAT entry is initialized to zero.</li>
 
@@ -296,37 +297,37 @@ endif;</pre>
 		
 		<li> The return value of this system call is 0 in case of success and -1 in case of failure. The return value is stored in the stack at address absoluteSP - 12.</li>
 		<li>Use an <b>ireturn</b> instruction to transfer control back to USER Mode.</li>
-		</ul>
+		</ol>
 
 		<h6> int Open(filename) </h6>
-		<ul>
+		<ol>
 			<li> FAT is searched for the <tt>filename</tt>. If the entry is not found, -1 is returned. Otherwise, store the index of the FAT entry in a register.</li>
-			<li>Then, the <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a> is searched for the FAT Index entry found in the previous step. If there is no free entry (indicated by -1). Otherwise a new entry is created in the System-Wide Open File Table as follows: </li>
-				<ul>
-					<li> FAT </li>
 
+			<li>Then, the <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a> is searched for the FAT Index  found in the previous step. If an entry is found, increment the <a href="xos-spec.html#navfiles_swoft"><tt>File Open Count</tt></a>.</li>
 
+			<li> If an entry is not found with the FAT Index, then search for a free entry in the System-Wide Open File Table. If there are no free entries (indicated by -1 <tt>FAT Index</tt> field), return from the system call with return value -1. Otherwise, store <tt>FAT Index</tt> and set the <tt>File Open Count</tt> field as 1 in free entry found.	</li>
 
+			<li> Store the index of the entry (in System-Wide Open File Table) in a register.</li>
 
-		<li>  A free entry is searched in the <a href="xos-spec.html#navpromgmt_pcb">per-process open file table in the PCB</a> of the process. A free entry is indicated by -1 in the first field (Pointer to <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a>). If there are no free entries, -1 is returned by the system call. </li>
-		
-		<li> Th
-		<ul>
-			<li>
-
-
-
-
-
-			<li> The memory copy of FAT is searched using the <tt>fileName</tt> and the corresponding index of that file in the FAT is stored as the <em>FAT index</em>. If the file does not have an entry in the FAT, -1 is returned.
+			<li> Every process will have a <a href="xos-spec.html#navpromgmt_pcb">Per-Process File Table</a> in its PCB. This stores the details of files opened by this process. Find the PCB's location from PTBR (It may be directly obtained if there is only one process, however following a general approach to get PCBs will be useful when more than one process starts running). 
+				
+				<div class="syntax"><tt>  ProcessID = (PTBR - 1024) / 8; </tt></div>
 			
-			</li><li> The <em>lseek</em> field is set to zero.
-		</li></ul>
+
+			Page Tables start at word address 1024. And size of each <a href="xos-spec.html#navpromgpmt_pagetbl">per-process page table</a> is 8 words. 
+			<br/><br/>
+				We can find the PCB of the current process using the <tt>ProcessID</tt> calculated in the previous step.
+				<div class="syntax"><tt> PCB_Start = READY_LIST + 32 * ProcessID; </tt></div>
+				
+				(READY_LIST is a <a href="spl-spec.html#navconst">predefined constant</a> in SPL which has value 1536). 
+			</li>
+
+			<li>  A free entry is searched in the <a href="xos-spec.html#navpromgmt_pcb">per-process open file table in the PCB</a> of the process. A free entry is indicated by -1 in the first field (Pointer to <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a>). If there are no free entries, -1 is returned by the system call. </li>
+
+			<li> Otherwise, set the <tt>Pointer to System-Wide File Table Entry</tt> field to the index stored in Step 4 and set <tt>LSEEK Position</tt> to 0.  </li>
 		
-		</li><li> The index of this global file table entry is stored in its local file table.
-		
-		</li><li> The index of this entry in the local file table is returned as a return value of the system call. This is known as the file descriptor.
-		</li></ul>
+			<li> The index of this entry in the local file table is returned as a return value of the system call. This is known as the file descriptor.</li>
+		</ol>
 
 
 
@@ -334,7 +335,7 @@ endif;</pre>
 
 		
 		<h6> int Delete(filename) </h6>
-		<ul>
+		<ol>
 		<li> The memory copy of the FAT is searched using the <tt>fileName</tt> to get the corresponding FAT entry. If no entry is found, -1 is returned.</li>
 		
 		<li> If the file is already open, -1 is returned. We adopt the following steps to check if the file is open.
@@ -352,7 +353,7 @@ endif;</pre>
 		</li><li> The updated copies of FAT and disk free list in the memory are committed to the disk.
 		
 		</li><li> The return value of this system call is 0 in case of success and the appropriate error code in case of failure.
-	</li></ul>
+	</li></ol>
 
 
 			</article>
@@ -432,8 +433,9 @@ endif;</pre>
 </div>
 </div>
 
-<!-- Javascript - jQuery -->
-<script src="http://code.jquery.com/jquery.min.js"></script>
+<!-- Javascript - jQuery 
+<script src="http://code.jquery.com/jquery.min.js"></script>-->
+<script src="js/jquery-1.7.2.min.js"></script>
 <script>window.jQuery || document.write('<script src="js/jquery-1.7.2.min.js"><\/script>')</script>
 
 <!--[if (gte IE 6)&(lte IE 8)]>

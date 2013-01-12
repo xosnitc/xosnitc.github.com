@@ -91,7 +91,7 @@
 			<li> Start by formatting the disk in the XFS interface using <b>fdisk</b> command. A file named <i>disk.xfs</i> is created, which simulates the hard disk.</li>
 			<li> Load a data file to the XFS formatted disk from your UNIX machine.  Read about  <a href="xfs-spec.html#navfile" >Files</a> in XFS</li>
 			<li> Find out the FAT entry corresponding to the loaded file. Use the <b>copy</b> command to copy FAT entries to a file in your PC. See <a href="xfs-spec.html#navdiskorg">disk organization</a> of XFS Disk.  </li>
-			<li> Check the <a href="xfs-spec.html#navfat">FAT entry</a> and find the basic block. Copy it to get the data blocks used by this file.</li>
+			<li> Check the <a href="xos-spec.html#navfiles_fat">FAT entry</a> and find the basic block. Copy it to get the data blocks used by this file.</li>
 			<li> Copy the data blocks and display the file </li>
 			</ol>
 
@@ -274,11 +274,11 @@ endif;	</pre>
 		<li> First of all, the memory copy of the <a href="xfs-spec.html#navdfl">disk free list</a> is searched to find a free block number (indicated by a 0). This block is used as the <a href="xfs-spec.html#navfile">basic block</a> of the file to be created. It's entry is set to 1. The block number is stored to a register. If no free block is found return -1 (as done in the previous step). </li>
 
 		<li> The <tt>filename</tt> specified as argument is stored in the stack at absoluteSP - 2. Fetch it and store it to a register. </li>
-		<li> The memory copy of the <a href="xfs-spec.html#navfat">FAT</a> is to be searched for the <tt>filename</tt> to check if the file already exists. If it exists return from the sytem call with 0 (success).
+		<li> The memory copy of the <a href="xos-spec.html#navfiles_fat">FAT</a> is to be searched for the <tt>filename</tt> to check if the file already exists. If it exists return from the sytem call with 0 (success).
 		</li>
 
-		<li> Next, the memory copy of the <a href="xfs-spec.html#navfat">FAT</a> is searched for a free entry. A free entry in the FAT is indicated by -1 in the entry for basic block (Word 2 of each FAT entry). If no free entry is found put -1 in the return value space of the stack (absoluteSP - 12, See figure above). Then return to USER Mode using <b>ireturn</b> instruction. Address of FAT is stored in a <a href="spl-spec.html#navconst">predefined constant</a> in <tt>FAT</tt> in SPL. </li>
-		<li><tt>filename</tt> and the <tt>free block number</tt> obtained  in the previous steps are stored in the <em>Filename</em> field and <em>basic block number</em> field of the free <a href="xfs-spec.html#navfat">FAT</a> entry respectively.</li>
+		<li> Next, the memory copy of the <a href="xos-spec.html#navfiles_fat">FAT</a> is searched for a free entry. A free entry in the FAT is indicated by -1 in the entry for basic block (Word 2 of each FAT entry). If no free entry is found put -1 in the return value space of the stack (absoluteSP - 12, See figure above). Then return to USER Mode using <b>ireturn</b> instruction. Address of FAT is stored in a <a href="spl-spec.html#navconst">predefined constant</a> in <tt>FAT</tt> in SPL. </li>
+		<li><tt>filename</tt> and the <tt>free block number</tt> obtained  in the previous steps are stored in the <em>Filename</em> field and <em>basic block number</em> field of the free <a href="xos-spec.html#navfiles_fat">FAT</a> entry respectively.</li>
 			<li> The <em>file size</em> field of the FAT entry is initialized to zero.</li>
 
 
@@ -379,7 +379,7 @@ endif;</pre>
 
 
 		<ol>
-			<li> Search the memory copy of <a href="xfs-spec.html#navfat">FAT</a> for the <tt>filename</tt> specified as argument. If it is not found, return from the system call with -1 (failure). </li>
+			<li> Search the memory copy of <a href="xos-spec.html#navfiles_fat">FAT</a> for the <tt>filename</tt> specified as argument. If it is not found, return from the system call with -1 (failure). </li>
 			<li> If an entry is found, store the index in a register. </li>
 			<li> Search the System Wide Open File Table to see if the file has been opened. If it is opened, return from the system call with -1 (failure) </li>
 			<li> Otherwise, follow the steps to invalidate and delete the file <li>
@@ -387,7 +387,7 @@ endif;</pre>
 				<li>Load the <a href="xfs-spec.html#navfile"><tt>Basic Block</tt></a> to the <a href="xos-spec.html#navfiles_scratchpad">Scratchpad</a>. </li>
 				<li> For each block used by the file (specified in the Basic Block), invalidate the corresponding block's entry (Setting -1) in the memory copy of the <a href="xfs-spec.html#navdf">Disk Free List</a></li>
 				<li> Invalidate the entry for the basic block in the Disk Free List by setting -1.</li>
-				<li> Invalidate the <a href="xfs-spec.html#navfat">FAT</a> entry by setting -1 in the <tt>Block # of Basic Block</tt> field.</li>
+				<li> Invalidate the <a href="xos-spec.html#navfiles_fat">FAT</a> entry by setting -1 in the <tt>Block # of Basic Block</tt> field.</li>
 				</ul>
 			<li> Store back  the FAT and Disk Free List from the memory to the disk.</li>
 			<li> Return from the system call with 0 (success)</li>
@@ -430,7 +430,7 @@ endif;</pre>
 		<i>Arguments</i>: 1) fileDescriptor 2) newLseek <br/>
 		<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
 		<br/>
-		Changes the value of LSEEK position of the file to <i>newLseek</i>
+		Changes the value of LSEEK position of the file to <i>newLseek</i>.
 
 	  	<ol>
 	  		<li> Get the arguments to registers from the stack </li>
@@ -445,7 +445,7 @@ endif;</pre>
 	  	<h6>Read</h6>
 		<i>System Call No</i>: 7 <br/>
 		<i>Interrupt Routine No</i>: 3 <br/>
-		<i>Arguments</i>: 1) fileDescriptor 2) Variable passed by reference<br/>
+		<i>Arguments</i>: 1) fileDescriptor 2) Variable<br/>
 		<i>Return Value</i>: 0 (success) and -1 (failure) </br>
 		<br/>
 		Reads a word from a file to the variable passed as argument
@@ -472,19 +472,92 @@ endif;</pre>
 			
 
 			<article  id="navstage5" class="grid col-full">
-			<h2>Stage 5: Executing another program</h2>
+			<h2>Stage 5: The Exec System Call</h2>
 			<p>  
-
+			The <a href="xos-spec.html#navsyscalls_process">Exec system call</a> is used to load and run a new process from a currently running process. The current process is overwritten by new process i.e. the process data structures of the current process is used by the new process. </br>
+			<i>System Call No</i>: 9 <br/>
+			<i>Interrupt Routine No</i>: 6 <br/>
+			<i>Arguments</i>: filename <br/>
+			<i>Return Value</i>: 0 (success) and -1 (failure) </br>
+		
 			 </p>
+			 The Interrupt 6 Routine is to be programmed in SPL, compiled and loaded to the disk. 
+			 <b>OS Startup Code</b> is modified to load Interrupt Routine 6 from the disk to memory. </br>
+
+			 The Interrupt 6 Routine performs the following actions.
+			 <ol>
+		 		<li> Get the filename to a register from the stack </li>
+		 		<li> Search for the filename in the memory copy of FAT. If it doesn't exist return -1 (indicating failure). </li>
+		 		<li> Otherwise fetch the basic block (location is obtained from FAT) and place it in the <a href="xos-spec.html#navfiles_scratchpad">scratchpad</a>.
+		 		</li>
+		 		<li> Load the blocks of the file (a maximum of 3 blocks) to the memory in pages of INIT process (16-18). INIT is the currently running process which issues an Exec system call.</li>
+		 		<li> Close all files opened by the current process by following the steps in <b>Close()</b> system call </li>
+		 		<li> SP is reset to 3*512.  </li>
+		 		<li> 0 is stored in 19*512 (physical address of the stack) to set IP by the <b>ireturn</b> instruction </li> 
+				<li> Return from the system call with 0 (indicating success).</li>
+			 </ol>
+
+			 <b>Exec</b> system call can be tested out by modifying the INIT program, by adding an <a href="apl-spec.html#navexec">Exec</a> call in it.
+
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>	
 			
 
+
+
 			<article  id="navstage6" class="grid col-full">
 			<h2>Stage 6: Multiprogramming</h2>
-			<p>  Not Available . </p>
+			<p>  <a href="xos-spec.html#navpromgmt_multiprog">Multiprogramming</a> refers to running more than one process simultaneously. A machine capable of multiprogramming will have a timer which interrupts after a fixed interval. In XSM, the timer interrupts after every instruction and the control is passed to Page 8, i.e. the timer interrupt routine.  </p>
+			Run the machine  without the <b>-id</b> flag to enable the timer. <br/>
+			<tt> ./xsm </tt>
+
+			<p>The task to be done in this stage, is to program the Timer Interrupt in SPL, compile it and load it to the disk. </p>
+
+
+			The timer interrupt routine must perform the following actions:
+			<ol>
+				<li> Find the ProcessID or PID using the PTBR. </li>
+				<li> Using the PID find the PCB of the process. Store the values of the current process in its <a href="xos-spec.html#navpromgmt_pcb">PCB</a></li> 
+					<div class="syntax">
+						<pre>
+[ PCB_Start + 0 ] = ProcessID;		//PID
+[ PCB_Start + 1 ] = 1 			// STATE : Waiting for the CPU
+[ PCB_Start + 2 ] = BP 					
+[ PCB_Start + 3 ] = SP - 1           	
+[ PCB_Start + 4 ] = [absoluteSP - 1] 	// IP gets stored in SP by machine
+[ PCB_Start + 5 ] = PTBR	
+[ PCB_Start + 6 ] = PTLR		
+[ PCB_Start + 7 ] = R0			
+	.
+	.
+[ PCB_Start + 14] = R7			</pre>	</div>	
+
+				<li>Scan the <a href="xos-spec.html#navpromgmt_readylist">Ready List of PCBs</a> from the PCB of current process to check for the next process with STATE 1 (Waiting for the CPU). Store this in a register.
+				</li>
+				<li> Load the fields from this new PCB  to the corresponding registers. </lI>
+				<li> Find the physical address of SP corresponding to this process, and store 0 in it. </li>
+				<li> Use <b>ireturn</b> instruction to return to USER Mode</li>
+	
+			</ol>
+
+			However to test the timer interrupt, you must have more than one program present in the memory. The programs will run in an interleaved fashion when the timer itnerrupt is working perfectly. 
+
+			<ol>
+				<li> Write 2 APL programs,
+					<ul>
+						<li> To print all even numbers from 1 to n (taken as input)</li>
+						<li> To print all odd numbers from 1 to n (taken as input)</li>
+					</ul>
+				<li> Load one of the programs as INIT and the 2nd program as an executable to <b>disk.xfs</b></li>
+				<li> Modify the startup code, to load both the programs, one as INIT (already done in Stage 2) and other from locations 20 to 22 and page 23 for stack. </li>
+				<li> Setup the Per-Process Page Tables and PCB for the 2nd process as done in Stage 2. See <a href="xos-spec.html#navmemorg">Memory Organization</a> to get the locations of the page table and PCB of the 2nd process </li>
+				<li> Load the Timer Interrupt Routine from the disk to the memory. </li>
+
+			</ol> 
+
+
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>

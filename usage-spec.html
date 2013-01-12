@@ -124,8 +124,20 @@
 				<p> Run the following commands to compile and run the SPL compiler </p>
 				<ul>
 					<li><p> <tt>make </tt></p></li>
-					<li><p> <tt>./spl &ltpath-to-file&gt </tt></p></li>
+					<li><p> <tt>./spl &ltflag&gt  <  &ltpath-to-file&gt </tt></p></li>
 				</ul> 
+
+				<h6>Flags</h6>
+				Any one of these flags is required to compile.
+				<ul>
+					<li><p> <tt>--os</tt> : Compile OS Code</p></li>
+					<li><p> <tt>--int=timer</tt> : Compile Timer Interrupt code</p></li>
+					<li><p> <tt>--int=[1-7]</tt> : Compile Interrupt routines</p></li>
+					<li><p> <tt>--exhandler</tt> : Compile Exception Handler</p> </li>
+
+				</ul>	
+
+				
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -156,8 +168,10 @@
 				<p> Run the following commands to compile and run the APL compiler </p>
 				<ul>
 					<li><p> <tt>make </tt></p></li>
-					<li><p> <tt>./apl &ltpath-to-file&gt </tt></p></li>
+					<li><p> <tt>./apl < &ltpath-to-file&gt </tt></p></li>
 				</ul> 
+
+				The output file is named <b>"apcode.xsm"</b>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>

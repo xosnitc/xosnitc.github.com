@@ -222,12 +222,13 @@
 	
 	
 					<h5>Per-Process Open File Table </h5>
-					The Per-Process Open File Table contains details of files opened by the corre sponding process. Every entry in this  table occupies 2 words. A maximum of 8 files can be opened by a process at a time, i.e. up to 8 entries in the PCB. It is stored in the PCB from words 15 to 30. Its structure is given below 1 word Pointer to system-wide open file table entry 1 word LSEEK position
+					The Per-Process Open File Table contains details of files opened by the corresponding process. Every entry in this  table occupies 2 words. A maximum of 8 files can be opened by a process at a time, i.e. up to 8 entries in the PCB. It is stored in the PCB from words 15 to 30. Its structure is given below 
 					</br>
 					</br>
 					<table class="doctable" style="width:50%">
 					<tr><td>Pointer to system-wide </br> open file table entry</td><td><tt>LSEEK</tt> position</td>	</tr>			
-					</table>
+					</table> <br/>
+					For an invalid entry, the value of pointer to system wide open file table is set to -1.
 					<ul>
 					<li>The OS maintains a system wide open file table which contains details of all the files that are opened by processes (Refer <a href="#navfiles_swoft" >System Wide Open File Table</a>). The entry	in the Per-Process File Table points to the System-wide Open File Table entry corresponding to the file.</li>		
 					<li>

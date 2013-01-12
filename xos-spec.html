@@ -263,7 +263,7 @@ A	 maximum of 32 PCBs can be stored in the memory, and hence the maximum number 
 				</table>
 				</br>
 				<p>  
-				The Per-Process Page Table stores the physical page number corresponding to each logical page associated with the process. The logical page number can vary from 0 to 3 for each process. Therefore, each process has 4 entries in the page table. Per-Process Page Tables are stored in Page 2, words 1024 – 1279 in the memory (256 words = 32 processes × 4 pages )
+				The Per-Process Page Table stores the physical page number corresponding to each logical page associated with the process. The logical page number can vary from 0 to 3 for each process. Therefore, each process has 4 entries in the page table. Per-Process Page Tables are stored in Page 2, words 1024 – 1279 in the memory ( 256 words = 32 processes × 4 entries )
 				</p>
 				<p>
 					When a process is loaded only the disk addresses of the program are stored, and by demand paging (Refer <a href="#navmemmgmt_paging" >Paging</a>) pages are loaded/allocated for the process. Once all pages are loaded, each entry contains the page number where the data specified by the logical address resides in the memory and auxiliary information which includes valid/invalid bit, reference bit etc.
@@ -482,10 +482,10 @@ Apart from the file system data structures XOS maintains details about files ope
 			<p>his system call is used to close an open file. The file can only be closed by the process which opened it. FileDescriptor is an integer value returned by the corresponding <tt>Open()</tt> system call. The return value of the <tt>Close()</tt> system call is 0 if it is a success, and an error code otherwise. It calls Interrupt 2 Routine. </p>
 			
 			<b>Seek</b></br>
-			<i>APL Syntax </i>: <tt>iint Seek(FileDescriptor, lseek)</tt> <br/>
+			<i>APL Syntax </i>: <tt>int Seek(FileDescriptor, newLseek)</tt> <br/>
 			<i>System Call No. </i>: 5 <br/>
 			
-			<p>This system call is used to change the current value of the seek position in the global file table entry of a file. The return value of the <tt>Seek()</tt> system call is 0 if it is a success, and an error code otherwise. It calls Interrupt 3 Routine. </p>
+			<p>This system call is used to change the current value of the seek position in the global file table entry of a file to the <tt>newLseek</tt> value. The return value of the <tt>Seek()</tt> system call is 0 if it is a success, and an error code otherwise. It calls Interrupt 3 Routine. </p>
 			
 			<b>Read</b></br>
 			<i>APL Syntax </i>: <tt>int Read(fileDescriptor, memoryLocation, numWords)</tt> <br/>

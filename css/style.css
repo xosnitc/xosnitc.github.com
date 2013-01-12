@@ -19,10 +19,10 @@
 ------------------------------------------------------------- */
 
 @font-face{
-	font-family: 'Open sans';
-	url: 'OpenSans-Regular.ttf;
-
+	font-family: Museo Sans;
+	src: url('MuseoSans-300.otf');
 }
+
 article, aside, details, figcaption, figure, 
 footer, header, hgroup, menu, nav, section {display: block}
 audio, canvas, video { display: inline-block; *display: inline; *zoom: 1; }
@@ -32,7 +32,7 @@ html { font-size: 100%; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 10
 
 
 html, button, input, select, textarea {
-	font-family: "Open sans", "Helvetica Neue", "HelveticaNeue", Helvetica, Arial, sans-serif;
+	font-family: Museo Sans;
 	font-weight: 400; /* normal */
 	color: #555; 
 	font-smooth:always;

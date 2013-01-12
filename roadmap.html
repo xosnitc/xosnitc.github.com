@@ -341,11 +341,12 @@ endif;</pre>
 
 		<h6> int Close(fileDescriptor) </h6>
 		<ol> 
-			<li> Get the PCB of the process as in the Open System Call implementation.</li>
+			<li> Get the address of PCB of the process as in the Open System Call implementation.</li>
 			<li> Index into the per-process open file table using the argument <tt>fileDescriptor</tt>. Return from the system call with -1 (failure) if the <tt>fileDescriptor</tt> is invalid or its corresponding entry is invalid.</li>
 			<li> Using the <tt>Pointer to System Wide Open File Table Entry</tt> field, index to the System Wide Open File Table </tt> and decrement <tt>File Open Count</tt> by one. If it becomes 0, invalidate the entry by setting both the fields to -1. </li>
 			<li> Now invalidate the Per-Process Open File Table entry, by setting the fields to -1</li>
-			<li> Return from system call with 0 (success). </li>
+			<li> Return from system call with 0 (success).
+			 </li>
 		</ol>
 
 		<h6> int Delete (fileName) </h6>
@@ -364,6 +365,44 @@ endif;</pre>
 			<li> Return from the system call with 0 (success)</li>
 		</ol>
 
+		<h6> int Write(fileDescriptor, memoryLocation, numWords) </h6>	
+	  	
+	  	<ol>
+	  		<li> Get the arguments to registers from the stack </li>
+			<li> Get the address of PCB of the process. </li>
+			<li> Index into the per-process open file table using <tt>fileDescriptor</tt>. Return from the system call with -1 (failure) if the <tt>fileDescriptor</tt> is invalid or its corresponding entry is invalid.</li>
+			<li> Otherwise, store the LSEEK position to a register.</li>
+			<li> Using the <tt>Pointer to System Wide Open File Table Entry</tt> field, index to the System Wide Open File Table to get the FAT Index Entry.   </li>
+			<li> Repeat the following steps for each word to be written</li>
+			<ol style="list-style-type:lower-roman;">
+				<li> Fetch the <tt>basic block</tt> from the FAT and load it to the scratchpad</li>
+				<li> Using LSEEK position find the block number to be written to. Find its location in the disk from the basic block. If entry for the block is invalid, then allocate a new block in the following way.</li>
+					<ul>
+						<li> Traverse through the memory copy of the <a href="xfs-spec.html#navdfl">Disk Free List</a> to get a free block.
+						<li> If no free block is avaliable, commit the memory copy of FAT and Disk Free List back to the disk. Return from the system call, with return value as the number of words successfully written. </li>
+						<li> Otherwise, set 1 in the entry for the  free block in the Disk Free List. Update the basic block with this block number. </li> 
+						<li> Commit the basic block from scratchpad back to the disk. </li>
+						<li> Increment the <tt>file size</tt> in the FAT entry by 1. </li>
+					</ul>
+				<li> Fetch this block from the disk to the scratchpad. </li>
+				<li> Write to this block using the offset calculated using LSEEK position.</li>
+				<li> Commit this block back to disk </li>
+				<li> Update LSEEK position in the Per-Process Open File Table </li>
+			</ol>
+	  		<li> Commit the FAT and Disk Free List from the memory to the disk.</li>
+	  	</ol>
+
+
+	  	<h6> int Seek (fileDescriptor,  newLseek) </h6>
+	  	<ol>
+	  		<li> Get the arguments to registers from the stack </li>
+	  		<li> Get the address of PCB of the process. </li>
+			<li> Index into the per-process open file table using <tt>fileDescriptor</tt>. Return from the system call with -1 (failure) if the <tt>fileDescriptor</tt> is invalid or its corresponding entry is invalid.</li>
+			<li> Using the <tt>Pointer to System Wide Open File Table Entry</tt> field, index to the System Wide Open File Table to get the FAT Index Entry.   </li>
+			<li> Fetch the <tt>file size</tt> of the file from the FAT and store it in a register. </li>
+			<li> If value of the argument <tt>newLseek</tt> is between 0 and <tt>file size * block size</tt>, change the <tt>LSEEK</tt>  in the per-process file table to <tt>newLseek</tt>. Return with 0 (indicating success).</li>
+			<li> Otherwise, return with -1 (indicating failure). </li>
+	  	</ol>
 
 
 			</article>

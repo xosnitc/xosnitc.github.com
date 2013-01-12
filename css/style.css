@@ -40,7 +40,7 @@ html, button, input, select, textarea {
 	font-smoothing: antialiased;
 	text-shadow: 1px 1px 1px rgba(0,0,0,0.004);}
 
-body { margin: 0; font-size: 13px; line-height: 1.6; }
+body { margin: 0; font-size: 13px; line-height: 1.5; }
 
 a { color: #0078CF; font-weight: normal;
 	cursor: pointer;  text-decoration: none;

@@ -262,8 +262,14 @@ endif;	</pre>
 			Now we'll implement the system calls in its corresponding Interrupt Routine Code. <br/><br/>
 		
 
-		<h6> int Create(filename) </h6>
-		
+		<h6> Create </h6>
+		<i>System Call No</i>: 1 <br/>
+		<i>Interrupt Routine No</i>: 1 <br/>
+		<i>Arguments</i>: filename <br/>
+		<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
+		<br/>
+		Creates a file with the filename given as argument.
+
 		<ol>
 		<li> First of all, the memory copy of the <a href="xfs-spec.html#navdfl">disk free list</a> is searched to find a free block number (indicated by a 0). This block is used as the <a href="xfs-spec.html#navfile">basic block</a> of the file to be created. It's entry is set to 1. The block number is stored to a register. If no free block is found return -1 (as done in the previous step). </li>
 
@@ -308,7 +314,14 @@ endif;</pre>
 
 
 
-		<h6> int Open(filename) </h6>
+		<h6> Open </h6>
+		<i>System Call No</i>: 2 <br/>
+		<i>Interrupt Routine No</i>: 2 <br/>
+		<i>Arguments</i>: filename <br/>
+		<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
+		<br/>
+		Opens a file with the filename given as argument.
+
 		<ol>
 			<li> FAT is searched for the <tt>filename</tt> (get the <tt>filename</tt> from stack as explained in the Create system call) . If the entry is not found, -1 is returned. Otherwise, store the index of the FAT entry in a register.</li>
 
@@ -339,7 +352,14 @@ endif;</pre>
 		</ol>
 
 
-		<h6> int Close(fileDescriptor) </h6>
+		<h6> Close </h6>
+		<i>System Call No</i>: 3 <br/>
+		<i>Interrupt Routine No</i>: 2 <br/>
+		<i>Arguments</i>: fileDescriptor <br/>
+		<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
+		<br/>
+		Closes a file opened by the process.
+
 		<ol> 
 			<li> Get the address of PCB of the process as in the Open System Call implementation.</li>
 			<li> Index into the per-process open file table using the argument <tt>fileDescriptor</tt>. Return from the system call with -1 (failure) if the <tt>fileDescriptor</tt> is invalid or its corresponding entry is invalid.</li>
@@ -349,7 +369,15 @@ endif;</pre>
 			 </li>
 		</ol>
 
-		<h6> int Delete (fileName) </h6>
+		<h6> Delete</h6>
+		<i>System Call No</i>: 4 <br/>
+		<i>Interrupt Routine No</i>: 1 <br/>
+		<i>Arguments</i>: filename <br/>
+		<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
+		<br/>
+		Deletes a file in the disk with the filename given as argument.
+
+
 		<ol>
 			<li> Search the memory copy of <a href="xfs-spec.html#navfat">FAT</a> for the <tt>filename</tt> specified as argument. If it is not found, return from the system call with -1 (failure). </li>
 			<li> If an entry is found, store the index in a register. </li>
@@ -365,35 +393,45 @@ endif;</pre>
 			<li> Return from the system call with 0 (success)</li>
 		</ol>
 
-		<h6> int Write(fileDescriptor, memoryLocation, numWords) </h6>	
-	  	
+		<h6> Write </h6>	
+		<i>System Call No</i>: 5 <br/>
+		<i>Interrupt Routine No</i>: 4 <br/>
+		<i>Arguments</i>: 1) fileDescriptor 2) wordToWrite <br/>
+		<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
+		<br/>
+		Writes a word specified by <tt>wordToWrite</tt> to a file opened by the process.
+
 	  	<ol>
 	  		<li> Get the arguments to registers from the stack </li>
 			<li> Get the address of PCB of the process. </li>
 			<li> Index into the per-process open file table using <tt>fileDescriptor</tt>. Return from the system call with -1 (failure) if the <tt>fileDescriptor</tt> is invalid or its corresponding entry is invalid.</li>
 			<li> Otherwise, store the LSEEK position to a register.</li>
 			<li> Using the <tt>Pointer to System Wide Open File Table Entry</tt> field, index to the System Wide Open File Table to get the FAT Index Entry.   </li>
-			<li> Repeat the following steps for each word to be written</li>
-			<ol style="list-style-type:lower-roman;">
-				<li> Fetch the <tt>basic block</tt> from the FAT and load it to the scratchpad</li>
-				<li> Using LSEEK position find the block number to be written to. Find its location in the disk from the basic block. If entry for the block is invalid, then allocate a new block in the following way.</li>
-					<ul>
-						<li> Traverse through the memory copy of the <a href="xfs-spec.html#navdfl">Disk Free List</a> to get a free block.
-						<li> If no free block is avaliable, commit the memory copy of FAT and Disk Free List back to the disk. Return from the system call, with return value as the number of words successfully written. </li>
-						<li> Otherwise, set 1 in the entry for the  free block in the Disk Free List. Update the basic block with this block number. </li> 
-						<li> Commit the basic block from scratchpad back to the disk. </li>
-						<li> Increment the <tt>file size</tt> in the FAT entry by 1. </li>
-					</ul>
-				<li> Fetch this block from the disk to the scratchpad. </li>
-				<li> Write to this block using the offset calculated using LSEEK position.</li>
-				<li> Commit this block back to disk </li>
-				<li> Update LSEEK position in the Per-Process Open File Table </li>
-			</ol>
-	  		<li> Commit the FAT and Disk Free List from the memory to the disk.</li>
+			<li> Fetch the <tt>basic block</tt> from the FAT and load it to the scratchpad</li>
+			<li> Using LSEEK position find the block number to be written to. Find its location in the disk from the basic block. If entry for the block is invalid, then allocate a new block in the following way.</li>
+				<ul>
+					<li> Traverse through the memory copy of the <a href="xfs-spec.html#navdfl">Disk Free List</a> to get a free block.
+					<li> If no free block is avaliable. Return from the system call, with return value -1 (failure). </li>
+					<li> Otherwise, set 1 in the entry for the  free block in the Disk Free List. Update the basic block with this block number. </li> 
+					<li> Commit the basic block from scratchpad back to the disk. </li>
+					<li> Increment the <tt>file size</tt> in the FAT entry by 1. </li>
+					<li> Commit the FAT and Disk Free List from the memory to the disk. </li>
+				</ul>
+			<li> Fetch this block from the disk to the scratchpad. </li>
+			<li> Write the argument <tt>wordToWrite</tt> to this block using the offset calculated using LSEEK position.</li>
+			<li> Commit this block back to disk </li>
+			<li> Increment LSEEK Position by 1 in the Per-Process Open File Table </li>
 	  	</ol>
 
 
-	  	<h6> int Seek (fileDescriptor,  newLseek) </h6>
+	  	<h6> Seek </h6>
+		<i>System Call No</i>: 6 <br/>
+		<i>Interrupt Routine No</i>: 3 <br/>
+		<i>Arguments</i>: 1) fileDescriptor 2) newLseek <br/>
+		<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
+		<br/>
+		Changes the value of LSEEK position of the file to <i>newLseek</i>
+
 	  	<ol>
 	  		<li> Get the arguments to registers from the stack </li>
 	  		<li> Get the address of PCB of the process. </li>
@@ -404,6 +442,28 @@ endif;</pre>
 			<li> Otherwise, return with -1 (indicating failure). </li>
 	  	</ol>
 
+	  	<h6>Read</h6>
+		<i>System Call No</i>: 7 <br/>
+		<i>Interrupt Routine No</i>: 3 <br/>
+		<i>Arguments</i>: 1) fileDescriptor 2) Variable passed by reference<br/>
+		<i>Return Value</i>: 0 (success) and -1 (failure) </br>
+		<br/>
+		Reads a word from a file to the variable passed as argument
+
+	  	<ol>
+	  		<li> Get the arguments to registers from the stack </li>
+			<li> Get the address of PCB of the process. </li>
+			<li> Index into the per-process open file table using <tt>fileDescriptor</tt>. Return from the system call with -1 (failure) if the <tt>fileDescriptor</tt> is invalid or its corresponding entry is invalid.</li>
+			<li> Otherwise, store the LSEEK position to a register.</li>
+			<li> Using the <tt>Pointer to System Wide Open File Table Entry</tt> field, index to the System Wide Open File Table to get the FAT Index Entry.   </li>
+			<li> Fetch the <tt>basic block</tt> from the FAT and load it to the scratchpad
+			</li>
+			<li> Using LSEEK position find the block number to be read from. Find its location in the disk from the basic block. If entry for the block is invalid, return with value -1 (indicating failure).</li>
+			<li> Else,  fetch this block from the disk to the scratchpad. </li>
+			<li> Read from this block using the offset calculated using LSEEK position. </li>
+			<li> This value is stored in the stack in position of Argument 2. Store the word read to absoluteSP - 2.</li>
+			<li> Return with 0, indicating success </li>
+	  	</ol>
 
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -412,8 +472,10 @@ endif;</pre>
 			
 
 			<article  id="navstage5" class="grid col-full">
-			<h2>Stage 5: The Exec System Call</h2>
-			<p>  Not Available  </p>
+			<h2>Stage 5: Executing another program</h2>
+			<p>  
+
+			 </p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>

@@ -588,7 +588,8 @@
 			
 			<article  id="navexamples" class="grid col-full">
 			<h2>Sample Programs</h2>
-			<p>Write a program to input 4 numbers and find the largest of them </p> 
+			<br/>
+			<p><h5> Program to find largest of 4 numbers</h5></p> 
 			<div class="syntax">
 			<pre>
 decl
@@ -632,6 +633,31 @@ integer main(){
 }
 			</pre>
 			</div>
+<br/>
+<p><h5>Program to find factorial using recursion </h5></p> 
+<div class="syntax">
+<pre>
+decl
+integer fact(integer n),a;
+enddecl
+integer fact(integer n)
+{
+	integer f;
+	if(n==1) then
+		f=1;
+	else
+		f=n*fact(n-1);
+	endif;
+	return f;
+}
+integer main()
+{
+	integer b;
+	read(a);
+	b=fact(a);
+	print(b);
+	return 0;
+}
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>

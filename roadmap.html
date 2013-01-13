@@ -594,7 +594,13 @@ endif;</pre>
 			<li> The Per-Process Open File table of the parent process is not copied to child's PCB. Instead invalidate all entries in child's Per-Process Open File Table </li>
 			<li> Control is passed back to the parent process using <b>ireturn</b>.</b>
 		  	</ol>
-		  	<b> OS Startup Code</b> is modified to load Interrupt 5 Routine. (The code to load the 2nd process in the previous stage can now be removed).</br>
+		  	<b> OS Startup Code</b> is modified to 
+		  		<ul>
+		  			<li>Load Interrupt 5 Routine. (The code to load the 2nd process in the previous stage can now be removed)
+		  			</li> 
+		  			<li> The entries for pages 0 to 15 in the <a href="xos-spec.html#navmemmgmt_mfl">memory free list</a> is marked as used (set 1) and others as unused (set 0). Pages 0 - 15 are reserved for OS structures. See <a href="xos-spec.html#navmemorg"> Memory Organization </a>
+		  			</li> 
+		  		</ul>
 		  	To test Fork(), use Exec with program to print odd numbers after issuing a Fork from the INIT program (to print even numbers). 
 
 

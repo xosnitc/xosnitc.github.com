@@ -87,12 +87,12 @@
 			<p> The first stage of building XOS begins with understanding the underlying XFS Filesystem interface. </p>
 			
 			<ol>
-			<li> Download the XFS-Interface from the <a href="downloads.html">downloads</a> page and compile the program following the instructions given in the page.</li>
-			<li> Start by formatting the disk in the XFS interface using <b>fdisk</b> command. A file named <i>disk.xfs</i> is created, which simulates the hard disk.</li>
+
+			<li> Start by formatting the disk in the XFS interface using <b>fdisk</b> command. A file named <b>disk.xfs</b>	 is created in the location <b>myxos/xfs-interface/</b> is created in which simulates the hard disk.</li>
 			<li> Load a data file to the XFS formatted disk from your UNIX machine.  Read about  <a href="xfs-spec.html#navfile" >Files</a> in XFS</li>
 			<li> Find out the FAT entry corresponding to the loaded file. Use the <b>copy</b> command to copy FAT entries to a file in your PC. See <a href="xfs-spec.html#navdiskorg">disk organization</a> of XFS Disk.  </li>
 			<li> Check the <a href="xos-spec.html#navfiles_fat">FAT entry</a> and find the basic block. Copy it to get the data blocks used by this file.</li>
-			<li> Copy the data blocks and display the file </li>
+			<li> Copy the data blocks and display it as a UNIX file. </li>
 			</ol>
 
 
@@ -104,25 +104,52 @@
 			
 			<article  id="navstage2" class="grid col-full">
 			<h2>Stage 2: Starting the machine </h2>
-			<p> The next stage is to make the machine display <i>"Hello World"</i> on startup.    </p>
+			<p> In this stage, we'll run a system program <b>to print odd numbers from 1 to n</b> and run it as the OS Startup Code in the machine. The steps to do this are explained in detail below. </p>
 			<ol>
 			<li>
-			Create a "Hello World" program using <a href="spl-spec.html">SPL</a> (System Programmer's Language).
-			The code snippet is given below. 
+			
+
+			Create the program using <a href="spl-spec.html">SPL</a> (System Programmer's Language).
+	
+			<br/><br/>
+			<h5> SPL Code to print odd numbers from 1 to n (taken as input)</h5>
 			<div class="syntax"> 
-			R0 = "Hello World"; </br>
-			print R0 ;</br>
+<pre>
+alias counter R0;
+alias n R1;
+print "Enter n:";
+read n;
+counter = 0;
+while(counter <= n) do
+	if(counter%2 != 0) then
+		print counter;
+	endif;
+	counter = counter + 1;
+endwhile; </pre>
 			</div>
 			</li>
 			<li>
 			Load it as the OS startup code to <tt>disk.xfs</tt> using the XFS Interface. 
 			</li>
-			<li> Download the XSM Simulator from the <a href="downloads.html">downloads</a> page. Unzip the directory.</li>
-			<li> <b>xfs-interface directory</b>  and <b>xsm directory</b>  must be placed in the same location. ( or change the <b>DISK_NAME</b>  to the path of <tt>disk.xfs</tt> in <b>disk.h</b> in <b>xsm</b> directory) </li>
-			<li> Follow the instructions in README to compile the machine simulator </li>
-			<li> cd to xsm directory. Run the machine using the command <tt>./xsm --disable-timer </tt>.
-			
+			<li> <b>xfs-interface directory</b>  and <b>xsm directory</b> should be placed in the same location. ( or change the <b>DISK_NAME</b>  to the path of <tt>disk.xfs</tt> in <b>disk.h</b> in <b>xsm</b> directory). See <a href="usage-spec.html">download and setup</a> instructions.	 </li>
+			<li> Run the machine using the command </li>
+			<div class="syntax">
+			. $HOME/myxos/xsm/xsm --disable-timer
+		</div>
 			</ol>
+The machine will halt after printing all odd numbers from 1 to n
+<pre><tt>
+Enter n:
+10
+1
+3
+5
+7
+9
+Machine is halting
+</tt>
+</pre>
+
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -132,11 +159,21 @@
 			<h2>Stage 3: Running a user program </h2>
 			<p> User programs or application programs are programmed using <a href="apl-spec.html">APL</a> or Application Programmer's Language. In this stage, an application program in APL is compiled and loaded to the disk as the init process. An OS Startup code is written in <a href="spl-spec.html">SPL</a> to load this program to the memory on machine startup. 		  </p>
 			<ol>
-			<li> Download APL Compiler from the <a href="downloads.html">downloads</a> page. Unzip and install the compiler following the instructions in the README </li>
-			<li> Write a program in APL to print all prime numbers lesser than a number taken as input. See <a href="apl-spec.html#navexamples">Examples</a> of APL programs</li>
-			<li> Compile your APL program using <b> ./apl < <i>path-to-your-program</i> > </b>. </li>
+			<li> Write a program in APL to print all prime numbers lesser than a number taken as input. See <a href="apl-spec.html#navexamples">Examples</a> of APL programs. In the roadmap, the path of the file is assumed to be <tt>$HOME/myxos/prime.apl</tt></li>
+			<li> Compile your APL program using the command
+			<div class="syntax"> <tt> . $HOME/myxos/apl < $HOME/myxos/prime.apl  </tt> </div> </li>
 			<li> Load it to <b>disk.xfs</b> as <b>INIT program</b> using XFS interface </li>
-			<li> For for the machine to halt when it runs a user program, <b>INT 7</b> and <b>Exception handler</b> of the <b>disk.xfs</b> must be loaded with a file containing just the <tt>HALT</tt> instruction. 
+			<li> Create a Interrupt 7 SPL program with  just a <b>halt;</b> instruction. Here, we have assumed its path to be <b>$HOME/myxos/haltprog.spl</b>.  </li> 
+			Compile this program using two different flags as shown
+			<div class="syntax">
+				. $HOME/myxos/spl/spl --int=7  < $HOME/myxos/haltprog.sp <br/>
+				. $HOME/myxos/spl/spl --exhandler < $HOME/myxos/haltprog.spl 
+			</div>
+			Now two files name <tt>int7.xsm</tt> and <tt>exhandler.xsm</tt> is created in <tt>$HOME/myxos/spl/</tt> 
+			<br/>
+			Load these files to the XFS Disk (disk.xfs) using filesystem interface. 
+
+			This files are responsible for halting the machine upon completion of running user program and when an exception occurs respectively. This is to be loaded by the OS Startup Code. 
 			<br/><br/>
 			</ol>
 			<h6>OS Startup Code</h6>
@@ -147,14 +184,14 @@
 			 load (page_number, block_number);
 			</div> </li>
 			<li>
-			Load the <b>INIT process</b> from the disk to the memory. Load blocks 13-15 from disk to memory pages 16 - 18 in the memory.
+			Load the <b>INIT process</b> from the disk to the memory. Load blocks 13-15 from disk to memory pages 16 - 18 in the memory. 
 			</li>
 			<li> 
 			Setup page tables for the INIT process in the followin way. (Read about <a href="xsm-spec.html#navaddr"> Address Translation </a>).
 		 		<ul>
-		 		<li>Set <b>PTBR</b> (Page Table Base Register) to 1024, which is the starting address of process page tables (See <a href="xos-spec.html#navmemorg" >Memory Organization</a>) and <b>PTLR</b> to 4.  </li>
-		 		<li> Each page table entry contains 2 words. Set the first word of each entry to corresponding memory address and set the second word (Auxiliary information) as <b>11</b>. Refer <a href="xos-spec.html#navmemmgmt_paging">Paging</a> to see the structure of page table entry. </li>
-			<li> Setup entries for memory pages 16 to 18 in the page table as well as one entry for the stack (19th page) </li>
+		 		<li>Set <b>PTBR</b> (Page Table Base Register) to 1024, which is the starting address of process page tables (See <a href="xos-spec.html#navmemorg" >Memory Organization</a>) and <b>PTLR</b> to 4. INIT process is the first process in memory and it will get the first page table (address 1024)</li>
+		 		<li> Each page table entry contains 2 words. Set the first word of each entry to corresponding memory address and set the second word (Auxiliary information) as <b>11</b> (Valid and Referenced). Refer <a href="xos-spec.html#navmemmgmt_paging">Paging</a> for the structure of page table entry. </li>
+			<li> Setup entries for memory pages 16 to 18 (3 pages are used for code) in the page table as well as one entry for memory page 19 (1 page is used for stack) </li>
 			Setting up the entries of page table can be done in the following way
 			<div class="syntax">
 			 [PTBR + 0] = 16;  // Entry for memory address<br/>
@@ -180,8 +217,10 @@
 				</ul> <br/>
 			
 			
-			<li> Once the control gets transferred to the user program, all addresses are logical addresses. Therefore <b>SP</b> (Stack Pointer) must be set to 3*512 (stack is allocated with logical page number 3).   </li>
-			<li> Store 0 in the stack (page number 19 in memory). This value gets stored in IP after an <b>ireturn</b> instruction. 
+			<li> Once the control gets transferred to the user program, all addresses are logical addresses <!--(ERROR: REFERENCE)-->. Therefore <b>SP</b> (Stack Pointer) must be set to 3*512 (stack is allocated with logical page number 3). <!--(ERROR: EXPLAIN MORE) -->  </li>
+			<li> Store 0 in the stack (page number 19 in memory) <!--(ERROR:  PAGE NUMBER 19 IS STACK'S PHYSICAL PAGE NUMBER) -->. This value gets stored in IP after an <b>ireturn</b> instruction. <!--(ERROR: EXPLAIN MORE) -->
+
+
 			<div class="syntax">
 			[19*512] = 0;
 			</div></li>

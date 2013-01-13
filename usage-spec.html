@@ -106,10 +106,45 @@
 				<h2>Setting Up</h2>
 				<ol>
 				<li> Download the complete package <a href="files/myxos.tar.gz">myxos.tar.gz</a></li>
-				<li> Extract the contents to your home folder. </li>
-
+				<li> Copy the tar file to your home directory. 
+				<div class="syntax">
+					cp myxos.tar.gz $HOME/
+				</div>
+				</li>
+				<li> Extract the contents using the command. 
+				<div class="syntax">
+					tar -xvf myxos.tar.gz 
+				</div></li>
+				Now you will have a directory <tt>myxos</tt> in your home drectory, with all components required for building your own XOS
+				<li> Change directory to <tt>myxos</tt> directory </li>
+				<div class="syntax">
+					cd $HOME/myxos
+				</div>	
+				<li> Make sure all the pre-requisites which include <b>gcc</b>, <b>flex/lex</b> and <b>bison/yacc</b> are re installed. </li>	
+				In Ubuntu/Debian systems use <b>apt</b> to install flex and bison.
+				<div class="syntax">
+					sudo apt-get install flex bison
+				</div>	
+				<li> Make to build all the components.</li>
+				<div class="syntax">
+					make
+				</div>					
 				</ol>
 
+			If the setup worked correctly, an executable with name <tt>xsm</tt> will be created in $HOME/myxos/xsm. Similarly for <tt>xfs-interface</tt> , <tt>apl</tt> and <tt>spl</tt> subdirectories within <tt>myxos</tt> directory, its corresponding executables will be created. 
+		</br></br>
+			<h4> The Compoents </h4>
+			<ul>
+				There are four components
+				<ul>
+					<li> <b>SPL Compiler</b>: Compiler for the high level language to program the OS.</li>
+					<li> <b>APL Compiler</b>: Compiler for the high level language to write user programs for the OS</li>
+					<li> <b>XFS Interface</b>: Interface to connect to the filesystem used by the OS.</li>
+					<li> <b>XSM Simulator</b>: Machine simulator on which the OS will run </b>
+				</ul>
+				<br/>
+		
+			</ul>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -137,12 +172,12 @@
 					<li><p> Bison / Yacc (GNU Project Parser Generator) </p></li>
 				</ul> <br/>
 				
-				<h6> Compiling and Running </h6>
-				<p> Run the following commands to compile and run the SPL compiler </p>
-				<ul>
-					<li><p> <tt>make </tt></p></li>
-					<li><p> <tt>./spl &ltflag&gt  <  &ltpath-to-file&gt </tt></p></li>
-				</ul> 
+				<h6> Running </h6>
+				<p> Within your spl directory, use the following commands to run the SPL compiler </p>
+<ul>
+<li><p> <tt>./spl <i>&lt;flag&gt;</i> &lt; <i>&lt;path-to-spl-program&gt;</i> </tt></p></li> </pre>
+</ul>	
+
 
 				<h6>Flags</h6>
 				Any one of these flags is required to compile.
@@ -153,6 +188,16 @@
 					<li><p> <tt>--exhandler</tt> : Compile Exception Handler</p> </li>
 
 				</ul>	
+
+<h6>Example Usage</h6>
+
+<div class="syntax">
+<pre>
+cd $HOME/myxos/spl 
+./spl --os < Samples/hello-world.spl 
+</pre>
+</div>
+A file  <tt>os_startup.xsm</tt> is created in <tt>$HOME/myxos/spl</tt>.
 
 				
 			</article>
@@ -188,7 +233,19 @@
 					<li><p> <tt>./apl < &ltpath-to-file&gt </tt></p></li>
 				</ul> 
 
-				The output file is named <b>"apcode.xsm"</b>
+				The output file is named <b>"apcode.xsm"</b> <br/><br/>
+
+<h6>Example Usage</h6>
+
+<div class="syntax">
+<pre>
+cd $HOME/myxos/apl 
+./apl < samples/largest
+</pre>
+</div>
+A file  <tt>apcode.xsm</tt> is created in <tt>$HOME/myxos/apl</tt>.
+
+
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>

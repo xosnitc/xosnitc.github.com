@@ -701,7 +701,7 @@ Ip_addr = (EFR/1000);		//Gets value of IP at the point of exception
 
 			</ol>
 			<h6>Modifications to OS Startup Code and d Exec system calls</h6>
-			When a process is loaded, only the disk addresses of the corresponding code blocks needs to be set in the page table and its <tt>Auxiliary Information</tt> is set to 00 (Invalid and Unreferenced). The disk blocks need not be loaded initially. It will be loaded by <a href="xos-spec.html#navmemmgmt_intro">pure demand paging strategy</a> when required.
+			When a process is loaded, only the disk addresses of the corresponding code blocks needs to be set in the page table and its <tt>Auxiliary Information</tt> is set to 00 (Invalid and Unreferenced). Put the <tt>Physical Address</tt> field of remaining entries are set to -1 with  <tt>Auxiliary Information</tt>  as "00". The disk blocks need not be loaded initially. It will be loaded by <a href="xos-spec.html#navmemmgmt_intro">pure demand paging strategy</a> when required.
 			<br/>
 			<h6> Modifications to Fork </h6>
 			For Fork system call, when it copies the address space, duplicate all valid addresses as done earlier. If the entry in the page table of the parent process is invalid, 
@@ -710,7 +710,7 @@ Ip_addr = (EFR/1000);		//Gets value of IP at the point of exception
 						If it is a disk address less than 448 (not swap area), copy the entry directly to the page table of the child.
 					</li>
 					<li>
-						If it is a disk address >= 448 (swap area), check the disk free list and get a free swap block. Copy the contents of current swap block to the newly allocated swap block by using scratchpad. Set the page table of the child with the newly allocated swap block number and copy the Auxiliary Information from the parent's page table entry. 
+						If it is a disk address >= 448 (swap area), check the disk free list and get a free swap block. Copy the contents of current swap block to the newly allocated swap block by using scratchpad. Set the page table of the child with the newly allocated swap block number and copy the <tt>Auxiliary Information</tt> from the parent's page table entry. 
 					</li>
 					<li>
 						If the address is -1, do nothing.

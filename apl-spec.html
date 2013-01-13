@@ -630,8 +630,7 @@ integer main(){
 		endif;
 	endif;
 	return 0;
-}
-			</pre>
+}	</pre>
 			</div>
 <br/>
 <p><h5>Program to find factorial using recursion </h5></p> 
@@ -657,7 +656,34 @@ integer main()
 	b=fact(a);
 	print(b);
 	return 0;
+}	</pre>
+			</div>
+<br/>
+<p><h5>Bubble Sort in</h5></p> 
+<div class="syntax">
+<pre>
+decl
+integer fact(integer n),a;
+enddecl
+integer fact(integer n)
+{
+	integer f;
+	if(n==1) then
+		f=1;
+	else
+		f=n*fact(n-1);
+	endif;
+	return f;
 }
+integer main()
+{
+	integer b;
+	read(a);
+	b=fact(a);
+	print(b);
+	return 0;
+}	</pre>
+			</div>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>

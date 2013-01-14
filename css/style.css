@@ -238,6 +238,7 @@ body{width:100%; }
 .half-gutter {margin-left: -1.5em; }
   .half-gutter .grid-col {padding-left: 1.5em; }
   
+
 .col-full {width: 100%; }
 .col-one-half {width: 50%; }
 .col-one-third {width: 33.333%; }
@@ -302,7 +303,20 @@ nav a, menu a { text-decoration: none; color: #555; }
 /* -- GENERAL 
 ------------------------------------------------------------- */
 .main > section { margin-bottom: 7em; }
-.main header{ color: #555; margin-bottom: 3em; }
+.main header{ color: #555; 
+padding-bottom:0;
+margin-bottom:30px;
+padding-left:50px;
+margin-top: 0;
+color:black;
+
+}
+.main header p{
+	font-size:30px;
+	margin-bottom:90x;
+	text-transform: uppercase;
+	width: 100%;
+}
 .main header hr{border-top-color:#999;}
 .arrow:after {content:" \27F6"; /* html unicode: &#10230; */ } 
 header .arrow {color: #999; font-style: italic;}

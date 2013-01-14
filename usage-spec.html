@@ -371,7 +371,34 @@ A file  <tt>apcode.xsm</tt> is created in <tt>$HOME/myxos/apl</tt>.
 				<h6> Exit Interface </h6>
 				<p>The command <b>exit</b> quits the inteface.<br/>
 				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt><b>exit</b></tt></p>
-				
+<h6>Example Usage</h6>
+To load a file <tt>os_startup.xsm</tt>(which you created using <b>SPL</b> compiler) located in <tt>$HOME/myxos/spl</tt> into the <tt>xfs</tt> filesystem	
+<div class="syntax">
+<pre>
+cd  
+./xfs-interface
+</pre>
+</div>
+This will show the <tt>xfs-interface</tt>. 
+
+First issue a <tt>fdisk</tt> command. This will create a <tt>disk.xfs</tt> file in the directory <tt>$HOME/myxos/xfs-interface</tt>. This file simulates the hard disk for <tt>XSM</tt> (Machine Simulator). 
+<div class="syntax">
+fdisk
+</div>
+
+
+Now use the <tt>load</tt> command to load the <tt>os_startup.xsm</tt>.
+<div class="syntax">
+load --os $HOME/myxos/spl/os_startup.xsm
+</div>
+
+If you want to see if loading worked properly, copy the block 0 (from 0 to 0) in <b>disk.xds</b> back to a unix file, say <tt>$HOME/myxos/xfs-interface/test </tt>			
+<div class="syntax">
+copy 0 0 $HOME/myxos/xfs-interface/test
+</div>
+
+Now open test to see the contents of os_startup.xsm
+
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>

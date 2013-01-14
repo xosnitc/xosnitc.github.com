@@ -216,7 +216,7 @@ Machine is halting
 				
 				</ul> <br/>
 
-			<li> Store 0 in address 19 * 512 ( physical page number 19 * page size 512 is the actual address of the stack). This value gets stored in <b>IP</b> after the control passes to user mode. IP is set  to the value in the top of the stack by the machine when control passes. IP value is  set to 0 because in user mode, addresses are logical addresses. <b>NOTE: 0 is the starting logical address for IP for any process.</b>
+			<li> Store 0 in address 19 * 512 ( physical page number 19 * page size 512 is the physical address corresponding to top of the stack). The value 0  will get stored in <b>IP</b> after the control passes to user mode.  IP value is  set to 0 because in user mode, addresses are logical addresses. <b>NOTE: 0 is the starting logical address for IP for any process.</b>
 
 			<br/><br/> See <a href="xsm-spec.html#navmodes">privilege modes</a> and <a href="xsm-spec.html#navaddr">address translation</a>. 
 
@@ -225,13 +225,14 @@ Machine is halting
 			[19*512] = 0;
 			</div></li>		
 			
-			<li> Set SP to 0 * 512 (logical page number 3 * page size 512).  Before the control passes to the user program, <b>SP</b> (instruction pointer) must be set to the logical address of the starting position of the user stack.  (In this case, INIT process' stack). <b>Why logical address?</b> In user mode all addresses are logical addresses. So before we pass control to user mode, we must set SP to logical address for it to work perfectly in  user mode.<b>NOTE: 3 * 512 is the starting logical address for SP for any process.</b>
+			<li> Set SP to 3 * 512 (logical page number 3 * page size 512).  Before the control passes to the user program, <b>SP</b> (stack pointer) must be set to the logical address of the starting position of the user stack (In this case, INIT process' stack). <b>Why logical address?</b> In user mode all addresses are logical addresses. So before we pass control to user mode, we must set SP to logical address for the machine to work correctly in  user mode. <b>NOTE: 3 * 512 is the starting logical address of SP for any process.</b>
+			<div class="syntax">
+			SP = 3 * 512;
+			</div></li>	
 
-
-			 </li>
 
 			
-			<li> Use the <b>ireturn</b> instruction to transfer control to user program. This instruction calls the machine instruction <tt>IRET</tt> which changes privilege mode from KERNEL to USER (See <a href="xsm-spec.html#navmodes">privilege modes</a>). <tt>IRET</tt> then gets the value stored in memory location pointed to by SP which is 0 (See  step 5). The logical address 3*512 stored in SP gets translated to get the actual location of the stack because execution is now in USER Mode. </li> 
+			<li> Use the <b>ireturn</b> instruction to transfer control to user program. This instruction calls the machine instruction <tt>IRET</tt> which changes privilege mode from KERNEL to USER (See <a href="xsm-spec.html#navmodes">privilege modes</a>). <tt>IRET</tt> then gets the value stored in memory location pointed to by <b>SP</b> which is 0 (See  step 5) and stores it in <b>IP</b>. The logical address 3*512 stored in SP gets translated to get the actual location of the stack as execution is in USER Mode. </li> 
 		 		
 		 		
 			</li>

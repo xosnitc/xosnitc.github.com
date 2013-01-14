@@ -161,7 +161,7 @@ Machine is halting
 			<ol>
 			<li> Write a program in APL to print all prime numbers lesser than a number taken as input. See <a href="apl-spec.html#navexamples">Examples</a> of APL programs. In the roadmap, the path of the file is assumed to be <tt>$HOME/myxos/prime.apl</tt></li>
 			<li> Compile your APL program using the command
-			<div class="syntax"> <tt> . $HOME/myxos/apl < $HOME/myxos/prime.apl  </tt> </div> </li>
+			<div class="syntax">  <tt> . cd $HOME/myxos/apl </tt><br/><tt> ./apl < ../prime.apl  </tt> </div> </li>
 			<li> Load it to <b>disk.xfs</b> as <b>INIT program</b> using XFS interface </li>
 			<li> Create a Interrupt 7 SPL program with  just a <b>halt;</b> instruction. Here, we have assumed its path to be <b>$HOME/myxos/haltprog.spl</b>.  </li> 
 			Compile this program using two different flags as shown

@@ -156,7 +156,7 @@
 			
 			<article  id="navregisters" class="grid col-full">
 				<h4>Registers</h4>
-				<p>	SPL allows the use of 21 registers for various operations. (<tt>R0-R15, BP, SP, IP, PTBR, PTLR</tt>)</p>
+				<p>	SPL allows the use of 22 registers for various operations. (<tt>R0-R15, BP, SP, IP, PTBR, PTLR, EFR</tt>)</p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -167,6 +167,8 @@
 				<p>	Identifiers are used as symbolic names for constants and aliases for registers.
 				Identifiers should start with an alphabet but may contain alphabets, digits and/or underscore ( _ ). 
 				No other special characters are allowed in identifiers.</p>
+				<p> Examples: <tt>var1</tt>, <tt>new_page</tt> </br>
+					Invalid identifiers include <tt> 9blocks </tt>, <tt>$n</tt> etc. 
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -243,6 +245,7 @@
 				<p>	Registers, constants, and 2 or more arithmetic expressions connected using arithmetic operators are categorized as arithmetic expressions. 
 				SPL provides five arithmetic operators, viz., +, -, *, / (Integer Division) and % (Modulo operator) through which arithmetic expressions may be combined. 
 				Expression syntax and semantics are similar to standard practice in programming languages and normal rules of precedence, associativity and paranthesization hold.</p>
+				<p> Examples: <br/><tt>(5*x) + 3</tt> <br/> <tt>10 % 4</tt>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -288,10 +291,14 @@
 			
 			<article  id="navdefinestmt" class="grid col-full">
 				<h4>Define Statement</h4>
-				<p>	Define statement is used to define a symbolic name for a value. Define statements should be used before any other statment in an SPL program. 
+				<p>	Define statement is used to define a symbolic name for a value. Define statements should be used <b>before any other statement</b> in an SPL program. 
 				The keyword <b>define</b> is used to associate a literal to a symbolic name.<br/>
 				
 				<tt>&nbsp&nbsp&nbsp <b>define</b> constant name value;</tt></p>
+
+			<div class="syntax">
+				define DISK_BLOCK 437;
+			</div>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -303,6 +310,10 @@
 				Alias statements can be used anywhere in the program except within <b>if</b> and <b>while</b> statements.<br/>
 				
 				<tt>&nbsp&nbsp&nbsp <b>alias</b> alias_name register_name ;</tt></p>
+			
+			<div class="syntax">
+				alias counter R8;
+			</div>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -315,6 +326,12 @@
 				The general syntax is as follows<br/>
 				
 				<tt>&nbsp&nbsp&nbsp Register / Alias / [Address] = Register / Number / String / Expression / [Address] ;</tt></p>
+			 <div class="syntax">
+				R8 = R0 * 10 + 5; <br/>
+				counter = counter + 1; <br/>
+				[PTBR + 3] = [1024] + 10; <br/>
+				R9 = "hello world"; <br/>
+			</div>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>

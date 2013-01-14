@@ -1,0 +1,19 @@
+Experimental Operating System (XOS)
+===================================
+
+
+Components
+==========
+APL-Compiler
+SPL-Compiler
+XFS-Interface
+XSM
+
+
+
+Compiling Components
+====================
+
+Use 'make' to compile all components
+
+

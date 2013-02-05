@@ -76,16 +76,16 @@ rm -rf ./myxos/xsm/.git
 rm -rf ./myxos/xsm/.gitignore
 
 
-wget https://github.com/xosnitc/xosdoc/blob/master/filesystem/filesystem.pdf?raw=true -P ./myxos/doc/
+wget https://github.com/xosnitc/xosdoc/blob/master/filesystem/filesystem.pdf?raw=true -P ./myxos/doc/ --no-check-certificate
 mv ./myxos/doc/filesystem.pdf?raw=true ./myxos/doc/filesystem.pdf
 
-wget https://github.com/xosnitc/xosdoc/blob/master/machine/machine.pdf?raw=true -P ./myxos/doc/
+wget https://github.com/xosnitc/xosdoc/blob/master/machine/machine.pdf?raw=true -P ./myxos/doc/ --no-check-certificate
 mv ./myxos/doc/machine.pdf?raw=true ./myxos/doc/machine.pdf
 
-wget https://github.com/xosnitc/xosdoc/blob/master/os/os.pdf?raw=true -P ./myxos/doc/
+wget https://github.com/xosnitc/xosdoc/blob/master/os/os.pdf?raw=true -P ./myxos/doc/ --no-check-certificate
 mv ./myxos/doc/os.pdf?raw=true ./myxos/doc/os.pdf
 
-wget https://github.com/xosnitc/xosdoc/blob/master/usage/usage.pdf?raw=true -P ./myxos/doc/
+wget https://github.com/xosnitc/xosdoc/blob/master/usage/usage.pdf?raw=true -P ./myxos/doc/ --no-check-certificate
 mv ./myxos/doc/usage.pdf?raw=true ./myxos/doc/usage.pdf
 
 
@@ -95,8 +95,7 @@ cp ./files/README ./myxos/
 
 nano ./myxos/README
 
-
-tar -cvf myxos.tar.gz ./myxos
+tar c myxos  | gzip > myxos.tar.gz
 
 mv -f ./myxos.tar.gz ./files/
 

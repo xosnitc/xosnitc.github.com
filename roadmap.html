@@ -94,7 +94,7 @@
 				<li> $HOME/myxos/xfs-interface </li>
 				<li> $HOME/myxos/xsm </li>
 			</ul>
-					
+			<p>It is advised that the system programmer use only the register R8-R15.</p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -420,12 +420,12 @@ endif;</pre>
 				
 				<div class="syntax"><tt>  ProcessID = (PTBR - 1024) / 8; </tt></div>
 			
-			Page Tables start at word address 1024. And size of each <a href="xos-spec.html#navpromgpmt_pagetbl">per-process page table</a> is 8 words. <b>NOTE: This calculation is specific to our machine. In general Process ID is not obtained from the value of PTBR.</b> 
+			Page Tables start at word address 1024. And size of each <a href="xos-spec.html#navpromgpmt_pagetbl">per-process page table</a> is 8 words. <b>NOTE: This calculation is specific to our operating system. In general Process ID is not obtained from the value of PTBR.</b> 
 			<br/><br/>
 				We can find the PCB of the current process using the <tt>ProcessID</tt> calculated in the previous step.
 				<div class="syntax"><tt> PCB_Start = READY_LIST + 32 * ProcessID; </tt></div>
 				
-				(READY_LIST is a <a href="spl-spec.html#navconst">predefined constant</a> in SPL which has value 1536). 
+				READY_LIST is a <a href="spl-spec.html#navconst">predefined constant</a> in SPL which has value 1536. It is the starting address of the list of PCB's. Size of PCB of each process is 32 words.  <b>NOTE: This calculation is specific to our operating system. In general adresss of PCB of current process is not obtained like this.</b> 
 			</li>
 
 			<li>  A free entry is searched in the <a href="xos-spec.html#navpromgmt_pcb">per-process open file table in the PCB</a> of the process. A free entry is indicated by -1 in the first field (Pointer to <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a>). If there are no free entries, -1 is returned by the system call. </li>
@@ -505,6 +505,7 @@ endif;</pre>
 			<li> Write the argument <tt>wordToWrite</tt> to this block using the offset calculated using LSEEK position.</li>
 			<li> Commit this block back to disk </li>
 			<li> Increment LSEEK Position by 1 in the Per-Process Open File Table </li>
+			<li> Return from the system call with 0 (success)</li>
 	  	</ol>
 
 
@@ -581,7 +582,7 @@ endif;</pre>
 				<li> Return from the system call with 0 (indicating success).</li>
 			 </ol>
 
-			 <b>Exec</b> system call can be tested out by modifying the INIT program, by adding an <a href="apl-spec.html#navexec">Exec</a> call in it.
+			 <b>Exec</b> system call can be tested out by modifying the INIT program, by adding an <a href="apl-spec.html#navexec">Exec</a> call in it. <b>NOTE: The exec system call will be later modified to include Multiprogramming.</b>
 
 			</article>
 			<div class="up grid col-one-third" style="float:right">

@@ -63,16 +63,16 @@
 		
 			<menu>
 				<ol style="list-style-type:decimal">
-					<li><a href="#navstage0" class="sec">Setting up the System</a></li>
-					<li><a href="#navstage1" class="sec">Understanding the Filesystem</a></li>
-					<li><a href="#navstage2" class="sec">Starting the machine</a></li>
-					<li><a href="#navstage3" class="sec">Running a user program</a></li>
-					<li><a href="#navstage4" class="sec">Playing with files</a></li>
-					<li><a href="#navstage5" class="sec">The Exec System Call</a></li>
-					<li><a href="#navstage6" class="sec">Multiprogramming</a></li>
-					<li><a href="#navstage7" class="sec">Fork, Exit and Halt System Calls</a></li>
-					<li><a href="#navstage8" class="sec">Exception Handling</a></li>
-					<li><a href="#navstage9" class="sec">Making a console</a></li>
+					<li><a href="#navstage1" class="sec">Setting up the System</a></li>
+					<li><a href="#navstage2" class="sec">Understanding the Filesystem</a></li>
+					<li><a href="#navstage3" class="sec">Starting the machine</a></li>
+					<li><a href="#navstage4" class="sec">Running a user program</a></li>
+					<li><a href="#navstage5" class="sec">Playing with files</a></li>
+					<li><a href="#navstage6" class="sec">The Exec System Call</a></li>
+					<li><a href="#navstage7" class="sec">Multiprogramming</a></li>
+					<li><a href="#navstage8" class="sec">Fork, Exit and Halt System Calls</a></li>
+					<li><a href="#navstage9" class="sec">Exception Handling</a></li>
+					<li><a href="#navstage10" class="sec">Making a console</a></li>
 				
 				</ol>
 			</menu>
@@ -83,68 +83,126 @@
 			
 			
 			<div class="grid-wrap">
-			<article  id="navstage0" class="grid col-full">
-			<h2>Stage 0: Setting up the System </h2>
-			<p>Follow the instructions in the <a href="usage-spec.html">Usage Documentation</a> to setup the system. This document assumes that the entire package is extracted to <i>$HOME/myxos</i>. If the setting up of the system is done correctly the following folders will be created.</p>
+
+					
+			<article  id="navstage1" class="grid col-full">
+			<h2>Stage 1: Setting up the System </h2>
+
+			<p> Follow the instructions in the <a href="usage-spec.html">Usage Documentation</a> to setup the system. This document assumes that the entire package is extracted to $HOME/myxos. If the setting up of the system is done correctly the following directories will be created.
+			</p>
+
 			<ul>
-				<li> $HOME/myxos </li>
-				<li> $HOME/myxos/apl </li>
-				<li> $HOME/myxos/doc </li>
-				<li> $HOME/myxos/spl </li>
-				<li> $HOME/myxos/xfs-interface </li>
-				<li> $HOME/myxos/xsm </li>
+				<li> $HOME/myxos/apl <br/>
+				This directory contains the compiler required to compile user programs to XSM machine instructions. Try out APL compiler using the instructions given <a href="usage-spec.html#navapl">here</a>.
+					<ul> 
+						<li> $HOME/myxos/apl/samples - Contains sample APL programs. </li>
+						<li> $HOME/myxos/apl_progs - This directory is an empty directory. The user programs written in APL must be saved in this directory.</li>
+					</ul>
+				</li>
+				
+				<li> $HOME/myxos/spl <br/>
+				This directory contains the compiler required to compile system programs (i.e. operating system routines) to XSM machine instructions. Instructions on how to use SPL compiler is given <a href="usage-spec.html#navspl">here</a>
+					<ul>
+						<li> $HOME/myxos/spl/samples - 	Contains sample SPL programs </li>
+						<li> $HOME/myxos/spl_progs - This directory is an empty directory. The system programs written in SPL must be saved in this directory. The Operating System code written in SPL is to be saved here. </li>
+					</ul>
+				</li>
+				
+				<li> $HOME/myxos/xfs-interface <br/>
+				This directory contains an interface to XFS through which files from linux can be loaded into the File system of XSM (XFS). The interface also provides options for formatting the disk, listing the files loaded into the disk, removing files from the disk, copying continuous blocks from the disk to a file in linux and displaying a file in the disk. Usage instructions and examples can be found <a href="usage-spec.html#XXXXXXXX" > here </a>. </li>
+
+				<li> $HOME/myxos/xsm <br/>
+				This directory contains the machine simulator. Usage instructions and examples can be found <a href="usage-spec.html#XXXXXXXX"> here </a> </li>
+
+				<li> $HOME/myxos/doc <br/>
+				This directory contains the complete specification for XOS (Experimental Operating System), XSM (Experimental String Machine), XFS (Experimental File System), APL (Application Programmers Language) and SPL(System Programmers Language) and Usage Documentation </li>
 			</ul>
-			<p>It is advised that the system programmer use only the register R8-R15.</p>
 			</article>
+
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
-			</div>
-				
-				
-			<article  id="navstage1" class="grid col-full">
-			<h2>Stage 1: Understanding the Filesystem </h2>
-			<p> The first stage of building XOS begins with understanding the underlying XFS Filesystem interface. </p>
+			</div>	
 			
-			<ol>
+			<article id="navstage2" class="grid col-full">
+				<h2>Stage 2: Understanding the Filesystem </h2>
+				<p> The first stage of building XOS begins with understanding the underlying XFS Filesystem interface. </p>
+					<ol>
+						<li> Start by formatting the disk in the XFS interface using <b>fdisk</b> command. This can be done by 
+							<div class="syntax"> 
+<pre>cd $HOME/myxos/xfs-interface
+./xfs-interface</pre>
+							</div> 
 
-			<li> Start by formatting the disk in the XFS interface using <b>fdisk</b> command. A file named <b>disk.xfs</b>	 is created in the location <b>$HOME/myxos/xfs-interface/</b>. This file simulates the hard disk of the machine.</li>
-			<li> Create a data file in your UNIX machine. Read about  <a href="xfs-spec.html#navfile" >Files</a> in XFS</li>
-			<h5> A sample data file is given below</h5>
-			<div class="syntax"> 
-				<pre>
-There is a place where the sidewalk ends
+						This will take you to the xfs-interface prompt. Type the following commands in the xfs-interface prompt
+						<div class="syntax"> 
+<pre>fdisk 
+exit</pre>
+						</div>
+
+						You will be back in the linux shell and a file named <b>disk.xfs</b> is created in the location <b>$HOME/myxos/xfs-interface/</b>. This file simulates the hard disk of the machine.</li>
+
+						<li> Create a data file in your UNIX machine.		
+							<h5> A sample data file is given below</h5>
+								<div class="syntax"> 
+<pre>There is a place where the sidewalk ends
 And before the street begins,
 And there the grass grows soft and white,
 And there the sun burns crimson bright,
 And there the moon-bird rests from his flight
 To cool in the peppermint wind.</pre>
-			</div>
-			<li> Load the data file to the XFS formatted disk from your UNIX machine.  </li>
-			<li> Find out the FAT entry corresponding to the loaded file. See <a href="xfs-spec.html#navdiskorg">disk organization</a> of XFS Disk. Use the <b>copy</b> command to copy FAT entries (block 10 of the disk) to a file (say <i>fat_block.txt</i>) in your PC as
-			<div class="syntax">
-			copy 10 10 fat_block.txt
-			</div></li>	
-			<li> Check the <a href="xos-spec.html#navfiles_fat">FAT entry</a> and find the basic block. Copy it to get the data blocks used by this file.</li>
-			<li> Copy the data blocks and display it as a UNIX file. </li>
+								</div>
+								Save the file as $HOME/myxos/sample.dat
+						</li>
+
+						<li> Load the data file to the XFS formatted disk from your UNIX machine.  This can be done by 
+							<div class="syntax"> 
+<pre>cd $HOME/myxos/xfs-interface
+./xfs-interface
+</pre>
+							</div>
+							This will take you to the xfs-interface prompt. Type the following commands in the xfs-interface prompt.
+							<div class="syntax"> 
+<pre>load --data $HOME/myxos/sample.dat</pre>
+							</div>
+						</li>
+
+						<li> Find out the FAT entry corresponding to the loaded file. See <a href="xfs-spec.
+							tml#navdiskorg">disk organization</a> of XFS Disk. Use the <b>copy</b> command to copy FAT entries (block 10 of the disk) to a file (say <i>fat_block.txt</i>) in your PC as
+							<div class="syntax">
+<pre>copy 10 10 fat_block.txt
+exit</pre>
+							</div>
+						</li>	
+						<li> Check the <a href="xos-spec.html#navfiles_fat">FAT entry</a> by viewing the fat_block.txt 
+							file from linux and find the block number of basic block of the loaded data file. Copy this block using xfs-interface to a linux file as done above to get the data blocks used by this file.
+						</li>
+
+						<li> Copy the data blocks and display it as a UNIX file. </li>
 			</ol>
 
-
-			
 			</article>
+
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>	
 			
-			<article  id="navstage2" class="grid col-full">
-			<h2>Stage 2: Starting the machine </h2>
-			<p> In this stage, we will run a system program <b>to print odd numbers from 1 to n</b> and run it as the OS Startup Code in the machine. The steps to do this are explained in detail below. </p>
-			<ol>
-			<li>
-			
 
-			Create the program using <a href="spl-spec.html">SPL</a> (System Programmer's Language).<br/>
-			<h5> SPL Code to print odd numbers from 1 to n (taken as input)</h5>
-			<div class="syntax"> 
+			<article  id="navstage3" class="grid col-full">
+				<h2>Stage 3: Starting the machine </h2>
+
+				<p>When the XSM machine is started up  <a href="XXXXXXXXXXXX"> ROM Code </a> is executed. The page 0 of the machine is called the ROM Code. It is hard coded into the machine. That is The ROM code at absolute address 0 (to 511) is "already there" when machine starts up. The ROM code is called the "bootstrap" loader in OS literature. ROM code does the following operations :
+				<ol>
+					<li>Loads block 0 of disk to page 1 of memory (absolute address 512).</li>
+					<li>After completing 1, sets IP to 512 so that the next instruction to be exected is fetched from location 512(page 1 in memory starts from location 512).</li>
+				</ol> 
+				So if we write a program in SPL, compile it using SPL compiler and load the compiled code to block 0 of disk using xfs-interface, our program will be executed by the machine. This program which we load to block 0 of disk is supposed to be the OS Startup Code. The OS designer must design and program  "OS startup code", compile it using the SPL compiler to generate executable program and copy this program to block 0 of the disk (using xfs interface). Once that is done, this code is loaded into page 1 of memory during boot up by the ROM code. Now your program gets control.</p>
+			
+				<p>In this stage, we will run a system program <b>to print odd numbers from 1 to n</b> and run it as the OS Startup Code in the machine. The steps to do this are explained in detail below. </p>
+				
+				<ol>
+					<li>Create the program using <a href="spl-spec.html">SPL</a> (System Programmer's Language). It is advised that the system programmer use only the register R8-R15. <br/>
+						<h5> SPL Code to print odd numbers from 1 to n (taken as input)</h5>
+						<div class="syntax"> 
 <pre>
 alias counter R0;
 alias n R1;
@@ -157,23 +215,24 @@ while(counter <= n) do
 	endif;
 	counter = counter + 1;
 endwhile; </pre>
-			</div>
-			</li>
-			<li>Save this file as <i>$HOME/myxos/spl_progs/oddnos.spl</i>. Compile this SPL program using the command
-			<div class="syntax">
-				<tt> . cd $HOME/myxos/spl </tt><br/><tt> ./spl --os < $HOME/myxos/spl_progs/oddnos.spl  </tt> 
-			</div> </li> 
-	
-			</li>
-			<li>
-			Load the file generated by the SPL compiler (<i>$HOME/myxos/spl/os_startup.xsm</i>) as the OS startup code to <tt>disk.xfs</tt> using the XFS Interface. 
-			</li>
-			<li> Run the machine using the command </li>
-			<div class="syntax">
-			. $HOME/myxos/xsm/xsm --disable-timer
-		</div>
-			</ol>
-The machine will halt after printing all odd numbers from 1 to n
+						</div>
+					</li>
+
+					<li>Save this file as <i>$HOME/myxos/spl_progs/oddnos.spl</i>. Compile this SPL program using the command
+						<div class="syntax">
+						<tt> . cd $HOME/myxos/spl </tt><br/>
+						<tt> ./spl --os < $HOME/myxos/spl_progs/oddnos.spl  </tt> </div> 
+					</li> 
+
+					<li> Load the file generated by the SPL compiler (<i>$HOME/myxos/spl/os_startup.xsm</i>) as the OS startup code to <tt>disk.xfs</tt> using the XFS Interface (use the command <i>load --os $HOME/myxos/spl/os_startup.xsm</i> from xfs interface). 
+					</li>
+
+					<li> Run the machine using the command 
+						<div class="syntax">
+. $HOME/myxos/xsm/xsm --disable-timer
+						</div></li>
+				</ol>
+				The machine will halt after printing all odd numbers from 1 to n
 <pre><tt>
 Enter n:
 10
@@ -183,15 +242,20 @@ Enter n:
 7
 9
 Machine is halting
-</tt>
-</pre>
+</tt></pre>
 
+				<p> You may also write a few SPL programs on your own and run it on the machine to get familiarized with SPL syntax. Try using the instructions like <a href="http://xosnitc.github.com/spl-spec.html#navbreakpointstmt"><i>breakpoint</i></a>. This instruction is useful for debugging. It displays the contents of all the machine registers at the point where the instruction is used.</p>
 			</article>
+
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
-			</div>			
+			</div>	
 
-			<article  id="navstage3" class="grid col-full">
+
+
+			
+
+			<article  id="navstage4" class="grid col-full">
 			<h2>Stage 3: Running a user program </h2>
 			<p> User programs or application programs are programmed using <a href="apl-spec.html">APL</a> or Application Programmer's Language. In this stage, an application program in APL is compiled and loaded to the disk as the init process. An OS Startup code is written in <a href="spl-spec.html">SPL</a> to load this program to the memory on machine startup. 		  </p>
 			<ol>
@@ -282,7 +346,7 @@ Machine is halting
 			</div>	
 
 
-			<article  id="navstage4" class="grid col-full">
+			<article  id="navstage5" class="grid col-full">
 			<h2>Stage 4: Playing with files </h2>
 			<p> In this stage, you will implement file system calls  <b>Create, Delete, Open, Close, Seek, Read</b> and <b> Write </b>. The following tasks should be done in this stage </p>
 			<h6> Modifying the OS Startup Code</h6>
@@ -556,7 +620,7 @@ endif;</pre>
 			</div>	
 			
 
-			<article  id="navstage5" class="grid col-full">
+			<article  id="navstage6" class="grid col-full">
 			<h2>Stage 5: The Exec System Call</h2>
 			<p>  
 			The <a href="xos-spec.html#navsyscalls_process">Exec system call</a> is used to load and run a new process from a currently running process. The current process is overwritten by new process i.e. the process data structures of the current process is used by the new process. </br>
@@ -592,7 +656,7 @@ endif;</pre>
 
 
 
-			<article  id="navstage6" class="grid col-full">
+			<article  id="navstage7" class="grid col-full">
 			<h2>Stage 6: Multiprogramming</h2>
 			<p>  <a href="xos-spec.html#navpromgmt_multiprog">Multiprogramming</a> refers to running more than one process simultaneously. In XSM, the timer interrupts after every instruction and the control is passed to Page 8, i.e. the timer interrupt routine.  </p>
 			Run the machine  without disabling the timer. <br/>
@@ -653,7 +717,7 @@ endif;</pre>
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>	
 			
-			<article  id="navstage7" class="grid col-full">
+			<article  id="navstage8" class="grid col-full">
 			<h2>Stage 7: Fork , Exit and Halt System Calls </h2>
 
 			<h6>Fork</h6>
@@ -728,7 +792,7 @@ endif;</pre>
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>		
 			
-			<article  id="navstage8" class="grid col-full">
+			<article  id="navstage9" class="grid col-full">
 			<h2>Stage 8: Exception Handling </h2>
 			<p> 
 				<a href="xos-spec.html#navsysroutines_exhandler">Exception Handler</a> in XOS handles exceptions caused by machine. When an exception occurs, the machine sets the <tt>EFR</tt> (Exception Flag Register) and calls the Exception Handler in Page 7. See <a href="xsm-spec.html#navexcep">Exceptions</a>.
@@ -808,7 +872,7 @@ Ip_addr = (EFR/1000);		//Gets value of IP at the point of exception
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>		
 			
-			<article  id="navstage9" class="grid col-full">
+			<article  id="navstage10" class="grid col-full">
 			<h2>Stage 9: Making a console </h2>
 			<p> 
 				The final stage is to make the INIT  process act like a console. INIT written in APL, should be an infinite loop, which takes in  filenames. This filename should correspond to the program to be executed.

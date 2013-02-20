@@ -71,8 +71,9 @@
 					<li><a href="#navstage6" class="sec">Multiprogramming</a></li>
 					<li><a href="#navstage7" class="sec">Creating Files</a></li>
 					<li><a href="#navstage8" class="sec">Exec, Fork, Exit and Halt System Calls</a></li>
-					<li><a href="#navstage9" class="sec">Exception Handling</a></li>
-					<li><a href="#navstage10" class="sec">Making a console</a></li>
+					<li><a href="#navstage9" class="sec">Playing with Files</a></li>
+					<li><a href="#navstage10" class="sec">Exception Handling and Demand Paging</a></li>
+					<li><a href="#navstage11" class="sec">Making a console</a></li>
 				
 				</ol>
 			</menu>
@@ -768,9 +769,167 @@ endif;</pre>
 			</div>	
 
 
-
 			<article  id="navstage9" class="grid col-full">
-			<h2>Stage 9: Exception Handling </h2>
+			<h2>Stage 9: Playing with files</h2>
+			<p>We have already created files using the "Create" system call. Now we will implement the remaining system calls - <b>Open, Close, Delete, Write, Seek and Read</b>.</p>
+			<h6> Open </h6>
+			<i>System Call No</i>: 2 <br/>
+			<i>Interrupt Routine No</i>: 2 <br/>
+			<i>Arguments</i>: filename <br/>
+			<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
+			<br/>
+			Opens a file with the filename given as argument.
+
+			<ol>
+				<li> Memory copy of FAT is searched for the <tt>filename</tt> (get the <tt>filename</tt> from stack as explained in the Create system call) . If the entry is not found, -1 is returned. Otherwise, store the index of the FAT entry in a register.</li>
+
+				<li>Then, the <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a> is searched for the FAT Index  found in the previous step. If an entry is found, increment the <a href="xos-spec.html#navfiles_swoft"><tt>File Open Count</tt></a>.</li>
+
+				<li> If an entry is not found with the FAT Index, then search for a free entry in the System-Wide Open File Table. If there are no free entries (indicated by -1 <tt>FAT Index</tt> field), return from the system call with return value -1. Otherwise, store <tt>FAT Index</tt> and set the <tt>File Open Count</tt> field as 1 in free entry found.	</li>
+
+				<li> Store the index of the entry (in System-Wide Open File Table) in a register.</li>
+
+				<li> Every process will have a <a href="xos-spec.html#navpromgmt_pcb">Per-Process File Table</a> in its PCB. This stores the details of files opened by this process. Find the PCB's location using the value of PTBR (It may be directly obtained if there is only one process, however following a general approach to get PCBs will be useful when more than one process starts running). Using the value of PTBR we can find the ProcessID using the formula:
+					
+					<div class="syntax"><tt>  ProcessID = (PTBR - 1024) / 8; </tt></div>
+				
+				Page Tables start at word address 1024. And size of each <a href="xos-spec.html#navpromgpmt_pagetbl">per-process page table</a> is 8 words. <b>NOTE: This calculation is specific to our operating system. In general Process ID is not obtained from the value of PTBR.</b> 
+				<br/><br/>
+					We can find the PCB of the current process using the <tt>ProcessID</tt> calculated in the previous step.
+					<div class="syntax"><tt> PCB_Start = READY_LIST + 32 * ProcessID; </tt></div>
+					
+					READY_LIST is a <a href="spl-spec.html#navconst">predefined constant</a> in SPL which has value 1536. It is the starting address of the list of PCB's. Size of PCB of each process is 32 words.  <b>NOTE: This calculation is specific to our operating system. In general adresss of PCB of current process is not obtained like this.</b> 
+				</li>
+
+				<li>  A free entry is searched in the <a href="xos-spec.html#navpromgmt_pcb">per-process open file table in the PCB</a> of the process. A free entry is indicated by -1 in the first field (Pointer to <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a>). If there are no free entries, -1 is returned by the system call. </li>
+
+				<li> Otherwise, set the <tt>Pointer to System-Wide File Table Entry</tt> field to the index stored in Step 4 and set <tt>LSEEK Position</tt> to 0.  </li>
+			
+				<li> The index of this entry in the local file table is returned as a return value of the system call. This is known as the file descriptor.</li>
+			</ol>
+
+
+			<h6> Close </h6>
+			<i>System Call No</i>: 3 <br/>
+			<i>Interrupt Routine No</i>: 2 <br/>
+			<i>Arguments</i>: fileDescriptor <br/>
+			<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
+			<br/>
+			Closes a file opened by the process.
+
+			<ol> 
+				<li> Get the address of PCB of the process as in the Open System Call implementation.</li>
+				<li> Index into the per-process open file table using the argument <tt>fileDescriptor</tt>. Return from the system call with -1 (failure) if the <tt>fileDescriptor</tt> is invalid or its corresponding entry is invalid.</li>
+				<li> Using the <tt>Pointer to System Wide Open File Table Entry</tt> field, index to the System Wide Open File Table </tt> and decrement <tt>File Open Count</tt> by one. If it becomes 0, invalidate the entry by setting both the fields to -1. </li>
+				<li> Now invalidate the Per-Process Open File Table entry, by setting the fields to -1</li>
+				<li> Return from system call with 0 (success).
+				 </li>
+			</ol>
+
+			<h6> Delete</h6>
+			<i>System Call No</i>: 4 <br/>
+			<i>Interrupt Routine No</i>: 1 <br/>
+			<i>Arguments</i>: filename <br/>
+			<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
+			<br/>
+			Deletes a file in the disk with the filename given as argument.
+
+
+			<ol>
+				<li> Search the memory copy of <a href="xos-spec.html#navfiles_fat">FAT</a> for the <tt>filename</tt> specified as argument. If it is not found, return from the system call with -1 (failure). </li>
+				<li> If an entry is found, store the index in a register. </li>
+				<li> Search the System Wide Open File Table to see if the file has been opened. If it is opened, return from the system call with -1 (failure) </li>
+				<li> Otherwise, follow the steps to invalidate and delete the file <li>
+					<ul>
+					<li>Load the <a href="xfs-spec.html#navfile"><tt>Basic Block</tt></a> to the <a href="xos-spec.html#navfiles_scratchpad">Scratchpad</a>. </li>
+					<li> For each block used by the file (specified in the Basic Block), invalidate the corresponding block's entry (Setting -1) in the memory copy of the <a href="xfs-spec.html#navdf">Disk Free List</a></li>
+					<li> Invalidate the entry for the basic block in the Disk Free List by setting -1.</li>
+					<li> Invalidate the <a href="xos-spec.html#navfiles_fat">FAT</a> entry by setting -1 in the <tt>Block # of Basic Block</tt> field.</li>
+					</ul>
+				<li> Store back  the FAT and Disk Free List from the memory to the disk.</li>
+				<li> Return from the system call with 0 (success)</li>
+			</ol>
+
+			<h6> Write </h6>	
+			<i>System Call No</i>: 5 <br/>
+			<i>Interrupt Routine No</i>: 4 <br/>
+			<i>Arguments</i>: 1) fileDescriptor 2) wordToWrite <br/>
+			<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
+			<br/>
+			Writes a word specified by <tt>wordToWrite</tt> to a file opened by the process.
+
+		  	<ol>
+		  		<li> Get the arguments to registers from the stack </li>
+				<li> Get the address of PCB of the process. </li>
+				<li> Index into the per-process open file table using <tt>fileDescriptor</tt>. Return from the system call with -1 (failure) if the <tt>fileDescriptor</tt> is invalid or its corresponding entry is invalid.</li>
+				<li> Otherwise, store the LSEEK position to a register.</li>
+				<li> Using the <tt>Pointer to System Wide Open File Table Entry</tt> field, index to the System Wide Open File Table to get the FAT Index Entry.   </li>
+				<li> Fetch the <tt>basic block</tt> from the FAT and load it to the scratchpad</li>
+				<li> Using LSEEK position find the block number to be written to. Find its location in the disk from the basic block. If entry for the block is invalid, then allocate a new block in the following way.</li>
+					<ul>
+						<li> Traverse through the memory copy of the <a href="xfs-spec.html#navdfl">Disk Free List</a> till the entry for block 447 to get a free block.
+						<li> If no free block is avaliable. Return from the system call, with return value -1 (failure). </li>
+						<li> Otherwise, set 1 in the entry for the  free block in the Disk Free List. Update the basic block with this block number. </li> 
+						<li> Commit the basic block from scratchpad back to the disk. </li>
+						<li> Increment the <tt>file size</tt> in the FAT entry by 1. </li>
+						<li> Commit the FAT and Disk Free List from the memory to the disk. </li>
+					</ul>
+				<li> Fetch this block from the disk to the scratchpad. </li>
+				<li> Write the argument <tt>wordToWrite</tt> to this block using the offset calculated using LSEEK position.</li>
+				<li> Commit this block back to disk </li>
+				<li> Increment LSEEK Position by 1 in the Per-Process Open File Table </li>
+				<li> Return from the system call with 0 (success)</li>
+		  	</ol>
+
+
+		  	<h6> Seek </h6>
+			<i>System Call No</i>: 6 <br/>
+			<i>Interrupt Routine No</i>: 3 <br/>
+			<i>Arguments</i>: 1) fileDescripto	r 2) newLseek <br/>
+			<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
+			<br/>
+			Changes the value of LSEEK position of the file to <i>newLseek</i>.
+
+		  	<ol>
+		  		<li> Get the arguments to registers from the stack </li>
+		  		<li> Get the address of PCB of the process. </li>
+				<li> Index into the per-process open file table using <tt>fileDescriptor</tt>. Return from the system call with -1 (failure) if the <tt>fileDescriptor</tt> is invalid or its corresponding entry is invalid.</li>
+				<li> Using the <tt>Pointer to System Wide Open File Table Entry</tt> field, index to the System Wide Open File Table to get the FAT Index Entry.   </li>
+				<li> Fetch the <tt>file size</tt> of the file from the FAT and store it in a register. </li>
+				<li> If value of the argument <tt>newLseek</tt> is between 0 and <tt>file size * block size</tt>, change the <tt>LSEEK</tt>  in the per-process file table to <tt>newLseek</tt>. Return with 0 (indicating success).</li>
+				<li> Otherwise, return with -1 (indicating failure). </li>
+		  	</ol>
+
+		  	<h6>Read</h6>
+			<i>System Call No</i>: 7 <br/>
+			<i>Interrupt Routine No</i>: 3 <br/>
+			<i>Arguments</i>: 1) fileDescriptor 2) Variable<br/>
+			<i>Return Value</i>: 0 (success) and -1 (failure) </br>
+			<br/>
+			Reads a word from a file to the variable passed as argument
+
+		  	<ol>
+		  		<li> Get the arguments to registers from the stack </li>
+				<li> Get the address of PCB of the process. </li>
+				<li> Index into the per-process open file table using <tt>fileDescriptor</tt>. Return from the system call with -1 (failure) if the <tt>fileDescriptor</tt> is invalid or its corresponding entry is invalid.</li>
+				<li> Otherwise, store the LSEEK position to a register.</li>
+				<li> Using the <tt>Pointer to System Wide Open File Table Entry</tt> field, index to the System Wide Open File Table to get the FAT Index Entry.   </li>
+				<li> Fetch the <tt>basic block</tt> from the FAT and load it to the scratchpad
+				</li>
+				<li> Using LSEEK position find the block number to be read from. Find its location in the disk from the basic block. If entry for the block is invalid, return with value -1 (indicating failure).</li>
+				<li> Else,  fetch this block from the disk to the scratchpad. </li>
+				<li> Read from this block using the offset calculated using LSEEK position. </li>
+				<li> This value is stored in the stack in position of Argument 2. Store the word read to absoluteSP - 2.</li>
+				<li> Return with 0, indicating success </li>
+		  	</ol>
+
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+
+			<article  id="navstage10" class="grid col-full">
+			<h2>Stage 10: Exception Handling and Demand Paging</h2>
 			<p> 
 				<a href="xos-spec.html#navsysroutines_exhandler">Exception Handler</a> in XOS handles exceptions caused by machine. When an exception occurs, the machine sets the <tt>EFR</tt> (Exception Flag Register) and calls the Exception Handler in Page 7. See <a href="xsm-spec.html#navexcep">Exceptions</a>.
 			</p>
@@ -850,300 +1009,17 @@ Ip_addr = (EFR/1000);		//Gets value of IP at the point of exception
 			</div>
 
 
-			<article  id="navstage10" class="grid col-full">
-			<h2>Stage 10: Making a console </h2>
+			<article  id="navstage11" class="grid col-full">
+			<h2>Stage 11: Making a console </h2>
 			<p> 
 				The final stage is to make the INIT  process act like a console. INIT written in APL, should be an infinite loop, which takes in  filenames. This filename should correspond to the program to be executed.
 				It should <a href="apl-spec.html#navfork"><b>Fork</b></a> itself and <a href="apl-spec.html#navexec"><b>Exec</b></a> using the filename. Appropriate errors must be reported. To have  a time delay between asking for filenames as input, a time-consuming loop may be added  :) 
 			 </p>
+
+			
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>
-
-
-			<article  id="navstage5" class="grid col-full">
-			<h2>Stage 5: Playing with files !!!</h2>
-			<p> In this stage, you will implement file system calls  <b>Create, Delete, Open, Close, Seek, Read</b> and <b> Write </b>. The following tasks should be done in this stage </p>
-			<h6> Modifying the OS Startup Code</h6>
-			<ol>
-			<li> Load FAT from disk block 10 to memory page 5 and Disk Free List from the disk block 11 to memory page 6. Refer <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization </a>. </li>
-			</li>
-			<li>
-			Set the <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a> entries to -1 (invalid initially). 	</li>
-			<div class="syntax">
-			<pre>
-alias counter R8;	// R8 - R15 is used by system programmers.
-counter = 0;
-while ( counter <=  128) do
-	[ FILE_TABLE + counter] = -1;
-endwhile;						</pre>
-			</div>
-			<li> Set all words in the <a href="xos-spec.html#navpromgmt_pcb">Per-Process Open-File Table in the PCB</a> of INIT to -1  </li>
-			
-			<li> 
-			<a href="xos-spec.html#navsyscalls_file">File System Calls</a> are implemented in Interrupt 1 (Create & Delete),  2 (Open & Close), 3 (Seek & Read) and 4 (Write) Routines. These 4 interrupt routines must be programmed in SPL, compiled and loaded into the disk in the corresponding locations using the XFS-Interface. These interrupt routines must be loaded from the disk to corresponding memory pages by the OS Startup Code.
-			</li>
-			</ol>
-			Each system call will be invoked from a user program which invokes the <tt> INT </tt> instruction after pushing the registers, arguments and system call number into the stack.  <img src="doc/syscallstack.png" style="width:150%">
-			
-			<br/><br/>
-			An Interrupt  Routine may contain more than system call implementation. The system call number is obtained from the stack (Stack Pointer - 1) and then an <b>if</b> condition is checked for the corresponding system call. To access the stack in KERNEL mode, the physical address of the top of the stack must used. The physical address of the top of stack is calculated as: The 6th entry in the Page Table (obtained from PTBR + 6) gives the starting address of the stack, and SP%512 will give the offset in the stack. Adding both will give the absoulte address of SP. 
-			<br/><br/>
-			<h4>File System Calls</h4>
-			<table class="doctable" style="width:50%">
-				<tr><th>System Call Name</th><th>System Call #</th><th>Interrupt Routine #</th></tr>
-				<tr><td>Create</td>			 <td>1</td>				<td> 1</td> </tr>
-				<tr><td>Open</td>			<td>2</td>				<td> 2</td> </tr>
-				<tr><td>Close</td>			<td>3</td>				<td> 2</td> </tr>
-				<tr><td>Delete</td>			<td>4</td>				<td> 1</td> </tr>
-				<tr><td>Write</td>			<td>5</td>				<td> 4</td> </tr>
-				<tr><td>Seek</td>			<td>6</td>				<td> 3</td> </tr>
-				<tr><td>Read</td>			<td>7</td>				<td> 3</td> </tr>
-			</table>
-
-			<br/>
-			A skeleton of Interrupt 1 Routine is given below.
-
-			<div class="syntax">
-			<pre>
-alias absoluteSP R8;
-absoluteSP = [PTBR + 6] + SP % 512 ;
-.
-// Get system call no. from the stack
-.
-if ( sysCallNo == 1) then
-	// Implementation of Create
-	.
-	.
-endif;
-if ( sysCallNo == 4) then
-	// Implementation of Delete
-	.
-	.
-endif;	</pre>
-			</div>
-
-			Now we'll implement the system calls in its corresponding Interrupt Routine Code. <br/><br/>
-		
-
-		<h6> Create </h6>
-		<i>System Call No</i>: 1 <br/>
-		<i>Interrupt Routine No</i>: 1 <br/>
-		<i>Arguments</i>: filename <br/>
-		<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
-		<br/>
-		Creates a file with the filename given as argument.
-
-		<ol>
-		<li> First of all, the memory copy of the <a href="xfs-spec.html#navdfl">disk free list</a> is searched till the entry for block number 447 to find a free block number (indicated by a 0 entry in the disk free list). Blocks 448 - 511  are reserved for <a href="xfs-spec.html#navdiskorg">swap area</a> which will be used for virtual memory management (<a href="roadmap.html#navstage8">Stage 8</a>). This block is used as the <a href="xfs-spec.html#navfile">basic block</a> of the file to be created. It's entry is set to 1. The block number is stored to a register. If no free block is found return -1 (as done in the previous step). </li>
-
-		<li> The <tt>filename</tt> specified as argument is stored in the stack at absoluteSP - 2. Fetch it and store it to a register. </li>
-		<li> The memory copy of the <a href="xos-spec.html#navfiles_fat">FAT</a> is to be searched for the <tt>filename</tt> to check if the file already exists. If it exists return from the sytem call with 0 (success).
-		</li>
-
-		<li> Next, the memory copy of the <a href="xos-spec.html#navfiles_fat">FAT</a> is searched for a free entry. A free entry in the FAT is indicated by -1 in the entry for basic block (Word 2 of each FAT entry). If no free entry is found put -1 in the return value space of the stack (absoluteSP - 12, See figure above). Then return to USER Mode using <b>ireturn</b> instruction. Address of FAT is stored in a <a href="spl-spec.html#navconst">predefined constant</a> in <tt>FAT</tt> in SPL. </li>
-		<li><tt>filename</tt> and the <tt>free block number</tt> obtained  in the previous steps are stored in the <em>Filename</em> field and <em>basic block number</em> field of the free <a href="xos-spec.html#navfiles_fat">FAT</a> entry respectively.</li>
-			<li> The <em>file size</em> field of the FAT entry is initialized to zero.</li>
-
-
-			<div class="syntax">
-				<pre>
-alias counter R8;
-counter = 0;
-while(counter < 512) do
-	if([FAT + counter + 2] == -1) then
-		.
-		// Set the FAT entry 
-		.
-		break;
-	endif;
-	counter = counter + 8;
-endwhile;
-
-// Return with -1 if there is no free entry
-if(counter == 512) then 		
-	[absoluteSP - 12] = -1;		
-	ireturn;	
-endif;</pre>
-			</div>
-		
-		<li> Load the <a href="xfs-spec.html#navfile">basic block</a> from the disk to the <a href="xos-spec.html#navfiles_scratchpad">scratchpad</a>. Each entry of the block list in the basic block is initialized to zero and it is stored back to the disk.</li>	
-		<li> The updated copies of FAT and disk free list in the memory are then stored back to the disk.</li>
-		
-		<li> The return value of this system call is 0 in case of success and -1 in case of failure. The return value is stored in the stack at address absoluteSP - 12.</li>
-		<li>Use an <b>ireturn</b> instruction to transfer control back to USER Mode.</li>
-		</ol>
-
-
-
-
-
-		<h6> Open </h6>
-		<i>System Call No</i>: 2 <br/>
-		<i>Interrupt Routine No</i>: 2 <br/>
-		<i>Arguments</i>: filename <br/>
-		<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
-		<br/>
-		Opens a file with the filename given as argument.
-
-		<ol>
-			<li> Memory copy of FAT is searched for the <tt>filename</tt> (get the <tt>filename</tt> from stack as explained in the Create system call) . If the entry is not found, -1 is returned. Otherwise, store the index of the FAT entry in a register.</li>
-
-			<li>Then, the <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a> is searched for the FAT Index  found in the previous step. If an entry is found, increment the <a href="xos-spec.html#navfiles_swoft"><tt>File Open Count</tt></a>.</li>
-
-			<li> If an entry is not found with the FAT Index, then search for a free entry in the System-Wide Open File Table. If there are no free entries (indicated by -1 <tt>FAT Index</tt> field), return from the system call with return value -1. Otherwise, store <tt>FAT Index</tt> and set the <tt>File Open Count</tt> field as 1 in free entry found.	</li>
-
-			<li> Store the index of the entry (in System-Wide Open File Table) in a register.</li>
-
-			<li> Every process will have a <a href="xos-spec.html#navpromgmt_pcb">Per-Process File Table</a> in its PCB. This stores the details of files opened by this process. Find the PCB's location using the value of PTBR (It may be directly obtained if there is only one process, however following a general approach to get PCBs will be useful when more than one process starts running). Using the value of PTBR we can find the ProcessID using the formula:
-				
-				<div class="syntax"><tt>  ProcessID = (PTBR - 1024) / 8; </tt></div>
-			
-			Page Tables start at word address 1024. And size of each <a href="xos-spec.html#navpromgpmt_pagetbl">per-process page table</a> is 8 words. <b>NOTE: This calculation is specific to our operating system. In general Process ID is not obtained from the value of PTBR.</b> 
-			<br/><br/>
-				We can find the PCB of the current process using the <tt>ProcessID</tt> calculated in the previous step.
-				<div class="syntax"><tt> PCB_Start = READY_LIST + 32 * ProcessID; </tt></div>
-				
-				READY_LIST is a <a href="spl-spec.html#navconst">predefined constant</a> in SPL which has value 1536. It is the starting address of the list of PCB's. Size of PCB of each process is 32 words.  <b>NOTE: This calculation is specific to our operating system. In general adresss of PCB of current process is not obtained like this.</b> 
-			</li>
-
-			<li>  A free entry is searched in the <a href="xos-spec.html#navpromgmt_pcb">per-process open file table in the PCB</a> of the process. A free entry is indicated by -1 in the first field (Pointer to <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a>). If there are no free entries, -1 is returned by the system call. </li>
-
-			<li> Otherwise, set the <tt>Pointer to System-Wide File Table Entry</tt> field to the index stored in Step 4 and set <tt>LSEEK Position</tt> to 0.  </li>
-		
-			<li> The index of this entry in the local file table is returned as a return value of the system call. This is known as the file descriptor.</li>
-		</ol>
-
-
-		<h6> Close </h6>
-		<i>System Call No</i>: 3 <br/>
-		<i>Interrupt Routine No</i>: 2 <br/>
-		<i>Arguments</i>: fileDescriptor <br/>
-		<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
-		<br/>
-		Closes a file opened by the process.
-
-		<ol> 
-			<li> Get the address of PCB of the process as in the Open System Call implementation.</li>
-			<li> Index into the per-process open file table using the argument <tt>fileDescriptor</tt>. Return from the system call with -1 (failure) if the <tt>fileDescriptor</tt> is invalid or its corresponding entry is invalid.</li>
-			<li> Using the <tt>Pointer to System Wide Open File Table Entry</tt> field, index to the System Wide Open File Table </tt> and decrement <tt>File Open Count</tt> by one. If it becomes 0, invalidate the entry by setting both the fields to -1. </li>
-			<li> Now invalidate the Per-Process Open File Table entry, by setting the fields to -1</li>
-			<li> Return from system call with 0 (success).
-			 </li>
-		</ol>
-
-		<h6> Delete</h6>
-		<i>System Call No</i>: 4 <br/>
-		<i>Interrupt Routine No</i>: 1 <br/>
-		<i>Arguments</i>: filename <br/>
-		<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
-		<br/>
-		Deletes a file in the disk with the filename given as argument.
-
-
-		<ol>
-			<li> Search the memory copy of <a href="xos-spec.html#navfiles_fat">FAT</a> for the <tt>filename</tt> specified as argument. If it is not found, return from the system call with -1 (failure). </li>
-			<li> If an entry is found, store the index in a register. </li>
-			<li> Search the System Wide Open File Table to see if the file has been opened. If it is opened, return from the system call with -1 (failure) </li>
-			<li> Otherwise, follow the steps to invalidate and delete the file <li>
-				<ul>
-				<li>Load the <a href="xfs-spec.html#navfile"><tt>Basic Block</tt></a> to the <a href="xos-spec.html#navfiles_scratchpad">Scratchpad</a>. </li>
-				<li> For each block used by the file (specified in the Basic Block), invalidate the corresponding block's entry (Setting -1) in the memory copy of the <a href="xfs-spec.html#navdf">Disk Free List</a></li>
-				<li> Invalidate the entry for the basic block in the Disk Free List by setting -1.</li>
-				<li> Invalidate the <a href="xos-spec.html#navfiles_fat">FAT</a> entry by setting -1 in the <tt>Block # of Basic Block</tt> field.</li>
-				</ul>
-			<li> Store back  the FAT and Disk Free List from the memory to the disk.</li>
-			<li> Return from the system call with 0 (success)</li>
-		</ol>
-
-		<h6> Write </h6>	
-		<i>System Call No</i>: 5 <br/>
-		<i>Interrupt Routine No</i>: 4 <br/>
-		<i>Arguments</i>: 1) fileDescriptor 2) wordToWrite <br/>
-		<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
-		<br/>
-		Writes a word specified by <tt>wordToWrite</tt> to a file opened by the process.
-
-	  	<ol>
-	  		<li> Get the arguments to registers from the stack </li>
-			<li> Get the address of PCB of the process. </li>
-			<li> Index into the per-process open file table using <tt>fileDescriptor</tt>. Return from the system call with -1 (failure) if the <tt>fileDescriptor</tt> is invalid or its corresponding entry is invalid.</li>
-			<li> Otherwise, store the LSEEK position to a register.</li>
-			<li> Using the <tt>Pointer to System Wide Open File Table Entry</tt> field, index to the System Wide Open File Table to get the FAT Index Entry.   </li>
-			<li> Fetch the <tt>basic block</tt> from the FAT and load it to the scratchpad</li>
-			<li> Using LSEEK position find the block number to be written to. Find its location in the disk from the basic block. If entry for the block is invalid, then allocate a new block in the following way.</li>
-				<ul>
-					<li> Traverse through the memory copy of the <a href="xfs-spec.html#navdfl">Disk Free List</a> till the entry for block 447 to get a free block.
-					<li> If no free block is avaliable. Return from the system call, with return value -1 (failure). </li>
-					<li> Otherwise, set 1 in the entry for the  free block in the Disk Free List. Update the basic block with this block number. </li> 
-					<li> Commit the basic block from scratchpad back to the disk. </li>
-					<li> Increment the <tt>file size</tt> in the FAT entry by 1. </li>
-					<li> Commit the FAT and Disk Free List from the memory to the disk. </li>
-				</ul>
-			<li> Fetch this block from the disk to the scratchpad. </li>
-			<li> Write the argument <tt>wordToWrite</tt> to this block using the offset calculated using LSEEK position.</li>
-			<li> Commit this block back to disk </li>
-			<li> Increment LSEEK Position by 1 in the Per-Process Open File Table </li>
-			<li> Return from the system call with 0 (success)</li>
-	  	</ol>
-
-
-	  	<h6> Seek </h6>
-		<i>System Call No</i>: 6 <br/>
-		<i>Interrupt Routine No</i>: 3 <br/>
-		<i>Arguments</i>: 1) fileDescripto	r 2) newLseek <br/>
-		<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
-		<br/>
-		Changes the value of LSEEK position of the file to <i>newLseek</i>.
-
-	  	<ol>
-	  		<li> Get the arguments to registers from the stack </li>
-	  		<li> Get the address of PCB of the process. </li>
-			<li> Index into the per-process open file table using <tt>fileDescriptor</tt>. Return from the system call with -1 (failure) if the <tt>fileDescriptor</tt> is invalid or its corresponding entry is invalid.</li>
-			<li> Using the <tt>Pointer to System Wide Open File Table Entry</tt> field, index to the System Wide Open File Table to get the FAT Index Entry.   </li>
-			<li> Fetch the <tt>file size</tt> of the file from the FAT and store it in a register. </li>
-			<li> If value of the argument <tt>newLseek</tt> is between 0 and <tt>file size * block size</tt>, change the <tt>LSEEK</tt>  in the per-process file table to <tt>newLseek</tt>. Return with 0 (indicating success).</li>
-			<li> Otherwise, return with -1 (indicating failure). </li>
-	  	</ol>
-
-	  	<h6>Read</h6>
-		<i>System Call No</i>: 7 <br/>
-		<i>Interrupt Routine No</i>: 3 <br/>
-		<i>Arguments</i>: 1) fileDescriptor 2) Variable<br/>
-		<i>Return Value</i>: 0 (success) and -1 (failure) </br>
-		<br/>
-		Reads a word from a file to the variable passed as argument
-
-	  	<ol>
-	  		<li> Get the arguments to registers from the stack </li>
-			<li> Get the address of PCB of the process. </li>
-			<li> Index into the per-process open file table using <tt>fileDescriptor</tt>. Return from the system call with -1 (failure) if the <tt>fileDescriptor</tt> is invalid or its corresponding entry is invalid.</li>
-			<li> Otherwise, store the LSEEK position to a register.</li>
-			<li> Using the <tt>Pointer to System Wide Open File Table Entry</tt> field, index to the System Wide Open File Table to get the FAT Index Entry.   </li>
-			<li> Fetch the <tt>basic block</tt> from the FAT and load it to the scratchpad
-			</li>
-			<li> Using LSEEK position find the block number to be read from. Find its location in the disk from the basic block. If entry for the block is invalid, return with value -1 (indicating failure).</li>
-			<li> Else,  fetch this block from the disk to the scratchpad. </li>
-			<li> Read from this block using the offset calculated using LSEEK position. </li>
-			<li> This value is stored in the stack in position of Argument 2. Store the word read to absoluteSP - 2.</li>
-			<li> Return with 0, indicating success </li>
-	  	</ol>
-
-			</article>
-			<div class="up grid col-one-third" style="float:right">
-			<a href="#navtop" title="Go back up"> top &uarr;</a>
-			</div>	
-			
-
-			
-						
-			
-					
-			
-					
-			
-					
-			
 			 <br/><br/>
  			<center><h6>AND THAT'S YOUR OWN </h6><img src="img/logo-img.jpeg" style="margin:0;  width:40px"></center>
 			</article>

@@ -182,10 +182,10 @@
 				<h6>Flags</h6>
 				Any one of these flags is required to compile.
 				<ul>
-					<li><p> <tt>--os</tt> : Compile OS Code</p></li>
-					<li><p> <tt>--int=timer</tt> : Compile Timer Interrupt code</p></li>
-					<li><p> <tt>--int=[1-7]</tt> : Compile Interrupt routines</p></li>
-					<li><p> <tt>--exhandler</tt> : Compile Exception Handler</p> </li>
+					<li><p> <tt>--os</tt> : Compile OS Code. The compiled output filename will be <b>os_startup.xsm</b></p></li>
+					<li><p> <tt>--int=timer</tt> : Compile Timer Interrupt code. The compiled output filename will be <b>timer.xsm</b></p></li>
+					<li><p> <tt>--int=[1-7]</tt> : Compile Interrupt routines. The compiled output filename will be <b>int1.xsm, int2.xsm</b>...etc.</p></li>
+					<li><p> <tt>--exhandler</tt> : Compile Exception Handler. The compiled output filename will be <b>exhandler.xsm</b></p> </li>
 
 				</ul>	
 
@@ -194,7 +194,7 @@
 <div class="syntax">
 <pre>
 cd $HOME/myxos/spl 
-./spl --os < Samples/hello-world.spl 
+./spl --os < samples/hello-world.spl 
 </pre>
 </div>
 A file  <tt>os_startup.xsm</tt> is created in <tt>$HOME/myxos/spl</tt>.
@@ -226,10 +226,9 @@ A file  <tt>os_startup.xsm</tt> is created in <tt>$HOME/myxos/spl</tt>.
 					<li><p> Bison / Yacc (GNU Project Parser Generator) </p></li>
 				</ul> <br/>
 				
-				<h6> Compiling and Running </h6>
-				<p> Run the following commands to compile and run the APL compiler </p>
+				<h6> Running </h6>
+				<p>Within your APL directory, use the following commands to run the APL compiler </p>
 				<ul>
-					<li><p> <tt>make </tt></p></li>
 					<li><p> <tt>./apl < &ltpath-to-file&gt </tt></p></li>
 				</ul> 
 
@@ -240,10 +239,10 @@ A file  <tt>os_startup.xsm</tt> is created in <tt>$HOME/myxos/spl</tt>.
 <div class="syntax">
 <pre>
 cd $HOME/myxos/apl 
-./apl < samples/largest
+./apl < samples/largest.apl
 </pre>
 </div>
-A file  <tt>apcode.xsm</tt> is created in <tt>$HOME/myxos/apl</tt>.
+The file largest.apl is a sample APL program which finds largest of 4 numbers. This program is compiled to  <tt>$HOME/myxos/apl/apcode.xsm</tt>.
 
 
 			</article>
@@ -258,7 +257,7 @@ A file  <tt>apcode.xsm</tt> is created in <tt>$HOME/myxos/apl</tt>.
 				<h4>Introduction</h4>
 				<p><b>XFS Interface</b> (eXperimental File System Interface) is an external interface to access the filesystem of the XOS. 
 				The filesystem is simulated on a binary file called <b>”disk.xfs”</b>. The interface can format the disk, 
-				load/remove files, list files and copy blocks to a UNIX file.</p>
+				load/remove files, list files and copy blocks to a UNIX file. See <a href="xfs-spec.html">Filesystem specification</a>.</p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -271,11 +270,10 @@ A file  <tt>apcode.xsm</tt> is created in <tt>$HOME/myxos/apl</tt>.
 					<li><p> GCC (GNU project C and C++ compiler) </p></li>
 				</ul> <br/>
 				
-				<h6> Compiling and Running </h6>
-				<p> Run the following commands to compile and run the interface </p>
+				<h6> Running </h6>
+				<p> Within your xfs-interface directory, use the following commands to run the interface </p>
 				<ul>
-					<li><p> <tt>make </tt></p></li>
-					<li><p> <tt>./fileSystem </tt></p></li>
+					<li><p> <tt>./xfs-interface </tt></p></li>
 				</ul> 
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -289,17 +287,16 @@ A file  <tt>apcode.xsm</tt> is created in <tt>$HOME/myxos/apl</tt>.
 				
 				<h6> Format the disk </h6>
 				<p>The command <b>fdisk</b> is used to create the disk (”disk.xfs”) or to format the disk if already created. 
-				On a newly created disk or formatted disk the Disk Free List and FAT entries are initialized. 
-				Also a FAT entry is created for the file ”init.xsm” (INIT code).<br/>
+				On a newly created disk or formatted disk the Disk Free List and FAT entries are initialized. <br/>
 				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt><b>fdisk</b> </tt></p>
 				
 				<h6> Load Files </h6>
-				<p>The command <b>load</b> is used to load files to the filesystem from a UNIX file.
-				The types of file that is loaded is specified by the first argument. The second argument &ltpathname&gt 
+				<p>The command <b>load</b> is used to load files from the UNIX filesystem to the XFS disk.
+				The type of the file that is loaded is specified by the first argument. The second argument &ltpathname&gt 
 				is the path to the UNIX file which is to be loaded to the filesystem. <br/>
 				The command checks the size of the file (executable or data files) and allocates blocks to it. 
-				The corresponding FAT entry is created for the file. For the OS Startup code, Interrupt routines and 
-				Exception Handler, the file is loaded to the corresponding location in the disk.</p>
+				A corresponding FAT entry is created for the file. For the OS Startup code, Interrupt routines and 
+				Exception Handler, the file is loaded to the corresponding location in the disk ( Refer <a href="xfs-spec.html#navdiskorg">disk organization</a> ).</p>
 				
 				<ul>
 					<li><p> <i>Syntax :</i> <tt><b>load</b> --exec &ltpathname&gt </tt><br/>
@@ -327,7 +324,7 @@ A file  <tt>apcode.xsm</tt> is created in <tt>$HOME/myxos/apl</tt>.
 				<ul>
 					<li><p> <i>Syntax :</i> <tt><b>rm</b> --exec &ltxfs_filename&gt </tt><br/>
 					&nbsp&nbsp&nbsp&nbsp Removes an executable file from XFS disk </p></li>
-					<li><p> <i>Syntax :</i> <tt><b>rm</b> --init &ltxfs_filename&gt </tt><br/>
+					<li><p> <i>Syntax :</i> <tt><b>rm</b> --init </tt><br/>
 					&nbsp&nbsp&nbsp&nbsp Removes INIT code from XFS disk </p></li>
 					<li><p> <i>Syntax :</i> <tt><b>rm</b> --data &ltxfs_filename&gt </tt><br/>
 					&nbsp&nbsp&nbsp&nbsp Removes a data file from XFS disk </p></li>
@@ -354,12 +351,12 @@ A file  <tt>apcode.xsm</tt> is created in <tt>$HOME/myxos/apl</tt>.
 				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt><b>df</b></tt></p>
 				
 				<h6> Display File contents </h6>
-				<p>The command <b>cat</b> displays the contents of a file in the filesystem with the corresponding word number.
+				<p>The command <b>cat</b> displays the contents of a file in the filesystem.
 				The FAT entries are searched to get the blocks corresponding to the file. The blocks are displayed.<br/>
 				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt><b>cat</b> &ltxfs_filename&gt</tt></p>
 				
-				<h6> Copy contents of File </h6>
-				<p>The command <b>copy</b> copies the contents of specified blocks from a file in the filesystem to an 
+				<h6> Copy disk blocks to a UNIX file </h6>
+				<p>The command <b>copy</b> copies the contents of specified blocks in the filesystem to an 
 				external UNIX file. The arguments &ltstart_block&gt and &ltend_block&gt denotes the range of blocks to be copied 
 				(including both). &ltunix_filename&gt specifes the destination UNIX file to which the contents are copied to.<br/>
 				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt><b>copy</b> &ltstart_block&gt &ltend_block&gt &ltunix_filename&gt</tt></p>
@@ -372,10 +369,10 @@ A file  <tt>apcode.xsm</tt> is created in <tt>$HOME/myxos/apl</tt>.
 				<p>The command <b>exit</b> quits the inteface.<br/>
 				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt><b>exit</b></tt></p>
 <h6>Example Usage</h6>
-To load a file <tt>os_startup.xsm</tt>(which you created using <b>SPL</b> compiler) located in <tt>$HOME/myxos/spl</tt> into the <tt>xfs</tt> filesystem	
+To load a file <tt>os_startup.xsm</tt> ( which you created using <b>SPL</b> compiler ) located in <tt>$HOME/myxos/spl</tt> into the <tt>xfs</tt> filesystem	
 <div class="syntax">
 <pre>
-cd  
+cd $HOME/myxos/xfs-interface
 ./xfs-interface
 </pre>
 </div>
@@ -392,7 +389,7 @@ Now use the <tt>load</tt> command to load the <tt>os_startup.xsm</tt>.
 load --os $HOME/myxos/spl/os_startup.xsm
 </div>
 
-If you want to see if loading worked properly, copy the block 0 (from 0 to 0) in <b>disk.xds</b> back to a unix file, say <tt>$HOME/myxos/xfs-interface/test </tt>			
+If you want to see whether load command works properly, copy the block 0 (from 0 to 0) in <b>disk.xfs</b> back to a unix file, say <tt>$HOME/myxos/xfs-interface/test </tt>			
 <div class="syntax">
 copy 0 0 $HOME/myxos/xfs-interface/test
 </div>
@@ -408,7 +405,7 @@ Now open test to see the contents of os_startup.xsm
 			<article  id="navxsm" class="grid col-full">
 				<h2>XSM Simulator</h2>
 				<h4>Introduction</h4>
-				<p><b>The XSM Simulator</b> (eXperimental String Machine) is used to simulate the XSM hardware.</p>
+				<p><b>The XSM Simulator</b> (eXperimental String Machine) is used to simulate the XSM hardware. See <a href="xsm-spec.html">Machine Specification</a></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -423,16 +420,15 @@ Now open test to see the contents of os_startup.xsm
 					<li><p> Bison / Yacc (GNU Project Parser Generator) </p></li>
 				</ul> <br/>
 				
-				<h6> Compiling and Running </h6>
-				<p> Run the following commands to compile and run the simulator </p>
+				<h6> Running </h6>
+				<p> Within your XSM directory, use the following command to run the simulator </p>
 				<ul>
-					<li><p> <tt>make</tt> </p></li>
 					<li><p> <tt>./xsm &ltoptional-flags&gt &ltpath-to-file&gt</tt></p></li>
 				</ul> 
 				<p>The <tt>&ltoptional-flags&gt</tt> can be : </p>
 				<ul>
-					<li><p> <tt>--debug </tt>: This flag disables the timer interrupt for the machine </p></li>
-					<li><p> <tt>--disable-timer</tt>: This flag sets the machine into DEBUG mode </p></li>
+					<li><p> <tt>--debug </tt>: This flag sets the machine into DEBUG mode. In DEBUG mode, the contents of registers is displayed after each instruction. </p></li>
+					<li><p> <tt>--disable-timer</tt>: This flag disables the timer interrupt for the machine  </p></li>
 				</ul>
 			</article>
 			<div class="up grid col-one-third" style="float:right">

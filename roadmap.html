@@ -70,8 +70,8 @@
 					<li><a href="#navstage5" class="sec">Interrupts</a></li>
 					<li><a href="#navstage6" class="sec">Multiprogramming</a></li>
 					<li><a href="#navstage7" class="sec">Creating Files</a></li>
-					<li><a href="#navstage8" class="sec">Exec, Fork, Exit and Halt System Calls</a></li>
-					<li><a href="#navstage9" class="sec">Playing with Files</a></li>
+					<li><a href="#navstage8" class="sec">Playing with Files</a></li>
+					<li><a href="#navstage9" class="sec">Exec, Fork, Exit and Halt System Calls</a></li>
 					<li><a href="#navstage10" class="sec">Exception Handling and Demand Paging</a></li>
 					<li><a href="#navstage11" class="sec">Making a console</a></li>
 				
@@ -89,7 +89,7 @@
 			<article  id="navstage1" class="grid col-full">
 			<h2>Stage 1: Setting up the System </h2>
 
-			<p> Follow the instructions in the <a href="usage-spec.html">Usage Documentation</a> to setup the system. This document assumes that the entire package is extracted to $HOME/myxos. If the setting up of the system is done correctly the following directories will be created.
+			<p> Follow the instructions in the <a href="usage-spec.html">Usage Documentation</a> to setup the system. The following assumes that the entire package is extracted to $HOME/myxos. If the setting up of the system is done correctly the following directories will be created.
 			</p>
 
 			<ul>
@@ -685,116 +685,7 @@ endif;</pre>
 
 
 			<article  id="navstage8" class="grid col-full">
-			<h2>Stage 8: Exec, Fork, Exit and Halt System Calls</h2>
-			<p>  
-			There are several process system calls which are used to create processes, load a new process to an existing process, exit from a process and halt the machine. These system calls are <b>Exec, Fork, Exit and Halt</b>.</p>
-			<br/>
-			<h5>Exec system call :</h5>
-			The <a href="xos-spec.html#navsyscalls_process">Exec </a>system call is used to load and run a new process from a currently running process. The current process is overwritten by new process i.e. the process data structures of the current process is used by the new process. </br>
-			<i>System Call No</i>: 9 <br/>
-			<i>Interrupt Routine No</i>: 6 <br/>
-			<i>Arguments</i>: filename <br/>
-			<i>Return Value</i>: 0 (success) and -1 (failure) </br>
-		
-			 <br/>
-			 The Interrupt 6 Routine is to be programmed in SPL, compiled and loaded to the disk. 
-			 <b>OS Startup Code</b> is modified to load Interrupt Routine 6 from the disk to memory. </br>
-
-			 The Interrupt 6 Routine performs the following actions.
-			 <ol>
-		 		<li> Get the filename to a register from the stack </li>
-		 		<li> Search for the filename in the memory copy of FAT. If it doesn't exist return -1 (indicating failure). </li>
-		 		<li> Otherwise fetch the basic block (location is obtained from FAT) and place it in the <a href="xos-spec.html#navfiles_scratchpad">scratchpad</a>.
-		 		</li>
-		 		<li> Load the blocks of the file (a maximum of 3 blocks) to the memory in pages of INIT process (16-18). INIT is the currently running process which issues an Exec system call.</li>
-		 		<li> Close all files opened by the current process by following the steps in <b>Close()</b> system call </li>
-		 		<li> SP is reset to 3*512.  </li>
-		 		<li> 0 is stored in 19*512 (physical address of the stack) to set IP by the <b>ireturn</b> instruction </li> 
-				<li> Return from the system call with 0 (indicating success).</li>
-			 </ol>
-
-			 <b>Exec</b> system call can be tested out by modifying the INIT program, by adding an <a href="apl-spec.html#navexec">Exec</a> call in it. <b>NOTE: The exec system call will be later modified to include Multiprogramming.</b>
-
-			 <br/><br/><br/>
-			 <h5>Fork system call :</h5>
-			 The<a href="xos-spec.html#navsyscalls_process"> Fork </a> system call is used to replicate the process which invoked this system call in the memory. <br/>
-			 <i>System Call No</i>: 8 <br/>
-			<i>Interrupt Routine No</i>: 5 <br/>
-			<i>Arguments</i>: None<br/>
-			<i>Return Value</i>: PID of the process created (success) or -1 (failure)</br>
-
-			</br>
-			Interrupt 5 Routine must be programmed in SPL, compiled and loaded to disk. It must perform the following tasks.
-		  	<ol>
-			<li> The <em>Ready list</em> of PCBs is traversed to find a PCB with State 0 (terminated).</li>
-			<li> If no such PCB is found, -1 is returned. </li>
-			<li> The index of the PCB in the Ready List is the PID of new process created. It is stored in a register.</li>
-			<li> The pages used by the parent process is replicated in the following way</li>
-				<ul>
-					<li> The page table of the parent process is checked to count the number of valid pages. The <a href="xos-spec.html#navmemmgmt_mfl">memory free list</a> is checked to find an equal number of free pages. If this check fails, return with -1 indicating failure. </li> 
-					<li> Otherwise an equal number of pages are allocated by updating the memory free list.</li>
-					<li> Make corresponding entries in the child process' page table. The child's PTBR (address of its page table) is computed using PID stored in Step 3 </li>
-				</ul>
-			<li> The current register values of the parent process are (except PTBR)  copied to the child process' PCB. The entry for PTBR is the child's PTBR computed in the previous step. (<b>DO NOT</b> copy values from parent's PCB to child's PCB as it may not be equal to current values) </li>
-
-			<li> The Per-Process Open File table of the parent process is not copied to child's PCB. Instead invalidate all entries in child's Per-Process Open File Table </li>
-			<li> Control is passed back to the parent process using <b>ireturn</b>.</b>
-		  	</ol>
-		  	<b> OS Startup Code</b> is modified to 
-		  		<ul>
-		  			<li>Load Interrupt 5 Routine. (The code to load the 2nd process in the previous stage can now be removed)
-		  			</li> 
-		  			<li> The entries for pages 0 to 15 in the <a href="xos-spec.html#navmemmgmt_mfl">memory free list</a> is marked as used (set 1) and others as unused (set 0). Pages 0 - 15 are reserved for OS structures. See <a href="xos-spec.html#navmemorg"> Memory Organization </a>
-		  			</li> 
-		  		</ul>
-		  	To test Fork(), use Exec with program to print odd numbers after issuing a Fork from the INIT program (to print even numbers). 
-
-
-	</br>	</br><br/>
-
-			<h5>Exit system call :</h5>
-			This system call is used to terminate the execution of the process which invoked it. Exit removes this process from the memory. If there is only one process, it halts the system.<br/>
-			<i>System Call No</i>: 10 <br/>
-			<i>Interrupt Routine No</i>: 7 <br/>
-			<i>Arguments</i>: None<br/>
-			<i>Return Value</i>:-1 on failure, exits on success </br>
-			
-
-		</br>	</br>
-			<h5>Halt system call :</h5>
-			<i>System Call No</i>: 0 <br/>
-			<i>Interrupt Routine No</i>: 7 <br/>
-			<i>Arguments</i>: None<br/>
-			<i>Return Value</i>:-1 on failure, halts on success </br>
-			If there is only one process in memory, it halts the system. Otherwise returns -1.
-			<br/><br/>
-			Both Exit and Halt are implemented in Interrupt 7 Routine. It is to be programmed in SPL, compiled and loaded to the disk using XFS Interface. It does the following tasks 
-				<ol>
-					<li> If there is only one process, halt the system using <tt>HALT</tt> instruction irrespective of the system call </li>
-					<li> If its Exit system call, do the following actions</li>
-						<ol style="list-style-type:lower-roman;">
-							<li> Find the PCB of the current process using PTBR 
-							</li>
-							<li> Close all files opened by the process as done for <b>Close</b> system call</li>
-							<li> Set the STATE in the PCB to 0.  </li>
-							<li> Invalidate all entries in its per-process page table (Set <tt>Address</tt> field to -1) </li>
-							<li> Find the next waiting process from the  <a href="xos-spec.html#navpromgmt_readylist">Ready List of PCBs</a></li>
-							<li> Get the IP from its PCB and store it in its stack (Compute absolute address of its SP)</li>
-							<li> And use <b>ireturn</b> instruction to transfer control.</li>
-						</ol>
-					<li> Otherwise, exit with -1 </li>	
-
-				</ol>
-	 		<b>OS Startup Code</b> is modified to load Interrpt 7 from disk to memory. 
-
-			</article>
-			<div class="up grid col-one-third" style="float:right">
-			<a href="#navtop" title="Go back up"> top &uarr;</a>
-			</div>	
-
-
-			<article  id="navstage9" class="grid col-full">
-			<h2>Stage 9: Playing with files</h2>
+			<h2>Stage 8: Playing with files</h2>
 			<p>We have already created files using the "Create" system call. Now we will implement the remaining 
 			system calls - <b>Open, Close, Delete, Write, Seek and Read</b>.</p>
 				
@@ -965,7 +856,117 @@ endif;</pre>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>	
+			
+			
+			
+			<article  id="navstage9" class="grid col-full">
+			<h2>Stage 9: Exec, Fork, Exit and Halt System Calls</h2>
+			<p>  
+			There are several process system calls which are used to create processes, load a new process to an existing process, exit from a process and halt the machine. These system calls are <b>Exec, Fork, Exit and Halt</b>.</p>
+			<br/>
 
+			 <h5>Fork system call :</h5>
+			 The<a href="xos-spec.html#navsyscalls_process"> Fork </a> system call is used to replicate the process which invoked this system call in the memory. <br/>
+			 <i>System Call No</i>: 8 <br/>
+			<i>Interrupt Routine No</i>: 5 <br/>
+			<i>Arguments</i>: None<br/>
+			<i>Return Value</i>: PID of the process created (success) or -1 (failure)</br>
+
+			</br>
+			Interrupt 5 Routine must be programmed in SPL, compiled and loaded to disk. It must perform the following tasks.
+		  	<ol>
+			<li> The <em>Ready list</em> of PCBs is traversed to find a PCB with State 0 (terminated).</li>
+			<li> If no such PCB is found, -1 is returned. </li>
+			<li> The index of the PCB in the Ready List is the PID of new process created. It is stored in a register.</li>
+			<li> The pages used by the parent process is replicated in the following way</li>
+				<ul>
+					<li> The page table of the parent process is checked to count the number of valid pages. The <a href="xos-spec.html#navmemmgmt_mfl">memory free list</a> is checked to find an equal number of free pages. If this check fails, return with -1 indicating failure. </li> 
+					<li> Otherwise an equal number of pages are allocated by updating the memory free list.</li>
+					<li> Make corresponding entries in the child process' page table. The child's PTBR (address of its page table) is computed using PID stored in Step 3 </li>
+				</ul>
+			<li> The current register values of the parent process are (except PTBR)  copied to the child process' PCB. The entry for PTBR is the child's PTBR computed in the previous step. (<b>DO NOT</b> copy values from parent's PCB to child's PCB as it may not be equal to current values) </li>
+
+			<li> The Per-Process Open File table of the parent process is not copied to child's PCB. Instead invalidate all entries in child's Per-Process Open File Table </li>
+			<li> Control is passed back to the parent process using <b>ireturn</b>.</b>
+		  	</ol>
+		  	<b> OS Startup Code</b> is modified to 
+		  		<ul>
+		  			<li>Load Interrupt 5 Routine. (The code to load the 2nd process in the previous stage can now be removed)
+		  			</li> 
+		  			<li> The entries for pages 0 to 15 in the <a href="xos-spec.html#navmemmgmt_mfl">memory free list</a> is marked as used (set 1) and others as unused (set 0). Pages 0 - 15 are reserved for OS structures. See <a href="xos-spec.html#navmemorg"> Memory Organization </a>
+		  			</li> 
+		  		</ul>
+		  	To test Fork(), use Exec with program to print odd numbers after issuing a Fork from the INIT program (to print even numbers). 
+			
+			</br><br/></br>
+			<h5>Exec system call :</h5>
+			The <a href="xos-spec.html#navsyscalls_process">Exec </a>system call is used to load and run a new process from a currently running process. The current process is overwritten by new process i.e. the process data structures of the current process is used by the new process. </br>
+			<i>System Call No</i>: 9 <br/>
+			<i>Interrupt Routine No</i>: 6 <br/>
+			<i>Arguments</i>: filename <br/>
+			<i>Return Value</i>: 0 (success) and -1 (failure) </br>
+		
+			 <br/>
+			 The Interrupt 6 Routine is to be programmed in SPL, compiled and loaded to the disk. 
+			 <b>OS Startup Code</b> is modified to load Interrupt Routine 6 from the disk to memory. </br>
+
+			 The Interrupt 6 Routine performs the following actions.
+			 <ol>
+		 		<li> Get the filename to a register from the stack </li>
+		 		<li> Search for the filename in the memory copy of FAT. If it doesn't exist return -1 (indicating failure). </li>
+		 		<li> Otherwise fetch the basic block (location is obtained from FAT) and place it in the <a href="xos-spec.html#navfiles_scratchpad">scratchpad</a>.
+		 		</li>
+		 		<li> Load the blocks of the file (a maximum of 3 blocks) to the memory in pages of the current process.</li>
+		 		<li> Close all files opened by the current process by following the steps in <b>Close()</b> system call </li>
+		 		<li> SP is reset to 3*512.  </li>
+		 		<li> 0 is stored in 19*512 (physical address of the stack) to set IP by the <b>ireturn</b> instruction </li> 
+				<li> Return from the system call with 0 (indicating success).</li>
+			 </ol>
+
+			 <b>Exec</b> system call can be tested out by modifying the INIT program, by adding an <a href="apl-spec.html#navexec">Exec</a> call in it. 
+	</br>	</br><br/>
+
+			<h5>Exit system call :</h5>
+			This system call is used to terminate the execution of the process which invoked it. Exit removes this process from the memory. If there is only one process, it halts the system.<br/>
+			<i>System Call No</i>: 10 <br/>
+			<i>Interrupt Routine No</i>: 7 <br/>
+			<i>Arguments</i>: None<br/>
+			<i>Return Value</i>:-1 on failure, exits on success </br>
+			
+
+		</br>	</br>
+			<h5>Halt system call :</h5>
+			<i>System Call No</i>: 0 <br/>
+			<i>Interrupt Routine No</i>: 7 <br/>
+			<i>Arguments</i>: None<br/>
+			<i>Return Value</i>:-1 on failure, halts on success </br>
+			If there is only one process in memory, it halts the system. Otherwise returns -1.
+			<br/><br/>
+			Both Exit and Halt are implemented in Interrupt 7 Routine. It is to be programmed in SPL, compiled and loaded to the disk using XFS Interface. It does the following tasks 
+				<ol>
+					<li> If there is only one process, halt the system using <tt>HALT</tt> instruction irrespective of the system call </li>
+					<li> If its Exit system call, do the following actions</li>
+						<ol style="list-style-type:lower-roman;">
+							<li> Find the PCB of the current process using PTBR 
+							</li>
+							<li> Close all files opened by the process as done for <b>Close</b> system call</li>
+							<li> Set the STATE in the PCB to 0.  </li>
+							<li> Invalidate all entries in its per-process page table (Set <tt>Address</tt> field to -1) </li>
+							<li> Find the next waiting process from the  <a href="xos-spec.html#navpromgmt_readylist">Ready List of PCBs</a></li>
+							<li> Get the IP from its PCB and store it in its stack (Compute absolute address of its SP)</li>
+							<li> And use <b>ireturn</b> instruction to transfer control.</li>
+						</ol>
+					<li> Otherwise, exit with -1 </li>	
+
+				</ol>
+	 		<b>OS Startup Code</b> is modified to load Interrpt 7 from disk to memory. 
+
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>
+			
+			
 			<article  id="navstage10" class="grid col-full">
 			<h2>Stage 10: Exception Handling and Demand Paging</h2>
 			<p> 

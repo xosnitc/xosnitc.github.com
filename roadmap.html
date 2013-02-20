@@ -262,7 +262,7 @@ Machine is halting
 
 			<article  id="navstage4" class="grid col-full">
 				<h2>Stage 4: Running a user program </h2>
-				<p> User programs or application programs are programmed using <a href="apl-spec.html">APL</a> or Application Programmer's Language. A user program is different from a system program which you run on the machine in stage 3. It is to be noted that a system program is executed in kernel mode ( See <a href="xsm-spec.html#navmodes">Privilege modes</a> ). The machine starts its execution in kernel mode. In kernel mode both privileged and unprivileged instructions can be executed. All memory addresses are absolute addresses in kernel mode. A user program should be run in user mode. In user mode only unprivileged instructions can be executed. Also all memory addresses are logical in user mode. The OS Startup code must load the user program to be executed from the disk to the memory and set up the page tables for <a href="xsm-spec.html#navaddr">address translation</a>. Also before the start of execution of the application program, the mode of execution must be changed from kernel mode to user mode. Also the value of Instruction Pointer must be set to starting address of the code of the user program (Since all addresses are logical in user mode code of a program starts from logical address 0). The last two operations are done using <a href="spl-spec.html#naviretstmt"> ireturn</a> instruction which translates to a machine instruction <a href="xsm-spec.html#navinstr">IRET</a>. </p>
+				<p> User programs or application programs are programmed using <a href="apl-spec.html">APL</a> or Application Programmer's Language. A user program is different from a system program which you run on the machine in stage 3. It is to be noted that a system program is executed in kernel mode ( See <a href="xsm-spec.html#navmodes">Privilege modes</a> ). The machine starts its execution in kernel mode. In kernel mode both privileged and unprivileged instructions can be executed. All memory addresses are absolute addresses in kernel mode. A user program should be run in user mode. In user mode only unprivileged instructions can be executed. Also all memory addresses are logical in user mode. The OS Startup code must load the user program to be executed from the disk to the memory and set up the page tables for <a href="xsm-spec.html#navaddr">address translation</a>. Also before the start of execution of the application program, the mode of execution must be changed from kernel mode to user mode. Also the value of Instruction Pointer must be set to starting address of the code of the user program (Since all addresses are logical in user mode code of a program starts from logical address 0). The last two operations are done using <a href="spl-spec.html#naviretstmt"> ireturn</a> instruction which translates to a machine instruction <a href="xsm-spec.html#navinstr_iret">IRET</a>. </p>
 
 				<p>In this stage, an application program in APL is compiled and loaded to the disk as the init process. An OS Startup code is written in <a href="spl-spec.html">SPL</a> to load this program to the memory on machine startup.</p>
 
@@ -303,9 +303,9 @@ Machine is halting
 
 					<li>Load the <b>INIT process</b> from the disk to the memory. This is done by Loading blocks 13-15 from disk to pages 16 - 18 in the memory. </li>
 
-					<li> Setup page tables for the INIT process in the following way. (Read about <a href="xsm-spec.html#navaddr">Address Translation</a>).
+					<li> Setup page tables for the INIT process in the following way. (See <a href="xsm-spec.html#navaddr">Address Translation</a>).
 						<ul>
-							<li>Set <b>PTBR</b> (Page Table Base Register) to 1024, which is the starting address of process page tables (See <a href="xos-spec.html#navmemorg" >Memory Organization</a>) and <b>PTLR</b> (Page Table Length Register) to 4. INIT process is the first process in memory and it will get the first page table (address 1024)</li>
+							<li>Set <b>PTBR</b> (Page Table Base Register) to 1024, which is the starting address of process page tables (See <a href="xos-spec.html#navmemorg" >Memory Organization</a>) and <b>PTLR</b> (Page Table Length Register) to 4. This is because a process consists of 4 pages - 3 pages for code and 1 for stack (See <a href="xos-spec.html#navpromgmt_prostruct">Process Structure</a>). Allocate the first page table (address 1024) for the INIT process.</li>
 
 							<li> Each page table entry contains 2 words. Set the first word of each entry to corresponding memory address (16-18) and set the second word (Auxiliary information) as <b>11</b> (Valid and Referenced). Refer <a href="xos-spec.html#navmemmgmt_paging">Paging</a> for the structure of page table entry. </li>
 
@@ -330,12 +330,12 @@ Machine is halting
 								[READY_LIST + 0] = 0 // Sets the entry for PID as 0
 							</div>
 							<li> Similarly, <tt>STATE</tt> of INIT process is set to 2 (running) </li>
-							<li> The remaining entries need not be set by the OS startup code and will be done in subsequent stages.  </li>
+							<li> The remaining entries need not be set by the OS startup code. You will learn about these in subsequent stages.  </li>
 						</ul> 
 					</li> 
 
 					<li> 
-						<p>Next we need to set the stack pointer(SP) and instruction pointer(IP) registers correctly. SP is to be set as <i>3 * 512</i>. This is because once the user program starts to execute all addresses are logical addresses and stack is allocated the logical page 4. <b>IP</b> cannot be explicitly changed by any instruction. When the machine instruction <tt>IRET</tt> is executed, first the privilege mode is changed from KERNEL to USER and then the value at the top of the stack is poped out and the <b>IP</b> is set with this value. So to set <b>IP</b> to logical address 0 (code of the user program starts from logical address 0), the value 0 is stored at the top of the stack</p>
+						<p>Next we need to set the stack pointer(SP) and instruction pointer(IP) registers correctly. SP is to be set as <i>3 * 512</i>. This is because once the user program starts to execute all addresses are logical addresses and stack is allocated the logical page 4. <b>IP</b> cannot be explicitly changed by any instruction. When the machine instruction <a href="xsm-spec.html#navinstr_iret"><tt>IRET</tt></a> is executed, first the privilege mode is changed from KERNEL to USER and then the value at the top of the stack is poped out and the <b>IP</b> is set with this value. So to set <b>IP</b> to logical address 0 (code of the user program starts from logical address 0), the value 0 is stored at the top of the stack</p>
 						<p>Store 0 in address 19 * 512 ( physical page number 19 * page size 512 is the physical address corresponding to top of the stack). The value 0  will get stored in <b>IP</b> after the control passes to user mode.  <b>IP</b> value is  set to 0 because in user mode, addresses are logical addresses. <b>NOTE: 0 is the starting logical address for IP for any process.</b></p>
 
 						See <a href="xsm-spec.html#navmodes">privilege modes</a> and <a href="xsm-spec.html#navaddr">address translation</a>. 
@@ -350,7 +350,7 @@ Machine is halting
 						</div>
 					</li>	
 
-					<li> Use the <b>ireturn</b> instruction to transfer control to user program. This instruction calls the machine instruction <tt>IRET</tt> which changes privilege mode from KERNEL to USER (See <a href="xsm-spec.html#navmodes">privilege modes</a>). <tt>IRET</tt> then gets the value stored in memory location pointed to by <b>SP</b> which is 0 (See  step 5) and stores it in <b>IP</b>. The logical address 3*512 stored in SP gets translated to get the actual location of the stack as execution is in USER Mode. </li> 
+					<li> Use the <b>ireturn</b> instruction to transfer control to user program. This instruction calls the machine instruction <tt>IRET</tt> which changes privilege mode from KERNEL to USER (See <a href="xsm-spec.html#navmodes">privilege modes</a>). <tt>IRET</tt> then gets the value stored in memory location pointed to by <b>SP</b> which is 0 (See  step 5) and stores it in <b>IP</b>. The logical address 3*512 stored in SP gets translated to get the actual location of the stack as execution is in USER Mode (See <a href="xsm-spec.html#navaddr">Address Translation</a>). </li> 
 				</ol>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -373,25 +373,25 @@ Machine is halting
 			<ol>
 				<li> Create an SPL program to print "Interrupt Invoked". The sample SPL program is given below
 					<div class="syntax">
-					print "Interrupt Invoked";<br/>
+					print "INT";<br/>
 					ireturn; </div>
 				</li>
 				<li> Save this file in your UNIX machine as <b>$HOME/myxos/spl_progs/sample_int.spl</b> </li>
-				<li> Compile this program using SPL compiler with the flag --int=7. (We will load this program as Interrupt 7).
+				<li> Compile this program using SPL compiler with the flag --int=1. (We will load this program as Interrupt 1).
 					<div class="syntax">
 						cd $HOME/myxos/spl<br/>
-						./spl --int=7 < $HOME/myxos/spl_progs/sample_int.spl
+						./spl --int=1 < $HOME/myxos/spl_progs/sample_int.spl
 					</div>
 				</li>
-				<li> The output file generated will be <b>$HOME/myxos/spl/int7.xsm</b> </li>
+				<li> The output file generated will be <b>$HOME/myxos/spl/int1.xsm</b> </li>
 				<li> Load this file to the XFS disk as interrupt 1. </li>
 				<li> Create a user program to invoke INT. We'll program it using XSM Machine instructions for simplicity.
 					<div class="syntax">
 						START <br/>
-						MOV R0, "Before Interrupt" <br/>
+						MOV R0, "Before INT" <br/>
 						OUT R0 <br/>
 						INT 1 <br/>
-						MOV R0, "After Interrupt" <br/>
+						MOV R0, "After INT" <br/>
 						OUT R0<br/>
 						END
 					</div>
@@ -406,16 +406,16 @@ Machine is halting
 					<div class="syntax"> $HOME/myxos/xsm/xsm --disable-timer </div>
 					You'll get the following output on the screen.
 <pre><tt>
-Before Interrupt
-Interrupt Invoked
-After Interrupt
+Before INT
+INT
+After INT
 </tt></pre>
 				</li>
 			</ol>
 			<br/>
 			<h5>Timer Interrupt</h5>
 			<p> The XSM simulator has a timer which invokes the timer interrupt routine after specific number of instructions. In usual machines, the timer interrupts in specific intervals of time, however in XSM, timer interrupts after specific number of instructions. Refer <a href="xsm-spec.html#navtimer">Timer Interrupt</a>
-			<br/>In this task, we'll create a timer interrupt routine, which prints "hello world". This can be done in the following steps.</p>
+			<br/>In this task, we'll create a timer interrupt routine, which prints "TIMER". This can be done in the following steps.</p>
 
 			<ol>
 				<li> Create an SPL program to print "TIMER". The sample SPL program is given below
@@ -433,7 +433,7 @@ After Interrupt
 				</li>
 				<li> The output file generated will be in <b>$HOME/myxos/spl/timer.xsm</b> </li>
 				<li> Load this file to XFS disk as Timer Interrupt Routine </li>
-				<li> Compile the sample program to print numbers upto 20 using APL compiler and load it as the INIT program to XFS disk. The sample program is available at <b>$HOME/myxos/apl/samples/</b> </li>
+				<li> Compile the sample program to print numbers upto 20 using APL compiler and load it as the INIT program to XFS disk. The sample program is available at <b>$HOME/myxos/apl/samples/printnum.apl</b> </li>
 				<li> Use the same OS Startup Code used previously </li>
 				<li> Run the machine this time without disabling the timer, to see the timer interrupt routine in action
 					<div class="syntax">. $HOME/myxos/xsm/xsm </div>

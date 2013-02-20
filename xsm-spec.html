@@ -459,6 +459,7 @@
 				<h5>Privileged Instructions</h5>
 				<p> There are four privileged instructions. They can only be executed in kernel mode <a href="#navmodes"> (Refer Section:Privilege Modes)</a> These instructions are:</p>
 				<ol style="list-style-type:decimal">
+					<div id="navinstr_iret"></div>
 					<li> <p> <tt>IRET</tt><br/>
 					<i>Syntax</i> : <tt>IRET</tt><br/>
 					IRET switches the mode from kernel to user mode. It then sets <tt>IP</tt> to the value pointed by <tt>SP</tt> and decrements <tt>SP</tt> by one. 

@@ -68,9 +68,9 @@
 					<li><a href="#navstage3" class="sec">Starting the machine</a></li>
 					<li><a href="#navstage4" class="sec">Running a user program</a></li>
 					<li><a href="#navstage5" class="sec">Interrupts</a></li>
-					<li><a href="#navstage6" class="sec">The Exec System Call</a></li>
-					<li><a href="#navstage7" class="sec">Multiprogramming</a></li>
-					<li><a href="#navstage8" class="sec">Fork, Exit and Halt System Calls</a></li>
+					<li><a href="#navstage6" class="sec">Multiprogramming</a></li>
+					<li><a href="#navstage7" class="sec">Creating Files</a></li>
+					<li><a href="#navstage8" class="sec">Exec, Fork, Exit and Halt System Calls</a></li>
 					<li><a href="#navstage9" class="sec">Exception Handling</a></li>
 					<li><a href="#navstage10" class="sec">Making a console</a></li>
 				
@@ -472,10 +472,404 @@ Machine is halting
 			</div>	
 
 
+			<article  id="navstage6" class="grid col-full">
+			<h2>Stage 6: Multiprogramming</h2>
+			<p>  <a href="xos-spec.html#navpromgmt_multiprog">Multiprogramming</a> refers to running more than one process simultaneously. In XSM, the timer interrupts after every instruction and the control is passed to Page 8, i.e. the timer interrupt routine.  </p>
+			Run the machine  without disabling the timer. <br/>
+			<tt> ./xsm </tt>
+
+			<p>The task to be done in this stage, is to program the Timer Interrupt in SPL, compile it and load it to the disk. </p>
+
+
+			The timer interrupt routine must perform the following actions:
+			<ol>
+				<li> Find the ProcessID or PID using the PTBR. </li>
+				<li> Using the PID find the PCB of the process. Store the values of the current process in its <a href="xos-spec.html#navpromgmt_pcb">PCB</a> as shown below.</li>
+					<div class="syntax">
+						<pre>
+[ PCB_Start + 0 ] = ProcessID;		//PID
+[ PCB_Start + 1 ] = 1 			// STATE : Waiting for the CPU
+[ PCB_Start + 2 ] = BP 					
+[ PCB_Start + 3 ] = SP            	
+[ PCB_Start + 4 ] = [absoluteSP - 1] 	// IP gets stored in SP by machine
+[ PCB_Start + 5 ] = PTBR	
+[ PCB_Start + 6 ] = PTLR		
+[ PCB_Start + 7 ] = R0			
+	.
+	.
+[ PCB_Start + 14] = R7			</pre>	</div>	
+
+				<li>Scan the <a href="xos-spec.html#navpromgmt_readylist">Ready List of PCBs</a> in a circular manner from the PCB of current process to check for the next process with STATE 1 (Waiting for the CPU). Store the address of the PCB found in a register.
+				</li>
+				<li> Load the fields from this  PCB  to the corresponding registers.	</li>
+				<li> Find the physical address of SP corresponding to newly found PCB. Store IP from this PCB to the location pointed by the physical address of SP. </li>
+				<li> Use <b>ireturn</b> instruction to return to USER Mode</li>
+	
+			</ol>
+
+			However to test the timer interrupt, you must have more than one program present in the memory. The programs will run in an interleaved fashion when the timer itnerrupt is working perfectly. 
+
+			<ol>
+				<li> Write and compile 2 APL programs,
+					<ul>
+						<li> To print all even numbers from 1 to n (taken as input)</li>
+						<li> To print all odd numbers from 1 to n (taken as input)</li>
+					</ul>
+				<li> Load one of the programs as INIT and the 2nd program as an executable to <b>disk.xfs</b></li>
+			</ol>
+			<b> OS Startup Code </b>
+			<ol>
+				<li> Modify the startup code, to load both the programs, one as INIT (already done in Stage 2) and other from locations 20 to 22 and page 23 for stack. </li>
+				<li> Setup the Per-Process Page Tables and PCB for the 2nd process as done in Stage 2. See <a href="xos-spec.html#navmemorg">Memory Organization</a> to get the locations of the page table and PCB of the 2nd process </li>
+				<li> Load the Timer Interrupt Routine from the disk to the memory. </li>
+			</ol> 
+
+
+
+			Run the machine without disabling the timer.
+
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>
+
+
+			<article id="navstage7" class="grid col-full">
+				<h2>Stage 7: Creating Files </h2>
+				<p> In this stage, you will implement file system calls  <b>Create, Delete, Open, Close, Seek, Read</b> and <b> Write </b>. The following tasks should be done in this stage </p>
+				<h6> Modifying the OS Startup Code</h6>
+				<ol>
+				<li> Load FAT from disk block 10 to memory page 5 and Disk Free List from the disk block 11 to memory page 6. Refer <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization </a>. </li>
+				</li>
+				<li>
+				Set the <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a> entries to -1 (invalid initially). 	</li>
+				<div class="syntax">
+				<pre>
+alias counter R8;	// R8 - R15 is used by system programmers.
+counter = 0;
+while ( counter <=  128) do
+	[ FILE_TABLE + counter] = -1;
+endwhile;						</pre>
+				</div>
+				<li> Set all words in the <a href="xos-spec.html#navpromgmt_pcb">Per-Process Open-File Table in the PCB</a> of INIT to -1  </li>
+				
+				<li> 
+				<a href="xos-spec.html#navsyscalls_file">File System Calls</a> are implemented in Interrupt 1 (Create & Delete),  2 (Open & Close), 3 (Seek & Read) and 4 (Write) Routines. These 4 interrupt routines must be programmed in SPL, compiled and loaded into the disk in the corresponding locations using the XFS-Interface. These interrupt routines must be loaded from the disk to corresponding memory pages by the OS Startup Code.
+				</li>
+				</ol>
+				Each system call will be invoked from a user program which invokes the <tt> INT </tt> instruction after pushing the registers, arguments and system call number into the stack.  <img src="doc/syscallstack.png" style="width:150%">
+				
+				<br/><br/>
+				An Interrupt  Routine may contain more than system call implementation. The system call number is obtained from the stack (Stack Pointer - 1) and then an <b>if</b> condition is checked for the corresponding system call. To access the stack in KERNEL mode, the physical address of the top of the stack must used. The physical address of the top of stack is calculated as: The 6th entry in the Page Table (obtained from PTBR + 6) gives the starting address of the stack, and SP%512 will give the offset in the stack. Adding both will give the absoulte address of SP. 
+				<br/><br/>
+				<h4>File System Calls</h4>
+				<table class="doctable" style="width:50%">
+					<tr><th>System Call Name</th><th>System Call #</th><th>Interrupt Routine #</th></tr>
+					<tr><td>Create</td>			 <td>1</td>				<td> 1</td> </tr>
+					<tr><td>Open</td>			<td>2</td>				<td> 2</td> </tr>
+					<tr><td>Close</td>			<td>3</td>				<td> 2</td> </tr>
+					<tr><td>Delete</td>			<td>4</td>				<td> 1</td> </tr>
+					<tr><td>Write</td>			<td>5</td>				<td> 4</td> </tr>
+					<tr><td>Seek</td>			<td>6</td>				<td> 3</td> </tr>
+					<tr><td>Read</td>			<td>7</td>				<td> 3</td> </tr>
+				</table>
+
+				<br/>
+				A skeleton of Interrupt 1 Routine is given below.
+
+				<div class="syntax">
+				<pre>
+alias absoluteSP R8;
+absoluteSP = [PTBR + 6] + SP % 512 ;
+.
+// Get system call no. from the stack
+.
+if ( sysCallNo == 1) then
+	// Implementation of Create
+	.
+	.
+endif;
+if ( sysCallNo == 4) then
+	// Implementation of Delete
+	.
+	.
+endif;	</pre>
+				</div>
+
+				Now we'll implement the system calls in its corresponding Interrupt Routine Code. <br/><br/>
+			
+
+				<h6> Create </h6>
+				<i>System Call No</i>: 1 <br/>
+				<i>Interrupt Routine No</i>: 1 <br/>
+				<i>Arguments</i>: filename <br/>
+				<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
+				<br/>
+				Creates a file with the filename given as argument.
+
+				<ol>
+				<li> First of all, the memory copy of the <a href="xfs-spec.html#navdfl">disk free list</a> is searched till the entry for block number 447 to find a free block number (indicated by a 0 entry in the disk free list). Blocks 448 - 511  are reserved for <a href="xfs-spec.html#navdiskorg">swap area</a> which will be used for virtual memory management (<a href="roadmap.html#navstage8">Stage 8</a>). This block is used as the <a href="xfs-spec.html#navfile">basic block</a> of the file to be created. It's entry is set to 1. The block number is stored to a register. If no free block is found return -1 (as done in the previous step). </li>
+
+				<li> The <tt>filename</tt> specified as argument is stored in the stack at absoluteSP - 2. Fetch it and store it to a register. </li>
+				<li> The memory copy of the <a href="xos-spec.html#navfiles_fat">FAT</a> is to be searched for the <tt>filename</tt> to check if the file already exists. If it exists return from the sytem call with 0 (success).
+				</li>
+
+				<li> Next, the memory copy of the <a href="xos-spec.html#navfiles_fat">FAT</a> is searched for a free entry. A free entry in the FAT is indicated by -1 in the entry for basic block (Word 2 of each FAT entry). If no free entry is found put -1 in the return value space of the stack (absoluteSP - 12, See figure above). Then return to USER Mode using <b>ireturn</b> instruction. Address of FAT is stored in a <a href="spl-spec.html#navconst">predefined constant</a> in <tt>FAT</tt> in SPL. </li>
+				<li><tt>filename</tt> and the <tt>free block number</tt> obtained  in the previous steps are stored in the <em>Filename</em> field and <em>basic block number</em> field of the free <a href="xos-spec.html#navfiles_fat">FAT</a> entry respectively.</li>
+					<li> The <em>file size</em> field of the FAT entry is initialized to zero.</li>
+
+
+				<div class="syntax">
+						<pre>
+alias counter R8;
+counter = 0;
+while(counter < 512) do
+	if([FAT + counter + 2] == -1) then
+		.
+		// Set the FAT entry 
+		.
+		break;
+	endif;
+	counter = counter + 8;
+endwhile;
+
+// Return with -1 if there is no free entry
+if(counter == 512) then 		
+	[absoluteSP - 12] = -1;		
+	ireturn;	
+endif;</pre>
+				</div>
+		
+				<li> Load the <a href="xfs-spec.html#navfile">basic block</a> from the disk to the <a href="xos-spec.html#navfiles_scratchpad">scratchpad</a>. Each entry of the block list in the basic block is initialized to zero and it is stored back to the disk.</li>	
+				<li> The updated copies of FAT and disk free list in the memory are then stored back to the disk.</li>
+				
+				<li> The return value of this system call is 0 in case of success and -1 in case of failure. The return value is stored in the stack at address absoluteSP - 12.</li>
+				<li>Use an <b>ireturn</b> instruction to transfer control back to USER Mode.</li>
+				</ol>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>
+
+
+
+			<article  id="navstage8" class="grid col-full">
+			<h2>Stage 8: Exec, Fork, Exit and Halt System Calls</h2>
+			<p>  
+			The <a href="xos-spec.html#navsyscalls_process">Exec system call</a> is used to load and run a new process from a currently running process. The current process is overwritten by new process i.e. the process data structures of the current process is used by the new process. </br>
+			<i>System Call No</i>: 9 <br/>
+			<i>Interrupt Routine No</i>: 6 <br/>
+			<i>Arguments</i>: filename <br/>
+			<i>Return Value</i>: 0 (success) and -1 (failure) </br>
+		
+			 </p>
+			 The Interrupt 6 Routine is to be programmed in SPL, compiled and loaded to the disk. 
+			 <b>OS Startup Code</b> is modified to load Interrupt Routine 6 from the disk to memory. </br>
+
+			 The Interrupt 6 Routine performs the following actions.
+			 <ol>
+		 		<li> Get the filename to a register from the stack </li>
+		 		<li> Search for the filename in the memory copy of FAT. If it doesn't exist return -1 (indicating failure). </li>
+		 		<li> Otherwise fetch the basic block (location is obtained from FAT) and place it in the <a href="xos-spec.html#navfiles_scratchpad">scratchpad</a>.
+		 		</li>
+		 		<li> Load the blocks of the file (a maximum of 3 blocks) to the memory in pages of INIT process (16-18). INIT is the currently running process which issues an Exec system call.</li>
+		 		<li> Close all files opened by the current process by following the steps in <b>Close()</b> system call </li>
+		 		<li> SP is reset to 3*512.  </li>
+		 		<li> 0 is stored in 19*512 (physical address of the stack) to set IP by the <b>ireturn</b> instruction </li> 
+				<li> Return from the system call with 0 (indicating success).</li>
+			 </ol>
+
+			 <b>Exec</b> system call can be tested out by modifying the INIT program, by adding an <a href="apl-spec.html#navexec">Exec</a> call in it. <b>NOTE: The exec system call will be later modified to include Multiprogramming.</b>
+
+			 <br/><br/>
+			 <h6>Fork</h6>
+			<i>System Call No</i>: 8 <br/>
+			<i>Interrupt Routine No</i>: 5 <br/>
+			<i>Arguments</i>: None<br/>
+			<i>Return Value</i>: PID of the process created (success) or -1 (failure)</br>
+
+			<a href="xos-spec.html#navsyscalls_process"> Fork </a> system call is used to replicate the process which invoked this system call in the memory. <br/></br>
+			Interrupt 5 Routine must be programmed in SPL, compiled and loaded to disk. It must perform the following tasks.
+		  	<ol>
+			<li> The <em>Ready list</em> of PCBs is traversed to find a PCB with State 0 (terminated).</li>
+			<li> If no such PCB is found, -1 is returned. </li>
+			<li> The index of the PCB in the Ready List is the PID of new process created. It is stored in a register.</li>
+			<li> The pages used by the parent process is replicated in the following way</li>
+				<ul>
+					<li> The page table of the parent process is checked to count the number of valid pages. The <a href="xos-spec.html#navmemmgmt_mfl">memory free list</a> is checked to find an equal number of free pages. If this check fails, return with -1 indicating failure. </li> 
+					<li> Otherwise an equal number of pages are allocated by updating the memory free list.</li>
+					<li> Make corresponding entries in the child process' page table. The child's PTBR (address of its page table) is computed using PID stored in Step 3 </li>
+				</ul>
+			<li> The current register values of the parent process are (except PTBR)  copied to the child process' PCB. The entry for PTBR is the child's PTBR computed in the previous step. (<b>DO NOT</b> copy values from parent's PCB to child's PCB as it may not be equal to current values) </li>
+
+			<li> The Per-Process Open File table of the parent process is not copied to child's PCB. Instead invalidate all entries in child's Per-Process Open File Table </li>
+			<li> Control is passed back to the parent process using <b>ireturn</b>.</b>
+		  	</ol>
+		  	<b> OS Startup Code</b> is modified to 
+		  		<ul>
+		  			<li>Load Interrupt 5 Routine. (The code to load the 2nd process in the previous stage can now be removed)
+		  			</li> 
+		  			<li> The entries for pages 0 to 15 in the <a href="xos-spec.html#navmemmgmt_mfl">memory free list</a> is marked as used (set 1) and others as unused (set 0). Pages 0 - 15 are reserved for OS structures. See <a href="xos-spec.html#navmemorg"> Memory Organization </a>
+		  			</li> 
+		  		</ul>
+		  	To test Fork(), use Exec with program to print odd numbers after issuing a Fork from the INIT program (to print even numbers). 
+
+
+	</br>	</br>
+			<h6>Exit</h6>
+			<i>System Call No</i>: 10 <br/>
+			<i>Interrupt Routine No</i>: 7 <br/>
+			<i>Arguments</i>: None<br/>
+			<i>Return Value</i>:-1 on failure, exits on success </br>
+			This system call is used to terminate the execution of the process which invoked it. Exit removes this process from the memory. If there is only one process, it halts the system.
+
+		</br>	</br>
+			<h6>Halt</h6>
+			<i>System Call No</i>: 0 <br/>
+			<i>Interrupt Routine No</i>: 7 <br/>
+			<i>Arguments</i>: None<br/>
+			<i>Return Value</i>:-1 on failure, halts on success </br>
+			If there is only one process in memory, it halts the system. Otherwise returns -1.
+			<br/><br/>
+			Both Exit and Halt are implemented in Interrupt 7 Routine. It is to be programmed in SPL, compiled and loaded to the disk using XFS Interface. It does the following tasks 
+				<ol>
+					<li> If there is only one process, halt the system using <tt>HALT</tt> instruction irrespective of the system call </li>
+					<li> If its Exit system call, do the following actions</li>
+						<ol style="list-style-type:lower-roman;">
+							<li> Find the PCB of the current process using PTBR 
+							</li>
+							<li> Close all files opened by the process as done for <b>Close</b> system call</li>
+							<li> Set the STATE in the PCB to 0.  </li>
+							<li> Invalidate all entries in its per-process page table (Set <tt>Address</tt> field to -1) </li>
+							<li> Find the next waiting process from the  <a href="xos-spec.html#navpromgmt_readylist">Ready List of PCBs</a></li>
+							<li> Get the IP from its PCB and store it in its stack (Compute absolute address of its SP)</li>
+							<li> And use <b>ireturn</b> instruction to transfer control.</li>
+						</ol>
+					<li> Otherwise, exit with -1 </li>	
+
+				</ol>
+	 		<b>OS Startup Code</b> is modified to load Interrpt 7 from disk to memory. 
+
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+
+
+
+			<article  id="navstage9" class="grid col-full">
+			<h2>Stage 9: Exception Handling </h2>
+			<p> 
+				<a href="xos-spec.html#navsysroutines_exhandler">Exception Handler</a> in XOS handles exceptions caused by machine. When an exception occurs, the machine sets the <tt>EFR</tt> (Exception Flag Register) and calls the Exception Handler in Page 7. See <a href="xsm-spec.html#navexcep">Exceptions</a>.
+			</p>
+
+
+			This stage involves programming the Exception handler in SPL, compiling and loading it to disk. The OS Startup Code must be modified to load the exception handler from disk to memory on startup. 
+
+			The exception handler must do the following :
+			<ol>
+				<li> The details corresponding to the exception is stored in EFR register. The individual values in EFR must be extracted to registers. 
+					<div class="syntax">
+						<pre>
+Cause = EFR % 10;		// Gets value of cause field (size 1 char)
+VPagenum = (EFR / 10) % 100;    // Gets value of BadVAddr 
+Ip_addr = (EFR/1000);		//Gets value of IP at the point of exception
+</pre>
+						
+					</div>
+				</li> 
+				<li> 
+					If <tt>Cause</tt> is a value other than 0, Display the error and exit the process which caused the exception. The process can be identified by the current <tt>PTBR</tt> value. Follow the steps done in Exit system call implementation. 
+				</li>
+				<li>
+					If <tt>Cause</tt> it is 0 (Page Fault), the following actions have to be performed.
+					<ol style="list-style-type:lower-roman">
+
+						<li> Allocate a free page by searching through the memory free list. If a free page is not found, follow the page replacement technique, described later to find a free page. Store its page number in a register </li>
+						<li> Get the <tt>physical page number</tt> field corresponding to <tt>VPagenum</tt> from the Per-Process page table of process that caused the exception.  </li>
+						<li> If the <tt>physical page number</tt> field is a disk block number, load the disk block to the free page allocated in Step i. Otherwise, this step can be omitted. </li>
+						<li> Set the Per-Process Page Table entry corresponding to  <tt>VPagenum</tt> with the page number of free page and set the <tt>Auxiliary flag</tt> as 11. (Valid and Referenced) </li>
+						<li> Put Ip_addr to the memory location pointed to by the physical address of SP. </li>
+						<li> Return to USER Mode using <b>ireturn</b> instruction. </li>
+					</ol>
+				</li>
+				<br/>
+			</ol>
+				<h6>Page-Replacement Algorithm</h6>
+				<p>The page replacement technique used in XOS is a <i>Second Chance Algorithm</i> which uses the <i>reference bits</i> in the auxiliary information. The steps are as follows
+					<ol>
+						<li>
+						It scans the valid entries in the  Per-Process Page Tables of all processes in a circluar fashion and checks for a page with reference bit '0'.
+						</li>
+						<li>
+						The scanning starts from the current page table entry which issued a page fault.
+						</li>
+						<li> Whenever a page with reference bit '1' is encountered it is set to '0' and goes to the next page, giving a referenced page a second chance. </li>
+						<li> When a page with reference bit '0' is encountered it is selected as the victim page. Then </li>
+							<ol style="list-style-type:lower-roman">
+								<li>  Memory copy of Disk Free List is scanned for a free block in the swap area (blocks 448 - 511). </li>
+								<li> If no free block is found the corresponding process will be terminated	</li>
+								<li> If a free block is found, the victim page is stored on that block and memory copy of Disk Free List is updated. </li>
+								<li>The entry for the victim page in the Per-Process Page Table is updated with the address of this block and is set as invalid. </li>
+							</ol>
+
+			</ol>
+			<h6>Modifications to OS Startup Code and d Exec system calls</h6>
+			When a process is loaded, only the disk addresses of the corresponding code blocks needs to be set in the page table and its <tt>Auxiliary Information</tt> is set to 00 (Invalid and Unreferenced). Put the <tt>Physical Address</tt> field of remaining entries are set to -1 with  <tt>Auxiliary Information</tt>  as "00". The disk blocks need not be loaded initially. It will be loaded by <a href="xos-spec.html#navmemmgmt_intro">pure demand paging strategy</a> when required.
+			<br/>
+			<h6> Modifications to Fork </h6>
+			For Fork system call, when it copies the address space, duplicate all valid addresses as done earlier. If the entry in the page table of the parent process is invalid, 
+				<ul>
+					<li>
+						If it is a disk address less than 448 (not swap area), copy the entry directly to the page table of the child.
+					</li>
+					<li>
+						If it is a disk address >= 448 (swap area), check the disk free list and get a free swap block. Copy the contents of current swap block to the newly allocated swap block by using scratchpad. Set the page table of the child with the newly allocated swap block number and copy the <tt>Auxiliary Information</tt> from the parent's page table entry. 
+					</li>
+					<li>
+						If the address is -1, do nothing.
+					</li>
+				</ul>
+
+
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>
+
+
+			<article  id="navstage10" class="grid col-full">
+			<h2>Stage 10: Making a console </h2>
+			<p> 
+				The final stage is to make the INIT  process act like a console. INIT written in APL, should be an infinite loop, which takes in  filenames. This filename should correspond to the program to be executed.
+				It should <a href="apl-spec.html#navfork"><b>Fork</b></a> itself and <a href="apl-spec.html#navexec"><b>Exec</b></a> using the filename. Appropriate errors must be reported. To have  a time delay between asking for filenames as input, a time-consuming loop may be added  :) 
+			 </p>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 			<article  id="navstage5" class="grid col-full">
-			<h2>Stage 5: Playing with files </h2>
+			<h2>Stage 5: Playing with files !!!</h2>
 			<p> In this stage, you will implement file system calls  <b>Create, Delete, Open, Close, Seek, Read</b> and <b> Write </b>. The following tasks should be done in this stage </p>
 			<h6> Modifying the OS Startup Code</h6>
 			<ol>
@@ -748,267 +1142,14 @@ endif;</pre>
 			</div>	
 			
 
-			<article  id="navstage6" class="grid col-full">
-			<h2>Stage 5: The Exec System Call</h2>
-			<p>  
-			The <a href="xos-spec.html#navsyscalls_process">Exec system call</a> is used to load and run a new process from a currently running process. The current process is overwritten by new process i.e. the process data structures of the current process is used by the new process. </br>
-			<i>System Call No</i>: 9 <br/>
-			<i>Interrupt Routine No</i>: 6 <br/>
-			<i>Arguments</i>: filename <br/>
-			<i>Return Value</i>: 0 (success) and -1 (failure) </br>
-		
-			 </p>
-			 The Interrupt 6 Routine is to be programmed in SPL, compiled and loaded to the disk. 
-			 <b>OS Startup Code</b> is modified to load Interrupt Routine 6 from the disk to memory. </br>
-
-			 The Interrupt 6 Routine performs the following actions.
-			 <ol>
-		 		<li> Get the filename to a register from the stack </li>
-		 		<li> Search for the filename in the memory copy of FAT. If it doesn't exist return -1 (indicating failure). </li>
-		 		<li> Otherwise fetch the basic block (location is obtained from FAT) and place it in the <a href="xos-spec.html#navfiles_scratchpad">scratchpad</a>.
-		 		</li>
-		 		<li> Load the blocks of the file (a maximum of 3 blocks) to the memory in pages of INIT process (16-18). INIT is the currently running process which issues an Exec system call.</li>
-		 		<li> Close all files opened by the current process by following the steps in <b>Close()</b> system call </li>
-		 		<li> SP is reset to 3*512.  </li>
-		 		<li> 0 is stored in 19*512 (physical address of the stack) to set IP by the <b>ireturn</b> instruction </li> 
-				<li> Return from the system call with 0 (indicating success).</li>
-			 </ol>
-
-			 <b>Exec</b> system call can be tested out by modifying the INIT program, by adding an <a href="apl-spec.html#navexec">Exec</a> call in it. <b>NOTE: The exec system call will be later modified to include Multiprogramming.</b>
-
-			</article>
-			<div class="up grid col-one-third" style="float:right">
-			<a href="#navtop" title="Go back up"> top &uarr;</a>
-			</div>	
 			
-
-
-
-			<article  id="navstage7" class="grid col-full">
-			<h2>Stage 6: Multiprogramming</h2>
-			<p>  <a href="xos-spec.html#navpromgmt_multiprog">Multiprogramming</a> refers to running more than one process simultaneously. In XSM, the timer interrupts after every instruction and the control is passed to Page 8, i.e. the timer interrupt routine.  </p>
-			Run the machine  without disabling the timer. <br/>
-			<tt> ./xsm </tt>
-
-			<p>The task to be done in this stage, is to program the Timer Interrupt in SPL, compile it and load it to the disk. </p>
-
-
-			The timer interrupt routine must perform the following actions:
-			<ol>
-				<li> Find the ProcessID or PID using the PTBR. </li>
-				<li> Using the PID find the PCB of the process. Store the values of the current process in its <a href="xos-spec.html#navpromgmt_pcb">PCB</a> as shown below.</li>
-					<div class="syntax">
-						<pre>
-[ PCB_Start + 0 ] = ProcessID;		//PID
-[ PCB_Start + 1 ] = 1 			// STATE : Waiting for the CPU
-[ PCB_Start + 2 ] = BP 					
-[ PCB_Start + 3 ] = SP            	
-[ PCB_Start + 4 ] = [absoluteSP - 1] 	// IP gets stored in SP by machine
-[ PCB_Start + 5 ] = PTBR	
-[ PCB_Start + 6 ] = PTLR		
-[ PCB_Start + 7 ] = R0			
-	.
-	.
-[ PCB_Start + 14] = R7			</pre>	</div>	
-
-				<li>Scan the <a href="xos-spec.html#navpromgmt_readylist">Ready List of PCBs</a> in a circular manner from the PCB of current process to check for the next process with STATE 1 (Waiting for the CPU). Store the address of the PCB found in a register.
-				</li>
-				<li> Load the fields from this  PCB  to the corresponding registers.	</li>
-				<li> Find the physical address of SP corresponding to newly found PCB. Store IP from this PCB to the location pointed by the physical address of SP. </li>
-				<li> Use <b>ireturn</b> instruction to return to USER Mode</li>
-	
-			</ol>
-
-			However to test the timer interrupt, you must have more than one program present in the memory. The programs will run in an interleaved fashion when the timer itnerrupt is working perfectly. 
-
-			<ol>
-				<li> Write and compile 2 APL programs,
-					<ul>
-						<li> To print all even numbers from 1 to n (taken as input)</li>
-						<li> To print all odd numbers from 1 to n (taken as input)</li>
-					</ul>
-				<li> Load one of the programs as INIT and the 2nd program as an executable to <b>disk.xfs</b></li>
-			</ol>
-			<b> OS Startup Code </b>
-			<ol>
-				<li> Modify the startup code, to load both the programs, one as INIT (already done in Stage 2) and other from locations 20 to 22 and page 23 for stack. </li>
-				<li> Setup the Per-Process Page Tables and PCB for the 2nd process as done in Stage 2. See <a href="xos-spec.html#navmemorg">Memory Organization</a> to get the locations of the page table and PCB of the 2nd process </li>
-				<li> Load the Timer Interrupt Routine from the disk to the memory. </li>
-			</ol> 
-
-
-
-			Run the machine without disabling the timer.
-
-			</article>
-			<div class="up grid col-one-third" style="float:right">
-			<a href="#navtop" title="Go back up"> top &uarr;</a>
-			</div>	
-			
-			<article  id="navstage8" class="grid col-full">
-			<h2>Stage 7: Fork , Exit and Halt System Calls </h2>
-
-			<h6>Fork</h6>
-			<i>System Call No</i>: 8 <br/>
-			<i>Interrupt Routine No</i>: 5 <br/>
-			<i>Arguments</i>: None<br/>
-			<i>Return Value</i>: PID of the process created (success) or -1 (failure)</br>
-
-			<a href="xos-spec.html#navsyscalls_process"> Fork </a> system call is used to replicate the process which invoked this system call in the memory. <br/></br>
-			Interrupt 5 Routine must be programmed in SPL, compiled and loaded to disk. It must perform the following tasks.
-		  	<ol>
-			<li> The <em>Ready list</em> of PCBs is traversed to find a PCB with State 0 (terminated).</li>
-			<li> If no such PCB is found, -1 is returned. </li>
-			<li> The index of the PCB in the Ready List is the PID of new process created. It is stored in a register.</li>
-			<li> The pages used by the parent process is replicated in the following way</li>
-				<ul>
-					<li> The page table of the parent process is checked to count the number of valid pages. The <a href="xos-spec.html#navmemmgmt_mfl">memory free list</a> is checked to find an equal number of free pages. If this check fails, return with -1 indicating failure. </li> 
-					<li> Otherwise an equal number of pages are allocated by updating the memory free list.</li>
-					<li> Make corresponding entries in the child process' page table. The child's PTBR (address of its page table) is computed using PID stored in Step 3 </li>
-				</ul>
-			<li> The current register values of the parent process are (except PTBR)  copied to the child process' PCB. The entry for PTBR is the child's PTBR computed in the previous step. (<b>DO NOT</b> copy values from parent's PCB to child's PCB as it may not be equal to current values) </li>
-
-			<li> The Per-Process Open File table of the parent process is not copied to child's PCB. Instead invalidate all entries in child's Per-Process Open File Table </li>
-			<li> Control is passed back to the parent process using <b>ireturn</b>.</b>
-		  	</ol>
-		  	<b> OS Startup Code</b> is modified to 
-		  		<ul>
-		  			<li>Load Interrupt 5 Routine. (The code to load the 2nd process in the previous stage can now be removed)
-		  			</li> 
-		  			<li> The entries for pages 0 to 15 in the <a href="xos-spec.html#navmemmgmt_mfl">memory free list</a> is marked as used (set 1) and others as unused (set 0). Pages 0 - 15 are reserved for OS structures. See <a href="xos-spec.html#navmemorg"> Memory Organization </a>
-		  			</li> 
-		  		</ul>
-		  	To test Fork(), use Exec with program to print odd numbers after issuing a Fork from the INIT program (to print even numbers). 
-
-
-	</br>	</br>
-			<h6>Exit</h6>
-			<i>System Call No</i>: 10 <br/>
-			<i>Interrupt Routine No</i>: 7 <br/>
-			<i>Arguments</i>: None<br/>
-			<i>Return Value</i>:-1 on failure, exits on success </br>
-			This system call is used to terminate the execution of the process which invoked it. Exit removes this process from the memory. If there is only one process, it halts the system.
-
-		</br>	</br>
-			<h6>Halt</h6>
-			<i>System Call No</i>: 0 <br/>
-			<i>Interrupt Routine No</i>: 7 <br/>
-			<i>Arguments</i>: None<br/>
-			<i>Return Value</i>:-1 on failure, halts on success </br>
-			If there is only one process in memory, it halts the system. Otherwise returns -1.
-			<br/><br/>
-			Both Exit and Halt are implemented in Interrupt 7 Routine. It is to be programmed in SPL, compiled and loaded to the disk using XFS Interface. It does the following tasks 
-				<ol>
-					<li> If there is only one process, halt the system using <tt>HALT</tt> instruction irrespective of the system call </li>
-					<li> If its Exit system call, do the following actions</li>
-						<ol style="list-style-type:lower-roman;">
-							<li> Find the PCB of the current process using PTBR 
-							</li>
-							<li> Close all files opened by the process as done for <b>Close</b> system call</li>
-							<li> Set the STATE in the PCB to 0.  </li>
-							<li> Invalidate all entries in its per-process page table (Set <tt>Address</tt> field to -1) </li>
-							<li> Find the next waiting process from the  <a href="xos-spec.html#navpromgmt_readylist">Ready List of PCBs</a></li>
-							<li> Get the IP from its PCB and store it in its stack (Compute absolute address of its SP)</li>
-							<li> And use <b>ireturn</b> instruction to transfer control.</li>
-						</ol>
-					<li> Otherwise, exit with -1 </li>	
-
-				</ol>
-	 		<b>OS Startup Code</b> is modified to load Interrpt 7 from disk to memory. 
-			</article>
-			<div class="up grid col-one-third" style="float:right">
-			<a href="#navtop" title="Go back up"> top &uarr;</a>
-			</div>		
-			
-			<article  id="navstage9" class="grid col-full">
-			<h2>Stage 8: Exception Handling </h2>
-			<p> 
-				<a href="xos-spec.html#navsysroutines_exhandler">Exception Handler</a> in XOS handles exceptions caused by machine. When an exception occurs, the machine sets the <tt>EFR</tt> (Exception Flag Register) and calls the Exception Handler in Page 7. See <a href="xsm-spec.html#navexcep">Exceptions</a>.
-			</p>
-
-
-			This stage involves programming the Exception handler in SPL, compiling and loading it to disk. The OS Startup Code must be modified to load the exception handler from disk to memory on startup. 
-
-			The exception handler must do the following :
-			<ol>
-				<li> The details corresponding to the exception is stored in EFR register. The individual values in EFR must be extracted to registers. 
-					<div class="syntax">
-						<pre>
-Cause = EFR % 10;		// Gets value of cause field (size 1 char)
-VPagenum = (EFR / 10) % 100;    // Gets value of BadVAddr 
-Ip_addr = (EFR/1000);		//Gets value of IP at the point of exception
-</pre>
 						
-					</div>
-				</li> 
-				<li> 
-					If <tt>Cause</tt> is a value other than 0, Display the error and exit the process which caused the exception. The process can be identified by the current <tt>PTBR</tt> value. Follow the steps done in Exit system call implementation. 
-				</li>
-				<li>
-					If <tt>Cause</tt> it is 0 (Page Fault), the following actions have to be performed.
-					<ol style="list-style-type:lower-roman">
-
-						<li> Allocate a free page by searching through the memory free list. If a free page is not found, follow the page replacement technique, described later to find a free page. Store its page number in a register </li>
-						<li> Get the <tt>physical page number</tt> field corresponding to <tt>VPagenum</tt> from the Per-Process page table of process that caused the exception.  </li>
-						<li> If the <tt>physical page number</tt> field is a disk block number, load the disk block to the free page allocated in Step i. Otherwise, this step can be omitted. </li>
-						<li> Set the Per-Process Page Table entry corresponding to  <tt>VPagenum</tt> with the page number of free page and set the <tt>Auxiliary flag</tt> as 11. (Valid and Referenced) </li>
-						<li> Put Ip_addr to the memory location pointed to by the physical address of SP. </li>
-						<li> Return to USER Mode using <b>ireturn</b> instruction. </li>
-					</ol>
-				</li>
-				<br/>
-			</ol>
-				<h6>Page-Replacement Algorithm</h6>
-				<p>The page replacement technique used in XOS is a <i>Second Chance Algorithm</i> which uses the <i>reference bits</i> in the auxiliary information. The steps are as follows
-					<ol>
-						<li>
-						It scans the valid entries in the  Per-Process Page Tables of all processes in a circluar fashion and checks for a page with reference bit '0'.
-						</li>
-						<li>
-						The scanning starts from the current page table entry which issued a page fault.
-						</li>
-						<li> Whenever a page with reference bit '1' is encountered it is set to '0' and goes to the next page, giving a referenced page a second chance. </li>
-						<li> When a page with reference bit '0' is encountered it is selected as the victim page. Then </li>
-							<ol style="list-style-type:lower-roman">
-								<li>  Memory copy of Disk Free List is scanned for a free block in the swap area (blocks 448 - 511). </li>
-								<li> If no free block is found the corresponding process will be terminated	</li>
-								<li> If a free block is found, the victim page is stored on that block and memory copy of Disk Free List is updated. </li>
-								<li>The entry for the victim page in the Per-Process Page Table is updated with the address of this block and is set as invalid. </li>
-							</ol>
-
-			</ol>
-			<h6>Modifications to OS Startup Code and d Exec system calls</h6>
-			When a process is loaded, only the disk addresses of the corresponding code blocks needs to be set in the page table and its <tt>Auxiliary Information</tt> is set to 00 (Invalid and Unreferenced). Put the <tt>Physical Address</tt> field of remaining entries are set to -1 with  <tt>Auxiliary Information</tt>  as "00". The disk blocks need not be loaded initially. It will be loaded by <a href="xos-spec.html#navmemmgmt_intro">pure demand paging strategy</a> when required.
-			<br/>
-			<h6> Modifications to Fork </h6>
-			For Fork system call, when it copies the address space, duplicate all valid addresses as done earlier. If the entry in the page table of the parent process is invalid, 
-				<ul>
-					<li>
-						If it is a disk address less than 448 (not swap area), copy the entry directly to the page table of the child.
-					</li>
-					<li>
-						If it is a disk address >= 448 (swap area), check the disk free list and get a free swap block. Copy the contents of current swap block to the newly allocated swap block by using scratchpad. Set the page table of the child with the newly allocated swap block number and copy the <tt>Auxiliary Information</tt> from the parent's page table entry. 
-					</li>
-					<li>
-						If the address is -1, do nothing.
-					</li>
-				</ul>
-
-
-			</article>
-			<div class="up grid col-one-third" style="float:right">
-			<a href="#navtop" title="Go back up"> top &uarr;</a>
-			</div>		
 			
-			<article  id="navstage10" class="grid col-full">
-			<h2>Stage 9: Making a console </h2>
-			<p> 
-				The final stage is to make the INIT  process act like a console. INIT written in APL, should be an infinite loop, which takes in  filenames. This filename should correspond to the program to be executed.
-				It should <a href="apl-spec.html#navfork"><b>Fork</b></a> itself and <a href="apl-spec.html#navexec"><b>Exec</b></a> using the filename. Appropriate errors must be reported. To have  a time delay between asking for filenames as input, a time-consuming loop may be added  :) 
-			 </p>
-			<div class="up grid col-one-third" style="float:right">
-			<a href="#navtop" title="Go back up"> top &uarr;</a>
-			</div>		
+					
+			
+					
+			
+					
 			
 			 <br/><br/>
  			<center><h6>AND THAT'S YOUR OWN </h6><img src="img/logo-img.jpeg" style="margin:0;  width:40px"></center>

@@ -518,7 +518,7 @@ Machine is halting
 								[READY_LIST + 38] = 4;			//PTLR<br/>
 							</div>
 							Stack allocated for the process starts from logical page no 3. So SP and BP fields are set to the start of this page. Code area of the process starts from logical address 0, so IP field is set to zero. The page table of the process should  start from 1024 + PID*8, since page table of each process in our operating system is 8 word long (4 entries each of 2 word size). Field for PTLR is set to 4 since only 4 pages are allocated for the process(3 code pages and a stack page).  (Note: These values are specific to XOS and not the general case).<br/>
-							The rest of the entries of the PCB may not be set now. You will deal with then in subsequent stages.
+							The rest of the entries of the PCB may not be set now. You will deal with them in subsequent stages.
 						</li>
 						<li> Load the timer interrupt routine from disk block 2 to memory page 8. </li>
 					</ul>
@@ -555,6 +555,7 @@ Machine is halting
 						<li> Use ireturn instruction to return to USER Mode </li>
 					</ul>
 				</li>
+				<li> Compile the OS Startup Code and Timer interrupt using the SPL Compiler. </li>
 				<li> Load the new OS Startup code and timer interrupt routine to the xfs disk using xfs interface. </li>
 				<li> Run the machine without disabling timer </li>
 				

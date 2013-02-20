@@ -174,7 +174,10 @@ exit</pre>
 							</div>
 						</li>	
 						<li> Check the <a href="xos-spec.html#navfiles_fat">FAT entry</a> by viewing the fat_block.txt 
-							file from linux and find the block number of basic block of the loaded data file. Copy this block using xfs-interface to a linux file as done above to get the data blocks used by this file.
+							file from linux and find the block number of basic block of the loaded data file.
+						</li>
+						<li>
+							Copy the basic block of the file using xfs-interface to a linux file as done above, to get the data blocks used by this file.
 						</li>
 
 						<li> Copy the data blocks and display it as a UNIX file. </li>
@@ -230,7 +233,8 @@ endwhile; </pre>
 					<li> Run the machine using the command 
 						<div class="syntax">
 . $HOME/myxos/xsm/xsm --disable-timer
-						</div></li>
+						</div>
+					</li>
 				</ol>
 				The machine will halt after printing all odd numbers from 1 to n
 <pre><tt>
@@ -267,9 +271,10 @@ Machine is halting
 							<tt> . cd $HOME/myxos/apl </tt><br/>
 							<tt> ./apl < $HOME/myxos/apl_progs/prime.apl  </tt>
 						</div> 
+						The output file generated is $HOME/myxos/apl/apcode.xsm
 					</li>
 
-					<li> Load it to <b>disk.xfs</b> as <b>INIT program</b> using XFS interface </li>
+					<li> Load this file to <b>disk.xfs</b> as <b>INIT program</b> using XFS interface </li>
 
 					<li> Create a Interrupt 7 SPL program with  just a <b>halt;</b> instruction. Here, we have assumed its path to be <b>$HOME/myxos/spl_progs/haltprog.spl</b>.  </li> 
 
@@ -351,12 +356,21 @@ Machine is halting
 			</div>
 
 
+			<article  id="navstage5" class="grid col-full">
+			<h2>Stage 5: Getting Started with files </h2>
+			<p> In this stage you will get familiarised with how a system call is to be handled.
+			</p>
+			
+			</article>
 
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
 
 
 
 			<article  id="navstage5" class="grid col-full">
-			<h2>Stage 4: Playing with files </h2>
+			<h2>Stage 5: Playing with files </h2>
 			<p> In this stage, you will implement file system calls  <b>Create, Delete, Open, Close, Seek, Read</b> and <b> Write </b>. The following tasks should be done in this stage </p>
 			<h6> Modifying the OS Startup Code</h6>
 			<ol>

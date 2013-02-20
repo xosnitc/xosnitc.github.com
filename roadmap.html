@@ -235,7 +235,7 @@ endwhile; </pre>
 						<div class="syntax">
 . $HOME/myxos/xsm/xsm --disable-timer
 						</div>
-						<p>The machine has a timer which interrupts the execution at specific intervals and pass the control to timer interrupt routine. We will be dealing with the timer in stage 5(Interrupts and exceptions). Until then we will run the machine with the timer disabled.  The <i>--disable-timer</i> is used to disable the timer.</p>
+						<p>The machine has a timer which interrupts the execution at specific intervals and pass the control to timer interrupt routine. We will be dealing with the timer in stage 5 (Interrupts). Until then we will run the machine with the timer disabled.  The <i>--disable-timer</i> is used to disable the timer.</p>
 					</li>
 				</ol>
 				The machine will halt after printing all odd numbers from 1 to n
@@ -401,7 +401,7 @@ Machine is halting
 				<li> Modify the OS Startup Code to load the <b>INT 1</b> routine from disk block 3 to memory page 9. Add the following line to OS startup code
 					<div class="syntax">load (9, 3);</div>
 				</li>
-				<li> Compile the OS Startup Code using SPL compiler. Load the compiled output file osstartup.xsm to the XFS disk </li>
+				<li> Compile the OS Startup Code using SPL compiler. Load the compiled output file os_startup.xsm to the XFS disk </li>
 				<li> Run the machine using this startup code by disabling the timer.
 					<div class="syntax"> $HOME/myxos/xsm/xsm --disable-timer </div>
 					You'll get the following output on the screen.

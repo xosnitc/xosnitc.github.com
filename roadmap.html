@@ -262,7 +262,7 @@ Machine is halting
 
 			<article  id="navstage4" class="grid col-full">
 				<h2>Stage 4: Running a user program </h2>
-				<p> User programs or application programs are programmed using <a href="apl-spec.html">APL</a> or Application Programmer's Language. A user program is different from a system program which you run on the machine in stage 3. It is to be noted that a system program is executed in kernel mode. The machine starts its execution in kernel mode. In kernel mode both privileged and unprivileged instructions can be executed. All memory addresses are absolute addresses in kernel mode. A user program should be run in user mode. In user mode only unprivileged instructions can be executed. Also all memory addresses are logical in user mode. The OS Startup code must load the user program to be executed from the disk to the memory and set up the page tables for <a href="xsm-spec.html#navaddr">address translation</a>. Also before the start of execution of the application program, the mode of execution must be changed from kernel mode to user mode (Read more about Privilege modes <a href="xsm-spec.html#navmodes">here</a>). Also the value of Instruction Pointer must be set to starting address of the code of the user program (Since all addresses are logical in user mode code of a program starts from logical address 0). The last two operations are done using <a href="spl-spec.html#naviretstmt"> ireturn</a> instruction. </p>
+				<p> User programs or application programs are programmed using <a href="apl-spec.html">APL</a> or Application Programmer's Language. A user program is different from a system program which you run on the machine in stage 3. It is to be noted that a system program is executed in kernel mode ( See <a href="xsm-spec.html#navmodes">Privilege modes</a> ). The machine starts its execution in kernel mode. In kernel mode both privileged and unprivileged instructions can be executed. All memory addresses are absolute addresses in kernel mode. A user program should be run in user mode. In user mode only unprivileged instructions can be executed. Also all memory addresses are logical in user mode. The OS Startup code must load the user program to be executed from the disk to the memory and set up the page tables for <a href="xsm-spec.html#navaddr">address translation</a>. Also before the start of execution of the application program, the mode of execution must be changed from kernel mode to user mode. Also the value of Instruction Pointer must be set to starting address of the code of the user program (Since all addresses are logical in user mode code of a program starts from logical address 0). The last two operations are done using <a href="spl-spec.html#naviretstmt"> ireturn</a> instruction which translates to a machine instruction <a href="xsm-spec.html#navinstr">IRET</a>. </p>
 
 				<p>In this stage, an application program in APL is compiled and loaded to the disk as the init process. An OS Startup code is written in <a href="spl-spec.html">SPL</a> to load this program to the memory on machine startup.</p>
 
@@ -270,7 +270,7 @@ Machine is halting
 					<li> Write a program in APL to print all prime numbers lesser than a number taken as input. See <a href="apl-spec.html#navexamples">Examples</a> of APL programs. In the roadmap, the path of the file is assumed to be <tt>$HOME/myxos/apl_progs/prime.apl</tt></li>
 					<li> Compile your APL program using the command
 						<div class="syntax">
-							<tt> . cd $HOME/myxos/apl </tt><br/>
+							<tt> cd $HOME/myxos/apl </tt><br/>
 							<tt> ./apl < $HOME/myxos/apl_progs/prime.apl  </tt>
 						</div> 
 						The output file generated is $HOME/myxos/apl/apcode.xsm
@@ -282,8 +282,8 @@ Machine is halting
 
 					Compile this program using two different flags as shown
 					<div class="syntax">
-						. cd $HOME/myxos/spl <br/>
-						./spl --int=7  < $HOME/myxos/spl_progs/haltprog.sp <br/>
+						cd $HOME/myxos/spl <br/>
+						./spl --int=7  < $HOME/myxos/spl_progs/haltprog.spl <br/>
 						./spl --exhandler < $HOME/myxos/spl_progs/haltprog.spl 
 					</div>
 					Now two files named <tt>int7.xsm</tt> and <tt>exhandler.xsm</tt> are created in <tt>$HOME/myxos/spl/</tt> <br/>

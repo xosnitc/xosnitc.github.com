@@ -131,20 +131,14 @@
 				</div>					
 				</ol>
 
-			If the setup worked correctly, an executable with name <tt>xsm</tt> will be created in $HOME/myxos/xsm. Similarly for <tt>xfs-interface</tt> , <tt>apl</tt> and <tt>spl</tt> subdirectories within <tt>myxos</tt> directory, its corresponding executables will be created. 
-		</br></br>
-			<h4> The Compoents </h4>
+			If the setup worked correctly, the following executables will be created 
 			<ul>
-				There are four components
-				<ul>
-					<li> <b>SPL Compiler</b>: Compiler for the high level language to program the OS.</li>
-					<li> <b>APL Compiler</b>: Compiler for the high level language to write user programs for the OS</li>
-					<li> <b>XFS Interface</b>: Interface to connect to the filesystem used by the OS.</li>
-					<li> <b>XSM Simulator</b>: Machine simulator on which the OS will run </b>
-				</ul>
-				<br/>
-		
+				<li> <b>spl</b> in <b>$HOME/myxos/spl</b> folder</li>
+				<li> <b>apl</b> in <b>$HOME/myxos/apl</b> folder</li>
+				<li> <b>xfs-interface</b> in <b>$HOME/myxos/xfs-interface</b> folder</li>
+				<li> <b>xsm</b> in <b>$HOME/myxos/xsm</b> folder</li>
 			</ul>
+		
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -175,7 +169,7 @@
 				<h6> Running </h6>
 				<p> Within your spl directory, use the following commands to run the SPL compiler </p>
 <ul>
-<li><p> <tt>./spl <i>&lt;flag&gt;</i> &lt; <i>&lt;path-to-spl-program&gt;</i> </tt></p></li> </pre>
+<li><p> <tt>./spl <i>flag</i> &lt; <i>path-to-spl-program</i> </tt></p></li> </pre>
 </ul>	
 
 
@@ -229,7 +223,7 @@ A file  <tt>os_startup.xsm</tt> is created in <tt>$HOME/myxos/spl</tt>.
 				<h6> Running </h6>
 				<p>Within your APL directory, use the following commands to run the APL compiler </p>
 				<ul>
-					<li><p> <tt>./apl < &ltpath-to-file&gt </tt></p></li>
+					<li><p> <tt>./apl < path-to-file </tt></p></li>
 				</ul> 
 
 				The output file is named <b>"apcode.xsm"</b> <br/><br/>

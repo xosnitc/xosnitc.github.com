@@ -659,28 +659,43 @@ integer main()
 }	</pre>
 			</div>
 <br/>
-<p><h5>Bubble Sort in</h5></p> 
+<p><h5>Bubble Sort</h5></p> 
 <div class="syntax">
 <pre>
 decl
-integer fact(integer n),a;
+	integer a[10],bubblesort();
 enddecl
-integer fact(integer n)
+integer bubblesort()
 {
-	integer f;
-	if(n==1) then
-		f=1;
-	else
-		f=n*fact(n-1);
-	endif;
-	return f;
+	integer i,j,k;
+	i=0;
+	while (i < 10) do
+		j=0;
+		while (j < 10-i-1) do
+			if (a[j] < a[j+1]) then
+				k=a[j];
+				a[j]=a[j+1];
+				a[j+1]=k;
+			endif;
+			j=j+1;
+		endwhile;
+		i=i+1;
+	endwhile;	
+	return 0;
 }
 integer main()
 {
-	integer b;
-	read(a);
-	b=fact(a);
-	print(b);
+	integer i;
+	i=0;
+	while (i < 10) do
+		a[i]=i;
+		i=i+1;
+	endwhile;
+	i=bubblesort();
+	while (i < 10) do
+		print(a[i]);
+		i=i+1;
+	endwhile;
 	return 0;
 }	</pre>
 			</div>

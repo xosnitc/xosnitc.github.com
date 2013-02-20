@@ -572,17 +572,6 @@ endwhile;						</pre>
 				<br/><br/>
 				An Interrupt  Routine may contain more than system call implementation. The system call number is obtained from the stack (Stack Pointer - 1) and then an <b>if</b> condition is checked for the corresponding system call. To access the stack in KERNEL mode, the physical address of the top of the stack must used. The physical address of the top of stack is calculated as: The 6th entry in the Page Table (obtained from PTBR + 6) gives the starting address of the stack, and SP%512 will give the offset in the stack. Adding both will give the absoulte address of SP. 
 				<br/><br/>
-				<h4>File System Calls</h4>
-				<table class="doctable" style="width:50%">
-					<tr><th>System Call Name</th><th>System Call #</th><th>Interrupt Routine #</th></tr>
-					<tr><td>Create</td>			 <td>1</td>				<td> 1</td> </tr>
-					<tr><td>Open</td>			<td>2</td>				<td> 2</td> </tr>
-					<tr><td>Close</td>			<td>3</td>				<td> 2</td> </tr>
-					<tr><td>Delete</td>			<td>4</td>				<td> 1</td> </tr>
-					<tr><td>Write</td>			<td>5</td>				<td> 4</td> </tr>
-					<tr><td>Seek</td>			<td>6</td>				<td> 3</td> </tr>
-					<tr><td>Read</td>			<td>7</td>				<td> 3</td> </tr>
-				</table>
 
 				<br/>
 				A skeleton of Interrupt 1 Routine is given below.
@@ -609,13 +598,7 @@ endif;	</pre>
 				In this stage we'll implement the Create System Call. Delete and other system calls will be implemented in later stages.
 			
 
-				<h6> Create System Call</h6>
-				<i>System Call No</i>: 1 <br/>
-				<i>Interrupt Routine No</i>: 1 <br/>
-				<i>Arguments</i>: filename <br/>
-				<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
-				<br/>
-				Creates a file with the filename given as argument.
+
 
 				<ol>
 				<li> First of all, the memory copy of the <a href="xfs-spec.html#navdfl">disk free list</a> is searched till the entry for block number 447 to find a free block number (indicated by a 0 entry in the disk free list). Blocks 448 - 511  are reserved for <a href="xfs-spec.html#navdiskorg">swap area</a> which will be used for virtual memory management (<a href="roadmap.html#navstage8">Stage 8</a>). This block is used as the <a href="xfs-spec.html#navfile">basic block</a> of the file to be created. It's entry is set to 1. The block number is stored to a register. If no free block is found return -1 (as done in the previous step). </li>
@@ -657,6 +640,7 @@ endif;</pre>
 				<li>Use an <b>ireturn</b> instruction to transfer control back to USER Mode.</li>
 				</ol>
 			
+			Check if the file is created by using the ls command in the XFS interface.
 
 
 			</article>
@@ -771,7 +755,21 @@ endif;</pre>
 
 			<article  id="navstage9" class="grid col-full">
 			<h2>Stage 9: Playing with files</h2>
-			<p>We have already created files using the "Create" system call. Now we will implement the remaining system calls - <b>Open, Close, Delete, Write, Seek and Read</b>.</p>
+			<p>We have already created files using the "Create" system call. Now we will implement the remaining 
+			system calls - <b>Open, Close, Delete, Write, Seek and Read</b>.</p>
+				
+				<h4>File System Calls</h4>
+				<table class="doctable" style="width:50%">
+					<tr><th>System Call Name</th><th>System Call #</th><th>Interrupt Routine #</th></tr>
+					<tr><td>Create</td>			 <td>1</td>				<td> 1</td> </tr>
+					<tr><td>Open</td>			<td>2</td>				<td> 2</td> </tr>
+					<tr><td>Close</td>			<td>3</td>				<td> 2</td> </tr>
+					<tr><td>Delete</td>			<td>4</td>				<td> 1</td> </tr>
+					<tr><td>Write</td>			<td>5</td>				<td> 4</td> </tr>
+					<tr><td>Seek</td>			<td>6</td>				<td> 3</td> </tr>
+					<tr><td>Read</td>			<td>7</td>				<td> 3</td> </tr>
+				</table>
+
 			<h6> Open </h6>
 			<i>System Call No</i>: 2 <br/>
 			<i>Interrupt Routine No</i>: 2 <br/>

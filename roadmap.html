@@ -116,13 +116,16 @@
 				This directory contains the machine simulator. Usage instructions and examples can be found <a href="usage-spec.html#navxsm"> here</a>. </li>
 
 				<li> $HOME/myxos/doc <br/>
-				This directory contains the complete specification for XOS (Experimental Operating System), XSM (Experimental String Machine), XFS (Experimental File System), APL (Application Programmers Language) and SPL(System Programmers Language) and Usage Documentation </li>
+				This directory contains the complete specification for <a href="xos-spec.html">XOS</a> (Experimental Operating System), <a href="xsm-spec.html">XSM</a> (Experimental String Machine), <a href="xfs-spec.html">XFS</a> (Experimental File System), <a href="apl-spec.html">APL</a> (Application Programmers Language) and <a hre="spl-spec.html">SPL</a>(System Programmers Language) and <a href="usage-spec.html">Usage Documentation</a> </li>
 			</ul>
 			</article>
 
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>	
+			
+			
+			
 			
 			<article id="navstage2" class="grid col-full">
 				<h2>Stage 2: Understanding the Filesystem </h2>
@@ -181,7 +184,7 @@ exit</pre>
 							Copy the basic block of the file using xfs-interface to a linux file as done above, to get the data blocks used by this file.
 						</li>
 
-						<li> Copy the data blocks and display it as a UNIX file. </li>
+						<li> Copy the data blocks from the XFS disk and display it as a UNIX file. </li>
 			</ol>
 
 			</article>
@@ -350,7 +353,7 @@ Machine is halting
 						</div>
 					</li>	
 
-					<li> Use the <b>ireturn</b> instruction to transfer control to user program. This instruction calls the machine instruction <tt>IRET</tt> which changes privilege mode from KERNEL to USER (See <a href="xsm-spec.html#navmodes">privilege modes</a>). <tt>IRET</tt> then gets the value stored in memory location pointed to by <b>SP</b> which is 0 (See  step 5) and stores it in <b>IP</b>. The logical address 3*512 stored in SP gets translated to get the actual location of the stack as execution is in USER Mode (See <a href="xsm-spec.html#navaddr">Address Translation</a>). </li> 
+					<li> Use the <b>ireturn</b> instruction to transfer control to user program. This instruction calls the machine instruction  <a href="xsm-spec.html#navinstr_iret">IRET</a> which changes privilege mode from KERNEL to USER (See <a href="xsm-spec.html#navmodes">privilege modes</a>). <tt>IRET</tt> then gets the value stored in memory location pointed to by <b>SP</b> which is 0 (See  step 5) and stores it in <b>IP</b>. The logical address 3*512 stored in SP gets translated to get the actual location of the stack as execution is in USER Mode (See <a href="xsm-spec.html#navaddr">Address Translation</a>). </li> 
 				</ol>
 			</article>
 			<div class="up grid col-one-third" style="float:right">

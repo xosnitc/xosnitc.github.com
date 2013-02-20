@@ -14,7 +14,7 @@
 
 	<meta name="viewport" content="width=device-width">
 	<meta name="description" content="Build a simple opearting system">
-
+	<title>Documentation // eXperimental Operating System</title>
 	<link rel="shortcut icon" type="image/png" href="favicon.png">
 	
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
@@ -396,7 +396,7 @@ Apart from the file system data structures XOS maintains details about files ope
 			
 			<article id="navfiles_fat" class="grid col-full">
 			<h4>File Allocation Table</h4>
-			<p> <i>File allocation table (FAT)</i> is a table that has an entry for each file present in the disk. FAT is stored in page number 5 in the memory. </p>
+			<p> <i>File allocation table (FAT)</i> is a table that has an entry for each file present in the disk. FAT is stored in disk block 10 in the XFS disk. FAT is loaded into page number 5 of the memory when the OS starts. </p>
 			<p>The structure of FAT entry is given below</p>
 			<table class="doctable" >
 			<tr><th>0</th><th>1</th><th>2</th><th>3 - 7</th></tr>

@@ -570,8 +570,13 @@ Machine is halting
 
 			<article id="navstage7" class="grid col-full">
 				<h2>Stage 7: Creating Files </h2>
-				<p> In this stage, you will implement file system calls  <b>Create, Delete, Open, Close, Seek, Read</b> and <b> Write </b>. The following tasks should be done in this stage </p>
+				<p> In this stage, you'll learn to implement a <a href="xos-spec.htmlnavsyscalls"> system call </a>. System calls are interfaces provided by the operating system to the user programs to run a system routine. The system calls in XOS are invoked  using Commands in SPL which will call a specific INT instrution. The INT instruction invokes an interrupt service routine, as done in stage 5. In this stage 
+
+				We'll modify the Interrupt 1 routine to implement the funtionality to create files in the XFS disk. Interrupt 1 is used by two system calls Create and Delete. (See <a href="xos-spec.html#navsyscalls_file">File System Calls</a>).
+
+
 				<h6> Modifying the OS Startup Code</h6>
+				<b>NOTE:</b> Modify the OS Startup Code in Stage 5. The OS Startup Code modifications done in Stage 6 can be discarded as it was done to test the timer interrupt routine.
 				<ol>
 				<li> Load FAT from disk block 10 to memory page 5 and Disk Free List from the disk block 11 to memory page 6. Refer <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization </a>. </li>
 				</li>
@@ -586,27 +591,20 @@ while ( counter <=  128) do
 endwhile;						</pre>
 				</div>
 				<li> Set all words in the <a href="xos-spec.html#navpromgmt_pcb">Per-Process Open-File Table in the PCB</a> of INIT to -1  </li>
-				
-				<li> 
-				<a href="xos-spec.html#navsyscalls_file">File System Calls</a> are implemented in Interrupt 1 (Create & Delete),  2 (Open & Close), 3 (Seek & Read) and 4 (Write) Routines. These 4 interrupt routines must be programmed in SPL, compiled and loaded into the disk in the corresponding locations using the XFS-Interface. These interrupt routines must be loaded from the disk to corresponding memory pages by the OS Startup Code.
+				<li> You've already written code to load Interrupt routine 1 from the disk to the memory in stage 5.
+					Check if this instruction is present in the OS Startup Code.
+					<div class="syntax">load (9, 3);</div>
 				</li>
 				</ol>
-				Each system call will be invoked from a user program which invokes the <tt> INT </tt> instruction after pushing the registers, arguments and system call number into the stack.  <img src="doc/syscallstack.png" style="width:150%">
-				
+				Each system call will be invoked from a user program which invokes the <tt> INT </tt> instruction after pushing the registers, arguments and system call number into the stack. 
+
+				 <img src="doc/syscallstack.png" style="width:150%">
+				<br/>
+				This figure shows the contents of the stack before a system call is exectued and after it comes back to the user program. A system call in an SPL program compiles to a set of instructions for setting up the stack (Figure a. Step 1) followed by the corresponding INT instruction (Figure a. Step 2). The INT instruction passes control to the corresponding Interrupt routine. In the case of <b>Create</b> it corresponds Interrupt Routine 1.  After the interrupt routine performs the required actions, it passes control back to the user program (Figure b. Step 1 and 2). 
+
 				<br/><br/>
 				An Interrupt  Routine may contain more than system call implementation. The system call number is obtained from the stack (Stack Pointer - 1) and then an <b>if</b> condition is checked for the corresponding system call. To access the stack in KERNEL mode, the physical address of the top of the stack must used. The physical address of the top of stack is calculated as: The 6th entry in the Page Table (obtained from PTBR + 6) gives the starting address of the stack, and SP%512 will give the offset in the stack. Adding both will give the absoulte address of SP. 
 				<br/><br/>
-				<h4>File System Calls</h4>
-				<table class="doctable" style="width:50%">
-					<tr><th>System Call Name</th><th>System Call #</th><th>Interrupt Routine #</th></tr>
-					<tr><td>Create</td>			 <td>1</td>				<td> 1</td> </tr>
-					<tr><td>Open</td>			<td>2</td>				<td> 2</td> </tr>
-					<tr><td>Close</td>			<td>3</td>				<td> 2</td> </tr>
-					<tr><td>Delete</td>			<td>4</td>				<td> 1</td> </tr>
-					<tr><td>Write</td>			<td>5</td>				<td> 4</td> </tr>
-					<tr><td>Seek</td>			<td>6</td>				<td> 3</td> </tr>
-					<tr><td>Read</td>			<td>7</td>				<td> 3</td> </tr>
-				</table>
 
 				<br/>
 				A skeleton of Interrupt 1 Routine is given below.
@@ -630,16 +628,10 @@ if ( sysCallNo == 4) then
 endif;	</pre>
 				</div>
 
-				Now we'll implement the system calls in its corresponding Interrupt Routine Code. <br/><br/>
+				In this stage we'll implement the Create System Call. Delete and other system calls will be implemented in later stages.
 			
 
-				<h6> Create </h6>
-				<i>System Call No</i>: 1 <br/>
-				<i>Interrupt Routine No</i>: 1 <br/>
-				<i>Arguments</i>: filename <br/>
-				<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
-				<br/>
-				Creates a file with the filename given as argument.
+
 
 				<ol>
 				<li> First of all, the memory copy of the <a href="xfs-spec.html#navdfl">disk free list</a> is searched till the entry for block number 447 to find a free block number (indicated by a 0 entry in the disk free list). Blocks 448 - 511  are reserved for <a href="xfs-spec.html#navdiskorg">swap area</a> which will be used for virtual memory management (<a href="roadmap.html#navstage8">Stage 8</a>). This block is used as the <a href="xfs-spec.html#navfile">basic block</a> of the file to be created. It's entry is set to 1. The block number is stored to a register. If no free block is found return -1 (as done in the previous step). </li>
@@ -680,6 +672,10 @@ endif;</pre>
 				<li> The return value of this system call is 0 in case of success and -1 in case of failure. The return value is stored in the stack at address absoluteSP - 12.</li>
 				<li>Use an <b>ireturn</b> instruction to transfer control back to USER Mode.</li>
 				</ol>
+			
+			Check if the file is created by using the ls command in the XFS interface.
+
+
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -798,7 +794,21 @@ endif;</pre>
 
 			<article  id="navstage9" class="grid col-full">
 			<h2>Stage 9: Playing with files</h2>
-			<p>We have already created files using the "Create" system call. Now we will implement the remaining system calls - <b>Open, Close, Delete, Write, Seek and Read</b>.</p>
+			<p>We have already created files using the "Create" system call. Now we will implement the remaining 
+			system calls - <b>Open, Close, Delete, Write, Seek and Read</b>.</p>
+				
+				<h4>File System Calls</h4>
+				<table class="doctable" style="width:50%">
+					<tr><th>System Call Name</th><th>System Call #</th><th>Interrupt Routine #</th></tr>
+					<tr><td>Create</td>			 <td>1</td>				<td> 1</td> </tr>
+					<tr><td>Open</td>			<td>2</td>				<td> 2</td> </tr>
+					<tr><td>Close</td>			<td>3</td>				<td> 2</td> </tr>
+					<tr><td>Delete</td>			<td>4</td>				<td> 1</td> </tr>
+					<tr><td>Write</td>			<td>5</td>				<td> 4</td> </tr>
+					<tr><td>Seek</td>			<td>6</td>				<td> 3</td> </tr>
+					<tr><td>Read</td>			<td>7</td>				<td> 3</td> </tr>
+				</table>
+
 			<h6> Open </h6>
 			<i>System Call No</i>: 2 <br/>
 			<i>Interrupt Routine No</i>: 2 <br/>

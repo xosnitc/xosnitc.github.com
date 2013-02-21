@@ -544,13 +544,17 @@ Machine is halting
 				<li> Next task to be done in this stage, is to program the Timer Interrupt in SPL, compile it and load it to the disk. <br/>
 					The timer interrupt routine must perform the following actions:
 					<ul>
-						<li> Find the location of the current process' PCB using the value of PTBR. We can find the ProcessID of the current process using the formula:
+						<li> Find the location of the  <a href="xos-spec.html#navpromgmt_pcb">PCB</a> of the current process using the value of PTBR by following these instructions.
+						 <ul>
+						 <li> We can find the ProcessID of the current process using the PTBR value using this instruction
 							<div class="syntax">ProcessID = (PTBR - 1024) / 8;</div>
-							Page Tables start at word address 1024. And size of each per-process page table is 8 words. NOTE: This calculation is specific to our operating system. In general Process ID is not obtained from the value of PTBR. 
+							Page Tables start at word address 1024. And size of each per-process page table is 8 words. <b>NOTE: This calculation is specific to our operating system. In general Process ID cannot be computed  from the value of PTBR . </b>
+						  </li>
+						</ul>
 						</li>
-						<li> Find the PCB of the current process using the ProcessID calculated in the previous step.
+						<li> The starting address of the ready list of PCBs is 1536. READY_LIST is a predefined constant in SPL which has  value 1536 (ERROR: !!! Refer to memory organization). Size of PCB of each process is 32 words. The starting address of the PCB of the current process can thus be calcluated using this instruction. (ERROR: !!! Alias PCB_Start) 
 							<div class="syntax">PCB_Start = READY_LIST + 32 * ProcessID;</div>
-							READY_LIST is a predefined constant in SPL which has value 1536. It is the starting address of the list of PCB's. Size of PCB of each process is 32 words. NOTE: This calculation is specific to our operating system. In general adresss of PCB of current process is not obtained like this.							
+						   NOTE: This calculation is specific to our operating system. In general adresss of PCB of current process is not obtained like this.			
 						</li>
 						<li> Store the values of the current process in its PCB as shown below.
 							<div class="syntax">
@@ -567,9 +571,9 @@ Machine is halting
 								[ PCB_Start + 14] = R7;<br/>
 							</div>
 						</li>
-						<li> Scan the Ready List of PCBs in a circular manner from the PCB of current process to check for the next process with STATE 1 (Waiting for the CPU). Store the address of the PCB found in a register. </li>
+						<li> Scan the Ready List of PCBs in a circular manner from the PCB of current process to check for the next process with STATE 1 (Waiting for the CPU). Store the address of the PCB found in a register.(ERROR !!! Ready List Link) </li>
 						<li> Load the fields from this PCB to the corresponding registers. </li>
-						<li> Find the physical address of SP corresponding to newly found PCB. Store IP from this PCB to the location pointed by the physical address of SP. </li>
+						<li> Find the physical address of SP corresponding to newly found PCB. (ERROR !!! Explain More + Links) Store IP from this PCB to the location pointed by the physical address of SP. This is to ensure that the IRET sets the IP to its correct value after return from the interrupt. </li>
 						<li> Use ireturn instruction to return to USER Mode </li>
 					</ul>
 				</li>
@@ -578,7 +582,7 @@ Machine is halting
 				<li> Run the machine without disabling timer </li>
 				
 			</ol>
-			The programs will run in an interleaved fashion when the timer interrupt is working perfectly.
+			The programs will run in an interleaved fashion if the timer interrupt is working correctly.
 
 
 			</article>
@@ -589,40 +593,44 @@ Machine is halting
 
 			<article id="navstage7" class="grid col-full">
 				<h2>Stage 7: Creating Files </h2>
-				<p> In this stage, you'll learn to implement a <a href="xos-spec.htmlnavsyscalls"> system call </a>. System calls are interfaces provided by the operating system to the user programs to run a system routine. The system calls in XOS are invoked  using Commands in SPL which will call a specific INT instrution. The INT instruction invokes an interrupt service routine, as done in stage 5. In this stage 
+				<p> In this stage, you'll learn to implement a <a href="xos-spec.htmlnavsyscalls"> system call </a>. System calls are interfaces provided by the operating system to the user programs to run a system routine. The system calls in XOS are invoked  using commands in SPL which will call a specific INT instruction. The (ERROR !!! INT) instruction invokes an interrupt service routine, as done in stage 5.
 
-				We'll modify the Interrupt 1 routine to implement the funtionality to create files in the XFS disk. Interrupt 1 is used by two system calls Create and Delete. (See <a href="xos-spec.html#navsyscalls_file">File System Calls</a>).
+				 In this stage we'll modify the Interrupt 1 routine to implement the funtionality to create files in the XFS disk. Interrupt 1 is used by two system calls Create and Delete. (See <a href="xos-spec.html#navsyscalls_file">File System Calls</a>).
 
 
 				<h6> Modifying the OS Startup Code</h6>
-				<b>NOTE:</b> Modify the OS Startup Code in Stage 5. The OS Startup Code modifications done in Stage 6 can be discarded as it was done to test the timer interrupt routine.
+				(ERROR !!! Uniprocessing mode, we'll disable timer till then) Modify the OS Startup Code in Stage 5. The OS Startup Code modifications done in Stage 6 can be discarded as it was done to test the timer interrupt routine.
 				<ol>
 				<li> Load FAT from disk block 10 to memory page 5 and Disk Free List from the disk block 11 to memory page 6. Refer <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization </a>. </li>
 				</li>
 				<li>
-				Set the <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a> entries to -1 (invalid initially). 	</li>
+				Set the FAT Entry and File Open Count of 64 entries of the  <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a>  to -1. 
+
+			</li>
 				<div class="syntax">
 				<pre>
 alias counter R8;	// R8 - R15 is used by system programmers.
 counter = 0;
 while ( counter <=  128) do
 	[ FILE_TABLE + counter] = -1;
+	counter = counter + 1;
 endwhile;						</pre>
 				</div>
-				<li> Set all words in the <a href="xos-spec.html#navpromgmt_pcb">Per-Process Open-File Table in the PCB</a> of INIT to -1  </li>
+				<li> Set all words in the <a href="xos-spec.html#navpromgmt_pcb">Per-Process Open-File Table in the PCB</a> of INIT to -1  (ERROR !!! Why) </li>
 				<li> You've already written code to load Interrupt routine 1 from the disk to the memory in stage 5.
-					Check if this instruction is present in the OS Startup Code.
+					Check if this instruction is present in the OS Startup Code. 
 					<div class="syntax">load (9, 3);</div>
+					This instruction loads disk block 3 (containing interrupt 1 routine) to memory page 9 (See <a href="xos-spec.html#navmemorg" >Memory Organization</a>). 
 				</li>
 				</ol>
-				Each system call will be invoked from a user program which invokes the <tt> INT </tt> instruction after pushing the registers, arguments and system call number into the stack. 
+				A user program  invokes a system call by first pushing the registers, arguments and system call number into the stack and then invoking <tt> INT </tt> instruction corresponding to the system call. 
 
 				 <img src="doc/syscallstack.png" style="width:150%">
 				<br/>
-				This figure shows the contents of the stack before a system call is exectued and after it comes back to the user program. A system call in an SPL program compiles to a set of instructions for setting up the stack (Figure a. Step 1) followed by the corresponding INT instruction (Figure a. Step 2). The INT instruction passes control to the corresponding Interrupt routine. In the case of <b>Create</b> it corresponds Interrupt Routine 1.  After the interrupt routine performs the required actions, it passes control back to the user program (Figure b. Step 1 and 2). 
+				This figure shows the contents of the stack before a system call is exectued and after it comes back to the user program. A system call in an APL program compiles to a set of instructions for setting up the stack (Figure a. Step 1) followed by the corresponding INT instruction (Figure a. Step 2). The INT instruction passes control to the corresponding Interrupt routine. In the case of <b>Create</b> it corresponds Interrupt Routine 1.  After the interrupt routine performs the required actions, it passes control back to the user program (Figure b. Step 1 and 2). 
 
 				<br/><br/>
-				An Interrupt  Routine may contain more than system call implementation. The system call number is obtained from the stack (Stack Pointer - 1) and then an <b>if</b> condition is checked for the corresponding system call. To access the stack in KERNEL mode, the physical address of the top of the stack must used. The physical address of the top of stack is calculated as: The 6th entry in the Page Table (obtained from PTBR + 6) gives the starting address of the stack, and SP%512 will give the offset in the stack. Adding both will give the absoulte address of SP. 
+				An Interrupt  Routine may contain more than one system call implementation. The system call number is obtained from the stack (Stack Pointer - 1). Based on the system call number, the corresponding system call actions are performed. To access the stack in KERNEL mode, the physical address of the top of the stack must used. The physical address of the top of stack is calculated as: (ERROR !!! EXPLAIN MORE AFTER THIS) The 6th word in the Page Table (obtained from PTBR + 6) gives the starting address of the stack, and SP%512 will give the offset in the stack. Adding both will give the absoulte address of SP. 
 				<br/><br/>
 
 				<br/>
@@ -636,7 +644,7 @@ absoluteSP = [PTBR + 6] + SP % 512 ;
 // Get system call no. from the stack
 .
 if ( sysCallNo == 1) then
-	// Implementation of Create
+	// Implementation of Create (to be done in this stage !)
 	.
 	.
 endif;
@@ -648,22 +656,22 @@ endif;	</pre>
 				</div>
 
 				In this stage we'll implement the Create System Call. Delete and other system calls will be implemented in later stages.
-			
+				(ERROR !!! Give an Overview)
 
 
 
 				<ol>
-				<li> First of all, the memory copy of the <a href="xfs-spec.html#navdfl">disk free list</a> is searched till the entry for block number 447 to find a free block number (indicated by a 0 entry in the disk free list). Blocks 448 - 511  are reserved for <a href="xfs-spec.html#navdiskorg">swap area</a> which will be used for virtual memory management (<a href="roadmap.html#navstage8">Stage 8</a>). This block is used as the <a href="xfs-spec.html#navfile">basic block</a> of the file to be created. It's entry is set to 1. The block number is stored to a register. If no free block is found return -1 (as done in the previous step). </li>
+				<li> (ERROR !!! Look for a free entry in DFL from 13 to 447) First of all, the memory copy of the <a href="xfs-spec.html#navdfl">disk free list</a> is searched till the entry for block number 447 to find a free block number (indicated by a 0 entry in the disk free list). Blocks 448 - 511  are reserved for <a href="xfs-spec.html#navdiskorg">swap area</a> which will be used for virtual memory management (<a href="roadmap.html#navstage9">Stage 9</a>). (ERROR !!! about 0 - 12) This block is used as the <a href="xfs-spec.html#navfile">basic block</a> of the file to be created. It's entry is set to 1. The block number is stored to a register. If no free block is found return -1 (as done in the previous step). </li>
 
-				<li> The <tt>filename</tt> specified as argument is stored in the stack at absoluteSP - 2. Fetch it and store it to a register. </li>
+				<li> The <tt>filename</tt> specified as argument is stored in the stack at (ERROR !!! ) absoluteSP - 2. Fetch it and store it to a register. </li>
 				<li> The memory copy of the <a href="xos-spec.html#navfiles_fat">FAT</a> is to be searched for the <tt>filename</tt> to check if the file already exists. If it exists return from the sytem call with 0 (success).
 				</li>
 
 				<li> Next, the memory copy of the <a href="xos-spec.html#navfiles_fat">FAT</a> is searched for a free entry. A free entry in the FAT is indicated by -1 in the entry for basic block (Word 2 of each FAT entry). If no free entry is found put -1 in the return value space of the stack (absoluteSP - 12, See figure above). Then return to USER Mode using <b>ireturn</b> instruction. Address of FAT is stored in a <a href="spl-spec.html#navconst">predefined constant</a> in <tt>FAT</tt> in SPL. </li>
-				<li><tt>filename</tt> and the <tt>free block number</tt> obtained  in the previous steps are stored in the <em>Filename</em> field and <em>basic block number</em> field of the free <a href="xos-spec.html#navfiles_fat">FAT</a> entry respectively.</li>
+				<li><tt>filename</tt> and the <tt>free block number</tt> obtained  in the previous steps are stored in the <em>Filename</em> field and <em>basic block number</em> field of the free <a href="xos-spec.html#navfiles_fat">FAT</a> entry respectively.</li> (ERROR !!! BASIC BLOCK)
 					<li> The <em>file size</em> field of the FAT entry is initialized to zero.</li>
 
-
+(ERROR !!! Explain why the code is here!!)
 				<div class="syntax">
 						<pre>
 alias counter R8;
@@ -685,10 +693,10 @@ if(counter == 512) then
 endif;</pre>
 				</div>
 		
-				<li> Load the <a href="xfs-spec.html#navfile">basic block</a> from the disk to the <a href="xos-spec.html#navfiles_scratchpad">scratchpad</a>. Each entry of the block list in the basic block is initialized to zero and it is stored back to the disk.</li>	
+				<li> Load the <a href="xfs-spec.html#navfile">basic block</a> of the file from the disk to the <a href="xos-spec.html#navfiles_scratchpad">scratchpad</a> . Each entry of the block list in the basic block is initialized to zero and it is stored back to the disk.</li>	
 				<li> The updated copies of FAT and disk free list in the memory are then stored back to the disk.</li>
 				
-				<li> The return value of this system call is 0 in case of success and -1 in case of failure. The return value is stored in the stack at address absoluteSP - 12.</li>
+				<li> The return value of this system call is 0 in case of success and -1 in case of failure. The return value is stored in the stack at address Stack Pointer - 12. The value of stack pointer is obtained from absoluteSP.</li>
 				<li>Use an <b>ireturn</b> instruction to transfer control back to USER Mode.</li>
 				</ol>
 			
@@ -736,16 +744,17 @@ endif;</pre>
 
 				<li> Store the index of the entry (in System-Wide Open File Table) in a register.</li>
 
-				<li> Every process will have a <a href="xos-spec.html#navpromgmt_pcb">Per-Process File Table</a> in its PCB. This stores the details of files opened by this process. Find the PCB's location using the value of PTBR (It may be directly obtained if there is only one process, however following a general approach to get PCBs will be useful when more than one process starts running). Using the value of PTBR we can find the ProcessID using the formula:
+				<li> Every process will have a <a href="xos-spec.html#navpromgmt_pcb">Per-Process File Table</a> in its PCB. This stores the details of files opened by this process. Find the PCB's location using the value of PTBR (It may be directly obtained if there is only one process, however following a general approach to get PCBs will be useful when more than one process starts running). Recall that using the value of PTBR we can find the ProcessID using the formula.
 					
 					<div class="syntax"><tt>  ProcessID = (PTBR - 1024) / 8; </tt></div>
 				
 				Page Tables start at word address 1024. And size of each <a href="xos-spec.html#navpromgpmt_pagetbl">per-process page table</a> is 8 words. <b>NOTE: This calculation is specific to our operating system. In general Process ID is not obtained from the value of PTBR.</b> 
 				<br/><br/>
-					We can find the PCB of the current process using the <tt>ProcessID</tt> calculated in the previous step.
+					We can find the PCB of the current process using the <tt>ProcessID</tt> as done in earlier stages.
+
 					<div class="syntax"><tt> PCB_Start = READY_LIST + 32 * ProcessID; </tt></div>
 					
-					READY_LIST is a <a href="spl-spec.html#navconst">predefined constant</a> in SPL which has value 1536. It is the starting address of the list of PCB's. Size of PCB of each process is 32 words.  <b>NOTE: This calculation is specific to our operating system. In general adresss of PCB of current process is not obtained like this.</b> 
+					
 				</li>
 
 				<li>  A free entry is searched in the <a href="xos-spec.html#navpromgmt_pcb">per-process open file table in the PCB</a> of the process. A free entry is indicated by -1 in the first field (Pointer to <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a>). If there are no free entries, -1 is returned by the system call. </li>
@@ -988,7 +997,7 @@ endif;</pre>
 			<article  id="navstage10" class="grid col-full">
 			<h2>Stage 10: Exception Handling and Demand Paging</h2>
 			<p> 
-				<a href="xos-spec.html#navsysroutines_exhandler">Exception Handler</a> in XOS handles exceptions caused by machine. When an exception occurs, the machine sets the <tt>EFR</tt> (Exception Flag Register) and calls the Exception Handler in Page 7. See <a href="xsm-spec.html#navexcep">Exceptions</a>.
+				<a href="xos-spec.html#navsysroutines_exhandler">Exception Handler</a> in XOS handles exceptions caused by machine. When an exception occurs, the machine sets the <tt>EFR</tt> (Exception Flag Register) and calls the Exception Handler in Page 7. You must read about <a href="xsm-spec.html#navexcep">Exceptions</a> before proceeding .
 			</p>
 
 
@@ -1015,7 +1024,7 @@ Ip_addr = (EFR/1000);		//Gets value of IP at the point of exception
 
 						<li> Allocate a free page by searching through the memory free list. If a free page is not found, follow the page replacement technique, described later to find a free page. Store its page number in a register </li>
 						<li> Get the <tt>physical page number</tt> field corresponding to <tt>VPagenum</tt> from the Per-Process page table of process that caused the exception.  </li>
-						<li> If the <tt>physical page number</tt> field is a disk block number, load the disk block to the free page allocated in Step i. Otherwise, this step can be omitted. </li>
+						<li> If the <tt>physical page number</tt> field of the <a href="xos-spec.html#navpromgmt_page">Per-Process Page Table</a> is a disk block number, load the disk block to the free page allocated in Step i. Otherwise, this step can be omitted. </li>
 						<li> Set the Per-Process Page Table entry corresponding to  <tt>VPagenum</tt> with the page number of free page and set the <tt>Auxiliary flag</tt> as 11. (Valid and Referenced) </li>
 						<li> Put Ip_addr to the memory location pointed to by the physical address of SP. </li>
 						<li> Return to USER Mode using <b>ireturn</b> instruction. </li>
@@ -1042,8 +1051,8 @@ Ip_addr = (EFR/1000);		//Gets value of IP at the point of exception
 							</ol>
 
 			</ol>
-			<h6>Modifications to OS Startup Code and d Exec system calls</h6>
-			When a process is loaded, only the disk addresses of the corresponding code blocks needs to be set in the page table and its <tt>Auxiliary Information</tt> is set to 00 (Invalid and Unreferenced). Put the <tt>Physical Address</tt> field of remaining entries are set to -1 with  <tt>Auxiliary Information</tt>  as "00". The disk blocks need not be loaded initially. It will be loaded by <a href="xos-spec.html#navmemmgmt_intro">pure demand paging strategy</a> when required.
+			<h6>Modifications to OS Startup Code and Exec system calls</h6>
+			When a process is loaded, only the disk addresses of the corresponding code blocks needs to be set in the page table and its <tt>Auxiliary Information</tt> is set to 00 (Invalid and Unreferenced). Put the <tt>Physical Address</tt> field of remaining entries are set to -1 with  <tt>Auxiliary Information</tt>  as "00". The disk blocks need not be loaded initially. It will be loaded by <a href="xos-spec.html#nnavmemmgmt_vm">pure demand paging strategy</a> when required.
 			<br/>
 			<h6> Modifications to Fork </h6>
 			For Fork system call, when it copies the address space, duplicate all valid addresses as done earlier. If the entry in the page table of the parent process is invalid, 
@@ -1070,7 +1079,7 @@ Ip_addr = (EFR/1000);		//Gets value of IP at the point of exception
 			<h2>Stage 11: Making a console </h2>
 			<p> 
 				The final stage is to make the INIT  process act like a console. INIT written in APL, should be an infinite loop, which takes in  filenames. This filename should correspond to the program to be executed.
-				It should <a href="apl-spec.html#navfork"><b>Fork</b></a> itself and <a href="apl-spec.html#navexec"><b>Exec</b></a> using the filename. Appropriate errors must be reported. To have  a time delay between asking for filenames as input, a time-consuming loop may be added  :) 
+				It should <a href="apl-spec.html#navfork"><b>Fork</b></a> itself and <a href="apl-spec.html#navexec"><b>Exec</b></a> using the filename. Appropriate errors must be reported. 
 			 </p>
 
 			

@@ -89,33 +89,33 @@
 			<article  id="navstage1" class="grid col-full">
 			<h2>Stage 1: Setting up the System </h2>
 
-			<p> Follow the instructions in the <a href="usage-spec.html">Usage Documentation</a> to setup the system. The following assumes that the entire package is extracted to $HOME/myxos. If the setting up of the system is done correctly the following directories will be created.
+			<p> Follow the instructions in the <a href="usage-spec.html">Usage Documentation</a> to setup the system. This roadmap assumes that the entire package is extracted to $HOME/myxos. If the setting up of the system is done correctly the following directories will be created.
 			</p>
 
 			<ul>
-				<li> $HOME/myxos/apl <br/>
-				This directory contains the compiler required to compile user programs to XSM machine instructions. Try out APL compiler using the instructions given <a href="usage-spec.html#navapl">here</a>.
+				<li><b> $HOME/myxos/apl </b><br/>
+				This directory contains the <a href="apl-spec.html">APL</a> (Application Programmers Language) compiler required to compile user programs to XSM machine instructions. Try out APL compiler using the instructions given <a href="usage-spec.html#navapl">here</a>. 
 					<ul> 
-						<li> $HOME/myxos/apl/samples - Contains sample APL programs. </li>
-						<li> $HOME/myxos/apl_progs - This directory is an empty directory. The user programs written in APL must be saved in this directory.</li>
+						<li> $HOME/myxos/apl/samples - Contains sample APL programs for your reference. </li>
+						<li> $HOME/myxos/apl_progs - This is an empty directory. The user programs that you write in APL must be saved in this directory.</li>
 					</ul>
 				</li>
 				
-				<li> $HOME/myxos/spl <br/>
-				This directory contains the compiler required to compile system programs (i.e. operating system routines) to XSM machine instructions. Instructions on how to use SPL compiler is given <a href="usage-spec.html#navspl">here</a>
+				<li><b> $HOME/myxos/spl </b> <br/>
+				This directory contains the <a href="spl-spec.html">SPL</a> (System Programmers Language) Compiler required to compile system programs (i.e. operating system routines) to XSM machine instructions. Instructions on how to use SPL compiler is given <a href="usage-spec.html#navspl">here</a>. (See )
 					<ul>
-						<li> $HOME/myxos/spl/samples - 	Contains sample SPL programs </li>
-						<li> $HOME/myxos/spl_progs - This directory is an empty directory. The system programs written in SPL must be saved in this directory. The Operating System code written in SPL is to be saved here. </li>
+						<li> $HOME/myxos/spl/samples - 	Contains sample SPL programs for your reference.</li>
+						<li> $HOME/myxos/spl_progs - This directory is an empty directory. The operating system routines that you code using SPL is to be saved here. </li>
 					</ul>
 				</li>
 				
-				<li> $HOME/myxos/xfs-interface <br/>
-				This directory contains an interface through which files from linux can be loaded into the File system of XSM (XFS). The interface also provides options for formatting the disk, listing the files loaded into the disk, removing files from the disk, copying continuous blocks from the disk to a file in linux and displaying a file in the disk. Usage instructions and examples can be found <a href="usage-spec.html#navxfs" > here</a>. </li>
+				<li><b> $HOME/myxos/xfs-interface </b><br/>
+				This directory contains an interface through which files from your UNIX machine can be loaded into the File System of XSM (<a href="xfs-spec.html">XFS</a> or Experimental File System). The interface also provides options for formatting the disk, listing the files loaded into the disk, removing files from the disk, copying continuous blocks from the disk to a UNIX file and displaying a file in the XFS disk. Usage instructions and examples can be found <a href="usage-spec.html#navxfs" > here</a>. </li>
 
-				<li> $HOME/myxos/xsm <br/>
-				This directory contains the machine simulator. Usage instructions and examples can be found <a href="usage-spec.html#navxsm"> here</a>. </li>
+				<li><b> $HOME/myxos/xsm </b><br/>
+				This directory contains the machine simulator (<a href="xsm-spec.html">XSM</a> or Experimental String Machine). Usage instructions and examples can be found <a href="usage-spec.html#navxsm"> here</a>. </li>
 
-				<li> $HOME/myxos/doc <br/>
+				<li><b> $HOME/myxos/doc </b><br/>
 				This directory contains the complete specification for <a href="xos-spec.html">XOS</a> (Experimental Operating System), <a href="xsm-spec.html">XSM</a> (Experimental String Machine), <a href="xfs-spec.html">XFS</a> (Experimental File System), <a href="apl-spec.html">APL</a> (Application Programmers Language) and <a hre="spl-spec.html">SPL</a>(System Programmers Language) and <a href="usage-spec.html">Usage Documentation</a> </li>
 			</ul>
 			</article>
@@ -143,7 +143,7 @@
 exit</pre>
 						</div>
 
-						You will be back in the linux shell and a file named <b>disk.xfs</b> is created in the location <b>$HOME/myxos/xfs-interface/</b>. This file simulates the hard disk of the machine.</li>
+						You will be back in the UNIX shell and a file named <b>disk.xfs</b> is created in the location <b>$HOME/myxos/xfs-interface/</b>. This file simulates the hard disk of the machine.</li>
 
 						<li> Create a data file in your UNIX machine.	<br/>	
 							A sample data file is given below
@@ -177,11 +177,10 @@ To cool in the peppermint wind.</pre>
 exit</pre>
 							</div>
 						</li>	
-						<li> Check the <a href="xos-spec.html#navfiles_fat">FAT entry</a> by viewing the fat_block.txt 
-							file from linux and find the block number of basic block of the loaded data file.
+						<li> Check the <a href="xos-spec.html#navfiles_fat">FAT entry</a> by viewing the fat_block.txt file from UNIX machine and find the block number of basic block of the loaded data file.
 						</li>
 						<li>
-							Copy the basic block of the file using xfs-interface to a linux file as done above, to get the data blocks used by this file.
+							Copy the basic block of the file using xfs-interface to a UNIX shell file as done above, to get the data blocks used by this file.
 						</li>
 
 						<li> Copy the data blocks from the XFS disk and display it as a UNIX file. </li>

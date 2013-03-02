@@ -395,35 +395,38 @@ Machine is halting
 						 <div class="syntax">PTLR = 4; </div>
 						 Every process consists of 4 pages - 3 pages for code and 1 for stack (See <a href="xos-spec.html#navpromgmt_prostruct">Process Structure</a>). </li><br/>
 
-					 <p>Each page table entry contains 2 words. See <a href="xos-spec.html#navmemmgmt_paging">Paging</a> for the structure of page table entry. The first word of each entry indicates the physical page number corresponding to a logical page number. The logical page number index of the page table entry. The 2nd word of each entry contains the auxiliary information, which will be used for Virtual Memory Management in latter stages. </p>
+					 <p>Each page table entry contains 2 words. See <a href="xos-spec.html#navmemmgmt_paging">Paging</a> for the structure of page table entry. The first word of each entry indicates the physical page number corresponding to a logical page number. The logical page number is the index of the page table entry. The 2nd word of each entry contains the auxiliary information, which will be used for Virtual Memory Management in latter stages. </p>
 
 								 Setup entries for memory pages 16 to 18 (3 pages are used for code)  as well as one entry for memory page 19 (1 page is used for stack) in the page table. Set the first word of each entry to corresponding physical page number (16 to 19) and set the second word (Auxiliary information) as <b>11</b> (Valid and Referenced).</li><br/>
 							Setting up the entries of page table can be done in the following way
 							<div class="syntax">
-								[PTBR + 0] = 16;  // Entry for memory address of 1st page<br/>
-								[PTBR + 1] = 11;  // Entry for flag<br/>
+								[PTBR + 0] = 16;  // 1st Word of Page Table Entry 1 - Page Number<br/>
+								[PTBR + 1] = 11;  // 2nd Word of Page Table Entry 1 - Auxiliary Information<br/>
 								.	<br/>
 								.	<br/>
 								.	<br/>
-								[PTBR + 6] = 19;  // Memory address of stack <br/>
-								[PTBR + 7] = 11;  // Entry for flag	<br/>
+								[PTBR + 6] = 19;  // 1st Word of Page Table Entry 4 - Page Number of stack <br/>
+								[PTBR + 7] = 11;  // 2nd Word of Page Table Entry 4 - Auxiliary Information<br/>
 							</div>
 						
 					</li>					
 					
 					<li> Once  all structures are setup we can set <tt>STATE</tt> field in the PCB of INIT process is set to 2 (running). <div class="syntax">
-								[READY_LIST + 1] = 1 // Sets the entry for STATE as 2 (Running)
-							</div> The remaining entries need not be set by the OS startup code. You will learn about these in subsequent stages.  
+								[READY_LIST + 1] = 2 // Sets the entry for STATE as 2 (Running)
+							</div> The remaining entries of the PCB need not be set by the OS startup code. You will learn about these in subsequent stages.  
 							
 					</li> <br/>
 					
-					
-
-					
-					
 
 					<li> 
-						<p>Next we need to set the stack pointer(SP) and instruction pointer(IP) registers correctly. SP is to be set as <i>3 * 512</i>. This is because once the user program starts to execute all addresses are logical addresses and stack is allocated the logical page 4. <b>IP</b> cannot be explicitly changed by any instruction. When the machine instruction <a href="xsm-spec.html#navinstr_iret"><tt>IRET</tt></a> is executed, first the privilege mode is changed from KERNEL to USER and then the value at the top of the stack is poped out and the <b>IP</b> is set with this value. So to set <b>IP</b> to logical address 0 (code of the user program starts from logical address 0), the value 0 is stored at the top of the stack</p>
+						<p>Next we need to set the stack pointer (SP) register correctly. Before the control passes to the user program, <b>SP</b> (stack pointer) must be set to the logical address of the starting position of the user stack (In this case, INIT process' stack). SP is to be set as <i>3 * 512</i>. 
+						<div class="syntax">SP = 3 * 512; </div>
+							This is because once the user program starts to execute all addresses are logical addresses. The stack for any process is allocated the logical page number 3 (starting from 0). Before we pass control to user mode, we must set SP to logical address for the machine to work correctly in  user mode. <b>NOTE: 3 * 512 is the starting logical address of SP for any process.</b>
+						
+				
+					</li><br/>
+					<li>
+						 <b>IP</b> cannot be explicitly changed by any instruction. When the machine instruction <a href="xsm-spec.html#navinstr_iret"><tt>IRET</tt></a> is executed, first the privilege mode is changed from KERNEL to USER and then the value at the top of the stack is poped out and the <b>IP</b> is set with this value. So to set <b>IP</b> to logical address 0 (code of the user program starts from logical address 0), the value 0 is stored at the top of the stack</p>
 						<p>Store 0 in address 19 * 512 ( physical page number 19 * page size 512 is the physical address corresponding to top of the stack). The value 0  will get stored in <b>IP</b> after the control passes to user mode.  <b>IP</b> value is  set to 0 because in user mode, addresses are logical addresses. <b>NOTE: 0 is the starting logical address for IP for any process.</b></p>
 
 						See <a href="xsm-spec.html#navmodes">privilege modes</a> and <a href="xsm-spec.html#navaddr">address translation</a>. 
@@ -432,11 +435,6 @@ Machine is halting
 						</div>
 					</li>	
 
-					<li> Set SP to 3 * 512 (logical page number 3 * page size 512).  Before the control passes to the user program, <b>SP</b> (stack pointer) must be set to the logical address of the starting position of the user stack (In this case, INIT process' stack). <b>Why logical address?</b> In user mode all addresses are logical addresses. So before we pass control to user mode, we must set SP to logical address for the machine to work correctly in  user mode. <b>NOTE: 3 * 512 is the starting logical address of SP for any process.</b>
-						<div class="syntax">
-							SP = 3 * 512;
-						</div>
-					</li>	
 
 					<li> Use the <b>ireturn</b> instruction to transfer control to user program. This instruction calls the machine instruction  <a href="xsm-spec.html#navinstr_iret">IRET</a> which changes privilege mode from KERNEL to USER (See <a href="xsm-spec.html#navmodes">privilege modes</a>). <tt>IRET</tt> then gets the value stored in memory location pointed to by <b>SP</b> which is 0 (See  step 5) and stores it in <b>IP</b>. The logical address 3*512 stored in SP gets translated to get the actual location of the stack as execution is in USER Mode (See <a href="xsm-spec.html#navaddr">Address Translation</a>). </li> 
 				</ol>

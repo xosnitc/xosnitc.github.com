@@ -20,6 +20,9 @@ mv ./myxos/apl-master ./myxos/apl
 rm -rf ./myxos/apl/.git
 rm -rf ./myxos/apl/.gitignore
 
+# Add folder apl_progs
+mkdir ./myxos/apl/apl_progs
+
 # Move APL document to do cfolder
 mv ./myxos/apl/doc/spec.pdf ./myxos/doc/apl.pdf
 rm -rf ./myxos/apl/doc
@@ -38,6 +41,9 @@ mv ./myxos/spl-master ./myxos/spl
 # Remove the .git folder inside spl
 rm -rf ./myxos/spl/.git
 rm -rf ./myxos/spl/.gitignore
+
+# Add folder spl_progs
+mkdir ./myxos/spl/spl_progs
 
 # Move spl document to doc folder
 mv ./myxos/spl/doc/spec.pdf ./myxos/doc/spl.pdf

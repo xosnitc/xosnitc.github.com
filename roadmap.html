@@ -129,36 +129,39 @@
 			
 			<article id="navstage2" class="grid col-full">
 				<h2>Stage 2: Understanding the Filesystem </h2>
-				<p> The first stage of building XOS begins with understanding the underlying <a href="xfs-spec.html">Filesystem (XFS)</a> and its <a href="usage-spec.html#navxfs">interface</a>.  </p>
+				 <p><a href="xfs-spec.html">Experimental Filesystem (XFS)</a> is a simulated file system. A UNIX file named "disk.xfs" simulates a hard disk for the machine simulator (XSM). Building XOS begins with understanding the underlying <a href="xfs-spec.html">Filesystem (XFS)</a> and its <a href="usage-spec.html#navxfs">interface</a>. In this stage, you will create an UNIX file and load it to the XFS disk using the XFS-Interface</p>
 					<ol>
-						<li> Start by formatting the disk in the XFS interface using <b>fdisk</b> command. This can be done by starting the xfs interface
+					<li> Run the XFS Interface
 							<div class="syntax">
 <pre>cd $HOME/myxos/xfs-interface
 ./xfs-interface</pre>
 							</div> 
 
-						This will take you to the <a href="usage-spec.html#navxfs">xfs-interface</a> prompt. Type the following commands in the xfs-interface prompt
+						This will take you to the <a href="usage-spec.html#navxfs">xfs-interface</a> prompt. 
+					</li>
+					<li> Start by formatting the disk in the XFS interface using <b>fdisk</b> command.  Type the following commands in the xfs-interface prompt
 						<div class="syntax"> 
-<pre>fdisk 
-exit</pre>
+<pre># fdisk 
+# exit</pre>
 						</div>
 
-						You will be back in the UNIX shell and a file named <b>disk.xfs</b> is created in the location <b>$HOME/myxos/xfs-interface/</b>. This file simulates the hard disk of the machine.</li>
+						You will be back in the UNIX shell and a file named <b>disk.xfs</b> is created in the location <b>$HOME/myxos/xfs-interface/</b>. This UNIX file simulates the hard disk for the machine simulator. The disk is formatted as XFS or Experimental File System. See <a href="xfs-spec.html#navintro"> XFS Specification </a>
+					</li>
 
-						<li> Create a data file in your UNIX machine.	<br/>	
+						<li> Create a file in your UNIX machine with sample data.	<br/>	
 							A sample data file is given below
-								<div class="syntax"> 
+							
 <pre>There is a place where the sidewalk ends
 And before the street begins,
 And there the grass grows soft and white,
 And there the sun burns crimson bright,
 And there the moon-bird rests from his flight
 To cool in the peppermint wind.</pre>
-								</div>
+								<br/>
 								Save the file as <b>$HOME/myxos/sample.dat</b>
 						</li>
 
-						<li> Load the data file to the XFS formatted disk from your UNIX machine.  This can be done by 
+						<li> Load this data file ($HOME/myxos/sample.dat) to the XFS disk from your UNIX machine.  This can be done by the following commands
 							<div class="syntax"> 
 <pre>cd $HOME/myxos/xfs-interface
 ./xfs-interface
@@ -166,27 +169,70 @@ To cool in the peppermint wind.</pre>
 							</div>
 							This will take you to the xfs-interface prompt. Type the following commands in the xfs-interface prompt.
 							<div class="syntax"> 
-<pre>load --data $HOME/myxos/sample.dat</pre>
+<pre># load --data $HOME/myxos/sample.dat</pre>
 							</div>
+						This will load the file to the XFS disk. A FAT entry will be created for this file. <a href="xfs-spec.html#navfat">FAT</a> or File Allocation Table contains information such as the file name, file size and the block number of basic block. The basic block corresponding to a file will contain locations of the file blocks. See <a href="xfs-spec.html#navfile">files</a> in XFS.
 						</li>
 
 						<li> Find out the FAT entry corresponding to the loaded file. See <a href="xfs-spec.h
-							tml#navdiskorg">disk organization</a> of XFS Disk. Use the <b>copy</b> command to copy FAT entries (block 10 of the disk) to a file (say <i>fat_block.txt</i>) in your PC as
+							tml#navdiskorg">disk organization</a> of XFS Disk. Use the <b>copy</b> command to copy FAT entries (FAT is stored in disk block number 10) to a UNIX file (say <i>$HOME/myxos/fat_block.txt</i>).
 							<div class="syntax">
-<pre>copy 10 10 fat_block.txt
-exit</pre>
+<pre># copy 10 10 $HOME/myxos/fat_block.txt
+# exit</pre>
 							</div>
 						</li>	
-						<li> Check the <a href="xos-spec.html#navfiles_fat">FAT entry</a> by viewing the fat_block.txt file from UNIX machine and find the block number of basic block of the loaded data file.
+						<li> Check the <a href="xos-spec.html#navfiles_fat">FAT entry</a> by viewing the <tt>fat_block.txt</tt> file from UNIX machine and find the block number of basic block of the loaded data file. Example of first three lines of <tt>fat_block.txt</tt>  indicating the filename, file size and basic block for this loaded file.
 						</li>
+						
+<pre>sample.dat
+512
+16</pre>					
 						<li>
-							Copy the basic block of the file using xfs-interface to a UNIX shell file as done above, to get the data blocks used by this file.
-						</li>
+							Get the basic block number (16 in the above example). Copy the basic block of the file using xfs-interface to a UNIX file (say $HOME/myxos/basic_block.txt) using <b>copy</b> command, to get the data blocks used by this file. Invoke the XFS interface and use the following command.
+						<div class ="syntax">
+<pre> # copy 16 16 $HOME/myxos/basic_block.txt</pre>
+						</div>
+						 (<b>NOTE</b>: In this example block number 16 is the basic block of the loaded file)
+						 The first few lines of the file <tt>$HOME/myxos/basic_block.txt</tt> is shown below. 
+<pre>17
+0
+0
+.
+.</pre>						
+					This indicates that the only data block of this file is block number 17. Remaining 0 entries, indicates that there are no other data blocks.	</li><br/>	
+						
+						<li> Copy the data blocks from the XFS disk and display it as a UNIX file <tt>$HOME/myxos/data.txt</tt>. 
+						<div class ="syntax">
+<pre> # copy 17 17 $HOME/myxos/data.txt</pre>
+						</div>		
+					We will get back the contents of the file <tt>$HOME/myxos/sample.txt</tt> in <tt>$HOME/myxos/data.txt</tt>. However in <tt>$HOME/myxos/data.txt</tt>, each word is displayed in a line. A  word in XFS is 16 characters long. Sample <tt>data.txt</tt> file is shown below.
+<pre>There is a plac
+e where the sid
+ewalk ends
 
-						<li> Copy the data blocks from the XFS disk and display it as a UNIX file. </li>
+And before the 
+street begins,
+
+And there the g
+rass grows soft
+ and white,
+
+And there the s
+un burns crimso
+n bright,
+
+And there the m
+oon-bird rests 
+from his flight
+
+
+To cool in the 
+peppermint wind</pre>
+					</li>				
 			</ol>
-
 			</article>
+
+
 
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>

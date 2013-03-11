@@ -289,9 +289,9 @@ endwhile; </pre>
 
 					<li> Run the machine using the command 
 						<div class="syntax">
-$HOME/myxos/xsm/xsm --disable-timer
+$HOME/myxos/xsm/xsm
 						</div>
-						<p>The machine has a timer which interrupts the execution at specific intervals and pass the control to timer interrupt routine. We will be dealing with the timer in stage 5 (Interrupts). Until then we will run the machine with the timer disabled.  The <i>--disable-timer</i> flag is used to disable the timer.</p>
+						<p></p>
 					</li>
 				</ol>
 				The machine will halt after printing all odd numbers from 1 to n
@@ -313,8 +313,7 @@ Machine is halting
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>	
 
-
-
+<!--**************************** RUNNING A USER PROGRAM *******************************)-->
 
 			<article  id="navstage4" class="grid col-full">
 				<h2>Stage 4: Running a user program </h2>
@@ -367,7 +366,7 @@ Machine is halting
 
 				<h6>OS Startup Code</h6>
 				<ol>
-					Interrupt Routine 7, Exception Handler routine and the program to print primes must be loaded from the XFS disk to the memory  by the OS Startup Code when the OS starts. The OS Startup Code must be written in <a href="spl-spec.html">SPL</a>, compiled and loaded to the disk as done in 	stage 2. The new OS Startup Code must do the following tasks. </br><br/>
+					Interrupt Routine 7, Exception Handler routine and the program to print primes must be loaded from the XFS disk to the memory  by the OS Startup Code when the OS starts. The OS Startup Code must be written in <a href="spl-spec.html">SPL</a>, compiled and loaded to the disk as done in stage 3. The new OS Startup Code must do the following tasks. </br><br/>
 
 					<li> Load Exception Handler from disk block 1 to memory page 7 and Interrupt Routine 7 from disk block 9 to memory page 15 using <a href="spl-spec.html#navlsstmt" >load</a> instruction. See <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization </a>
 						<div class="syntax">
@@ -419,25 +418,52 @@ Machine is halting
 					
 
 					<li> 
-						<p>Next we need to set the stack pointer (SP) register correctly. Before the control passes to the user program, <b>SP</b> (stack pointer) must be set to the logical address of the starting position of the user stack (In this case, INIT process' stack). SP is to be set as <i>3 * 512</i>. 
+						<p> Next we need to set the stack pointer (<b>SP</b>) register. Each program in memory has an associated runtime stack. A runtime stack holds the local variables and function parameters while a process is running. The Stack Pointer or <b>SP</b> points to the top of this stack.</p>
+
+						<p>The stack of every process in XOS starts at logical address 3 x 512 (= 1536) which corresponds to logical page number 3 ( page numbering of a process starts from 0). It grows in till logical address 4 x 512 - 1 (= 2047). </p>
+
+						<p> Before OS Startup Code transfers control to the user program, the value of <b>SP</b> must be set to its starting logical address ( 3 * 512 = 1536). Every user program runs in user mode. In user mode, all addresses are logical addresses. Since SP is used by the user program, its address should be a logical address. </p>
+
 						<div class="syntax">SP = 3 * 512; </div>
-							This is because once the user program starts to execute all addresses are logical addresses. The stack for any process is allocated the logical page number 3 (starting from 0). Before we pass control to user mode, we must set SP to logical address for the machine to work correctly in  user mode. <b>NOTE: 3 * 512 is the starting logical address of SP for any process.</b>
+						
 						
 				
-					</li><br/>
+					</li>
 					<li>
-						 <b>IP</b> cannot be explicitly changed by any instruction. When the machine instruction <a href="xsm-spec.html#navinstr_iret"><tt>IRET</tt></a> is executed, first the privilege mode is changed from KERNEL to USER and then the value at the top of the stack is poped out and the <b>IP</b> is set with this value. So to set <b>IP</b> to logical address 0 (code of the user program starts from logical address 0), the value 0 is stored at the top of the stack</p>
-						<p>Store 0 in address 19 * 512 ( physical page number 19 * page size 512 is the physical address corresponding to top of the stack). The value 0  will get stored in <b>IP</b> after the control passes to user mode.  <b>IP</b> value is  set to 0 because in user mode, addresses are logical addresses. <b>NOTE: 0 is the starting logical address for IP for any process.</b></p>
+						<p> The OS Startup Code transfers control of execution to the user program using an <a href="xsm-spec.html#navinstr_iret"><tt>IRET</tt></a> instruction. An IRET performs the following operations implicitly 
+							<ol style="list-style-type:lower-roman">
+								<li> The privilege mode is changed from KERNEL to USER mode. </li>
+								<li> The value in the top of the user stack (pointed to by SP) is stored in IP or Instruction Pointer. The IP register points to the address of the next instruction to be executed. This value cannot be changed explicitly by the programmer using any other instruction. </li>
+								<li> Decrement the value of SP by 1 </li>
+							</ol>
+						<p> For an <tt>IRET</tt> instruction to function properly, the value at the top of the stack should be the address of the next instruction. This value gets stored in IP.</p>
 
-						See <a href="xsm-spec.html#navmodes">privilege modes</a> and <a href="xsm-spec.html#navaddr">address translation</a>. 
+						<p> The code pages of every program in memory starts from logical address 0. Hence <b>IP</b> or instruction pointer needs to be set to 0. As IP cannot be set explicitly, put the value 0 to the top of the stack, and <tt>IRET</tt> instruction will implicitly set the IP to this value. Since we are currently in KERNEL mode, the top of the stack is identified using its physical address. Stack of INIT process is allocated physical page number 19. Its corresponding physical address is 19 * 512. Use the following instruction to put 0 in the top of the stack. 
+
 						<div class="syntax">
 							[19*512] = 0;
 						</div>
+					See <a href="xsm-spec.html#navmodes">privilege modes</a> and <a href="xsm-spec.html#navaddr">address translation</a> for detailed information. 
 					</li>	
+					<br/>
 
-
-					<li> Use the <b>ireturn</b> instruction to transfer control to user program. This instruction calls the machine instruction  <a href="xsm-spec.html#navinstr_iret">IRET</a> which changes privilege mode from KERNEL to USER (See <a href="xsm-spec.html#navmodes">privilege modes</a>). <tt>IRET</tt> then gets the value stored in memory location pointed to by <b>SP</b> which is 0 (See  step 5) and stores it in <b>IP</b>. The logical address 3*512 stored in SP gets translated to get the actual location of the stack as execution is in USER Mode (See <a href="xsm-spec.html#navaddr">Address Translation</a>). </li> 
+					<li> Use the <b>ireturn</b> instruction to transfer control to user program. <b>ireturn</b> translates to <tt>IRET</tt> machine instruction  </li> 
+					<div class="syntax">
+						ireturn;
+					</div>
 				</ol>
+			<h6>Making things work !</h6><br/>
+			<p> You have already written, compiled and loaded your user program to <b>disk.xfs</b>. You have also loaded Interrupt routine 7 and Exception Handler to <b>disk.xfs</b>. </p>
+			<p> After finishing writing OS Startup Code in SPL, save it as <b>$HOME/myxos/spl/spl_progs/os_startup.spl</b>. You should compile this file using SPL compiler with --os flag as shown.</p>
+			<div class="syntax"><pre> cd $HOME/myxos/spl
+./spl --os < $HOME/myxos/spl/spl_progs/os_startup.spl</pre>
+			</div>
+			<p>This will generate a file <b>$HOME/myxos/spl/os_startup.xsm</b>.	Load this file as the OS startup code to <tt>disk.xfs</tt> using the XFS Interface. Invoke the XFS interface and use the following command to load the OS Startup Code. </p>
+					<div class="syntax"># load --os $HOME/myxos/spl/os_startup.xsm<br/># exit
+					</div>
+			<p> Run the machine by disabling the timer. The machine has a timer which interrupts the execution at specific intervals while running a user program. It passes the control to timer interrupt routine. We will be dealing with the timer in stage 5 (Interrupts). Until then we will run the machine with the timer disabled.  The <i>--disable-timer</i> flag is used to disable the timer. </p>
+			<div class="syntax">$HOME/myxos/xsm/xsm --disable-timer<br/></div>
+			If the timer is not disabled, the machine will get stuck when a timer interrupt occurs. This is because the control has passed to the Timer Interrupt Routine which is not  loaded into the memory. 
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>

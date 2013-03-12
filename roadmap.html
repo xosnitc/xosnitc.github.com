@@ -464,6 +464,15 @@ Machine is halting
 			<p> Run the machine by disabling the timer. The machine has a timer which interrupts the execution at specific intervals while running a user program. It passes the control to timer interrupt routine. We will be dealing with the timer in stage 5 (Interrupts). Until then we will run the machine with the timer disabled.  The <i>--timer=0</i> flag is used to disable the timer. </p>
 			<div class="syntax">$HOME/myxos/xsm/xsm --timer=0<br/></div>
 			If the timer is not disabled, the machine will get stuck when a timer interrupt occurs. This is because the control has passed to the Timer Interrupt Routine which is not  loaded into the memory. 
+			<br/><br/>
+			The output will be similar to the one given below,
+			<pre>Enter n:
+10
+2
+3
+5
+7
+Machine is halting</pre>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>

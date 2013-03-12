@@ -420,7 +420,7 @@ Now open test to see the contents of os_startup.xsm
 				<p>The <tt>&ltoptional-flags&gt</tt> can be : </p>
 				<ul>
 					<li><p> <tt>--debug </tt>: This flag sets the machine into DEBUG mode. In DEBUG mode, the contents of registers is displayed after each instruction. </p></li>
-					<li><p> <tt>--disable-timer</tt>: This flag disables the timer interrupt for the machine  </p></li>
+					<li><p> <tt>--timer=value</tt>: This flag sets the number of instructions after which timer interrupt is triggered to <tt>value</tt>. <b>--timer=0</b> disables the timer. The range of value is from 0 to 1024   </p></li>
 				</ul>
 			</article>
 			<div class="up grid col-one-third" style="float:right">

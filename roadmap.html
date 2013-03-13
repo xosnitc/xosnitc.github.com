@@ -411,7 +411,7 @@ Machine is halting
 					</li>					
 					
 					<li> Once  all structures are setup we can set <tt>STATE</tt> field in the PCB of INIT process is set to 2 (running). <div class="syntax">
-								[READY_LIST + 1] = 2 // Sets the entry for STATE as 2 (Running)
+								[READY_LIST + 1] = 2; // Sets the entry for STATE as 2 (Running)
 							</div> The remaining entries of the PCB need not be set by the OS startup code. You will learn about these in subsequent stages.  
 							
 					</li> <br/>
@@ -487,7 +487,7 @@ Machine is halting</pre>
 			<p>Interrupts can only be triggered or invoked in user mode. In Kernel mode interrupts are disabled. Upon encountering an interrupt, the machine transfers control to specific locations in memory and changes from user mode to kernel mode. These locations in memory contains Interrupt Routines. (See <a href="xos-spec.html#navmemorg">Memory Organization</a>). Interrupt routines is a set of privileged instructions which provides kernel level services to user programs. Memory page 8 contains the Timer Interrupt Routine which is invoked after specific intervals of instructions. Memory page 9 to 15 contain Interrupt Routine 1 to 7, invoked using <tt>INT 1</tt> to <tt>INT 7</tt> machine instructions respectively. The interrupt instructions <tt>INT 1</tt> to <tt>INT 7</tt> can be invoked from an application program using system call interfaces. You will be implementing system calls in the subsequent stages. In this stage you'll be implementing a sample timer interrupt and a software interrupt. See <a href ="xsm-spec.html#navintrrupt">Interrupts</a> for more details.
 			</p>
 			
-			<h5>Implementing a software interrupt</h5>
+			<h5>Implementing Software Interrupt</h5>
 			<p> Upon encountering the <b>INT</b> machine instruction in a user program, the OS transfers control to the corresponding interrupt routine. The interrupt routines reside in pages 9 to 15 of the memory (See <a href="xos-spec.html#navmemorg">Memory Organization</a>). </p>
 			<p>
 
@@ -513,11 +513,11 @@ Machine is halting</pre>
 				 </p>
 				<li> Load this file to the XFS disk as interrupt 1 using xfs-interface. </li>
 					<div class="syntax">
-						# load --int=7 $HOME/myxos/spl/int1.xsm <br/>
+						# load --int=1 $HOME/myxos/spl/int1.xsm <br/>
 						# exit
 					</div>				
 				
-				<li> Create a user program to invoke INT 1. For simplicity, write the program using XSM Machine instructions directly instead of APL.
+				<li> Create a user program to invoke INT 1. For simplicity, write the program using XSM Machine instructions directly instead of APL. This program prints <tt>Before INT</tt>, invokes Interrupt Routine 1 using <tt>INT 1</tt> instruction, and then prints <tt>After INT</tt>. The <tt>INT 7</tt> instruction before the <tt>END</tt> instruction is used to halt the machine after executing the user program. You've previously implemented the Interrupt Routine 7 with <tt>HALT</tt> instruction.
 					<div class="syntax">
 						START <br/>
 						MOV R0, "Before INT" <br/>
@@ -525,12 +525,13 @@ Machine is halting</pre>
 						INT 1 <br/>
 						MOV R0, "After INT" <br/>
 						OUT R0<br/>
+						INT 7 <br />
 						END
 					</div>
 				</li>
 				<li> Load it directly to the XFS disk as <a href="xfs-spec.html#navinit">init program</a>. This program is already in XSM machine code, and hence it need not be compiled.
 				</li>
-				<li> Modify the OS Startup Code to load the <b>INT 1</b> routine from disk block 3 (See <a href="xfs-spec.html#navdiskorg">Disk Organization</a>) to memory page 9 (See <a href="xos-spec.html#navmemorg">Memory Organization</a>). Add the following line to OS startup code
+				<li> Modify the OS Startup Code to load the <b>Interrupt 1 Routine</b> from disk block 3 (See <a href="xfs-spec.html#navdiskorg">Disk Organization</a>) to memory page 9 (See <a href="xos-spec.html#navmemorg">Memory Organization</a>). Add the following line to OS startup code before the <tt>ireturn;</tt> instruction.
 					<div class="syntax">load (9, 3);</div>
 				</li>
 				<li> Compile the OS Startup Code using SPL compiler. 
@@ -548,11 +549,16 @@ After INT
 Machine is halting
 </tt></pre>
 				</li>
-			</ol>
+			</ol>			
+			
 			<br/>
-			<h5>Timer Interrupt</h5>
-			<p> The XSM simulator has a timer which invokes the timer interrupt routine after specific number of instructions. In usual machines, the timer interrupt is triggered at specific intervals of time. However in XSM, it is triggered after a specific number of instructions. Refer <a href="xsm-spec.html#navtimer">Timer Interrupt</a>.
-			<br/>In this task, we'll create a timer interrupt routine, which prints "TIMER". This can be done in the following steps.</p>
+			<h5>Implementing Timer Interrupt</h5>
+			<p> The XSM simulator has a timer which invokes the timer interrupt routine after specific number of instructions. The Timer Interrupt Routine resides in Page Number 8 (See <a href="xos-spec.html#navmemorg">Memory Organization</a>) of the memory. Refer <a href="xsm-spec.html#navtimer">Timer Interrupt</a>.
+			</p>
+			<p>Your task is to display <tt>TIMER</tt> when a timer interrupt is triggered. Create a timer interrupt routine, which prints "<tt>TIMER</tt>". The Timer Interrupt Routine is loaded to memory by the OS Startup Code. The sample program to print numbers up to 20 is compiled using APL compiler and used as INIT program. The Machine is run without disabling the timer. After fixed number of instructions in the user program are executed, the timer interrupt occurs and control is passed to the timer interrupt routine. This routine prints <tt>TIMER</tt> and returns to the user program. Timer Interrupt occurs after fixed intervals of instruction. The interval can be specified while the machine is run. Default interval for timer interrupt is 10 instructions. 
+			</p>
+			<p>
+			Detailed instructions to get this done are given below.</p>
 
 			<ol>
 				<li> Create an SPL program to print "TIMER". The sample SPL program is given below
@@ -562,19 +568,25 @@ Machine is halting
 					</div>
 				</li>
 				<li> Save this file in your UNIX machine as <b>$HOME/myxos/spl/spl_progs/sample_timer.spl</b> </li>
-				<li> Compile this program using SPL compiler with the flag --int=timer
+				<li> Compile this program using SPL compiler with the flag --int=timer.
 					<div class="syntax">
 						cd $HOME/myxos/spl<br/>
 						./spl --int=timer < $HOME/myxos/spl/spl_progs/sample_timer.spl 
 					</div>
+				<p>The output file generated will be in <b>$HOME/myxos/spl/timer.xsm</b> 
+				</li></p>
+				
+				<li> Load this file to XFS disk as Timer Interrupt Routine using XFS Interface.</li>
+				<li> Compile the sample program to print numbers upto 20 using APL compiler. The sample program is available at <b>$HOME/myxos/apl/samples/printnum.apl</b>. Load the compiled output as the INIT program to XFS disk.  </li>
+				
+				<li> Modify the OS Startup Code to load the <b>Timer Interrupt Routine</b> from disk block 2(See <a href="xfs-spec.html#navdiskorg">Disk Organization</a>) to memory page 8 (See <a href="xos-spec.html#navmemorg">Memory Organization</a>).  Add the following line to OS startup code before the <tt>ireturn;</tt> instruction.
+				<div class="syntax">load (8, 2);</div>
 				</li>
-				<li> The output file generated will be in <b>$HOME/myxos/spl/timer.xsm</b> </li>
-				<li> Load this file to XFS disk as Timer Interrupt Routine using xfs-interface.</li>
-				<li> Compile the sample program to print numbers upto 20 using APL compiler and load it as the INIT program to XFS disk. The sample program is available at <b>$HOME/myxos/apl/samples/printnum.apl</b> </li>
-				<li> Use the same OS Startup Code used previously </li>
-				<li> Run the machine this time without disabling the timer, to see the timer interrupt routine in action
+				<li> Compile the new OS Startup Code using SPL Compiler, and load it to the XFS disk using XFS Interface.</li>
+				<li> <p>Now, run the machine <b>without</b> disabling the timer, to see the timer interrupt routine in action. To enable the timer, omit the &nbsp; &nbsp; &nbsp; <tt>--timer</tt> flag. You can specify the interval of instructions after which the timer interrupt is triggered by specifying a <tt>value</tt> in the <tt>--timer=&lt;value&gt;</value></tt>. The default <tt>value</tt> is 10 instructions.</p>
+				
 					<div class="syntax">$HOME/myxos/xsm/xsm </div>
-					You'll get the following output on the screen with the timer interrupt enabled
+					You'll get the following output on the screen
 <pre><tt>1
 2
 TIMER

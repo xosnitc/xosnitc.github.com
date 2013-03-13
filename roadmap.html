@@ -479,34 +479,45 @@ Machine is halting</pre>
 			</div>
 
 
+<!-- ************************ STAGE 5: INTERRUPTS ************************** !-->
 
 			<article  id="navstage5" class="grid col-full">
-			<h2>Stage 5: Interrupts </h2>
-			<p> The XSM machine simulator has 7 interrupt routines, a timer interrupt, and an exception handler. Refer <a href ="xsm-spec.html#navintrrupt">Interrupts and Exceptions</a>. The interrupt instructions can be invoked from an application program using system call interfaces. You will be implementing system calls in the subsequent stages.</p>
-
-			In this stage you'll be learning about interrupts. There are two kinds of interrupts - software interrupts and hardware interrupt (timer interrupt). <br/><br/>
-
+			<h2>Stage 5: Interrupt Routines </h2>
+			<p> When an interrupt occurs while the XSM simulator is running, it transfers control to specific memory locations corresponding to the interrupt. Interrupts can be invoked either by hardware or software through instructions. In XSM, the only hardware interrupt is timer interrupt, which is triggered in fixed intervals of intstructions. However in general, a timer interrupt is triggered in fixed intervals of time. There are 6 software interrupts in XSM, invoked using machine instrutions <tt>INT 1</tt> to <tt>INT 7</tt>. </p>
+			<p>Interrupts can only be triggered or invoked in user mode. In Kernel mode interrupts are disabled. Upon encountering an interrupt, the machine transfers control to specific locations in memory and changes from user mode to kernel mode. These locations in memory contains Interrupt Routines. (See <a href="xos-spec.html#navmemorg">Memory Organization</a>). Interrupt routines is a set of privileged instructions which provides kernel level services to user programs. Memory page 8 contains the Timer Interrupt Routine which is invoked after specific intervals of instructions. Memory page 9 to 15 contain Interrupt Routine 1 to 7, invoked using <tt>INT 1</tt> to <tt>INT 7</tt> machine instructions respectively. The interrupt instructions <tt>INT 1</tt> to <tt>INT 7</tt> can be invoked from an application program using system call interfaces. You will be implementing system calls in the subsequent stages. In this stage you'll be implementing a sample timer interrupt and a software interrupt. See <a href ="xsm-spec.html#navintrrupt">Interrupts</a> for more details.
+			</p>
+			
 			<h5>Implementing a software interrupt</h5>
-			<p> Upon encountering the <b>INT</b> machine instruction in a user program, the OS transfers control to the corresponding interrupt service routine. The interrupt service routines reside in pages 9 to 15 of the memory (See <a href="xos-spec.html#navmemorg">Memory Organization</a>). <br/>
+			<p> Upon encountering the <b>INT</b> machine instruction in a user program, the OS transfers control to the corresponding interrupt routine. The interrupt routines reside in pages 9 to 15 of the memory (See <a href="xos-spec.html#navmemorg">Memory Organization</a>). </p>
+			<p>
 
-			In this stage you'll do a test implementation of an interrupt service routine. Your task is to display "Interrupt Invoked" on an <b>INT</b> instructions. Follow these steps to get this done,</p>
+			In this stage you'll do a test implementation of  interrupt routine 1. Your task is to display <tt>"SW Interrupt"</tt> when <b>INT 1</b> instruction is encountered. To do this, you will need to create Interrupt Routine 1 system program to display the message <tt>"SW Interrupt"</tt>. This program must be loaded to memory by the OS Startup Code. Now, when invoking an <tt>INT 1</tt> instruction in a user program, the machine transfers control to Interrupt Routine 1. Interrupt Routine 1 prints <tt>SW Interrupt</tt> on the screen and transfers control back to the user program.  Follow these steps to get this done,</p>
 
 			<ol>
-				<li> Create an SPL program to print "Interrupt Invoked". The sample SPL program is given below
+				<li> <p>Create an SPL program to print <tt>SW Interrupt</tt>. Use an <tt>ireturn;</tt> instruction in the end. The sample SPL program is given below</p>
 					<div class="syntax">
-					print "INT";<br/>
+					print "SW Interrupt";<br/>
 					ireturn; </div>
-				</li>
+				<p>
+				This machine code corresponding to this program is the Interrupt 1 routine. This program will be executed when a user program invokes the <tt>INT 1</tt> instruction. After printing <tt>SW Interrupt</tt> the <tt>ireturn;</tt> instruction is executed. The <tt>ireturn</tt> instruction is responsible for transferring the control back to the user program which invoked the <tt>INT 1</tt> instruction.
+				</li></p>
+				
 				<li> Save this file in your UNIX machine as <b>$HOME/myxos/spl/spl_progs/sample_int.spl</b> </li>
-				<li> Compile this program using SPL compiler with the flag --int=1. (We will load this program as Interrupt 1).
+				<li> Compile this program using SPL compiler with the flag <tt>--int=1</tt>. This flag is used because this program is to be loaded as the Interrupt 1 routine. 
+				
 					<div class="syntax">
 						cd $HOME/myxos/spl<br/>
 						./spl --int=1 < $HOME/myxos/spl/spl_progs/sample_int.spl
 					</div>
-				</li>
-				<li> The output file generated will be <b>$HOME/myxos/spl/int1.xsm</b> </li>
+				 <p>The output file generated will be <b>$HOME/myxos/spl/int1.xsm</b></li>
+				 </p>
 				<li> Load this file to the XFS disk as interrupt 1 using xfs-interface. </li>
-				<li> Create a user program to invoke INT. We'll program it using XSM Machine instructions for simplicity.
+					<div class="syntax">
+						# load --int=7 $HOME/myxos/spl/int1.xsm <br/>
+						# exit
+					</div>				
+				
+				<li> Create a user program to invoke INT 1. For simplicity, write the program using XSM Machine instructions directly instead of APL.
 					<div class="syntax">
 						START <br/>
 						MOV R0, "Before INT" <br/>
@@ -522,13 +533,17 @@ Machine is halting</pre>
 				<li> Modify the OS Startup Code to load the <b>INT 1</b> routine from disk block 3 (See <a href="xfs-spec.html#navdiskorg">Disk Organization</a>) to memory page 9 (See <a href="xos-spec.html#navmemorg">Memory Organization</a>). Add the following line to OS startup code
 					<div class="syntax">load (9, 3);</div>
 				</li>
-				<li> Compile the OS Startup Code using SPL compiler. Load the compiled output file os_startup.xsm to the XFS disk </li>
+				<li> Compile the OS Startup Code using SPL compiler. 
+				<div class="syntax"><pre>cd $HOME/myxos/spl
+./spl --os < $HOME/myxos/spl/spl_progs/os_startup.spl</pre></div>
+				
+				<li> Load the compiled output file $HOME/myxos/spl/os_startup.xsm to the XFS disk using XFS interface</li>
 				<li> Run the machine by disabling the timer.
 					<div class="syntax"> $HOME/myxos/xsm/xsm --timer=0 </div>
 					You'll get the following output on the screen.
 <pre><tt>
 Before INT
-INT
+SW Interrupt
 After INT
 Machine is halting
 </tt></pre>

@@ -187,7 +187,7 @@
 <div class="syntax">
 <pre>
 cd $HOME/myxos/spl 
-./spl --os < samples/hello-world.spl 
+./spl --os samples/hello-world.spl 
 </pre>
 </div>
 A file  <tt>os_startup.xsm</tt> is created in <tt>$HOME/myxos/spl</tt>.
@@ -221,20 +221,20 @@ A file  <tt>os_startup.xsm</tt> is created in <tt>$HOME/myxos/spl</tt>.
 				<h6> Running </h6>
 				<p>Within your APL directory, use the following commands to run the APL compiler </p>
 				<ul>
-					<li><p> <tt>./apl < path-to-file </tt></p></li>
+					<li><p> <tt>./apl path-to-file </tt></p></li>
 				</ul> 
 
-				The output file is named <b>"apcode.xsm"</b> <br/><br/>
+				The output file will be in the same location as the input file and filename will be same with the extension changed to <tt>xsm</tt>. For example if input file is <b>prime.apl</b>, output file is <b>prime.xsm</b> <br/><br/>
 
 <h6>Example Usage</h6>
 
 <div class="syntax">
 <pre>
 cd $HOME/myxos/apl 
-./apl < samples/largest.apl
+./apl samples/largest.apl
 </pre>
 </div>
-The file largest.apl is a sample APL program which finds largest of 4 numbers. This program is compiled to  <tt>$HOME/myxos/apl/apcode.xsm</tt>.
+The file largest.apl is a sample APL program which finds largest of 4 numbers. This program is compiled to  <tt>$HOME/myxos/apl/samples/largest.xsm</tt>.
 
 
 			</article>

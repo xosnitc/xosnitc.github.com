@@ -242,9 +242,9 @@ peppermint wind</pre>
 			<article  id="navstage3" class="grid col-full">
 				<h2>Stage 3: Starting the machine </h2>
 
-				<p>When the XSM machine is started up, the <a href="xsm-spec.html#navrom"> ROM Code </a> is executed. ROM Code resides in page 0 of the memory. It is hard coded into the machine i.e the ROM code at absolute address 0 (to 511) is "already there" when machine starts up. The ROM code is called the "bootstrap" loader in OS literature. ROM code does the following operations :
+				<p>When the XSM machine is started up, the <a href="xsm-spec.html#navrom"> ROM Code </a> is executed. ROM Code resides in page 0 of the memory. It is hard coded into the machine i.e the ROM code at physical address 0 (to 511) is "already there" when machine starts up. The ROM code is called the "bootstrap" loader in OS literature. ROM code does the following operations :
 				<ol>
-					<li>Loads block 0 of disk to page 1 of memory (absolute address 512).</li>
+					<li>Loads block 0 of disk to page 1 of memory (physical address 512).</li>
 					<li>After completing 1, sets IP to 512 so that the next instruction to be executed is fetched from location 512 (page 1 in memory starts from location 512).</li>
 				</ol></p> 
 				<p>So if you write a program in SPL, compile it using SPL compiler and load the compiled code to block 0 of disk using xfs-interface, your  program will be executed by the machine. This program which is loaded to block 0 of disk is supposed to be the <a href="xos-spec.html#navsysroutines_osstartup">OS Startup Code</a>. This OS Startup Code is loaded from disk block 0 to memory page 1 by the ROM Code on machine startup as described above. See <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization</a> </p>
@@ -319,7 +319,7 @@ Machine is halting
 				<h2>Stage 4: Running a user program </h2>
 				<p> User programs or application programs are programmed using <a href="apl-spec.html">APL</a> or Application Programmer's Language. In stage 3, you wrote a system program and executed it. In this stage you will write a user program. </p>
 				<p>
-					A user program is different from a system program. It is to be noted that a system program is executed in kernel mode ( See <a href="xsm-spec.html#navmodes">Privilege modes</a> ). The machine starts its execution in kernel mode. In kernel mode both privileged and unprivileged <a href="xsm-spec.html#navinstr">instructions</a> can be executed. All memory addresses are absolute addresses in kernel mode. A user program should be run in user mode. In user mode only unprivileged instructions can be executed. Also all memory addresses are logical in user mode. In user mode, the machine translates logical addresses to physical addresses using the <a href="xsm-spec.html#navaddr">address translation</a> scheme of the machine. The OS Startup code must load the user program to be executed from the disk to the memory and set up the page tables so that the address translation scheme works correctly. 
+					A user program is different from a system program. It is to be noted that a system program is executed in kernel mode ( See <a href="xsm-spec.html#navmodes">Privilege modes</a> ). The machine starts its execution in kernel mode. In kernel mode both privileged and unprivileged <a href="xsm-spec.html#navinstr">instructions</a> can be executed. All memory addresses are physical addresses in kernel mode. A user program should be run in user mode. In user mode only unprivileged instructions can be executed. Also all memory addresses are logical in user mode. In user mode, the machine translates logical addresses to physical addresses using the <a href="xsm-spec.html#navaddr">address translation</a> scheme of the machine. The OS Startup code must load the user program to be executed from the disk to the memory and set up the page tables so that the address translation scheme works correctly. 
 				</p>
 				<p>
 				Before the start of execution of the application program, the mode of execution must be changed from kernel mode to user mode. The value of Instruction Pointer must be set to the starting logical address of the code of the user program (Since all addresses are logical in user mode, program starts executing from logical address 0). Both switching to user mode and setting of the IP is achieved by using <a href="spl-spec.html#naviretstmt"> ireturn</a> instruction. The ireturn instruction in SPL translates to the machine instruction <a href="xsm-spec.html#navinstr_iret">IRET</a>. </p>
@@ -334,12 +334,12 @@ Machine is halting
 							<tt> cd $HOME/myxos/apl </tt><br/>
 							<tt> ./apl < $HOME/myxos/apl/apl_progs/prime.apl  </tt>
 						</div> 
-						The output file generated is $HOME/myxos/apl/apcode.xsm
+						The output file generated is $HOME/myxos/apl/apl_progs/prime.xsm
 					</li>
 					<br/>
 					<li> Load this file to <b>disk.xfs</b> as <b>INIT program</b> using XFS interface.
 					<div class="syntax">
-						# load --init $HOME/myxos/apl/apcode.xsm
+						# load --init $HOME/myxos/apl/apl_progs/prime.xsm
 					</div></li>
 					<li> When the program finishes execution of the user program, the machine must halt. To do this, create an SPL program with just a <b>halt;</b> instruction. Here, we have assumed its path to be <b>$HOME/myxos/spl/spl_progs/haltprog.spl</b>.  </li> 
 
@@ -383,8 +383,12 @@ Machine is halting
 							<div class="syntax">
 								[READY_LIST + 0] = 0 // Sets the entry for PID as 0
 							</div>	
-					<li>Load the <b>INIT program</b> (program to print primes) from the disk to the memory. In the memory, user programs are stored in pages 16-63. Since INIT is the first process, we will allocate the first 3 pages (pages 16-18) for code. Every running process will require a stack. Memory page 19 can be allocated for the stack.  See <a href="xos-spec.html#promgmt_prostruct">Process Structure</a>. The blocks 13-15 from disk is to be loaded to the memory pages 16-18.  See <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization </a></li><br/>
-
+					<li>Load the <b>INIT program</b> (program to print primes) from the disk to the memory. In the memory, user programs are stored in pages 16-63. Since INIT is the first process, we will allocate the first 3 pages (pages 16-18) for code. Every running process will require a stack. Memory page 19 can be allocated for the stack.  See <a href="xos-spec.html#promgmt_prostruct">Process Structure</a>. The blocks 13-15 from disk is to be loaded to the memory pages 16-18.  See <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization </a></li>
+							<div class="syntax">
+								load(16,13);<br/>
+								load(17,14);<br/>
+								load(18,15);<br/>
+							</div>
 					<li> Page Tables for INIT must be setup for address translation scheme to work correctly. See <a href="xsm-spec.html#navaddr">Address Translation</a>. The starting address of process page tables is 1024 (See <a href="xos-spec.html#navmemorg" >Memory Organization</a>). The PTBR or Page Table Base Register stores the starting address of the page table of a process. PTBR of a process is calculated using the formula <pre> 1024 + (PID x 8) </pre>
 
 						 Since PID of INIT is 0, PTBR value of INIT is set as 1024. 
@@ -624,92 +628,169 @@ Machine is halting
 
 			<article  id="navstage6" class="grid col-full">
 			<h2>Stage 6: Getting started with Multiprogramming</h2>
-			<p> <a href="xos-spec.html#navpromgmt_multiprog">Multiprogramming</a> refers to running more than one process simultaneously. In XSM, the timer interrupt is triggered after a fixed number of instructions are executed in user mode, and the control is passed to Page 8, i.e. the timer interrupt routine. The timer interrupt routine saves the context of the current process in its Process Control Block ( <a href="xos-spec.html#navpromgmt_pcb">PCB</a> ), schedules and dispatches a new program to run on the machine. In this stage we run two programs simultaneously on the machine. The machine is run without disabling the timer. <br/>
+			<p> <a href="xos-spec.html#navpromgmt_multiprog">Multiprogramming</a> refers to running more than one process simultaneously. In XSM, the timer interrupt is triggered after a fixed number of instructions are executed in user mode, and the control is passed to Page 8, i.e. the timer interrupt routine. In the previous stage you made the timer interrupt to display <tt>TIMER</tt> at fixed intervals. The actual function of timer interrupt routine is to schedule processes in memory and execute them. </p>
+			
+			<p>The timer interrupt routine should save the context of the current process in its Process Control Block ( <a href="xos-spec.html#navpromgmt_pcb">PCB</a> ), schedule and dispatch a new process to be run on the machine. In this stage we run two programs simultaneously in an interleaved manner on the machine. The machine is run without disabling the timer. <br/>
 			</p>
 
-			In this stage the OS Startup Code loads two programs into the memory and starts the execution of one program. The timer interrupt routine when invoked saves the context of current running process and starts the execution of the other process. <br/>
-			The things to be done in this stage are:
-
-			<ol>
-				<li> Create 2 user programs in APL
-					<ul>
+			<p>OS Startup Code must be modified to load two programs into the memory and start the execution of one program. The timer interrupt routine when invoked, saves the context of current running process and starts the execution of the other process. 'Saving the context' means storing back the values of registers into fthe PCB of the currently running process. </p>
+			
+			<p>Detailed instructions to implement multiprogramming is given below.</p>
+			 <h6>Creating User Programs</h6>
+					<ol>
 						<li> Write an APL program to print all odd numbers from 1 to 20 and save it as <b>$HOME/myxos/apl/apl_progs/odd.apl</b> </li>
-						<li> Compile this program using APL compiler and load the <b>apcode.xsm</b> file generated to the disk using xfs interface as init program. </li>
+						<li> Compile this program using APL compiler and load the <b>$HOME/myxos/apl/apl_progs/odd.xsm</b> file generated to the disk using XFS Interface as init program. </li>
 						<li> Write another APL program to print all even numbers from 1 to 20 and save it as <b>$HOME/myxos/apl/apl_progs/even.apl</b> </li>
-						<li> Compile this program using APL compiler and load the <b>apcode.xsm</b> file generated to the disk using xfs interface as an executable file </li>
-						<li> Use the xfs interface to find the data blocks to which this file is loaded. This was done in Stage 2. We assume in this roadmap that this file is loaded to blocks 16 - 19, the basic block of the file at block 16 and the data blocks at blocks 17, 18 and 19. Note that this may not be the actual case. </li>
-					</ul>
-				</li>
-				<li> Modify the OS Startup Code <br/>
-					The current OS startup code loads only the init process and sets the process structures of only one process (init process). For this stage, it has to be modified to load the second program and set up PCB and page table of this process also. But for the subsequent stages, the current OS Startup code is enough. So before making changes to the current OS Startup Code, take a backup copy of it so that it can be used for the subsequent stages.<br/>
-					Before calling ireturn statement in the OS Startup Code do the following:<br/>
-					<ul>
-						<li> Load the code blocks of the second program from disk (We have assumed that the code blocks are stored in blocks 17 - 19 in the disk) to pages 20 - 22 in memory.
+						<li> Compile this program using APL compiler and load the <b>$HOME/myxos/apl/apl_progs/even.xsm</b> file generated to the disk using XFS Interface as an executable file. </li>
+						<div class="syntax"># load --exec $HOME/myxos/apl/apl_progs/even.xsm </div>
+						<li> Use the XFS interface to find the data blocks to which this file is loaded as done in Stage 2. In this roadmap, we assume that this file is loaded to blocks 16 - 19. The basic block of the file is in block 16 and the data blocks are in blocks 17, 18 and 19. Note that this may not be the actual scenario. </li>
+					</ol>
+			<br/>
+			
+			<h6>Modify the OS Startup Code</h6> <br/>
+					<p>The previous OS startup code loads only the INIT process and sets its process structures only. In this stage, the OS Startup Code has to be modified to load the second process and set up PCB and page table of this process also. But for the subsequent stages, the previous OS Startup code is enough. So before modifying the OS Startup Code, take a backup copy of it so that it can be used for the subsequent stages.
+					</p>
+					<p>Before the <tt>ireturn</tt> statement in the OS Startup Code, it should load and set up the process structures for the second process.</p>
+					<ol>
+						<li><p>The PID (Process Identifier) for the second process will be 1. This is because, the INIT process has been assigned PID.</p>
+						<p>PID field in the PCB of the second process is set to 1. The starting address of PCB for any running process is calculated using the formula discussed in Stage 4. </p>
+						<p>1536 + (PID x 32) </tt></p>
+						The value 1536 is stored in the the predefined SPL constant <tt>READY_LIST</tt>.
+							<div class="syntax">
+								[READY_LIST + 32] = 1; 		// Sets the entry for PID as 1<br/>
+							</div>
+						</li>
+						<li> Load the code blocks of the second program from disk (We have assumed that the code blocks are stored in blocks 17 - 19 in the disk) to pages 20 - 22 in memory. Pages 16 to 19 have already been allocated for the INIT process. So the second, process can be allocated pages after 19. For convenience we have used pages 20 to 22 in the memory. (See <a href="xos-spec.html#navmemorg">Memory Organization</a>)
 							<div class="syntax">
 								load(20,17);<br/>
 								load(21,18);<br/>
 								load(22,19);<br/>
 							</div>
 						</li>
-						<li> For the second process all the entries in the PCB must be setup. This is because the timer interrupt routine loads the context of this process from its <a href="xos-spec.html#navpromgmt_pcb">PCB</a>. PID field in the PCB of the second process is set to 1 and STATE field is set to 1 (ready) 
-							<div class="syntax">
-								[READY_LIST + 32] = 1; 		//PID<br/>
-								[READY_LIST + 33] = 1;		//STATE<br/>
-							</div>
+						<li><p>Page Table for this process must be setup. The starting address of the page table of a process is calculated using the formula discussed in stage 4. </p>
+						<tt>1024 + PID * 8</tt>
+						<p><br/>
+						The register R8 is aliased as <tt>PTBR_Process1</tt> and assigned this value as shown below. See <a href="spl-spec,html#navalias">Aliasing</a> in SPL Specification.</p> 
+						<div class="syntax">
+						alias PTBR_Process1 R8;<br/>	
+						PTBR_Process1 = 1024 + 1 * 8;
+						</div>
 						</li>
-						<li> The values for the register SP, BP, IP, PTBR and PTLR are set as: 
-							
-							<div class="syntax">
-								[READY_LIST + 34] = 3 * 512; 	//SP<br/>
-								[READY_LIST + 35] = 3 * 512;	//BP<br/>
-								[READY_LIST + 36] = 0;			//IP<br/>
-								[READY_LIST + 37] = 1024 + 8;	//PTBR<br/>
-								[READY_LIST + 38] = 4;			//PTLR<br/>
-							</div>
-							Stack allocated for the process starts from logical page no 3. So SP and BP fields are set to the start of this page. Code area of the process starts from logical address 0, so IP field is set to zero. The page table of the process should  start from 1024 + PID*8, since page table of each process in our operating system is 8 word long (4 entries each of 2 word size). Field for PTLR is set to 4 since only 4 pages are allocated for the process (3 code pages and a stack page).<br/>
+						<li><p>Setup page table entries for memory pages 20 to 22 (3 pages are used for code) as well as one entry for memory page 23 (1 page is used for stack) as shown below. First word of each entry	is the physical page number and the 2nd word is the auxiliary information.
+
+	<div class="syntax">
+								[PTBR_Process1 + 0] = 20;  // 1st Word of Page Table Entry 1 - Page Number<br/>
+								[PTBR_Process1 + 1] = 11;  // 2nd Word of Page Table Entry 1 - Auxiliary Information<br/>
+								.	<br/>
+								.	<br/>
+								.	<br/>
+								[PTBR_Process1 + 6] = 23;  // 1st Word of Page Table Entry 4 - Page Number of stack <br/>
+								[PTBR_Process1 + 7] = 11;  // 2nd Word of Page Table Entry 4 - Auxiliary Information<br/>
+							</div>						
+
+						  </p></li>
+						
+						<li> For the second process all the entries in the <a href="xos-spec.html#navpromgmt_pcb">PCB</a> must be setup. This is because the timer interrupt routine loads the context of this process from its <a href="xos-spec.html#navpromgmt_pcb">PCB</a>. The context of the process refers to  all the registers and open files associated with a process.
+							<ul>
+								<li>STATE field is set to 1 (ready)
+								<div class="syntax">
+								[READY_LIST + 33] = 1;		// Sets the entry for STATE as 1 (Ready)
+								</div></li>
+								<li>PTBR field of the PCB is set to <tt>PTBR_Process1</tt>. PTLR field is set to 4 since the maximum number of entries in a page table of the process is 4. 
+								<div class="syntax">
+								[READY_LIST + 37] = PTBR_Process1;	// PTBR <br/>
+								[READY_LIST + 38] = 4;		// PTLR
+								</div></li>								
+								<li> SP and BP fields in the PCB are set to the starting logical address of the process stack. The stack of any process starts at logical page number 3, which corresponds to logical address 3 * 512.
+								<div class="syntax">
+								[READY_LIST + 34] = 3 * 512; 	// Sets the entry for BP in the PCB<br/>
+								[READY_LIST + 35] = 3 * 512;	// Sets the entry for SP in the PCB
+								</div>								
+								</li>
+								<li> Code area of the process starts from logical address 0, so IP field is set to zero. 
+								<div class="syntax">
+								[READY_LIST + 36] = 0;		// Sets the entry for IP in the PCB
+								</div>								
+								</li>
 							The rest of the entries of the PCB may not be set now. You will deal with them in subsequent stages.
-						</li>
-						<li> Add the instruction to load the timer interrupt routine from disk block 2 to memory page 8. 
+							</ul>
+						</li> <br/>
+						<li> Add the instruction to load the timer interrupt routine from disk block 2 to memory page 8. See <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization </a>. 
 							<div class="syntax">
 								load(8,2);
 							</div>
 						</li>
-					</ul>
+					
+					</ol>
 				</li>
-				<li> Next task to be done in this stage, is to program the Timer Interrupt in SPL, compile it and load it to the disk. <br/>
+				<br/>
+			
+				<h6>Timer Interrupt Routine</h6> <br/>
+				Next task to be done in this stage, is to program the Timer Interrupt in SPL, compile it and load it to the disk.  <br/>
 					The timer interrupt routine must perform the following actions:
-					<ul>
-						<li> Find the location of the  <a href="xos-spec.html#navpromgmt_pcb">PCB</a> of the current process using the value of PTBR by following these instructions.
+					<ol>
+						<li> Find the PID or Process Identifier of the currently running process. In XOS, PID is calculated from the value of the <tt>PTBR</tt> using the formula <b><tt> (PTBR - 1024) / 8</tt></b>. The Per-Process Page tables are stored in memory from address 1024 onwards. Each page table is of size 8 words. The PTBR value gives the starting address of the current process' page table. Hence this calculation will give the Process ID for the currently running process. Note that this calculation is specific to XOS. In general Process ID cannot be computed  from the value of PTBR . <div class="syntax"><pre>alias currentPID R8;
+currentPID = (PTBR - 1024) / 8;</pre>
+						</div> </li>		
+										
+						<li><p>Find the location of the  <a href="xos-spec.html#navpromgmt_pcb">PCB</a> of the current process using the formula 1536 + 32 * currentPID, as discussed previously</li>
+						<div class="syntax"><pre>alias currentPCB R9;
+currentPCB = READY_LIST + 32 * currentPID;</pre>
+						</div> </li>	
+						</p>
+					
+						<li>The Timer Interrupt Routine must store back the current registers to the PCB of the current process. It can then assign the registers with the values corresponding to the next scheduled process.
 						 <ul>
-						 <li> We can find the ProcessID of the current process using the PTBR value using this instruction
-							<div class="syntax">ProcessID = (PTBR - 1024) / 8;</div>
-							Page Tables start at word address 1024. And size of each per-process page table is 8 words. <b>NOTE: This calculation is specific to our operating system. In general Process ID cannot be computed  from the value of PTBR . </b>
-						  </li>
-						</ul>
-						</li>
-						<li> The starting address of the ready list of PCBs is 1536. READY_LIST is a predefined constant in SPL which has  value 1536 (ERROR: !!! Refer to memory organization). Size of PCB of each process is 32 words. The starting address of the PCB of the current process can thus be calcluated using this instruction. (ERROR: !!! Alias PCB_Start) 
-							<div class="syntax">PCB_Start = READY_LIST + 32 * ProcessID;</div>
-						   NOTE: This calculation is specific to our operating system. In general adresss of PCB of current process is not obtained like this.			
-						</li>
-						<li> Store the values of the current process in its PCB as shown below.
+							<li> Set BP and SP entry in the PCB with values in registers <tt>BP</tt> and <tt>SP - 1</tt>. When an interrupt occurs, the value of IP is stored automatically on the top of the stack and SP is incremented. Hence SP - 1 is the correct value of SP of this process ignoring the <tt>IP</tt> pushed by the interrupt at the top of the stack.
 							<div class="syntax">
-								[ PCB_Start + 0 ] = ProcessID;		//PID<br/>
-								[ PCB_Start + 1 ] = 1; 			// STATE : Waiting for the CPU<br/>
-								[ PCB_Start + 2 ] = BP;<br/>
-								[ PCB_Start + 3 ] = SP;	<br/>
-								[ PCB_Start + 4 ] = [absoluteSP - 1]; 	// IP gets stored in SP by machine<br/>
-								[ PCB_Start + 5 ] = PTBR;	<br/>
-								[ PCB_Start + 6 ] = PTLR;	<br/>
-								[ PCB_Start + 7 ] = R0;	<br/>
+								[ currentPCB  + 2 ] = BP;<br/>
+								[ currentPCB  + 3 ] = SP - 1;	<br/>
+							</div>							
+							</li>
+							<li> <p>Next, you need to set the IP field in the PCB. When a timer interrupt occurs, the IP value gets stored in the user stack. The timer interrupt routine should fetch this value from the stack and store it in the IP field of the PCB. But the timer interrupt routine is in KERNEL mode and <tt>SP</tt> contains the logical address of the top of the user stack. You will need to find the physical address of the stack pointer </p> 
+							<p>
+							Physical page number corresponding to a logical address is obtained from the page table.  <tt><i>logical address / 512</i></tt> gives the logical page number. Multiplying this by 2 gives the index of the page table entry. Adding PTBR to this will give the physical address of the page table entry corresponding to the given logical address.  <b><pre>Address of page table entry = PTBR + 2 x (<i>Logical Address</i> / 512) </pre></b>The value stored in the first word in the page table entry corresponds to the physical page number. </p>
+							<b><pre>Physical Page Number = [ Address of page table entry + 0 ] </pre></b>
+							<p> Offset into the page is calculated as </p>
+							<pre><b>offset = logical_address % 512</b></pre> 
+							<p> The physical address is computed by multiplying the physical page number by page size (=512) and adding the offest. </p>
+							<pre><b>Physical Address = Physical Page Number x 512 + offset </pre></b></p>
+							<p> <b>NOTE</b>: In user mode, logical addresses are translated to physical address by the machine using its address translation scheme. However, in kernel mode, you will need to manually translate any logical address to physical address using the procedure given above.</p>
+							
+							<p> For calculating the physical address of SP, use the following instructions
+			<div class="syntax">alias physicalSP R10;</br>
+physicalSP = ([PTBR + 2 * (SP / 512)] * 512) + (SP % 512);
+						</div>							
+							</p>
+							
+							Now, get the value of IP from the top of the stack and store it in the IP field of  PCB. This can be done using the following instructions.
+		<div class="syntax">[ currentPCB + 4 ] = [ physicalSP - 1 ]; </div>
+							</li>
+							<li>Set PTBR and PTLR fields of the PCB with the values in <tt>PTBR</tt> and <tt>PTLR</tt>
+							<div class="syntax">
+								[ currentPCB  + 5 ] = PTBR;<br/>
+								[ currentPCB  + 6 ] = PTLR	;	<br/>
+							</div>									
+							</li>
+							<li>Set PCB fields for registers R0 to R7 with values in <tt>R0</tt> to <tt>R7</tt>
+							<div class="syntax">
+								[ currentPCB + 7 ] = R0;	<br/>
 								.<br/>
 								.<br/>
-								[ PCB_Start + 14] = R7;<br/>
-							</div>
+								[ currentPCB + 14 ] = R7;<br/>
+							</div>									
+							</li>							
+						 </ul>
 						</li>
-						<li> Scan the Ready List of PCBs in a circular manner from the PCB of current process to check for the next process with STATE 1 (Waiting for the CPU). Store the address of the PCB found in a register.(ERROR !!! Ready List Link) </li>
-						<li> Load the fields from this PCB to the corresponding registers. </li>
-						<li> Find the physical address of SP corresponding to newly found PCB. (ERROR !!! Explain More + Links) Store IP from this PCB to the location pointed by the physical address of SP. This is to ensure that the IRET sets the IP to its correct value after return from the interrupt. </li>
-						<li> Use ireturn instruction to return to USER Mode </li>
+						<li> Now, the next process to be scheduled for execution is to be selected. To do this, scan the <a href="xos-spec.html#navpromgmt_readylist">Ready List of PCBs</a> in a circular manner starting from the PCB of current process to check for the next process with STATE value 1 (Ready) in its PCB. Store the address of the newly found process' PCB  in a register. In this roadmap we have assumed this register's alias to be <tt>newPCB</tt>.</li>
+						<li> Load the fields except IP from this PCB to the corresponding registers . This is because IP value cannot be explicitly changed or set.  </li>
+						<li><p> IP value is set by the <b>ireturn;</b> instruction as explained in Stage 4. For this to work correctly, we need to fetch the value from the IP field in the PCB and store it in the top of the stack. <tt>ireturn</tt> will take this value from the stack and store it in the IP register. Physical SP corresponding to the SP of new process must be recalculated as given in Step 3. We have assumed that this new physical SP is aliased as <tt>physicalSP</tt>. Store IP from this PCB to the location pointed by the <tt>physicalSP</tt>.  Since we are pushing a value onto the stack, we need to increment SP by 1.</li></p>
+						<div class="syntax">
+							[ physicalSP ] = [ newPCB + 4 ]; // Stores IP field value of PCB on the stack <br/>
+							SP = SP + 1;
+						</div>
+						<li> Set the STATE of the current PCB to 1 (Ready) and the new PCB to 2 (Running)</li>
+						<li> Use <b>ireturn</b> instruction to return to USER Mode </li>
 					</ul>
 				</li>
 				<li> Compile the OS Startup Code and Timer interrupt using the SPL Compiler. </li>
@@ -730,7 +811,7 @@ Machine is halting
 				<h2>Stage 7: Creating Files </h2>
 				<p> In this stage, you'll learn to implement a <a href="xos-spec.htmlnavsyscalls"> system call </a>. System calls are interfaces provided by the operating system to the user programs to run a system routine. The system calls in XOS are invoked  using commands in SPL which will call a specific INT instruction. The (ERROR !!! INT) instruction invokes an interrupt service routine, as done in stage 5.
 
-				 In this stage we'll modify the Interrupt 1 routine to implement the funtionality to create files in the XFS disk. Interrupt 1 is used by two system calls Create and Delete. (See <a href="xos-spec.html#navsyscalls_file">File System Calls</a>).
+				 In this stage you'll modify the Interrupt 1 routine to implement the funtionality to create files in the XFS disk. Interrupt 1 is used by two system calls Create and Delete. (See <a href="xos-spec.html#navsyscalls_file">File System Calls</a>).
 
 
 				<h6> Modifying the OS Startup Code</h6>
@@ -773,8 +854,8 @@ endwhile;						</pre>
 
 				<div class="syntax">
 				<pre>
-alias absoluteSP R8;
-absoluteSP = [PTBR + 6] + SP % 512 ;
+alias physicalSP R8;
+physicalSP = [PTBR + 6] + SP % 512 ;
 .
 // Get system call no. from the stack
 .
@@ -790,7 +871,7 @@ if ( sysCallNo == 4) then
 endif;	</pre>
 				</div>
 
-				In this stage we'll implement the Create System Call. Delete and other system calls will be implemented in later stages.
+				In this stage you will implement the Create System Call. Delete and other system calls will be implemented in later stages.
 				(ERROR !!! Give an Overview)
 
 
@@ -798,11 +879,11 @@ endif;	</pre>
 				<ol>
 				<li> (ERROR !!! Look for a free entry in DFL from 13 to 447) First of all, the memory copy of the <a href="xfs-spec.html#navdfl">disk free list</a> is searched till the entry for block number 447 to find a free block number (indicated by a 0 entry in the disk free list). Blocks 448 - 511  are reserved for <a href="xfs-spec.html#navdiskorg">swap area</a> which will be used for virtual memory management (<a href="roadmap.html#navstage9">Stage 9</a>). (ERROR !!! about 0 - 12) This block is used as the <a href="xfs-spec.html#navfile">basic block</a> of the file to be created. It's entry is set to 1. The block number is stored to a register. If no free block is found return -1 (as done in the previous step). </li>
 
-				<li> The <tt>filename</tt> specified as argument is stored in the stack at (ERROR !!! ) absoluteSP - 2. Fetch it and store it to a register. </li>
+				<li> The <tt>filename</tt> specified as argument is stored in the stack at (ERROR !!! ) physicalSP - 2. Fetch it and store it to a register. </li>
 				<li> The memory copy of the <a href="xos-spec.html#navfiles_fat">FAT</a> is to be searched for the <tt>filename</tt> to check if the file already exists. If it exists return from the sytem call with 0 (success).
 				</li>
 
-				<li> Next, the memory copy of the <a href="xos-spec.html#navfiles_fat">FAT</a> is searched for a free entry. A free entry in the FAT is indicated by -1 in the entry for basic block (Word 2 of each FAT entry). If no free entry is found put -1 in the return value space of the stack (absoluteSP - 12, See figure above). Then return to USER Mode using <b>ireturn</b> instruction. Address of FAT is stored in a <a href="spl-spec.html#navconst">predefined constant</a> in <tt>FAT</tt> in SPL. </li>
+				<li> Next, the memory copy of the <a href="xos-spec.html#navfiles_fat">FAT</a> is searched for a free entry. A free entry in the FAT is indicated by -1 in the entry for basic block (Word 2 of each FAT entry). If no free entry is found put -1 in the return value space of the stack (physicalSP - 12, See figure above). Then return to USER Mode using <b>ireturn</b> instruction. Address of FAT is stored in a <a href="spl-spec.html#navconst">predefined constant</a> in <tt>FAT</tt> in SPL. </li>
 				<li><tt>filename</tt> and the <tt>free block number</tt> obtained  in the previous steps are stored in the <em>Filename</em> field and <em>basic block number</em> field of the free <a href="xos-spec.html#navfiles_fat">FAT</a> entry respectively.</li> (ERROR !!! BASIC BLOCK)
 					<li> The <em>file size</em> field of the FAT entry is initialized to zero.</li>
 
@@ -823,7 +904,7 @@ endwhile;
 
 // Return with -1 if there is no free entry
 if(counter == 512) then 		
-	[absoluteSP - 12] = -1;		
+	[physicalSP - 12] = -1;		
 	ireturn;	
 endif;</pre>
 				</div>
@@ -831,7 +912,7 @@ endif;</pre>
 				<li> Load the <a href="xfs-spec.html#navfile">basic block</a> of the file from the disk to the <a href="xos-spec.html#navfiles_scratchpad">scratchpad</a> . Each entry of the block list in the basic block is initialized to zero and it is stored back to the disk.</li>	
 				<li> The updated copies of FAT and disk free list in the memory are then stored back to the disk.</li>
 				
-				<li> The return value of this system call is 0 in case of success and -1 in case of failure. The return value is stored in the stack at address Stack Pointer - 12. The value of stack pointer is obtained from absoluteSP.</li>
+				<li> The return value of this system call is 0 in case of success and -1 in case of failure. The return value is stored in the stack at address Stack Pointer - 12. The value of stack pointer is obtained from physicalSP.</li>
 				<li>Use an <b>ireturn</b> instruction to transfer control back to USER Mode.</li>
 				</ol>
 			
@@ -1010,7 +1091,7 @@ endif;</pre>
 				<li> Using LSEEK position find the block number to be read from. Find its location in the disk from the basic block. If entry for the block is invalid, return with value -1 (indicating failure).</li>
 				<li> Else,  fetch this block from the disk to the scratchpad. </li>
 				<li> Read from this block using the offset calculated using LSEEK position. </li>
-				<li> This value is stored in the stack in position of Argument 2. Store the word read to absoluteSP - 2.</li>
+				<li> This value is stored in the stack in position of Argument 2. Store the word read to physicalSP - 2.</li>
 				<li> Return with 0, indicating success </li>
 		  	</ol>
 
@@ -1115,7 +1196,7 @@ endif;</pre>
 							<li> Set the STATE in the PCB to 0.  </li>
 							<li> Invalidate all entries in its per-process page table (Set <tt>Address</tt> field to -1) </li>
 							<li> Find the next waiting process from the  <a href="xos-spec.html#navpromgmt_readylist">Ready List of PCBs</a></li>
-							<li> Get the IP from its PCB and store it in its stack (Compute absolute address of its SP)</li>
+							<li> Get the IP from its PCB and store it in its stack (Compute physical address of its SP)</li>
 							<li> And use <b>ireturn</b> instruction to transfer control.</li>
 						</ol>
 					<li> Otherwise, exit with -1 </li>	

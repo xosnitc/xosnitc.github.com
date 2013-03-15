@@ -85,24 +85,7 @@
 			
 			<div class="grid-wrap">
 
-
-
-
-
-
-
-
-
-
-
-<!---  **************************** STAGE 1 *************************************************** -->
-
-
-
-
-
-
-
+					
 			<article  id="navstage1" class="grid col-full">
 			<h2>Stage 1: Setting up the System </h2>
 
@@ -141,19 +124,7 @@
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>	
 			
-	
-
-
-
-
-
-
-
-
-
-
-<!---  **************************** STAGE 2 *************************************************** -->
-
+			
 			
 			
 			<article id="navstage2" class="grid col-full">
@@ -263,15 +234,6 @@ peppermint wind</pre>
 
 
 
-
-
-
-
-
-
-
-<!---  **************************** STAGE 3 *************************************************** -->
-
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>	
@@ -351,16 +313,7 @@ Machine is halting
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>	
 
-
-
-
-
-
-
-
-
-
-<!--**************************** STAGE 4 *******************************)-->
+<!--**************************** RUNNING A USER PROGRAM *******************************)-->
 
 			<article  id="navstage4" class="grid col-full">
 				<h2>Stage 4: Running a user program </h2>
@@ -530,15 +483,7 @@ Machine is halting</pre>
 			</div>
 
 
-
-
-
-
-
-
-
-
-<!-- ************************ STAGE 5***************** ************************** !-->
+<!-- ************************ STAGE 5: INTERRUPTS ************************** !-->
 
 			<article  id="navstage5" class="grid col-full">
 			<h2>Stage 5: Interrupt Routines </h2>
@@ -819,7 +764,7 @@ physicalSP = ([PTBR + 2 * (SP / 512)] * 512) + (SP % 512);
 							</p>
 							
 							Now, get the value of IP from the top of the stack and store it in the IP field of  PCB. This can be done using the following instructions.
-		<div class="syntax">[ currentPCB + 4 ] = [ physicalSP ]; </div>
+		<div class="syntax">[ currentPCB + 4 ] = [ physicalSP - 1 ]; </div>
 							</li>
 							<li>Set PTBR and PTLR fields of the PCB with the values in <tt>PTBR</tt> and <tt>PTLR</tt>
 							<div class="syntax">
@@ -839,31 +784,22 @@ physicalSP = ([PTBR + 2 * (SP / 512)] * 512) + (SP % 512);
 						</li>
 						<li> Now, the next process to be scheduled for execution is to be selected. To do this, scan the <a href="xos-spec.html#navpromgmt_readylist">Ready List of PCBs</a> in a circular manner starting from the PCB of current process to check for the next process with STATE value 1 (Ready) in its PCB. Store the address of the newly found process' PCB  in a register. In this roadmap we have assumed this register's alias to be <tt>newPCB</tt>.</li>
 						<li> Load the fields except IP from this PCB to the corresponding registers . This is because IP value cannot be explicitly changed or set.  </li>
-						<li><p> IP value is set by the <b>ireturn;</b> instruction as explained in Stage 4. For this to work correctly, we need to fetch the value from the IP field in the PCB and store it in the top of the stack. <tt>ireturn</tt> will take this value from the stack and store it in the IP register. 
-						</p>
-						<p> When a value is stored on the top of the stack, SP needs to be incremented by 1 </p>
-						<div class="syntax"> SP = SP + 1; </div>
-						<li><p>
-						To store the value on top of the stack, we will need to calculate physical address of SP for the new process as desicribed in Step 3. We have assumed that this new physical SP is aliased as <tt>newphysicalSP</tt>.</li>
-						<li> Store IP from this PCB to the location pointed by the <tt>newphysicalSP</tt>.  Since we are pushing a value onto the stack, we need to increment SP by 1.</li></p>
+						<li><p> IP value is set by the <b>ireturn;</b> instruction as explained in Stage 4. For this to work correctly, we need to fetch the value from the IP field in the PCB and store it in the top of the stack. <tt>ireturn</tt> will take this value from the stack and store it in the IP register. Physical SP corresponding to the SP of new process must be recalculated as given in Step 3. We have assumed that this new physical SP is aliased as <tt>physicalSP</tt>. Store IP from this PCB to the location pointed by the <tt>physicalSP</tt>.  Since we are pushing a value onto the stack, we need to increment SP by 1.</li></p>
 						<div class="syntax">
-							[ newphysicalSP ] = [ newPCB + 4 ]; // Stores IP field value of PCB on the stack <br/>
-							
+							[ physicalSP ] = [ newPCB + 4 ]; // Stores IP field value of PCB on the stack <br/>
+							SP = SP + 1;
 						</div>
-						<li> Set the STATE field of the current PCB to 1 (Ready) and the new PCB to 2 (Running). Now the new process is schedule for execution and set as Running. The previously running process in now in Ready State, i.e. it is waiting for the CPU.</li>
+						<li> Set the STATE of the current PCB to 1 (Ready) and the new PCB to 2 (Running)</li>
 						<li> Use <b>ireturn</b> instruction to return to USER Mode </li>
 					</ul>
 				</li>
-			</ol>
-			<h6> Making things work!</h6>
-			<ol>
-				<li> Compile the OS Startup Code and Timer interrupt Routine using the SPL Compiler.  </li>
-				<li> Load the compiled output .xsm files corresponding to  OS Startup code and timer interrupt routine to the XFS disk using XFS interface. </li>
+				<li> Compile the OS Startup Code and Timer interrupt using the SPL Compiler. </li>
+				<li> Load the new OS Startup code and timer interrupt routine to the xfs disk using xfs interface. </li>
 				<li> Run the machine without disabling timer </li>
-				<div class="syntax">$HOME/myxos/xsm/xsm</div>
 				
 			</ol>
-			The output will have odd and even numbers printed in an interleaved fashion. This indicates that both programs, i.e. program to print odd numbers and the program to print even numbers ran simultaneously on the machine, and your timer interrupt switched between processes after fixed intervals. 
+			The programs will run in an interleaved fashion if the timer interrupt is working correctly.
+
 
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -871,22 +807,44 @@ physicalSP = ([PTBR + 2 * (SP / 512)] * 512) + (SP % 512);
 			</div>
 
 
-
-
-
-
-
-
-
-
-<!---  **************************** STAGE 7 *************************************************** -->
-
-
 			<article id="navstage7" class="grid col-full">
 				<h2>Stage 7: Creating Files </h2>
-				<p> In this stage, you'll learn to implement a <a href="xos-spec.htmlnavsyscalls"> system call </a>. System calls are interfaces provided by the operating system to the user programs to run a system routine. The system calls in XOS are invoked  using commands in SPL which will call a specific INT instruction. The <a href="xsm-spec.html#navinstr">INT</a> instruction invokes an interrupt service routine, as done in stage 5.
+				
+				<p> In this stage, you'll learn to implement a <a href="xos-spec.htmlnavsyscalls"> system call </a>. System calls are interfaces provided by the operating system to the user programs to run a system routine. System Calls are provided as commands in APL like Create(), Open(), Fork() etc. These system calls in APL translate to a series of stack operations followed by the <tt>INT</tt> machine instruction. <tt>INT</tt> instruction invokes an Interrupt Routine as described in Stage 5.</p>
+				<p>A user program  invokes a system call by first pushing the registers, arguments and system call number into the process stack and then invoking <tt> INT </tt> instruction corresponding to the system call. </p>
+		
+				<p>For e.g. a system call in APL compiles to the a set of machine instructions like the one shown below.</p>
+				<div class="syntax"> <pre>
+PUSH BP			// Backup value of BP
+PUSH R0			// Backup value of R0
+.
+.
+PUSH R7			// Backup value of R7
+PUSH <i>Argument_1</i>		// Push arguments to the stack
+.
+.
+PUSH <i>Argument_n</i>
+PUSH R0			// Push an empty space for RETURN VALUE
+MOV R0 <i>System_Call_No</i> 
+PUSH R0			// Push system call number		
+MOV BP, SP		// Change the BP to the top of the stack
+INT <i>number</i> 		// Invoke the corresponding INT instruction</div></pre>
+				
+				<p>The figure given below shows the contents of the stack when a system call is exectued. </p>
+				
+				<p><b>Step 1</b> shows the stack operations done before an <tt>INT</tt> instruction (See machine instructions above). The <tt>BP</tt> and all User Register (R0 to R7) are pushed to the stack. This is done to backup their values when control passes to an Interrupt Service Routine. The arguments are pushed to stack in an order such that last argument comes on top.</tt></p>
+				
+				<p>
+				 <b>Step 2</b> shows the contents of the stack when the <tt>INT</tt> instruction is executed.  </p>
 
-				 In this stage you'll modify the Interrupt 1 routine to implement the funtionality to create files in the XFS disk. Interrupt 1 is used by two system calls Create and Delete. (See <a href="xos-spec.html#navsyscalls_file">File System Calls</a>).
+				 <img src="doc/syscallstack1.png" style="width:60%; display:inline;">
+				<p>
+				 A system call in an APL program compiles to a set of instructions for setting up the stack (Figure a. Step 1) followed by the corresponding INT instruction (Figure a. Step 2). The INT instruction passes control to the corresponding Interrupt routine. In the case of <b>Create</b> it corresponds Interrupt Routine 1.  After the interrupt routine performs the required actions, it passes control back to the user program (Figure b. Step 1 and 2).</p> 
+
+
+				An Interrupt  Routine may contain more than one system call implementation. The system call number is obtained from the stack (Stack Pointer - 1). Based on the system call number, the corresponding system call actions are performed. To access the stack in KERNEL mode, the physical address of the top of the stack must used. The physical address of the top of stack is calculated as: (ERROR !!! EXPLAIN MORE AFTER THIS) The 6th word in the Page Table (obtained from PTBR + 6) gives the starting address of the stack, and SP%512 will give the offset in the stack. Adding both will give the absoulte address of SP. 
+				<br/><br/></p>
+				 <p>In this stage you'll modify the Interrupt 1 routine to implement the funtionality to create files in the XFS disk. Interrupt 1 is used by two system calls Create and Delete. (See <a href="xos-spec.html#navsyscalls_file">File System Calls</a>).</p>
 
 
 				<h6> Modifying the OS Startup Code</h6>
@@ -914,15 +872,7 @@ endwhile;						</pre>
 					This instruction loads disk block 3 (containing interrupt 1 routine) to memory page 9 (See <a href="xos-spec.html#navmemorg" >Memory Organization</a>). 
 				</li>
 				</ol>
-				A user program  invokes a system call by first pushing the registers, arguments and system call number into the stack and then invoking <tt> INT </tt> instruction corresponding to the system call. 
-
-				 <img src="doc/syscallstack.png" style="width:150%">
-				<br/>
-				This figure shows the contents of the stack before a system call is exectued and after it comes back to the user program. A system call in an APL program compiles to a set of instructions for setting up the stack (Figure a. Step 1) followed by the corresponding INT instruction (Figure a. Step 2). The INT instruction passes control to the corresponding Interrupt routine. In the case of <b>Create</b> it corresponds Interrupt Routine 1.  After the interrupt routine performs the required actions, it passes control back to the user program (Figure b. Step 1 and 2). 
-
-				<br/><br/>
-				An Interrupt  Routine may contain more than one system call implementation. The system call number is obtained from the stack (Stack Pointer - 1). Based on the system call number, the corresponding system call actions are performed. To access the stack in KERNEL mode, the physical address of the top of the stack must used. The physical address of the top of stack is calculated as: (ERROR !!! EXPLAIN MORE AFTER THIS) The 6th word in the Page Table (obtained from PTBR + 6) gives the starting address of the stack, and SP%512 will give the offset in the stack. Adding both will give the absoulte address of SP. 
-				<br/><br/>
+				
 
 				<br/>
 				A skeleton of Interrupt 1 Routine is given below.
@@ -1000,15 +950,6 @@ endif;</pre>
 			</div>
 
 
-
-
-
-
-
-
-
-
-<!-- ********************************************* STAGE 8 *************************************** -->
 
 			<article  id="navstage8" class="grid col-full">
 			<h2>Stage 8: Playing with files</h2>
@@ -1184,16 +1125,6 @@ endif;</pre>
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>	
 			
-
-
-
-
-
-
-
-
-
-<!-- ************************************************ STAGE 9 *************************************** -->
 			
 			
 			<article  id="navstage9" class="grid col-full">
@@ -1302,18 +1233,6 @@ endif;</pre>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>
-
-
-
-
-
-
-
-
-
-
-
-<!-- ************************************************ STAGE 10 *************************************** -->
 			
 			
 			<article  id="navstage10" class="grid col-full">
@@ -1395,16 +1314,6 @@ Ip_addr = (EFR/1000);		//Gets value of IP at the point of exception
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>
-
-
-
-
-
-
-
-
-
-<!-- ************************************************ STAGE 11 *************************************** -->
 
 
 			<article  id="navstage11" class="grid col-full">

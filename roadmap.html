@@ -819,7 +819,7 @@ physicalSP = ([PTBR + 2 * (SP / 512)] * 512) + (SP % 512);
 							</p>
 							
 							Now, get the value of IP from the top of the stack and store it in the IP field of  PCB. This can be done using the following instructions.
-		<div class="syntax">[ currentPCB + 4 ] = [ physicalSP - 1 ]; </div>
+		<div class="syntax">[ currentPCB + 4 ] = [ physicalSP ]; </div>
 							</li>
 							<li>Set PTBR and PTLR fields of the PCB with the values in <tt>PTBR</tt> and <tt>PTLR</tt>
 							<div class="syntax">
@@ -839,22 +839,31 @@ physicalSP = ([PTBR + 2 * (SP / 512)] * 512) + (SP % 512);
 						</li>
 						<li> Now, the next process to be scheduled for execution is to be selected. To do this, scan the <a href="xos-spec.html#navpromgmt_readylist">Ready List of PCBs</a> in a circular manner starting from the PCB of current process to check for the next process with STATE value 1 (Ready) in its PCB. Store the address of the newly found process' PCB  in a register. In this roadmap we have assumed this register's alias to be <tt>newPCB</tt>.</li>
 						<li> Load the fields except IP from this PCB to the corresponding registers . This is because IP value cannot be explicitly changed or set.  </li>
-						<li><p> IP value is set by the <b>ireturn;</b> instruction as explained in Stage 4. For this to work correctly, we need to fetch the value from the IP field in the PCB and store it in the top of the stack. <tt>ireturn</tt> will take this value from the stack and store it in the IP register. Physical SP corresponding to the SP of new process must be recalculated as given in Step 3. We have assumed that this new physical SP is aliased as <tt>physicalSP</tt>. Store IP from this PCB to the location pointed by the <tt>physicalSP</tt>.  Since we are pushing a value onto the stack, we need to increment SP by 1.</li></p>
+						<li><p> IP value is set by the <b>ireturn;</b> instruction as explained in Stage 4. For this to work correctly, we need to fetch the value from the IP field in the PCB and store it in the top of the stack. <tt>ireturn</tt> will take this value from the stack and store it in the IP register. 
+						</p>
+						<p> When a value is stored on the top of the stack, SP needs to be incremented by 1 </p>
+						<div class="syntax"> SP = SP + 1; </div>
+						<li><p>
+						To store the value on top of the stack, we will need to calculate physical address of SP for the new process as desicribed in Step 3. We have assumed that this new physical SP is aliased as <tt>newphysicalSP</tt>.</li>
+						<li> Store IP from this PCB to the location pointed by the <tt>newphysicalSP</tt>.  Since we are pushing a value onto the stack, we need to increment SP by 1.</li></p>
 						<div class="syntax">
-							[ physicalSP ] = [ newPCB + 4 ]; // Stores IP field value of PCB on the stack <br/>
-							SP = SP + 1;
+							[ newphysicalSP ] = [ newPCB + 4 ]; // Stores IP field value of PCB on the stack <br/>
+							
 						</div>
-						<li> Set the STATE of the current PCB to 1 (Ready) and the new PCB to 2 (Running)</li>
+						<li> Set the STATE field of the current PCB to 1 (Ready) and the new PCB to 2 (Running). Now the new process is schedule for execution and set as Running. The previously running process in now in Ready State, i.e. it is waiting for the CPU.</li>
 						<li> Use <b>ireturn</b> instruction to return to USER Mode </li>
 					</ul>
 				</li>
-				<li> Compile the OS Startup Code and Timer interrupt using the SPL Compiler. </li>
-				<li> Load the new OS Startup code and timer interrupt routine to the xfs disk using xfs interface. </li>
+			</ol>
+			<h6> Making things work!</h6>
+			<ol>
+				<li> Compile the OS Startup Code and Timer interrupt Routine using the SPL Compiler.  </li>
+				<li> Load the compiled output .xsm files corresponding to  OS Startup code and timer interrupt routine to the XFS disk using XFS interface. </li>
 				<li> Run the machine without disabling timer </li>
+				<div class="syntax">$HOME/myxos/xsm/xsm</div>
 				
 			</ol>
-			The programs will run in an interleaved fashion if the timer interrupt is working correctly.
-
+			The output will have odd and even numbers printed in an interleaved fashion. This indicates that both programs, i.e. program to print odd numbers and the program to print even numbers ran simultaneously on the machine, and your timer interrupt switched between processes after fixed intervals. 
 
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -875,7 +884,7 @@ physicalSP = ([PTBR + 2 * (SP / 512)] * 512) + (SP % 512);
 
 			<article id="navstage7" class="grid col-full">
 				<h2>Stage 7: Creating Files </h2>
-				<p> In this stage, you'll learn to implement a <a href="xos-spec.htmlnavsyscalls"> system call </a>. System calls are interfaces provided by the operating system to the user programs to run a system routine. The system calls in XOS are invoked  using commands in SPL which will call a specific INT instruction. The (ERROR !!! INT) instruction invokes an interrupt service routine, as done in stage 5.
+				<p> In this stage, you'll learn to implement a <a href="xos-spec.htmlnavsyscalls"> system call </a>. System calls are interfaces provided by the operating system to the user programs to run a system routine. The system calls in XOS are invoked  using commands in SPL which will call a specific INT instruction. The <a href="xsm-spec.html#navinstr">INT</a> instruction invokes an interrupt service routine, as done in stage 5.
 
 				 In this stage you'll modify the Interrupt 1 routine to implement the funtionality to create files in the XFS disk. Interrupt 1 is used by two system calls Create and Delete. (See <a href="xos-spec.html#navsyscalls_file">File System Calls</a>).
 
@@ -999,7 +1008,7 @@ endif;</pre>
 
 
 
-<!-- ************************************************ STAGE 8 *************************************** -->
+<!-- ********************************************* STAGE 8 *************************************** -->
 
 			<article  id="navstage8" class="grid col-full">
 			<h2>Stage 8: Playing with files</h2>
@@ -1386,6 +1395,8 @@ Ip_addr = (EFR/1000);		//Gets value of IP at the point of exception
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>
+
+
 
 
 

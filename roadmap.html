@@ -823,8 +823,8 @@ PUSH R0			// Push an empty space for RETURN VALUE
 PUSH <i>System_Call_No</i> 	// Push system call number		
 INT <i>number</i> 		// Invoke the corresponding INT instruction</div></pre>
 				
-				<p><b>This figure below shows the contents of the stack when a system call is exectued.</b> </p>
-				 <img src="doc/syscallstack1.png" style="width:50%; float:left; margin-right:5%; margin-top:16%; margin-bottom:16%;">
+				<p><b>FIGURE 1: Contents of the stack when a system call is exectued.</b> </p>
+				 <img src="doc/syscallstack1.png" style="width:50%; float:left; margin-right:5%; ">
 				 
 				<p><b>Step 1</b> shows the stack operations done before an <tt>INT</tt> instruction (See machine instructions above). The arguments are pushed to stack in an order such that last argument comes on top. A push instruction <tt>PUSH R0</tt> is done to put an empty space for the return value in the stack. This space will store the value returned by the System Call. The return value of the system call can be fetched by the user program from this position. We can implement more than one system call using an Interrupt Routine. When control is passed to the interrupt routine, it identifies the system call the user intended to perform by a system call number. This system call number is pushed to the user stack. The interrupt routine will fetch this value from the stack and identify which system call is to be performed.</p>
 				
@@ -836,61 +836,50 @@ INT <i>number</i> 		// Invoke the corresponding INT instruction</div></pre>
 
 				
 
-				<p><b>This figure below shows the contents of the stack when it returns back to the user program from an interrupt routine. Control returns from the interrupt routine  to user program using an <tt>IRET</tt> instruction.</b> </p>
-				 <img src="doc/syscallstack2.png" style="width:50%; float:left; margin-right:5%; margin-top:6%; margin-bottom:6%;">
+				<p><b>FIGURE 2: Contents of the stack when it returns back to the user program from an interrupt routine. Control returns from the interrupt routine  to user program using an <tt>IRET</tt> instruction.</b> </p>
+				 <img src="doc/syscallstack2.png" style="width:50%; float:right; margin-right:5%; ">
  				
 				<p><b>Step 1</b> shows the contents of the stack before the <tt>IRET</tt> instruction. This step shows the condition of the stack after the interrupt routine had performed all the required actions corresponding to the system call. Note that this is similar to Step 2 of the previous figure. However the interrupt routine will have filled the empty space for the <tt>RETURN VALUE</tt> with the required result after all the system call actions have been performed. In the previous figure this space would be empty.</p>
 				
 				<p>
-				 <b>Step 2</b> shows the contents of the stack immediately after the <tt>IRET</tt> instruction. The value on the top of the stack will be popped and stored in the <tt>IP</tt> register. This value will be the address of the  instruction after the <tt>INT</tt> instruction in the user program </p>
+				 <b>Step 2</b> shows the contents of the stack immediately after the <tt>IRET</tt> instruction. The value on the top of the stack will be popped and stored in the <tt>IP</tt> register. This value will be the address of the  instruction after the <tt>INT</tt> instruction in the user program. </p>
 				 
 
-				 
-				<br/><br/></p>
+			</p>
+				<br/>
 				
-				
-				 <p>In this stage you'll modify the Interrupt 1 routine to implement the funtionality to create files in the XFS disk. Interrupt 1 is used by two system calls Create and Delete. (See <a href="xos-spec.html#navsyscalls_file">File System Calls</a>).</p>
+				 <p>In this stage you'll implement the Create system call. To do this, you must modify the OS Startup code and Interrupt 1 routine. Create system call is to create files in the XFS disk.  (See <a href="xos-spec.html#navsyscalls_file">File System Calls</a>).</p>
 
 
 				<h6> Modifying the OS Startup Code</h6>
-				(ERROR !!! Uniprocessing mode, we'll disable timer till then) Modify the OS Startup Code in Stage 5. The OS Startup Code modifications done in Stage 6 can be discarded as it was done to test the timer interrupt routine.
+			 <p>In the last stage you have tested out the multiprogramming functionality by running two processes simultaneously. However to implement and test File System Calls  Create(), Delete(), Open(), Close(), Read(), Write() and Seek(), you may disable the timer and run the machine. </p>
+			 
+			 <p> Since in this stage, the machine is to be run in single processing mode without the timer interrupt, you do not need the OS Startup Code to load two programs. The OS Startup Code modifications done in Stage 6 can be discarded as it was done to test the timer interrupt routine. Modify the OS Startup Code you used in Stage 5 which loads only one process to memory. These additional tasks need to be performed by the new OS Startup Code before the <b>ireturn;</b> instruction for Create system call to work properly.</p>
 				<ol>
-				<li> Load FAT from disk block 10 to memory page 5 and Disk Free List from the disk block 11 to memory page 6. Refer <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization </a>. </li>
+				<li> When a file is created by the system call, a new FAT entry is to be created. The OS maintains a memory copy of the filesystem structures like <a href="xos-spec.html#navfiles_fat">FAT</a> and <a href="xos-spec.html#navfiles_dfl">Disk Free List</a>. The Disk Free List is a file system data structure which keeps track of used and unused blocks in the disk. (See <a href="xfs-spec.html#navdfl">Disk Free List</a> in XFS). The memory copy of these structures are changed by the OS when File System Calls are performed, and it is then committed back to the disk. Load <a href="xos-spec.html#navfiles_fat">FAT</a> from disk block 10 to memory page 5 and <a href="xos-spec.html#navfiles_dfl">Disk Free List</a> from the disk block 11 to memory page 6. Refer <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization </a>. </li>
 				</li>
-				<li>
-				Set the FAT Entry and File Open Count of 64 entries of the  <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a>  to -1. 
-
-			</li>
-				<div class="syntax">
-				<pre>
-alias counter R8;	// R8 - R15 is used by system programmers.
-counter = 0;
-while ( counter <=  128) do
-	[ FILE_TABLE + counter] = -1;
-	counter = counter + 1;
-endwhile;						</pre>
-				</div>
-				<li> Set all words in the <a href="xos-spec.html#navpromgmt_pcb">Per-Process Open-File Table in the PCB</a> of INIT to -1  (ERROR !!! Why) </li>
-				<li> You've already written code to load Interrupt routine 1 from the disk to the memory in stage 5.
-					Check if this instruction is present in the OS Startup Code. 
-					<div class="syntax">load (9, 3);</div>
-					This instruction loads disk block 3 (containing interrupt 1 routine) to memory page 9 (See <a href="xos-spec.html#navmemorg" >Memory Organization</a>). 
+				
+				<li> You already have the instruction to load Interrupt routine 1 from the disk to the memory in stage 5.  Check if this instruction <tt><b>load (9, 3)</b></tt> is present in the OS Startup Code.  This instruction loads the Interrupt 1 routine residing in disk block 3 to memory page 9. (See <a href="xos-spec.html#navmemorg" >Memory Organization</a> and <a href="xfs-spec.htmL#navdiskorg">Disk Organization</a>).
+					
 				</li>
 				</ol>
 				
-
-				<br/>
-				A skeleton of Interrupt 1 Routine is given below.
+				<h6> Modifying Interrupt 1 Routine</h6>
+				<p>
+				The previous implementation of Interrupt 1 Routine to print <tt>SW Interrupt</tt> is to be discarded. Interrupt 1 is used by two system calls Create and Delete. The system call number is to be obtained from the stack as explained earlier. Since interrupt routines execute in kernel mode, you will need to calculate the physical address of SP using the formula described in Stage 6. After getting the system call number in a register which is aliased as <tt>sysCallNo</tt>, use and <tt>if</tt> condition to check whether the system call corresponds to Create or Delete.</p>			
+				 A skeleton of the new Interrupt 1 Routine is given below. 
+				</p>
+				
 
 				<div class="syntax">
 				<pre>
 alias physicalSP R8;
-physicalSP = [PTBR + 6] + SP % 512 ;
+physicalSP = ([PTBR + 2 * (SP / 512)] * 512) + (SP % 512);
 .
 // Get system call no. from the stack
 .
 if ( sysCallNo == 1) then
-	// Implementation of Create (to be done in this stage !)
+	// Implementation of Create 
 	.
 	.
 endif;
@@ -901,20 +890,37 @@ if ( sysCallNo == 4) then
 endif;	</pre>
 				</div>
 
-				In this stage you will implement the Create System Call. Delete and other system calls will be implemented in later stages.
-				(ERROR !!! Give an Overview)
+				<p>In this stage you will implement the Create System Call. </p>
+				Create <br/>
+				<i>System Call No</i>: 1 <br/>
+				<i>Interrupt Routine No</i>: 1 <br/>
+				<i>Arguments</i>: filename <br/>
+				<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
+				<br/>				
+				<p> The Create system calls takes the <tt>filename</tt> of the file to be created as the argument. It checks for a free block in the disk, and if its found, it will allocate this block as the basic block of the new file. It will create a FAT entry for the newly created file. Detailed instructions on how to get this done is given below.
+				
+				</p>
 
 
 
 				<ol>
-				<li> (ERROR !!! Look for a free entry in DFL from 13 to 447) First of all, the memory copy of the <a href="xfs-spec.html#navdfl">disk free list</a> is searched till the entry for block number 447 to find a free block number (indicated by a 0 entry in the disk free list). Blocks 448 - 511  are reserved for <a href="xfs-spec.html#navdiskorg">swap area</a> which will be used for virtual memory management (<a href="roadmap.html#navstage9">Stage 9</a>). (ERROR !!! about 0 - 12) This block is used as the <a href="xfs-spec.html#navfile">basic block</a> of the file to be created. It's entry is set to 1. The block number is stored to a register. If no free block is found return -1 (as done in the previous step). </li>
+				<li><p> First of all, the memory copy of the <a href="xfs-spec.html#navdfl">disk free list</a> is searched till block number 447 to find a free block. Blocks 448 - 511  are reserved for <a href="xfs-spec.html#navdiskorg">swap area</a> which will be used for virtual memory management (<a href="roadmap.html#navstage9">Stage 10</a>). A free block is indicated by a 0 entry in the Disk Free List. The index of such an entry gives the block number of the free block.
+				
+				</li></p>
+				<li> <p> If no free block is found, return from the system call with return value -1, indicating failure. To do this, put -1 at the 2nd position from the top of stack as shown in Figure 2, and use <b>ireturn;</b> instruction. This will pass the control back to the user program. The user program can fetch the return value from the appropriate position in the stack. </li></p>
+				
+				<li>If a free block is found, it is used as the <a href="xfs-spec.html#navfile">basic block</a> of the file to be created. A basic block of the file stores the block numbers of the data blocks of the file. The data blocks will have the contents of the file. The entry in the Disk Free List for this block is set to 1, indicating that it has now been allocated. </li></p>
+				
+			
 
-				<li> The <tt>filename</tt> specified as argument is stored in the stack at (ERROR !!! ) physicalSP - 2. Fetch it and store it to a register. </li>
-				<li> The memory copy of the <a href="xos-spec.html#navfiles_fat">FAT</a> is to be searched for the <tt>filename</tt> to check if the file already exists. If it exists return from the sytem call with 0 (success).
-				</li>
+				<li> <p>Create system call has only 1 argument, <tt>filename</tt>. It is stored in the 3rd position from the top of the stack as shown in FIGURE 1.  Fetch it and store it to a register. </li></p>
+				
+				<li> <p>The memory copy of the <a href="xos-spec.html#navfiles_fat">FAT</a> is to be searched with this <tt>filename</tt> to check a file with the same name already exists. If it exists return from the system call with 0, indicating success. For convenience you may use the <a href="spl-spec.html#navconst">predefined constant</a> <tt>FAT</tt> in SPL which stores the address of memory copy of FAT.
+				</li></p>
 
-				<li> Next, the memory copy of the <a href="xos-spec.html#navfiles_fat">FAT</a> is searched for a free entry. A free entry in the FAT is indicated by -1 in the entry for basic block (Word 2 of each FAT entry). If no free entry is found put -1 in the return value space of the stack (physicalSP - 12, See figure above). Then return to USER Mode using <b>ireturn</b> instruction. Address of FAT is stored in a <a href="spl-spec.html#navconst">predefined constant</a> in <tt>FAT</tt> in SPL. </li>
-				<li><tt>filename</tt> and the <tt>free block number</tt> obtained  in the previous steps are stored in the <em>Filename</em> field and <em>basic block number</em> field of the free <a href="xos-spec.html#navfiles_fat">FAT</a> entry respectively.</li> (ERROR !!! BASIC BLOCK)
+				<li> <p>Next, the memory copy of the <a href="xos-spec.html#navfiles_fat">FAT</a> is searched for a free entry. A free entry in the FAT is indicated by -1 in the entry for basic block (word 2 of each FAT entry). If no free entry is found, return with -1, indicating failure.  </li></p>
+				<li> If a free FAT entry is found, set the <tt>filename</tt> field and <tt>Basic Block</tt> field in the FAT entry with the filename and basic block 
+					<tt>filename</tt> and the <tt>free block number</tt> obtained  in the previous steps are stored in the <em>Filename</em> field and <em>basic block number</em> field of the free <a href="xos-spec.html#navfiles_fat">FAT</a> entry respectively.</li> (ERROR !!! BASIC BLOCK)
 					<li> The <em>file size</em> field of the FAT entry is initialized to zero.</li>
 
 (ERROR !!! Explain why the code is here!!)
@@ -974,6 +980,21 @@ endif;</pre>
 				</table>
 
 			<h6> Open </h6>
+<li>
+				Set the FAT Entry and File Open Count of 64 entries of the  <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a>  to -1. 
+
+			</li>
+				<div class="syntax">
+				<pre>
+alias counter R8;	// R8 - R15 is used by system programmers.
+counter = 0;
+while ( counter <=  128) do
+	[ FILE_TABLE + counter] = -1;
+	counter = counter + 1;
+endwhile;						</pre>
+				</div>
+				<li> Set all words in the <a href="xos-spec.html#navpromgmt_pcb">Per-Process Open-File Table in the PCB</a> of INIT to -1  (ERROR !!! Why) </li>			
+			
 			<i>System Call No</i>: 2 <br/>
 			<i>Interrupt Routine No</i>: 2 <br/>
 			<i>Arguments</i>: filename <br/>

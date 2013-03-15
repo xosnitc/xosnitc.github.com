@@ -85,7 +85,24 @@
 			
 			<div class="grid-wrap">
 
-					
+
+
+
+
+
+
+
+
+
+
+<!---  **************************** STAGE 1 *************************************************** -->
+
+
+
+
+
+
+
 			<article  id="navstage1" class="grid col-full">
 			<h2>Stage 1: Setting up the System </h2>
 
@@ -124,7 +141,19 @@
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>	
 			
-			
+	
+
+
+
+
+
+
+
+
+
+
+<!---  **************************** STAGE 2 *************************************************** -->
+
 			
 			
 			<article id="navstage2" class="grid col-full">
@@ -234,6 +263,15 @@ peppermint wind</pre>
 
 
 
+
+
+
+
+
+
+
+<!---  **************************** STAGE 3 *************************************************** -->
+
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>	
@@ -313,7 +351,16 @@ Machine is halting
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>	
 
-<!--**************************** RUNNING A USER PROGRAM *******************************)-->
+
+
+
+
+
+
+
+
+
+<!--**************************** STAGE 4 *******************************)-->
 
 			<article  id="navstage4" class="grid col-full">
 				<h2>Stage 4: Running a user program </h2>
@@ -483,7 +530,15 @@ Machine is halting</pre>
 			</div>
 
 
-<!-- ************************ STAGE 5: INTERRUPTS ************************** !-->
+
+
+
+
+
+
+
+
+<!-- ************************ STAGE 5***************** ************************** !-->
 
 			<article  id="navstage5" class="grid col-full">
 			<h2>Stage 5: Interrupt Routines </h2>
@@ -764,7 +819,7 @@ physicalSP = ([PTBR + 2 * (SP / 512)] * 512) + (SP % 512);
 							</p>
 							
 							Now, get the value of IP from the top of the stack and store it in the IP field of  PCB. This can be done using the following instructions.
-		<div class="syntax">[ currentPCB + 4 ] = [ physicalSP - 1 ]; </div>
+		<div class="syntax">[ currentPCB + 4 ] = [ physicalSP ]; </div>
 							</li>
 							<li>Set PTBR and PTLR fields of the PCB with the values in <tt>PTBR</tt> and <tt>PTLR</tt>
 							<div class="syntax">
@@ -784,22 +839,31 @@ physicalSP = ([PTBR + 2 * (SP / 512)] * 512) + (SP % 512);
 						</li>
 						<li> Now, the next process to be scheduled for execution is to be selected. To do this, scan the <a href="xos-spec.html#navpromgmt_readylist">Ready List of PCBs</a> in a circular manner starting from the PCB of current process to check for the next process with STATE value 1 (Ready) in its PCB. Store the address of the newly found process' PCB  in a register. In this roadmap we have assumed this register's alias to be <tt>newPCB</tt>.</li>
 						<li> Load the fields except IP from this PCB to the corresponding registers . This is because IP value cannot be explicitly changed or set.  </li>
-						<li><p> IP value is set by the <b>ireturn;</b> instruction as explained in Stage 4. For this to work correctly, we need to fetch the value from the IP field in the PCB and store it in the top of the stack. <tt>ireturn</tt> will take this value from the stack and store it in the IP register. Physical SP corresponding to the SP of new process must be recalculated as given in Step 3. We have assumed that this new physical SP is aliased as <tt>physicalSP</tt>. Store IP from this PCB to the location pointed by the <tt>physicalSP</tt>.  Since we are pushing a value onto the stack, we need to increment SP by 1.</li></p>
+						<li><p> IP value is set by the <b>ireturn;</b> instruction as explained in Stage 4. For this to work correctly, we need to fetch the value from the IP field in the PCB and store it in the top of the stack. <tt>ireturn</tt> will take this value from the stack and store it in the IP register. 
+						</p>
+						<p> When a value is stored on the top of the stack, SP needs to be incremented by 1 </p>
+						<div class="syntax"> SP = SP + 1; </div>
+						<li><p>
+						To store the value on top of the stack, we will need to calculate physical address of SP for the new process as desicribed in Step 3. We have assumed that this new physical SP is aliased as <tt>newphysicalSP</tt>.</li>
+						<li> Store IP from this PCB to the location pointed by the <tt>newphysicalSP</tt>.  Since we are pushing a value onto the stack, we need to increment SP by 1.</li></p>
 						<div class="syntax">
-							[ physicalSP ] = [ newPCB + 4 ]; // Stores IP field value of PCB on the stack <br/>
-							SP = SP + 1;
+							[ newphysicalSP ] = [ newPCB + 4 ]; // Stores IP field value of PCB on the stack <br/>
+							
 						</div>
-						<li> Set the STATE of the current PCB to 1 (Ready) and the new PCB to 2 (Running)</li>
+						<li> Set the STATE field of the current PCB to 1 (Ready) and the new PCB to 2 (Running). Now the new process is schedule for execution and set as Running. The previously running process in now in Ready State, i.e. it is waiting for the CPU.</li>
 						<li> Use <b>ireturn</b> instruction to return to USER Mode </li>
 					</ul>
 				</li>
-				<li> Compile the OS Startup Code and Timer interrupt using the SPL Compiler. </li>
-				<li> Load the new OS Startup code and timer interrupt routine to the xfs disk using xfs interface. </li>
+			</ol>
+			<h6> Making things work!</h6>
+			<ol>
+				<li> Compile the OS Startup Code and Timer interrupt Routine using the SPL Compiler.  </li>
+				<li> Load the compiled output .xsm files corresponding to  OS Startup code and timer interrupt routine to the XFS disk using XFS interface. </li>
 				<li> Run the machine without disabling timer </li>
+				<div class="syntax">$HOME/myxos/xsm/xsm</div>
 				
 			</ol>
-			The programs will run in an interleaved fashion if the timer interrupt is working correctly.
-
+			The output will have odd and even numbers printed in an interleaved fashion. This indicates that both programs, i.e. program to print odd numbers and the program to print even numbers ran simultaneously on the machine, and your timer interrupt switched between processes after fixed intervals. 
 
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -807,9 +871,20 @@ physicalSP = ([PTBR + 2 * (SP / 512)] * 512) + (SP % 512);
 			</div>
 
 
+
+
+
+
+
+
+
+
+<!---  **************************** STAGE 7 *************************************************** -->
+
+
 			<article id="navstage7" class="grid col-full">
 				<h2>Stage 7: Creating Files </h2>
-				
+		
 				<p> In this stage, you'll learn to implement a <a href="xos-spec.htmlnavsyscalls"> system call </a>. System calls are interfaces provided by the operating system to the user programs to run a system routine. System Calls are provided as commands in APL like Create(), Open(), Fork() etc. These system calls in APL translate to a series of stack operations followed by the <tt>INT</tt> machine instruction. <tt>INT</tt> instruction invokes an Interrupt Routine as described in Stage 5.</p>
 				<p>A user program  invokes a system call by first pushing the registers, arguments and system call number into the process stack and then invoking <tt> INT </tt> instruction corresponding to the system call. </p>
 		
@@ -969,12 +1044,21 @@ Machine is halting     </pre>
 
 
 
+
+
+
+
+
+
+
+<!-- ********************************************* STAGE 8 *************************************** -->
+
 			<article  id="navstage8" class="grid col-full">
 			<h2>Stage 8: Playing with files</h2>
 			<p>We have already created files using the "Create" system call. Now we will implement the remaining 
 			system calls - <b>Open, Close, Delete, Write, Seek and Read</b>.</p>
 				
-				<h4>File System Calls</h4>
+					<h4>File System Calls</h4>
 				<table class="doctable" style="width:50%">
 					<tr><th>System Call Name</th><th>System Call #</th><th>Interrupt Routine #</th></tr>
 					<tr><td>Create</td>			 <td>1</td>				<td> 1</td> </tr>
@@ -1021,7 +1105,7 @@ endwhile;						</pre>
 				<li> Every process will have a <a href="xos-spec.html#navpromgmt_pcb">Per-Process File Table</a> in its PCB. This stores the details of files opened by this process. Find the PCB's location using the value of PTBR (It may be directly obtained if there is only one process, however following a general approach to get PCBs will be useful when more than one process starts running). Recall that using the value of PTBR we can find the ProcessID using the formula.
 					
 					<div class="syntax"><tt>  ProcessID = (PTBR - 1024) / 8; </tt></div>
-				
+
 				Page Tables start at word address 1024. And size of each <a href="xos-spec.html#navpromgpmt_pagetbl">per-process page table</a> is 8 words. <b>NOTE: This calculation is specific to our operating system. In general Process ID is not obtained from the value of PTBR.</b> 
 				<br/><br/>
 					We can find the PCB of the current process using the <tt>ProcessID</tt> as done in earlier stages.
@@ -1158,6 +1242,16 @@ endwhile;						</pre>
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>	
 			
+
+
+
+
+
+
+
+
+
+<!-- ************************************************ STAGE 9 *************************************** -->
 			
 			
 			<article  id="navstage9" class="grid col-full">
@@ -1266,6 +1360,18 @@ endwhile;						</pre>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>
+
+
+
+
+
+
+
+
+
+
+
+<!-- ************************************************ STAGE 10 *************************************** -->
 			
 			
 			<article  id="navstage10" class="grid col-full">
@@ -1349,6 +1455,16 @@ Ip_addr = (EFR/1000);		//Gets value of IP at the point of exception
 			</div>
 
 
+
+
+
+
+
+
+
+<!-- ************************************************ STAGE 11 *************************************** -->
+
+
 			<article  id="navstage11" class="grid col-full">
 			<h2>Stage 11: Making a console </h2>
 			<p> 
@@ -1416,4 +1532,3 @@ Ip_addr = (EFR/1000);		//Gets value of IP at the point of exception
 </script>
 </body>
 </html>
-

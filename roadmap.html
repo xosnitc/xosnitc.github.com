@@ -919,40 +919,47 @@ endif;	</pre>
 				</li></p>
 
 				<li> <p>Next, the memory copy of the <a href="xos-spec.html#navfiles_fat">FAT</a> is searched for a free entry. A free entry in the FAT is indicated by -1 in the entry for basic block (word 2 of each FAT entry). If no free entry is found, return with -1, indicating failure.  </li></p>
-				<li> If a free FAT entry is found, set the <tt>filename</tt> field and <tt>Basic Block</tt> field in the FAT entry with the filename and basic block 
-					<tt>filename</tt> and the <tt>free block number</tt> obtained  in the previous steps are stored in the <em>Filename</em> field and <em>basic block number</em> field of the free <a href="xos-spec.html#navfiles_fat">FAT</a> entry respectively.</li> (ERROR !!! BASIC BLOCK)
-					<li> The <em>file size</em> field of the FAT entry is initialized to zero.</li>
-
-(ERROR !!! Explain why the code is here!!)
-				<div class="syntax">
-						<pre>
-alias counter R8;
-counter = 0;
-while(counter < 512) do
-	if([FAT + counter + 2] == -1) then
-		.
-		// Set the FAT entry 
-		.
-		break;
-	endif;
-	counter = counter + 8;
-endwhile;
-
-// Return with -1 if there is no free entry
-if(counter == 512) then 		
-	[physicalSP - 12] = -1;		
-	ireturn;	
-endif;</pre>
-				</div>
-		
-				<li> Load the <a href="xfs-spec.html#navfile">basic block</a> of the file from the disk to the <a href="xos-spec.html#navfiles_scratchpad">scratchpad</a> . Each entry of the block list in the basic block is initialized to zero and it is stored back to the disk.</li>	
-				<li> The updated copies of FAT and disk free list in the memory are then stored back to the disk.</li>
 				
-				<li> The return value of this system call is 0 in case of success and -1 in case of failure. The return value is stored in the stack at address Stack Pointer - 12. The value of stack pointer is obtained from physicalSP.</li>
-				<li>Use an <b>ireturn</b> instruction to transfer control back to USER Mode.</li>
+				<li> <p>If a free FAT entry is found, set the <b>File Name</b> field with the filename given as argument. The <b>File Size</b> field in the FAT entry is initialized to 0. The <b>Block No. of Basic Block</b> is set to the block number of the free block found in Step 1. 
+				</li></p>
+
+		
+				<li><p> Scratchpad is a memory page used to load a disk block from disk to memory for reading or editing. It uses the same memory page as OS Startup Code. See <a href="xos-spec.html#navfiles_scratchpad">scratchpad</a>. Load the <a href="xfs-spec.html#navfile">basic block</a> of the file from the disk to the <a href="xos-spec.html#navfiles_scratchpad">scratchpad</a>. 
+				</li></p>
+				<li> <p>All the words in the basic block loaded to the scratchpad must be set to 0. This indicates that there are no data blocks currently for this file. After this is done, the basic block residing in the scratchpad needs to be stored back to the disk. Store the memory page 1 (corresponds to the scratchpad) to disk block number corresponding to the basic block of the newly created files. Use the <tt>store</tt> statement in SPL to do this. (See <a href="spl-spec.html#navstatements">statements</a> in SPL). </li></p>
+
+				<li> <p>The updated copies of <a href="xos-spec.html#navfiles_fat">FAT</a> and <a href="xos-spec.html#navfiles_dfl">Disk Free List</a> in the memory are then stored back to the disk.</li></p>
+				
+				<li><p> Return from the system call with return value 0, indicating success. An <b>ireturn</b> instruction is used to transfer control back to user program which invoked the system call. </li></p>
+	
 				</ol>
+			<h6>Making things work!</h6>
+			<ol>
+				<li><p>Compile the OS Startup Code and load the compiled output file to the XFS Disk</p></li>
+				<li><p>Compile the Interrupt 1 Routine and load the compiled output file to the XFS Disk</p></li>
+				<li><p>Create a test APL program which uses the Create system call. A sample program is given below.</p></li>
+				<div class="syntax"><pre>decl
+	integer status;
+enddecl
+integer main()
+{
+	status = Create("myfile.dat");
+	print(status);
+	return 0;
+}</pre>
+</div> This program invokes Create system call to create a file named <tt>myfile.dat</tt>. It prints the value returned by the Create system call.
+</p></li>
+				<li> <p> Compile the above given APL program using APL compiler. Load it as the INIT program to XFS Disk using the XFS interface.</p></li>
+				<li><p> Run the machine with the timer disabled</p><div class="syntax"> $HOME/myxos/xsm/xsm --timer=0</div></li>
+				
+			</ol>
+			<p>If the system call execution did not fail in between 0 will be printed and the machine will halt. The correct output is given below</p>
+			<tt><pre>
+0 
+Machine is halting     </pre>
+			</tt>
+			 However, this does not ensure that file is created properly. To ensure the proper functioning of the Create system call, invoke the XFS interface and use the <b>ls</b> command to see if the file <tt>myfile.dat</tt> is listed. You may use <b>copy</b> command to check if the contents of FAT and Disk Free List are set correctly by the Create system call.
 			
-			Check if the file is created by using the ls command in the XFS interface.
 
 
 			</article>

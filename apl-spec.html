@@ -485,7 +485,7 @@
 			<article  id="navread" class="grid col-full">
 				<h4>Read</h4>
 				<p>
-					Reads one word(16 bytes) from a file which has the specified file descriptor, into a string/integer variable. The return value of this system call is 0, if it is a success. 
+					Reads one word from a file which has the specified file descriptor, into a string/integer variable. The return value of this system call is 0, if it is a success. 
 					If the <b>Read</b> fails, an appropriate error code is returned.
 
 					<br/>
@@ -557,7 +557,7 @@
 			<article  id="navexec" class="grid col-full">
 				<h4>Exec</h4>
 				<p>This system call is used to load the program, whose name is specified in the argument, 
-				in the memory space of the current process and start its execution. The return value of this system call is 1 in case of failure. <br/>
+				in the memory space of the current process (overwriting existing contents) and start its execution. The return value of this system call is 1 in case of failure. <br/>
 				<tt>&nbsp&nbsp&nbsp	
 					integer <b>Exec</b> (string fileName);</tt></p>
 			</article>

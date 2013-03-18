@@ -941,7 +941,8 @@ INT <i>number</i> 		// Invoke the corresponding INT instruction</div></pre>
 				
 				<h6> Modifying Interrupt 1 Routine</h6>
 				<p>
-				The previous implementation of Interrupt 1 Routine to print <tt>SW Interrupt</tt> is to be discarded. Interrupt 1 is used by two system calls Create and Delete. The system call number is to be obtained from the stack as explained earlier. Since interrupt routines execute in kernel mode, you will need to calculate the physical address of SP using the formula described in Stage 6. After getting the system call number in a register which is aliased as <tt>sysCallNo</tt>, use and <tt>if</tt> condition to check whether the system call corresponds to Create or Delete.</p>			
+				The previous implementation of Interrupt 1 Routine to print <tt>SW Interrupt</tt> is to be discarded. Interrupt 1 is used by two system calls Create and Delete. The system call number is to be obtained from the stack. The system call number is at the 2nd position from the stack, i.e. SP - 1. This is explained in the figures given above. Since interrupt routines execute in kernel mode, you will need to calculate the physical address of SP using the formula described in Stage 6. Get the system call number in a register which is aliased as <tt>sysCallNo</tt>. Fetch the arguments from 3rd position onwards in the stack, i.e. SP - 2 onwards. Put the arguments in registers. </p>		
+				 <p> Based on the <tt>sysCallNo</tt> perform the required actions.</p>	
 				 A skeleton of the new Interrupt 1 Routine is given below. 
 				</p>
 				
@@ -951,7 +952,8 @@ INT <i>number</i> 		// Invoke the corresponding INT instruction</div></pre>
 alias physicalSP R8;
 physicalSP = ([PTBR + 2 * (SP / 512)] * 512) + (SP % 512);
 .
-// Get system call no. from the stack
+// Get system call no. from the stack and put it in registers
+// Get arguments from stack and put it in registers
 .
 if ( sysCallNo == 1) then
 	// Implementation of Create 
@@ -984,11 +986,11 @@ endif;	</pre>
 				</li></p>
 				<li> <p> If no free block is found, return from the system call with return value -1, indicating failure. To do this, put -1 at the 2nd position from the top of stack as shown in Figure 2, and use <b>ireturn;</b> instruction. This will pass the control back to the user program. The user program can fetch the return value from the appropriate position in the stack. </li></p>
 				
-				<li>If a free block is found, it is used as the <a href="xfs-spec.html#navfile">basic block</a> of the file to be created. A basic block of the file stores the block numbers of the data blocks of the file. The data blocks will have the contents of the file. The entry in the Disk Free List for this block is set to 1, indicating that it has now been allocated. </li></p>
+				<li>If a free block is found, it is used as the <a href="xfs-spec.html#navfile">basic block</a> of the file to be created. A basic block of the file stores the block numbers of the data blocks of the file. The data blocks will have the contents of the file. </li></p>
 				
 			
 
-				<li> <p>Create system call has only 1 argument, <tt>filename</tt>. It is stored in the 3rd position from the top of the stack as shown in FIGURE 1.  Fetch it and store it to a register. </li></p>
+				<li> <p>Create system call has only 1 argument, <tt>filename</tt>. You have already fetched the arguments and placed them in registers. </li></p>
 				
 				<li> <p>The memory copy of the <a href="xos-spec.html#navfiles_fat">FAT</a> is to be searched with this <tt>filename</tt> to check a file with the same name already exists. If it exists return from the system call with 0, indicating success. For convenience you may use the <a href="spl-spec.html#navconst">predefined constant</a> <tt>FAT</tt> in SPL which stores the address of memory copy of FAT.
 				</li></p>
@@ -1003,7 +1005,7 @@ endif;	</pre>
 				</li></p>
 				<li> <p>All the words in the basic block loaded to the scratchpad must be set to 0. This indicates that there are no data blocks currently for this file. After this is done, the basic block residing in the scratchpad needs to be stored back to the disk. Store the memory page 1 (corresponds to the scratchpad) to disk block number corresponding to the basic block of the newly created files. Use the <tt>store</tt> statement in SPL to do this. (See <a href="spl-spec.html#navstatements">statements</a> in SPL). </li></p>
 
-				<li> <p>The updated copies of <a href="xos-spec.html#navfiles_fat">FAT</a> and <a href="xos-spec.html#navfiles_dfl">Disk Free List</a> in the memory are then stored back to the disk.</li></p>
+				<li> <p> The entry in the Disk Free List for the basic block is set to 1, indicating that it has now been allocated.The updated copies of <a href="xos-spec.html#navfiles_fat">FAT</a> and <a href="xos-spec.html#navfiles_dfl">Disk Free List</a> in the memory are then stored back to the disk.</li></p>
 				
 				<li><p> Return from the system call with return value 0, indicating success. An <b>ireturn</b> instruction is used to transfer control back to user program which invoked the system call. </li></p>
 	
@@ -1057,7 +1059,32 @@ Machine is halting     </pre>
 			<h2>Stage 8: Playing with files</h2>
 			<p>You have already created files using the <b>Create</b> system call. In this stage, you will implement the <b>Open</b>, <b>Close</b>, <b>Delete</b>, <b>Write</b>, <b>Seek</b> and <b>Read</b> system calls. </p>
 				
-			<p>The various file system calls and their corresponding interrupt routines are given in the table below.</p>
+
+
+			<p>XOS uses two data structures to maintain information about opened files. They are <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a> and <a href="xos-spec.html#navpromgmt_pcb">Per-Process Open-File Table</a>. There is one system-wide open file table for XOS which stores the FAT index corresponding to each opened file and the number of times that file has been opened. There is a per-process open file table for every process in its PCB. The per-process open file table stores the system-wide open file table index corresponding to an open instance of a file, and the LSEEK position of this open instance, which indicates the word in the file to which the process currently points to for read/write operations. A single file may be opened more than once by the same or different processes. Each open instance has an entry in the corresponding per-process file table. But there will only be one entry corresponding to an opened file in the System Wide open file table. <b>File Open Count</b> field of the System Wide Open File Table entry stores the number of open instances of a file. </p>
+
+			<h6>Modifying OS Startup Code</h6>
+			<ol>
+			<li> <p>All entries of the <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a> must be set to invalid initially. This is because no files are open when the OS starts. An invalid entry is indicated by -1 in the <b>FAT Index</b> field of all entries. The <b>File Open Count</b> field of all entries must be set to 0.</b>. For convenience, you may use the predefined constant <tt>FILE_TABLE</tt> in SPL which stores the address of the System Wide Open File Table. </li></p>
+			
+			
+				<div class="syntax">
+				<pre>
+alias counter R8;			
+counter = 0;
+while ( counter <  128) do			// 64 entries, each of size 2 words
+	[ FILE_TABLE + counter + 0] = -1;	// Set FAT Index to -1
+	[ FILE_TABLE + counter + 1] =  0;	// Set File Open Count to 0
+	counter = counter + 2;			// Move to next entry
+endwhile;					</pre>
+				</div>
+				<li> <p>The only process OS Startup Code loads to memory is the INIT process. Hence all the entries of the Per-Process Open File Table of the INIT process must be best to invalid. This is because no files are opened by the INIT process. An invalid Per-Process File Table entry is indicated by -1 in both the fields (Pointer to System-Wide Open File Table entry and LSEEK position).  </li>	</p>
+				
+				<li> <p>File System Calls are implemented using interrupt routines 1 to 4. You have already written code to load interrupt routine 1 from the disk to memory. Similarly add instructions to load Interrupt Routines 2, 3 and 4 from disk to memory. (See <a href="xos-spec.html#navmemorg" >Memory Organization</a> and <a href="xfs-spec.htmL#navdiskorg">Disk Organization</a>). </li>		</p>
+			</ol>
+
+			<h6>Programming Interrupt Routines</h6>
+			<p>As done for Create system call, every system call is associated with an interrupt routine and a system call number.The various file system calls and their corresponding interrupt routines are given in the table below.</p>
 				<table class="doctable" style="width:50%">
 					<tr><th>System Call Name</th><th>System Call #</th><th>Interrupt Routine #</th></tr>
 					<tr><td>Create</td>			 <td>1</td>				<td> 1</td> </tr>
@@ -1068,73 +1095,52 @@ Machine is halting     </pre>
 					<tr><td>Seek</td>			<td>6</td>				<td> 3</td> </tr>
 					<tr><td>Read</td>			<td>7</td>				<td> 3</td> </tr>
 				</table>
-			
 			<br/>
-			<h5> Open System Call</h5>
-			<p> The Open system call is to open a file in the XFS disk. For the Open system call to work, the file must already be present in the disk. XOS uses two data structures to maintain information about opened files. They are <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a>. </p>
-<li>
-				Set the FAT Entry and File Open Count of 64 entries of the  <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a>  to -1. 
-
-			</li>
-				<div class="syntax">
-				<pre>
-alias counter R8;	// R8 - R15 is used by system programmers.
-counter = 0;
-while ( counter <=  128) do
-	[ FILE_TABLE + counter] = -1;
-	counter = counter + 1;
-endwhile;						</pre>
-				</div>
-				<li> Set all words in the <a href="xos-spec.html#navpromgmt_pcb">Per-Process Open-File Table in the PCB</a> of INIT to -1  (ERROR !!! Why) </li>			
+			<p>The system call number must be fetched from the stack and conditionally the corresponding system call actions need to be performed. Actions that needs to be taken for each system call is discussed in detail in this stage. After programming the interrupt routine, it must be compiled using SPL compiler, and loaded to XFS disk using XFS interface. </p>
+			<p>To check if the system call is functioning properly, make application programs which invoke the system call. Compile it using APL compiler and load it to disk as the INIT program. Run the machine by <b>disabling the timer</b>. You may use the XFS interface to check the working of file sytem calls.</p>
 			
+			<p> Detailed information and actions corresponding to each system call is given below.</p>
+			<h5> Open System Call</h5>
+			<i>Description:</i> The Open system call is used to open a file present in the XFS disk. <br/>
 			<i>System Call No</i>: 2 <br/>
 			<i>Interrupt Routine No</i>: 2 <br/>
-			<i>Arguments</i>: filename <br/>
-			<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
-			<br/>
-			Opens a file with the filename given as argument.
-
+			<i>Arguments</i>: filename of the file to be opened <br/>
+			<i>Return Value</i>: Index of open instance in per-process file table (Success) or -1 (Failure) <br/> 
 			<ol>
-				<li> Memory copy of FAT is searched for the <tt>filename</tt> (get the <tt>filename</tt> from stack as explained in the Create system call) . If the entry is not found, -1 is returned. Otherwise, store the index of the FAT entry in a register.</li>
+				<li><p>First, you need to check if a file with the given <b>filename</b> exists in the disk. To do this, memory copy of FAT is searched for the <tt>filename</tt> given as argument to the system call. Steps to obtain the argument from the stack is explained in detail in Stage 7. If the entry is not found, -1 is returned, indicating failure. Otherwise, store the index of the FAT entry in a register.</li></p>
 
-				<li>Then, the <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a> is searched for the FAT Index  found in the previous step. If an entry is found, increment the <a href="xos-spec.html#navfiles_swoft"><tt>File Open Count</tt></a>.</li>
-
-				<li> If an entry is not found with the FAT Index, then search for a free entry in the System-Wide Open File Table. If there are no free entries (indicated by -1 <tt>FAT Index</tt> field), return from the system call with return value -1. Otherwise, store <tt>FAT Index</tt> and set the <tt>File Open Count</tt> field as 1 in free entry found.	</li>
-
-				<li> Store the index of the entry (in System-Wide Open File Table) in a register.</li>
-
-				<li> Every process will have a <a href="xos-spec.html#navpromgmt_pcb">Per-Process File Table</a> in its PCB. This stores the details of files opened by this process. Find the PCB's location using the value of PTBR (It may be directly obtained if there is only one process, however following a general approach to get PCBs will be useful when more than one process starts running). Recall that using the value of PTBR we can find the ProcessID using the formula.
-					
-					<div class="syntax"><tt>  ProcessID = (PTBR - 1024) / 8; </tt></div>
-
-				Page Tables start at word address 1024. And size of each <a href="xos-spec.html#navpromgpmt_pagetbl">per-process page table</a> is 8 words. <b>NOTE: This calculation is specific to our operating system. In general Process ID is not obtained from the value of PTBR.</b> 
-				<br/><br/>
-					We can find the PCB of the current process using the <tt>ProcessID</tt> as done in earlier stages.
-
-					<div class="syntax"><tt> PCB_Start = READY_LIST + 32 * ProcessID; </tt></div>
-					
-					
-				</li>
-
-				<li>  A free entry is searched in the <a href="xos-spec.html#navpromgmt_pcb">per-process open file table in the PCB</a> of the process. A free entry is indicated by -1 in the first field (Pointer to <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a>). If there are no free entries, -1 is returned by the system call. </li>
-
-				<li> Otherwise, set the <tt>Pointer to System-Wide File Table Entry</tt> field to the index stored in Step 4 and set <tt>LSEEK Position</tt> to 0.  </li>
+				<li><p> If the file is not already opened, an entry in the system-wide open file table needs to be created. Otherwise, there will be an entry corresponding to this file in the System wide Open file table, which needs to be updated. To do this, search the <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a> for the FAT Index found in the previous step. </p>
+					<ul>
+					<li>If an entry with the FAT index is found, store the index of the matched entry in a register.  </li>
+					<li>Otherwise, search for a free entry in the System-Wide Open File Table. A free entry is indicated by -1 in the <b>FAT Index</b> field in the System-wide Open File Table. If there are no free entries. return from the system call with return value -1. If a free entry is found, store the index of the entry in a register. 
+					</li>
+				
+					</ul>
+			 </li></p>
+				
 			
-				<li> The index of this entry in the local file table is returned as a return value of the system call. This is known as the file descriptor.</li>
+
+				<li> <p>Every process will have a <a href="xos-spec.html#navpromgmt_pcb">Per-Process File Table</a> in its PCB. This stores the details of open instances of files by that process. Note that a single file may be opened more than once by the same process. Find the location of the PCB of the current process by obtaining the Process ID using the method described in Stage 6. A free entry is searched in the <a href="xos-spec.html#navpromgmt_pcb">per-process open file table in the PCB</a> of the process. A free entry is indicated by -1 in the first field (Pointer to <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a>). If there are no free entries -1 is returned by the system call. Otherwise, store the index of the Per-process file table entry in a register. Set the first field (<b>Pointer to System-Wide File Table Entry</b>) of this entry to the index of the System-wide open file table entry stored in Step 2 and set <b>LSEEK Position</b> field to 0.  				
+				</li></p>
+
+		
+
+				<li> <p> Set the <b>FAT Index</b> field of the System Wide file table entry found in Step 2 with the FAT Index found in Step 1. This field in the system wide open file table points to the FAT entry for the file.  Increment the <b>File Open Count</b> field in the system-wide open file table by 1. XOS keeps track of number of times a file has been opened in the <b>File Open Count</b> field for each open file in the System-wide open file table.  </li></p>
+			
+				<li> The index of the entry in the per-process open file table created in step 3 is returned as a return value of the system call. This is known as the file descriptor. </li>
 			</ol>
 
 
-			<h6> Close </h6>
+			<h5> Close System Call </h5>
+			<i>Description</i>: Closes a file opened by the process.<br/>
 			<i>System Call No</i>: 3 <br/>
 			<i>Interrupt Routine No</i>: 2 <br/>
 			<i>Arguments</i>: fileDescriptor <br/>
 			<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
-			<br/>
-			Closes a file opened by the process.
 
 			<ol> 
-				<li> Get the address of PCB of the process as in the Open System Call implementation.</li>
-				<li> Index into the per-process open file table using the argument <tt>fileDescriptor</tt>. Return from the system call with -1 (failure) if the <tt>fileDescriptor</tt> is invalid or its corresponding entry is invalid.</li>
+				
+				<li> Index into the per-process open file table in the PCB of the process using the argument <b>fileDescriptor</b>. Return from the system call with -1 (failure) if the <tt>fileDescriptor</tt> is invalid or its corresponding entry is invalid.</li>
 				<li> Using the <tt>Pointer to System Wide Open File Table Entry</tt> field, index to the System Wide Open File Table </tt> and decrement <tt>File Open Count</tt> by one. If it becomes 0, invalidate the entry by setting both the fields to -1. </li>
 				<li> Now invalidate the Per-Process Open File Table entry, by setting the fields to -1</li>
 				<li> Return from system call with 0 (success).

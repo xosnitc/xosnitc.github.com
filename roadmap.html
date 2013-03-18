@@ -1055,10 +1055,9 @@ Machine is halting     </pre>
 
 			<article  id="navstage8" class="grid col-full">
 			<h2>Stage 8: Playing with files</h2>
-			<p>We have already created files using the "Create" system call. Now we will implement the remaining 
-			system calls - <b>Open, Close, Delete, Write, Seek and Read</b>.</p>
+			<p>You have already created files using the <b>Create</b> system call. In this stage, you will implement the <b>Open</b>, <b>Close</b>, <b>Delete</b>, <b>Write</b>, <b>Seek</b> and <b>Read</b> system calls. </p>
 				
-					<h4>File System Calls</h4>
+			<p>The various file system calls and their corresponding interrupt routines are given in the table below.</p>
 				<table class="doctable" style="width:50%">
 					<tr><th>System Call Name</th><th>System Call #</th><th>Interrupt Routine #</th></tr>
 					<tr><td>Create</td>			 <td>1</td>				<td> 1</td> </tr>
@@ -1069,8 +1068,10 @@ Machine is halting     </pre>
 					<tr><td>Seek</td>			<td>6</td>				<td> 3</td> </tr>
 					<tr><td>Read</td>			<td>7</td>				<td> 3</td> </tr>
 				</table>
-
-			<h6> Open </h6>
+			
+			<br/>
+			<h5> Open System Call</h5>
+			<p> The Open system call is to open a file in the XFS disk. For the Open system call to work, the file must already be present in the disk. XOS uses two data structures to maintain information about opened files. They are <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a>. </p>
 <li>
 				Set the FAT Entry and File Open Count of 64 entries of the  <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a>  to -1. 
 

@@ -143,8 +143,8 @@
 				<li><a href="#navmemmgmt_mfl">Memory Free List</a> is a list of free memory locations in the memory. </li>
 				<li><a href="#navfiles_swoft" >System Wide Open File Table</a>  contains a details of files which are opened by the processes.  </li>
 				<li><a href="#navpromgmt_readylist" >Ready List</a> of <a href="#navpromgmt_pcb" >Process Control Block (PCB)</a>s, is a list of Process Control Blocks, which indicates the ready and terminated processes.</li>
-				<li><a href="#navfiles_fat" >File Allocation Table (FAT)</a>contains details about files stored on the disk.</li>
-				<li> <a href="#navfiles_dfl" >Disk Free List</a>  contains details about used and used blocks in the disk. </li>
+				<li><a href="#navfiles_fat" >Memory copy of File Allocation Table (FAT)</a>contains details about files stored on the disk. See <a href="xfs-spec.html#navfat">FAT in XFS</a></li>
+				<li> <a href="#navfiles_dfl" >Memory copy of Disk Free List</a>  contains details about used and used blocks in the disk. See <a href="xfs-spec.html#navdfl">Disk Free List in XFS</a> </li>
 				<li><a href="#navsysroutines_exhandler" >Exception Handler</a>  contains the kernel code to be executed during various exceptions. </li>
 				<li> <a href="#navsysroutines_timer" >Timer Interrupt Routine</a> contains the kernel code to be executed during a timer interrupt. </li>
 				<li> <a href="#navsysroutines_interrupt" >Interrupt Routines</a> contains kernel code to be executed during interrupts (1 to 7). </li>
@@ -267,20 +267,21 @@ A	 maximum of 32 PCBs can be stored in the memory, and hence the maximum number 
 				The Per-Process Page Table stores the physical page number corresponding to each logical page associated with the process. The logical page number can vary from 0 to 3 for each process. Therefore, each process has 4 entries in the page table. Per-Process Page Tables are stored in Page 2, words 1024 – 1279 in the memory ( 256 words = 32 processes × 4 entries )
 				</p>
 				<p>
-					When a process is loaded only the disk addresses of the program are stored, and by demand paging (Refer <a href="#navmemmgmt_paging" >Paging</a>) pages are loaded/allocated for the process. Once all pages are loaded, each entry contains the page number where the data specified by the logical address resides in the memory and auxiliary information which includes valid/invalid bit, reference bit etc. <br/>
+					When a process is loaded only the disk addresses of the program are stored, and by demand paging (Refer <a href="#navmemmgmt_paging" >Paging</a>) pages are loaded/allocated for the process. Once all pages are loaded, each entry contains the page number where the data specified by the logical address resides in the memory and auxiliary information which includes reference bit etc, valid/invalid bit, . <br/>
 					Eg :
 				</p>
 
 				<table class="doctable" style="width:50%">
-					<tr>  <th>Physical Page Number</th>  <th> Auxiliary information (valid bit)</th> </tr>
-					<tr> <td>36 </td> <td> 1</td> </tr>
-					<tr> <td>311</td> <td> 0</td> </tr>
-					<tr> <td> 54</td> <td> 1</td> </tr>
-					<tr> <td>490</td> <td> 0</td> </tr>
+					<tr>  <th>Physical Page Number</th>  <th> Auxiliary information <br/>(referenced and valid bit)</th> </tr>
+					<tr> <td>36 </td> <td> 01</td> </tr>
+					<tr> <td>311</td> <td> 00</td> </tr>
+					<tr> <td> 54</td> <td> 01</td> </tr>
+					<tr> <td>490</td> <td> 00</td> </tr>
 				</table>
 
 				In the above example : 
 				<ul>
+					<li> Reference bit of every entry is set as 0, indicating unreferenced</li>
 					<li> The 1st entry is a valid page in memory as the valid bit is 1.</li>
 					<li> The 2nd entry is invalid (valid bit is 0) and the disk block no corresponding to that entry is stored (311).</li>
 					<li> The 3rd entry is also a valid page (valid bit is 1). </li>
@@ -348,7 +349,7 @@ The INIT process is the first user program that is loaded by the OS after start 
 					<ul>
 					<li> <i>Reference Bit (R)</i>: This bit is set to 1 by the machine every time a page is accessed. This bit is used for page replacement by the OS
 
-					<li> <i>Valid/Invalid Bit (VI) </i> is a value 1 or 0 for valid and invalid respectively. It is valid if and only if the entry is a physical memory location. It is invalid if either the entry points to location on the disk or if its not in the logical address space of the process.</li>
+					<li> <i>Valid/Invalid Bit (I) </i> is a value 1 or 0 for valid and invalid respectively. It is valid if and only if the entry is a physical memory location. It is invalid if either the entry points to location on the disk or if its not in the logical address space of the process.</li>
 					</li>
 					</ul>		
 				</ul>

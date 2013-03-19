@@ -267,7 +267,7 @@ A	 maximum of 32 PCBs can be stored in the memory, and hence the maximum number 
 				The Per-Process Page Table stores the physical page number corresponding to each logical page associated with the process. The logical page number can vary from 0 to 3 for each process. Therefore, each process has 4 entries in the page table. Per-Process Page Tables are stored in Page 2, words 1024 – 1279 in the memory ( 256 words = 32 processes × 4 entries )
 				</p>
 				<p>
-					When a process is loaded only the disk addresses of the program are stored, and by demand paging (Refer <a href="#navmemmgmt_paging" >Paging</a>) pages are loaded/allocated for the process. Once all pages are loaded, each entry contains the page number where the data specified by the logical address resides in the memory and auxiliary information which includes reference bit etc, valid/invalid bit, . <br/>
+					When a process is loaded, only the disk addresses of the program are stored initially. The actual pages are not loaded into memory. In <b>demand paging</b>, the actual pages are loaded only when the pages are accessed for the first time (Refer <a href="#navmemmgmt_paging" >Paging</a> and <a href="#navmemmgmt_vm">Virtual Memory</a>). Once all pages are loaded, each entry contains the page number where the data specified by the logical address resides in the memory and auxiliary information which includes reference bit etc, valid/invalid bit, . <br/>
 					Eg :
 				</p>
 
@@ -369,11 +369,11 @@ The INIT process is the first user program that is loaded by the OS after start 
 			
 			<article id="navmemmgmt_vm" class="grid col-full">
 				<h4>Virtual Memory</h4>
-				<p>XOS allows virtual memory management, i.e. running processes without having all the pages in memory. It makes use of a backing store or swap in the disk to replace pages from the memory and allocate the emptied memory to another process. This increases the total number of processes that can be run simulta neously on the OS.</p>
+				<p>XOS allows virtual memory management, i.e. running processes without having all the pages in memory. It makes use of a backing store or swap in the disk to replace pages from the memory and allocate the emptied memory to another process. This increases the total number of processes that can be run simultaneously on the OS.</p>
 				<p>
-				XOS starts executing a process with no pages of that process in memory. Pages are loaded into the memory from the disk only when it is required by the CPU. This strategy is known as pure demand paging. The page table is loaded with the disk address of the data blocks corresponding to the process and all entries are set as invalid and not referenced initially (‘00’ as auxiliary information).		</p>
+				Before XOS starts executing a process, its page tables are set with disk block numbers i.e initially no pages are allocated to the process. For each page table entry, the flags are set as 0 (invalid) and 0 (unreferenced). When a page is referenced for the first time, it triggers a page fault exception (since valid bit is set as 0). The Exception Handler Routine is responsible for loading the required page from the disk to the memory. This strategy of loading pages when accessed for the first time, is known as <b>Pure Demand Paging</b>. </p>
 				<p>
-				Page Fault Exceptions occur when a required page is not currently loaded into the memory. In this case the Exception Handler Routine is responsible for loading the required page to the memory from the disk. If no free memory is available a page replacement technique is used to find a victim page. The page replacement technique used in XOS is a second chance algorithm(Refer Silberschatz, Galvin, Gagne: Operating System Concepts) which uses the reference bits in the auxiliary information. The victim page is swapped out to to the disk (swap area) to accommodate the required page.</p>
+				On encountering a page fault exception, the Exception Handler Routine loads the required page from the disk to a free page in the memory. If no free page is available in the memory, a page replacement technique is used to select a victim page. The page replacement technique used in XOS is a second chance algorithm (Refer Silberschatz, Galvin, Gagne: Operating System Concepts) which uses the reference bits in the auxiliary information. The victim page is swapped out to to the disk (swap area) to accommodate the required page.</p>
 			</article> 
 			</br></br>
 			<div class="up grid col-one-third" style="float:right">
@@ -587,7 +587,7 @@ which caused the exception.
 
 			<article id="navsysroutines_timer" class="grid col-full">
 			<h4>Timer Interrupt Routine</h4>
-			<p>The Timer Interrupt Routine is responsible for context switch, i.e. storing the state (values of the registers) of the currently executing process to the PCB, and setting the registers with values from the PCB of the next ready process in the Ready List of PCBs. A scheduler is responsible for selecting a ready process from this list. The Scheduler code is also contained in the Timer Interrupt Routine.</p>
+			<p>The Timer Interrupt Routine is responsible for context switch, i.e. storing the state (values of the registers) of the currently executing process to the PCB, and setting the registers with values from the PCB of the next ready process in the Ready List of PCBs. A scheduler is responsible for selecting a ready process from this list. The Scheduler code is also contained in the Timer Interrupt Routine. The Timer Interrupt routine resides in page 8 of the memory.</p>
 			</article>		
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -595,7 +595,7 @@ which caused the exception.
 			
 			<article id="navsysroutines_interrupt" class="grid col-full">
 			<h4>Interrupt Routines</h4>
-			<p>The Interrupts from 1 to 7 are invoked by the user processes through system calls. Each interrupt routine has code corresponding to one or more system calls. Refer <a href="#navsyscalls" >System Calls</a>. </p>
+			<p>The Interrupts from 1 to 7 are invoked by the user processes through system calls. Each interrupt routine has code corresponding to one or more system calls. Interrupt routines for interrupts 1 to 7 reside in memoery locations 9 to 15. Refer <a href="#navsyscalls" >System Calls</a>. </p>
 			</article>		
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>

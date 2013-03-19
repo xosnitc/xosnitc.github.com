@@ -215,7 +215,7 @@
 				There are two kinds of memory addresses,
 				</p>
 				<ul style="list-style-type:disc">
-					<li><p> Logical address : When a process runs, CPU generates address for the data accessed by this process. 
+					<li><p> Logical address : When a process runs in <a href="#navmodes">user mode</a>, CPU generates address for the data accessed by this process. 
 							This address is called the Logical address. </p></li>
 					<li><p> Physical address : It is the actual location of the data in the main memory. </p></li>
 				</ul>
@@ -232,10 +232,10 @@
 							The number of entries in the page table is stored in <b>PTLR</b> (Page Table Length Register). 
 							Each entry of the page table is two words long.
 							<ul>
-								<li><p> First word contains physical page number corresponding to a logical page number.</p></li>
-								<li><p> The second word can be used as flags. 
-										The first two positions in this word is used as <i>valid/invalid</i> bit (if the entry is a valid 
-										physical memory location or not) and <i>reference bit</i> (its set to 1 every time a page is accessed) respectively.</p></li>
+								<li><p> First word contains a physical page number corresponding to a logical page number, or  a disk block number if the corresponding page is not loaded (See <a href="xos-spec.html#navmemmgmt_vm">Virtual Memory</a>).</p></li>
+								<li><p> The second word contains flag bits. 
+										The first position in this word is used as <i>reference bit</i>. This bit is used in the page replacement algorithm to implement demand paging. It is initially set to 0 and set to 1 when the page is accessed (See <a href="xos-spec.html#navmemmgmt_vm">Virtual Memory</a>).<br/>
+										The second position of the word is used as a <i>valid</i> bit. It is set to 1 if the entry is a valid physical memory location or set to 0 otherwise. Upon encountering an invalid page, a page fault exception is trigerred. On this exception, the <a href="#navexcep">EFR (Exception Flag Register)</a> is set with IP of the instruction where the exception occured, logical address of the memory location that caused the exception and cause of the exception (page fault). The machine switches into kernel mode and the exception handler routine is invoked. After the routine, the execution resumes at the IP at which the exception was caused (See <a href="xos-spec.html#navsysroutines_exhandler">Exception Handler</a>).</p></li>
 							</ul>
 						<p>The logical page number is used to index the page table to get the corresponding physical page number.</p>
 							
@@ -509,7 +509,7 @@
 							<li> <p> <b>Kernel mode</b> : Both privileged and unprivileged instructions can be executed in this mode. 
 							The value of <tt>IP</tt> and <tt>EFR</tt> cannot be explicitly changed by any instruction. 
 							Also these registers cannot be used in addressing memory locations. 
-							All other registers can be used in Kernel Mode. Address translation does not occur in kernel mode.</p> </li>
+							All other registers can be used in Kernel Mode. Address translation does not occur in kernel mode. In kernel mode interrupts are disabled. (See <a href="#navintrrupt">Interrupts</a>)</p> </li>
 					</ul>
 					
 								

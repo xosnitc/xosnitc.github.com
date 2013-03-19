@@ -200,7 +200,7 @@ To cool in the peppermint wind.</pre>
 							<div class="syntax"> 
 <pre># load --data $HOME/myxos/sample.dat</pre>
 							</div>
-						This will load the file to the XFS disk. A FAT entry will be created for this file. <a href="xfs-spec.html#navfat">FAT</a> or File Allocation Table contains information such as the file name, file size and the block number of basic block. The basic block corresponding to a file will contain locations of the file blocks. See <a href="xfs-spec.html#navfile">files</a> in XFS.
+						This will load the file to the XFS disk. A FAT entry will be created for this file. <a href="xfs-spec.html#navfat">FAT</a> or File Allocation Table contains information such as the file name, file size and the block number of <a href="xfs-spec.html#navfile">basic block</a>. The basic block corresponding to a file will contain locations of the file blocks. See <a href="xfs-spec.html#navfile">files</a> in XFS.
 						</li>
 
 						<li> Find out the FAT entry corresponding to the loaded file. See <a href="xfs-spec.h
@@ -283,16 +283,16 @@ peppermint wind</pre>
 				<p>When the XSM machine is started up, the <a href="xsm-spec.html#navrom"> ROM Code </a> is executed. ROM Code resides in page 0 of the memory. It is hard coded into the machine i.e the ROM code at physical address 0 (to 511) is "already there" when machine starts up. The ROM code is called the "bootstrap" loader in OS literature. ROM code does the following operations :
 				<ol>
 					<li>Loads block 0 of disk to page 1 of memory (physical address 512).</li>
-					<li>After completing 1, sets IP to 512 so that the next instruction to be executed is fetched from location 512 (page 1 in memory starts from location 512).</li>
+					<li>After loading the block to memory, it sets IP to 512 so that the next instruction to be executed is fetched from location 512 (page 1 in memory starts from location 512).</li>
 				</ol></p> 
-				<p>So if you write a program in SPL, compile it using SPL compiler and load the compiled code to block 0 of disk using xfs-interface, your  program will be executed by the machine. This program which is loaded to block 0 of disk is supposed to be the <a href="xos-spec.html#navsysroutines_osstartup">OS Startup Code</a>. This OS Startup Code is loaded from disk block 0 to memory page 1 by the ROM Code on machine startup as described above. See <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization</a> </p>
+				<p>So if you write a program in SPL, compile it using SPL compiler and load the compiled code to block 0 of disk using xfs-interface, your  program will be executed by the machine. This program which is loaded to block 0 of disk is supposed to be the <a href="xos-spec.html#navsysroutines_osstartup">OS Startup Code</a>. As described above, this OS Startup Code is loaded from disk block 0 to memory page 1 by the ROM Code on machine startup. See <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization</a> </p>
 
-				<p/>The OS designer must design and program  the "OS Startup Code", compile it using the SPL compiler to generate executable program and copy this program to block 0 of the disk (using xfs interface). Once that is done, this code is loaded into page 1 of memory during boot up by the ROM code. Now your program starts executing.</p>
+				<p/>The OS designer must design and program  the "OS Startup Code", compile it using the SPL compiler to generate executable program and copy this program to block 0 of the disk (using xfs interface). Once that is done, this code is loaded into page 1 of memory during boot up by the ROM code. Now this OS Startup code will start executing.</p>
 			
 				<p>In this stage, we will write a system program to<b> print odd numbers from 1 to n</b> and run it as the OS Startup Code in the machine. The steps to do this are explained in detail below. </p>
 				
 				<ol>
-					<li><p>Create the program to print odd numbers from 1 to n using <a href="spl-spec.html">SPL</a> (System Programmer's Language). See examples of SPL programs in <tt>$HOME/myxos/spl/samples</tt>. <b> It is advised that the system programmer use only the registers R8-R15 while writing SPL programs. </b> </p>
+					<li><p>Create the program to print odd numbers from 1 to n using <a href="spl-spec.html">SPL</a> (System Programmer's Language). See examples of SPL programs in <tt>$HOME/myxos/spl/samples</tt>. <b>NOTE: It is advised that the system programmer use only the Kernel registers R8 - R15 while writing SPL programs </b> as Program registers R0 - R7 are used by application programs.    </p>
 						SPL Code to print odd numbers from 1 to n (taken as input)
 						<div class="syntax"> 
 <pre>
@@ -366,13 +366,14 @@ Machine is halting
 				<h2>Stage 4: Running a user program </h2>
 				<p> User programs or application programs are programmed using <a href="apl-spec.html">APL</a> or Application Programmer's Language. In stage 3, you wrote a system program and executed it. In this stage you will write a user program. </p>
 				<p>
-					A user program is different from a system program. It is to be noted that a system program is executed in kernel mode ( See <a href="xsm-spec.html#navmodes">Privilege modes</a> ). The machine starts its execution in kernel mode. In kernel mode both privileged and unprivileged <a href="xsm-spec.html#navinstr">instructions</a> can be executed. All memory addresses are physical addresses in kernel mode. A user program should be run in user mode. In user mode only unprivileged instructions can be executed. Also all memory addresses are logical in user mode. In user mode, the machine translates logical addresses to physical addresses using the <a href="xsm-spec.html#navaddr">address translation</a> scheme of the machine. The OS Startup code must load the user program to be executed from the disk to the memory and set up the page tables so that the address translation scheme works correctly. 
+					A user program is different from a system program. It is to be noted that a system program is executed in kernel mode ( See <a href="xsm-spec.html#navmodes">Privilege modes</a> ). The machine starts its execution in kernel mode. In kernel mode both privileged and unprivileged <a href="xsm-spec.html#navinstr">instructions</a> can be executed. All memory addresses are physical addresses in kernel mode.</p>
+					<p> A user program should be run in user mode. In user mode only unprivileged instructions can be executed. Also all memory addresses are logical in user mode. In user mode, the machine translates logical addresses to physical addresses using the <a href="xsm-spec.html#navaddr">address translation</a> scheme of the machine. The OS Startup code must load the user program to be executed from the disk to the memory and set up the page tables so that the address translation scheme works correctly. 
 				</p>
 				<p>
-				Before the start of execution of the application program, the mode of execution must be changed from kernel mode to user mode. The value of Instruction Pointer must be set to the starting logical address of the code of the user program (Since all addresses are logical in user mode, program starts executing from logical address 0). Both switching to user mode and setting of the IP is achieved by using <a href="spl-spec.html#naviretstmt"> ireturn</a> instruction. The ireturn instruction in SPL translates to the machine instruction <a href="xsm-spec.html#navinstr_iret">IRET</a>. </p>
+				Before the start of execution of the user program, the mode of execution must be changed from kernel mode to user mode. The value of Instruction Pointer must be set to the starting logical address of the code of the user program (Since all addresses are logical in user mode, program starts executing from logical address 0). Both switching to user mode and setting of the IP is achieved by using <a href="spl-spec.html#naviretstmt"> ireturn</a> instruction. The ireturn instruction in SPL translates to the machine instruction <a href="xsm-spec.html#navinstr_iret">IRET</a>. </p>
 				
 
-				<p>In this stage, an application program in APL is compiled and loaded to the disk as the <a href="xos-spec.html#navpromgmt_init">INIT</a> program. The first user program which is executed is called the INIT program. INIT program is stored in blocks 13-15 of the XFS disk. It does not have a FAT entry or a basic block. An OS Startup code is written in <a href="spl-spec.html">SPL</a> to load the INIT program to the memory on OS startup.</p>
+				<p>In this stage, a user program is written in <a href="apl-spec.html">APL</a> is compiled and loaded to the disk as the <a href="xos-spec.html#navpromgmt_init">INIT</a> program. The first user program which is executed is called the INIT program. INIT program is stored in blocks 13-15 of the XFS disk. It does not have a FAT entry or a basic block. You will also write an OS Startup Code to load your INIT program from the disk to the memory and execute it. Note that the OS Startup code is a system program which runs in kernel mode. Hence it must be written in <a href="spl-spec.html">SPL</a>.</p>
 
 				<ol>
 					<li> Write a program in APL to print all prime numbers lesser than a number taken as input. See <a href="apl-spec.html#navexamples">Examples</a> of APL programs. In the roadmap, the path of the file is assumed to be <tt>$HOME/myxos/apl/apl_progs/prime.apl</tt>. This program will be the INIT program in this stage. </li><br/>
@@ -398,9 +399,9 @@ Machine is halting
 					Now a file  named <tt>int7.xsm</tt> is created in <tt>$HOME/myxos/spl/spl_progs/</tt>. <br/><br/>
 					Load this file to the XFS Disk (disk.xfs) using XFS interface as Interrupt routine 7.
 					<div class="syntax"># load --int=7 $HOME/myxos/spl/spl_progs/int7.xsm</div>
-					Interrupt routine 7 is  responsible for halting the machine upon completion of running user program. Interrupt routine 7 is invoked at the end of every user program. APL compiler adds the <tt>INT 7</tt> instruction at the end of every compiled application program. This is to be loaded into the memory by the OS Startup Code.  You will learn about <a href="xos-spec.html#navsysroutines_interrupt">interrupts</a> in later stages.
+					Interrupt routine 7 is  responsible for halting the machine upon completion of running user program. Interrupt routine 7 is invoked at the end of every user program. APL compiler adds the <tt>INT 7</tt> instruction at the end of every compiled user program. This is to be loaded into the memory by the OS Startup Code.  You will learn about <a href="xos-spec.html#navsysroutines_interrupt">interrupts</a> in later stages.
 					</li><br/><br/>
-					<li> In this stage, it must be ensured that the machine will terminate on <a href="xsm-spec.html#navexcep">exceptions</a>. Upon encountering an exception, the machine invokes an <a href="xos-spec.html#navsysroutines_exhandler">exception handler</a> routine. In this stage, simply halt on exceptions. Compile the SPL program used in the previous step (<tt>HOME/myxos/spl/spl_progs/haltprog.spl</tt>) using <tt>--exhandler</tt> flag 
+					<li> It must be ensured that the machine will terminate on <a href="xsm-spec.html#navexcep">exceptions</a>. Upon encountering an exception, the machine invokes an <a href="xos-spec.html#navsysroutines_exhandler">exception handler</a> routine. In this stage, simply halt on exceptions. Compile the SPL program used in the previous step (<tt>HOME/myxos/spl/spl_progs/haltprog.spl</tt>) using <tt>--exhandler</tt> flag 
 					<div class="syntax">
 						cd $HOME/myxos/spl <br/>
 						./spl --exhandler $HOME/myxos/spl/spl_progs/haltprog.spl <br/>
@@ -415,7 +416,7 @@ Machine is halting
 				<ol>
 					Interrupt Routine 7, Exception Handler routine and the program to print primes must be loaded from the XFS disk to the memory  by the OS Startup Code when the OS starts. The OS Startup Code must be written in <a href="spl-spec.html">SPL</a>, compiled and loaded to the disk as done in stage 3. The new OS Startup Code must do the following tasks. </br><br/>
 
-					<li> Load Exception Handler from disk block 1 to memory page 7 and Interrupt Routine 7 from disk block 9 to memory page 15 using <a href="spl-spec.html#navlsstmt" >load</a> instruction. See <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization </a>
+					<li> Load Exception Handler from disk block 1 to memory page 7 and Interrupt Routine 7 from disk block 9 to memory page 15 using <a href="spl-spec.html#navlsstmt" >load</a> instruction. See <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization .</a> These programs are responsible for halting the machine on exceptions and upon finishing execution of the process respectively.
 						<div class="syntax">
 							load (page_number, block_number);
 						</div> 

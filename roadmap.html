@@ -445,7 +445,7 @@ Machine is halting
 						 <div class="syntax">PTLR = 4; </div>
 						 Every process consists of 4 pages - 3 pages for code and 1 for stack (See <a href="xos-spec.html#navpromgmt_prostruct">Process Structure</a>). </li><br/>
 
-					 <p>Each page table entry contains 2 words. See <a href="xos-spec.html#navmemmgmt_paging">Paging</a> for the structure of page table entry. The first word of each entry indicates the physical page number corresponding to a logical page number. The logical page number is the index of the page table entry. The 2nd word of each entry contains the auxiliary information, which will be used for Virtual Memory Management in latter stages. </p>
+					 <p>Each page table entry contains 2 words. See <a href="xos-spec.html#navmemmgmt_paging">Paging</a> for the structure of page table entry. The first word of each entry indicates the physical page number corresponding to a logical page number. The logical page number is the index of the page table entry. The 2nd word of each entry contains the auxiliary information, which will be used for Virtual Memory Management in Stage 10. </p>
 
 								 Setup entries for memory pages 16 to 18 (3 pages are used for code)  as well as one entry for memory page 19 (1 page is used for stack) in the page table. Set the first word of each entry to corresponding physical page number (16 to 19) and set the second word (Auxiliary information) as <b>11</b> (Valid and Referenced).</li><br/>
 							Setting up the entries of page table can be done in the following way
@@ -1296,7 +1296,6 @@ endwhile;					</pre>
 			
 			
 			<article  id="navstage9" class="grid col-full">
-			<h2>Stage 9: Process and Machine System Calls</h2>
 			<h2>Stage 9: Process and Machine System Calls</h2>
 			<p>  
 			There are several process system calls which are used to create processes, load a new process to an existing process, exit from a process. These system calls are <b>Exec, Fork and Exit</b>. The only machine system call in XOS is <b>Halt</b> which is used to shut down the machine.</p>

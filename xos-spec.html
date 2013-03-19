@@ -347,9 +347,9 @@ The INIT process is the first user program that is loaded by the OS after start 
 				<li><i>Auxiliary Information:</i>: The 2nd word for the entry contains auxiliary information, which are a sequence of flags. The structure of auxiliary information is given below </li>		
 					<img src="doc/auxinfo.png" />
 					<ul>
-					<li> <i>Reference Bit (R)</i>: This bit is set to 1 by the machine every time a page is accessed. This bit is used for page replacement by the OS
+					<li> <i>Reference Bit (R)</i>: Initially, this bit is set to 0 (unreferenced) by the machine. On a page access, this bit is set to 1 by the machine. This bit is used for page replacement by the OS
 
-					<li> <i>Valid/Invalid Bit (I) </i> is a value 1 or 0 for valid and invalid respectively. It is valid if and only if the entry is a physical memory location. It is invalid if either the entry points to location on the disk or if its not in the logical address space of the process.</li>
+					<li> <i>Valid/Invalid Bit (V) </i> is a value 1 or 0 for valid and invalid respectively. It is valid if and only if the entry is a physical memory location. It is invalid if either the entry points to location on the disk or if its not in the logical address space of the process.</li>
 					</li>
 					</ul>		
 				</ul>

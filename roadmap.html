@@ -68,7 +68,7 @@
 					<li><a href="#navstage3" class="sec">Starting the machine</a></li>
 					<li><a href="#navstage4" class="sec">Running a user program</a></li>
 					<li><a href="#navstage5" class="sec">Interrupts</a></li>
-					<li><a href="#navstage6" class="sec">Multiprogramming</a></li>
+					<li><a href="#navstage6" class="sec">Getting started with Multiprogramming</a></li>
 					<li><a href="#navstage7" class="sec">Creating Files</a></li>
 					<li><a href="#navstage8" class="sec">Playing with Files</a></li>
 					<li><a href="#navstage9" class="sec"> Process and Machine System Calls</a></li>
@@ -1098,6 +1098,7 @@ endwhile;					</pre>
 				</table>
 			<br/>
 			<p>The system call number must be fetched from the stack and conditionally the corresponding system call actions need to be performed. Actions that needs to be taken for each system call is discussed in detail in this stage. After programming the interrupt routine, it must be compiled using SPL compiler, and loaded to XFS disk using XFS interface. </p>
+			
 			<p>To check if the system call is functioning properly, make application programs which invoke the system call. Compile it using APL compiler and load it to disk as the INIT program. Run the machine by <b>disabling the timer</b>. You may use the XFS interface to check the working of file sytem calls.</p>
 			
 			<p> Detailed information and actions corresponding to each system call is given below.</p>
@@ -1145,12 +1146,17 @@ endwhile;					</pre>
 			<br/>
 			<p>The argument, <b>fileDescriptor</b> is the index of per-process open file table entry for the open instance of the file to be closed. When a file's open instance is closed this entry is deleted and the file open count in the system wide open file table is decremented. Specific tasks to be done by the Close is given below  </p>
 			<ol> 
-				<li> Return from the system call with -1, indicating failure if the <tt>fileDescriptor</tt> is invalid. A valid <b>fileDescriptor</b> will have value from 0 to 7.</li>
-				<li> Index into the per-process open file table in the PCB of the process with the <b>fileDescriptor</b>. If the entry is invalid, which is indicated by a -1 in the first field of the entry (pointer to System-wide Open File Table entry), return from the system call with -1, indicating failure.</li>
-				<li> Otherwise, using the <b>Pointer to System Wide Open File Table Entry</b>b> field, index to the System Wide Open File Table and decrement <b>File Open Count</b> field by one. If the  becomes 0, invalidate the entry. An entry in the system-wide open file table is invalidated by setting the <b>FAT Index</b> entry to -1. </li>
-				<li> Now invalidate the Per-Process Open File Table entry, by setting the fields to -1</li>
-				<li> Return from system call with 0 (success).
-				 </li>
+				<li><p> Check if the argument <b>fileDescriptor</b> is valid. A valid <b>fileDescriptor</b>  will have value from 0 to 7. Return from the system call with -1, indicating failure if the <tt>fileDescriptor</tt> is invalid. </li></p>
+				
+				<li><p> Index into the per-process open file table in the PCB of the process with the <b>fileDescriptor</b>. If the entry is invalid, which is indicated by a -1 in the first field of the entry (pointer to System-wide Open File Table entry), return from the system call with -1, indicating failure.</li></p>
+				
+				<li><p> Otherwise, using the <b>Pointer to System Wide Open File Table Entry</b> field, index to the System Wide Open File Table and decrement <b>File Open Count</b> field by one. If the  becomes 0, invalidate the entry. An entry in the system-wide open file table is invalidated by setting the <b>FAT Index</b> entry to -1. </li></p>
+				
+				
+				<li><p> Now invalidate the Per-Process Open File Table entry, by setting the fields to -1</li></p>
+				
+				<li> <p>Return from system call with 0 (success).
+				 </li></p>
 			</ol>
 
 			<h5> Delete System Call</h5>
@@ -1165,18 +1171,22 @@ endwhile;					</pre>
 			</p>
 
 			<ol>
-				<li> Check if the file to be deleted exists in the disk. To do this, search the memory copy of <a href="xos-spec.html#navfiles_fat">FAT</a> for the <tt>filename</tt> specified as argument. If it is not found, return from the system call with -1 (failure). If an entry is found, store the index in a register.</li>
-				<li> Search the System Wide Open File Table to see if the file has been opened. If a file is opened, an entry with the FAT index found in the previous step will be present in the System Wide Open file table. If it is opened, return from the system call with -1 (failure) </li>
-				<li> Otherwise, follow the steps to delete the file
+				<li><p> Check if the file to be deleted exists in the disk. To do this, search the memory copy of <a href="xos-spec.html#navfiles_fat">FAT</a> for the <tt>filename</tt> specified as argument. If it is not found, return from the system call with -1 (failure). If an entry is found, store the index in a register.</li></p>
+				
+				<li><p> Search the System Wide Open File Table to see if the file has been opened. If a file is opened, an entry with the FAT index found in the previous step will be present in the System Wide Open file table. If it is opened, return from the system call with -1 (failure) </li></p>
+				
+				<li><p> Otherwise, follow the steps to delete the file
 					<ul>
 					<li>Load the <a href="xfs-spec.html#navfile"><b>Basic Block</b></a> to the <a href="xos-spec.html#navfiles_scratchpad">Scratchpad</a>. The Basic Block contains the block numbers of all the data blocks of the file. The data blocks must be set as unused in the memory copy of the <a href="xfs-spec.html#navdf">Disk Free List</a>
 					</li>
 					<li> Set the entry for the basic block of the file in the Disk Free List to 0 (unused)</li>
 					<li> Invalidate the <a href="xos-spec.html#navfiles_fat">FAT</a> entry by setting -1 in the <b>filename</b> filed and  <b>Basic Block Number</b> field.</li>
 					</ul>
-				</li>
-				<li> Store back  the FAT and Disk Free List from the memory to the disk. These data structures are actually disk data structures. To change the entries of these structures, they have a corresponding memory copy. Once a change is made, the memory copies must be stored back to the disk to reflect the changes on the disk as well.</li>
-				<li> Return from the system call with 0 (success)</li>
+				</li></p>
+				
+				<li><p> Store back  the FAT and Disk Free List from the memory to the disk. These data structures are actually disk data structures. To change the entries of these structures, they have a corresponding memory copy. Once a change is made, the memory copies must be stored back to the disk to reflect the changes on the disk as well.</li></p>
+				
+				<li><p> Return from the system call with 0 (success)</li></p>
 			</ol>
 
 			<h5> Write System Call </h5>	
@@ -1188,8 +1198,10 @@ endwhile;					</pre>
 			<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
 			<br/>
 			
+			<p>The Read system call takes the fileDescriptor given as argument to identify the file open instance in the per-process file table. The <b>wordToWrite</b> given as argument is to be written to the file at the LSEEK position obtained from the per-process open file table. A new block must be allocated if required. The following steps must be done to perform all these required actions.</p>
+			
 		  	<ol>
-				<li><p> Return from the system call with -1, indicating failure if the <tt>fileDescriptor</tt> specified as argument is invalid. A valid <b>fileDescriptor</b> will have value from 0 to 7.</li></p>
+				<li><p> Return from the system call with -1, indicating failure if the <tt>fileDescriptor</tt> specified as argument is invalid. </li></p>
 				
 				<li> <p>Index into the per-process open file table in the PCB of the process with the <b>fileDescriptor</b>. If the entry is invalid, which is indicated by a -1 in the first field of the entry (pointer to System-wide Open File Table entry), return from the system call with -1, indicating failure.</li></p>
 				
@@ -1204,7 +1216,7 @@ endwhile;					</pre>
 				LSEEK position is the word number in the file at which reading or writing takes place. The LSEEK position divided by 512 gives the index of the basic block entry. This entry will have the block number of the data block to which the word is to be written. If this entry is invalid indicated by -1, then allocate a new block in the following way.
 					<ul>
 						<li> Find a free block in the disk. To do this traverse through the memory copy of the <a href="xfs-spec.html#navdfl">Disk Free List</a> till the entry for block 447 (Blocks 448 onwards is Swap, which is reserved for virtual memory management).
-						<li> If no free block is avaliable. Return from the system call, with return value -1 indicating failure <li>
+						<li> If no free block is avaliable. Return from the system call, with return value -1 indicating failure </li>
 						<li> Otherwise, set 1 in the entry for the  free block in the Disk Free List.</li> 
 						<li> Add this block number to the basic block of the file.</li>
 						<li> Commit the basic block from scratchpad back to the disk. </li>
@@ -1212,25 +1224,30 @@ endwhile;					</pre>
 						<li> Commit the FAT and Disk Free List from the memory to the disk. </li>
 					</ul>
 				</li></p>
-				<li> Fetch the block from the disk to the scratchpad. </li>
-				<li> Write the argument <b>wordToWrite</b> to this block with the offset calculated using LSEEK position. LSEEK modulo 512 will give the offest into the block at which the word is to be written to.</li>
-				<li> Store this block back to disk.</li>
-				<li> Increment LSEEK Position by 1 in the Per-Process Open File Table. This is because one new word has been written and LSEEK position must be pointing to the next word. </li>
-				<li> Return from the system call with 0 (success)</li>
+				<li> <p>Fetch the block from the disk to the scratchpad. Changes are made to this block after loading it to memory. The scratchpad is a temporary locaiton to load disk blocks from the disk to memory. The memory page in the scratchpad is stored back to the location after making the changes.</li></p>
+				
+				<li><p> Write the argument <b>wordToWrite</b> to this block loaded in the scratchpad at the seek position or offset. The offset is calculated using LSEEK position. LSEEK modulo 512 will give the offest into the block at which the word is to be written to.</li></p>
+				
+				<li><p>Store this block back to disk. This is done to reflect changes made to this block on the disk.</li></p> 
+				
+				<li><p> Increment LSEEK Position by 1 in the Per-Process Open File Table. This is because one new word has been written and LSEEK position must be pointing to the next word. </li></p>
+				
+				<li><p> Return from the system call with 0, indicating success.</li></p>
 		  	</ol>
 
 			<br/>
-		  	<h5> Seek </h5>
+		  	<h5> Seek System Call </h5>
 			
-			<i>Description</i>: Changes the LSEEK position
+			<i>Description</i>: Changes the LSEEK position<br/>
 			<i>System Call No</i>: 6 <br/>
 			<i>Interrupt Routine No</i>: 3 <br/>
 			<i>Arguments</i>: 1. fileDescriptor 2. newLseek <br/>
-			<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
-
-
+			<i>Return Value</i>: 0 (Success) or -1 (Failure) <br/>
+			<br/>
+			
+			<p> The Seek system call changes the word at which read/write operations take place within a file. This word is indicated by the <b>LSEEK</b> field in the per-process open file table entry of the open file. This field is modified to <tt>newLseek</tt> if the <tt>newLseek</tt> value is valid, i.e. the word lies within the file. Detailed instructions on getting this done is given below:	 </p>
 		  	<ol>
-				<li><p> Return from the system call with -1, indicating failure if the <tt>fileDescriptor</tt> specified as argument is invalid. </li></p>
+				<li><p> Return from the system call with -1, indicating failure if the <b>fileDescriptor</b> specified as argument is invalid. </li></p>
 				
 				<li> <p>Index into the per-process open file table in the PCB of the process with the <b>fileDescriptor</b>. If the entry is invalid, return from the system call with -1, indicating failure.</li></p>
 				
@@ -1240,21 +1257,26 @@ endwhile;					</pre>
 				<li> <p>Using the <b>Pointer to System Wide Open File Table Entry</b> field, index to the System Wide Open File Table to get the FAT Index Entry.   </li></p>
 				
 				<li> <p>Fetch the <b>file size</b> of the file from the FAT and store it in a register. </li></p>
-				<li> <p>Check if the new LSEEK position specified as argument is valid. If it is not valid, return from the system call with -1, indicating failure. LSEEK position is valid if the word number lies 0 and number of words in the file. Number of words in a file can be calculated using <b>file size</b> (or number of blocks) x 512 (block size). Change the <b>LSEEK</b> in the per-process file table to <b>newLseek</b>. Return with 0 (indicating success).</li></p>
+				<li> <p>Check if the new LSEEK position specified as argument is valid. If it is not valid, return from the system call with -1, indicating failure. LSEEK position is valid if it takes a value from 0 to number of words in the file. Number of words in a file can be calculated using <b>file size</b> (number of blocks in the file) x 512 (number of words in a block). </li></p>
+				
+				<li><p>Change the <b>LSEEK</b> in the per-process file table to <b>newLseek</b>.</li></p>
+				<li><p> Return with 0 (indicating success).</li></p>
 				
 				
 		  	</ol>
-
-		  	<h5>Read</h5>
+			<br/>
+		  	<h5>Read System Call</h5>
 			<i>Description</i>: Reads a word from a file to the variable passed as argument. <br/>
 			<i>System Call No</i>: 7 <br/>
 			<i>Interrupt Routine No</i>: 3 <br/>
 			<i>Arguments</i>: 1) fileDescriptor 2) wordRead<br/>
 			<i>Return Value</i>: 0 (success) and -1 (failure) </br>
 			<br/>
-
+			<p> 
+			The Read system call takes the fileDescriptor given as argument to identify the file open instance in the per-process file table.  Read system call is used to read one word at the position pointed to by LSEEK in the file and store it in the variable <b>wordRead</b> specified as argument in APL. Follow these steps to get this done. 
+			</p>
 		  	<ol>
-				<li><p> Return from the system call with -1, indicating failure if the <tt>fileDescriptor</tt> specified as argument is invalid.</li></p>
+				<li><p> Return from the system call with -1, indicating failure if the <b>fileDescriptor</b> specified as argument is invalid.</li></p>
 				
 				<li> <p>Index into the per-process open file table in the PCB of the process with the <b>fileDescriptor</b>. If the entry is invalid return from the system call with -1, indicating failure.</li></p>
 				
@@ -1265,7 +1287,9 @@ endwhile;					</pre>
 				
 				<li> <p>Using the FAT Index, fetch the <b>Basic Block</b> from the FAT and load it to the scratchpad. This is done to find the block from which the word is to be read. The basic block contains block numbers of all data blocks of the file.</li></p>
 				
-				<li> <p>Using LSEEK position, find the block number from which the word is to be read. 
+				<li><p> Check if LSEEK position is at the end of the file. If it is at the end of the file, then there is no word to be read. Return from the system call with -1 indicating error.  At the end of the file, LSEEK position value will be equal to <b>file size</b> (number of blocks in the file) x 512 (number of words in a block). </li></p>
+				
+				<li> <p>Using LSEEK position, find the block number of the data block  from which the word is to be read. The data block number can be obtained from the basic block of the file as explained in Write system call.   
 				</li></p>
 				
 				<li><p> Fetch the block from the disk to the scratchpad. </li></p>
@@ -1298,9 +1322,33 @@ endwhile;					</pre>
 			<article  id="navstage9" class="grid col-full">
 			<h2>Stage 9: Process and Machine System Calls</h2>
 			<p>  
-			There are several process system calls which are used to create processes, load a new process to an existing process, exit from a process. These system calls are <b>Exec, Fork and Exit</b>. The only machine system call in XOS is <b>Halt</b> which is used to shut down the machine.</p>
-			<br/>
-
+			There are 3 process system calls, <b>Fork, Exect</b> and <b> Exit</b>, which are used to create a new process, replace an existing process with a new process and exit from a process respectively. The only machine system call in XOS is <b>Halt</b> which is used to shut down the machine.</p>
+			
+			<p> The interrupt routines corresponding to these system calls must be programmed in SPL.  The interrupt routines must perform actions necessary for each system call. The various process and machine system calls and their corresponding interrupt routines are given in the table below :</p>
+			<p>
+				<table class="doctable" style="width:50%">
+					<tr><th>System Call Name</th><th>System Call #</th><th>Interrupt Routine #</th></tr>
+					<tr><td>Fork</td>			<td>8</td>				<td> 5</td> </tr>
+					<tr><td>Exec</td>			<td>9</td>				<td> 6</td> </tr>
+					<tr><td>Exit</td>				<td>10</td>				<td> 7</td> </tr>
+					<tr><td>Halt</td>			<td>0</td>				<td> 7</td> </tr>
+				</table>
+			</p>
+			<p> The OS maintains information about free memory pages in the <a href="xos-spec.html#navmemmgmt_mfl">memory free list</a> just like the disk maintains information about free disk blocks in the disk free list. Since fork loads a new process, it must check for free memory pages in the <i>memory free list</i> to allocate memory for this process. The OS Startup code is responsible for initializing the the memory free list. The entries for system reserved pages must be set as used in the memory free list. Since the OS startup code loads the INIT process to memory pages 16 to 19, these pages must also be marked as used in the memory free list. The interrupt routines 5, 6 and 7 must be loaded by the OS startup code.
+			</p>
+			
+			<p>After programming the OS Startup Code and the interrupt routines, compile and load them to the disk. To check if the system calls are functioning properly, make application programs which invoke these system calls. Compile these programs using APL compiler and load it to disk. Run the machine <b>with the timer enabled</b>.
+			<div class="syntax"> $HOME/myxos/xsm/xsm</div> You have already programmed the timer interrupt routine in stage 6. Make sure it is loaded to the disk and the OS Startup Code loads the timer interrupt routine to the memory. </p>
+			
+			<h6>Modifying OS Startup Code</h6>
+		  		<ol>
+		  			<li><p>Load Interrupt 5, 6 and 7 Routines from disk to memory. (See <a href="xos-spec.html#navmemorg" >Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization</a>)
+		  			</li> </p>
+		  			<li> <p>Pages 0 to 15 in the memory are reserved for operating system.  (See <a href="xos-spec.html#navmemorg" >Memory Organization</a>). The pages 16 to 19 are allocated for the INIT process by the OS Startup Code. These pages must be marked as used in the memory free list and the remaining pages must be marked as unused. Used pages are indicated with 1 and unused pages are indicated with 0 in the memory free list.
+		  			</li> </p>
+		  		</ol>			
+			
+			<p> </p>
 			 <h5>Fork system call :</h5>
 			 The<a href="xos-spec.html#navsyscalls_process"> Fork </a> system call is used to replicate the process which invoked this system call in the memory. <br/>
 			 <i>System Call No</i>: 8 <br/>
@@ -1325,13 +1373,7 @@ endwhile;					</pre>
 			<li> The Per-Process Open File table of the parent process is not copied to child's PCB. Instead invalidate all entries in child's Per-Process Open File Table </li>
 			<li> Control is passed back to the parent process using <b>ireturn</b>.</b>
 		  	</ol>
-		  	<b> OS Startup Code</b> is modified to 
-		  		<ul>
-		  			<li>Load Interrupt 5 Routine. (The code to load the 2nd process in the previous stage can now be removed)
-		  			</li> 
-		  			<li> The entries for pages 0 to 15 in the <a href="xos-spec.html#navmemmgmt_mfl">memory free list</a> is marked as used (set 1) and others as unused (set 0). Pages 0 - 15 are reserved for OS structures. See <a href="xos-spec.html#navmemorg"> Memory Organization </a>
-		  			</li> 
-		  		</ul>
+		  
 		  	To test Fork(), use Exec with program to print odd numbers after issuing a Fork from the INIT program (to print even numbers). 
 			
 			</br><br/></br>

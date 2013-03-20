@@ -224,11 +224,11 @@ To cool in the peppermint wind.</pre>
 						 (<b>NOTE</b>: In this example block number 16 is the basic block of the loaded file)
 						 The first few lines of the file <tt>$HOME/myxos/basic_block.txt</tt> is shown below. 
 <pre>17
-0
-0
+-1
+-1
 .
 .</pre>						
-					This indicates that the only data block of this file is block number 17. Remaining 0 entries, indicates that there are no other data blocks.	</li><br/>	
+					This indicates that the only data block of this file is block number 17. Remaining -1 entries, indicates that the remaining entries are invalid. There is only one data block for this file at block number 17.		</li><br/>	
 						
 						<li> Copy the data blocks from the XFS disk and display it as a UNIX file <tt>$HOME/myxos/data.txt</tt>. 
 						<div class ="syntax">
@@ -1199,7 +1199,7 @@ endwhile;					</pre>
 			<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
 			<br/>
 			
-			<p>The Read system call takes the fileDescriptor given as argument to identify the file open instance in the per-process file table. The <b>wordToWrite</b> given as argument is to be written to the file at the LSEEK position obtained from the per-process open file table. A new block must be allocated if required. The following steps must be done to perform all these required actions.</p>
+			<p>The Write system call takes the fileDescriptor given as argument to identify the file open instance in the per-process file table. The <b>wordToWrite</b> given as argument is to be written to the file at the LSEEK position obtained from the per-process open file table. A new block must be allocated if required. The following steps must be done to perform all these required actions.</p>
 			
 		  	<ol>
 				<li><p> Return from the system call with -1, indicating failure if the <tt>fileDescriptor</tt> specified as argument is invalid. </li></p>
@@ -1221,11 +1221,12 @@ endwhile;					</pre>
 						<li> Otherwise, set 1 in the entry for the  free block in the Disk Free List.</li> 
 						<li> Add this block number to the basic block of the file.</li>
 						<li> Commit the basic block from scratchpad back to the disk. </li>
-						<li> Increment the <tt>file size</tt> in the FAT entry by 1. </li>
+						<li> Increment the <b>file size</b> in the FAT entry by 512. This indicates that a new data block is added to the file. One data block occupies 512 words. </li>
 						<li> Commit the FAT and Disk Free List from the memory to the disk. </li>
 					</ul>
+					
 				</li></p>
-				<li> <p>Fetch the block from the disk to the scratchpad. Changes are made to this block after loading it to memory. The scratchpad is a temporary locaiton to load disk blocks from the disk to memory. The memory page in the scratchpad is stored back to the location after making the changes.</li></p>
+				<li> <p>Fetch the block from the disk to the scratchpad. Changes are made to this block after loading it to memory. The scratchpad is a temporary location to load disk blocks from the disk to memory. The memory page in the scratchpad is stored back to the location after making the changes.</li></p>
 				
 				<li><p> Write the argument <b>wordToWrite</b> to this block loaded in the scratchpad at the seek position or offset. The offset is calculated using LSEEK position. LSEEK modulo 512 will give the offest into the block at which the word is to be written to.</li></p>
 				
@@ -1258,7 +1259,7 @@ endwhile;					</pre>
 				<li> <p>Using the <b>Pointer to System Wide Open File Table Entry</b> field, index to the System Wide Open File Table to get the FAT Index Entry.   </li></p>
 				
 				<li> <p>Fetch the <b>file size</b> of the file from the FAT and store it in a register. </li></p>
-				<li> <p>Check if the new LSEEK position specified as argument is valid. If it is not valid, return from the system call with -1, indicating failure. LSEEK position is valid if it takes a value from 0 to number of words in the file. Number of words in a file can be calculated using <b>file size</b> (number of blocks in the file) x 512 (number of words in a block). </li></p>
+				<li> <p>Check if the new LSEEK position specified as argument is valid. If it is not valid, return from the system call with -1, indicating failure. LSEEK position is valid if it takes a value from 0 to <b>file size</b>. </li></p>
 				
 				<li><p>Change the <b>LSEEK</b> in the per-process file table to <b>newLseek</b>.</li></p>
 				<li><p> Return with 0 (indicating success).</li></p>
@@ -1288,20 +1289,20 @@ endwhile;					</pre>
 				
 				<li> <p>Using the FAT Index, fetch the <b>Basic Block</b> from the FAT and load it to the scratchpad. This is done to find the block from which the word is to be read. The basic block contains block numbers of all data blocks of the file.</li></p>
 				
-				<li><p> Check if LSEEK position is at the end of the file. If it is at the end of the file, then there is no word to be read. Return from the system call with -1 indicating error.  At the end of the file, LSEEK position value will be equal to <b>file size</b> (number of blocks in the file) x 512 (number of words in a block). </li></p>
+				<li><p> Check if LSEEK position is at the end of the file. If it is at the end of the file, then there is no word to be read. Return from the system call with -1 indicating error.  At the end of the file, LSEEK position value will be equal to <b>file size</b>. </li></p>
 				
 				<li> <p>Using LSEEK position, find the block number of the data block  from which the word is to be read. The data block number can be obtained from the basic block of the file as explained in Write system call.   
 				</li></p>
 				
 				<li><p> Fetch the block from the disk to the scratchpad. </li></p>
 				<li> <p> Read from this block using the offset calculated using LSEEK position. </li></p>
-				<li> <p>The word that is read is stored in the stack in position of Argument 2 (wordRead). The application programmer using this system call, gives a variable as the 2nd argument for the system call. This word that is read will get stored in that variable. This is similar to Call-by-reference argument passing mechanism in programming languages. To do this store the word read to <tt>physicalSP - 2</tt>.</li> </p>
+				<li> <p>The word that is read is stored in the stack in position of Argument 2 (wordRead). The application programmer using this system call, gives a variable as the 2nd argument for the system call. This word that is read will get stored in that variable. This is similar to Call-by-reference argument passing mechanism in programming languages. To do this store the word read to <tt>physicalSP - 3</tt>.</li> </p>
+				
 				<li><p> Increment LSEEK Position by 1 in the Per-Process Open File Table. This is because a word is read and LSEEK position must be pointing to the next word. </li></p>
 				<li> Return with 0, indicating success </li>
 		  	</ol>
 		  	
 		  	
-
 
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -1343,15 +1344,18 @@ endwhile;					</pre>
 			
 			<h6>Modifying OS Startup Code</h6>
 		  		<ol>
-		  			<li><p>Load Interrupt 5, 6 and 7 Routines from disk to memory. (See <a href="xos-spec.html#navmemorg" >Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization</a>)
+		  			<li><p>Load Interrupt 5, 6 and 7 Routines from disk to memory. (See <a href="xos-spec.html#navmemorg" >Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization</a>). These interrupt routines in the disk will contain the process and machine system call implementation.
 		  			</li> </p>
 		  			<li> <p>Pages 0 to 15 in the memory are reserved for operating system.  (See <a href="xos-spec.html#navmemorg" >Memory Organization</a>). The pages 16 to 19 are allocated for the INIT process by the OS Startup Code. These pages must be marked as used in the memory free list and the remaining pages must be marked as unused. Used pages are indicated with 1 and unused pages are indicated with 0 in the memory free list.
 		  			</li> </p>
 		  		</ol>			
+			<h6>Programming interrupt routines</h6>
 			
-			<p> </p>
-			 <h5>Fork system call :</h5>
-			 The<a href="xos-spec.html#navsyscalls_process"> Fork </a> system call is used to replicate the process which invoked this system call in the memory. <br/>
+			<p>The system call number must be obtained from the stack by an interrupt routine. Fetch the arguments from the stack. Conditionally the actions corresponding to the system call must be performed in the interrupt routine. The following set of actions are to be performed by each system call.</p>
+			
+			<h5>Fork System Call :</h5>
+			 
+			  <i>System Call No</i>: used to replicate the process which invoked this system call in the memory. <br/> 
 			 <i>System Call No</i>: 8 <br/>
 			<i>Interrupt Routine No</i>: 5 <br/>
 			<i>Arguments</i>: None<br/>
@@ -1360,18 +1364,36 @@ endwhile;					</pre>
 			</br>
 			Interrupt 5 Routine must be programmed in SPL, compiled and loaded to disk. It must perform the following tasks.
 		  	<ol>
-			<li> The <em>Ready list</em> of PCBs is traversed to find a PCB with State 0 (terminated).</li>
-			<li> If no such PCB is found, -1 is returned. </li>
-			<li> The index of the PCB in the Ready List is the PID of new process created. It is stored in a register.</li>
-			<li> The pages used by the parent process is replicated in the following way</li>
-				<ul>
-					<li> The page table of the parent process is checked to count the number of valid pages. The <a href="xos-spec.html#navmemmgmt_mfl">memory free list</a> is checked to find an equal number of free pages. If this check fails, return with -1 indicating failure. </li> 
-					<li> Otherwise an equal number of pages are allocated by updating the memory free list.</li>
-					<li> Make corresponding entries in the child process' page table. The child's PTBR (address of its page table) is computed using PID stored in Step 3 </li>
-				</ul>
-			<li> The current register values of the parent process are (except PTBR)  copied to the child process' PCB. The entry for PTBR is the child's PTBR computed in the previous step. (<b>DO NOT</b> copy values from parent's PCB to child's PCB as it may not be equal to current values) </li>
+			<li> <p>Find a terminated process in the Ready List of PCBs. The PCB of a terminated process can be used by a new process in the memory. To do this, the <em>Ready list</em> of PCBs is traversed to find a PCB with <b>STATE</b> field as 0. <b>STATE</b> field 0 indicates a terminated process. If no such PCB is found, return with -1 from the system call indicating error. This means that the system call could not find space for the PCB of the new process. </li></p>
 
-			<li> The Per-Process Open File table of the parent process is not copied to child's PCB. Instead invalidate all entries in child's Per-Process Open File Table </li>
+			<li> <p>If a PCB with <b>STATE</b> 0 is found, the index of the PCB in the ready list is stored in a register.  </li></p>
+	
+				<li><p> Set the <b>PID</b> field of the PCB of the child process with the value obtained in Step 2.</li></p>
+						
+			<li><p> The valid pages in memory occupied by the currently executing process (parent process) must be duplicated in the memory. This is one of the steps done in replicating the parent process by a Fork system call. The replica of the parent process in the memory is called the child process. The pages used by the parent process is duplicated in the following way.</li>
+				<ul>
+					<li> The page table of the parent process is checked to count the number of valid pages. The <a href="xos-spec.html#navmemmgmt_mfl">memory free list</a> is checked to find an equal number of free pages. If there is not enough free pages in the memory free list, return with -1 indicating failure. </li> 
+					
+					<li> Otherwise an equal number of pages are allocated for the new child process. To do this, first update the memory free list by setting the required number of free pages as used.The correponding entries in the memory free list must be set to 1, indicating these pages are used.</li>
+					
+					<li> Find the per-process page table of the new child process. The child process' <b>PTBR</b> (address of its page table) is computed using PID stored in Step 3 as explained in previous stages.  </li>
+					
+					<li>The page table of the current process must be copied to the page table of the new process. Change the valid entries of the page table with the physical page numbers of the free pages allocated now. </li>
+				</ul>
+				</p>
+			
+
+			<li><p>The <b>PTBR</b> field of the child process' PCB must be set to the <b>PTBR</b> computed in the previous step.</li></p>
+			<li><p> The <b>IP</b> field of the child process must be set correctly. The code pages of the parent process and child process will be in different locations even though  the contents will be the same. Only the physical addresses of IP will be different for both the processes. The logical address of IP will be the same for the parent and the child process. So, get the value of IP from the top of the stack. This IP is logical and is pushed by the <tt>INT</tt> instruction.  Store this value to the <b>IP</b> field in the PCB of the child process.</li></p>
+			
+			<li><p> Set the <b>SP</b> field in the PCB of the child process to SP - 1. This is because the stack of the parent process will contain the IP value on the top of the stack. When control returns back to the parent process, from the Fork system call, the value on the top of the stack is removed from the stack by the <tt>IRET</tt> instruction. This removal does not take place in the child process, as <tt>IRET</tt> transfers control back to the parent process. Hence you will have to manually set the decremented value of SP in the PCB of the child process. When the timer schedules the child process for execution, this value <b>SP - 1</b> from the PCB is taken and stored in SP. This gives an effect similar to removing the IP value on top of the stack.</li></p>
+							
+			<li><p> The current register values are (except PTBR, SP and IP) are copied to the child process' PCB. These include, BP, R0 to R7.  (<b>DO NOT</b> copy values from parent's PCB to child's PCB as it may not be equal to current values).  </li></p>
+			
+
+
+			<li> <p>The Per-Process Open File table of the parent process is copied to child's PCB. For each entry in the per-process open file table, increment the <b>File Open Count</b> in the system-wide open file table. </li></p>
+			
 			<li> Control is passed back to the parent process using <b>ireturn</b>.</b>
 		  	</ol>
 		  

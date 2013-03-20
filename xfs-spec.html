@@ -154,7 +154,7 @@
 									<li>The block list consists of 256 entries.</li>
 									<li>Each entry is of size one word.</li>
 									<li>The value contained in an entry of the block list gives the	block number of the corresponding data block in the disk.
-									All invalid entries are marked with 0.</li>
+									All invalid entries are marked with -1.</li>
 								</ul>
 							</li>
 							<li> <b>Header</b>  The header contains the meta information relating to the file. The header fields is 256 words long. It can be used to store details like permissions, ownership etc related to a file, similar to inode in Linux and UNIX operating systems. However XOS does not use the header field.

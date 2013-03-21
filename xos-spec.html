@@ -148,7 +148,7 @@
 				<li><a href="#navsysroutines_exhandler" >Exception Handler</a>  contains the kernel code to be executed during various exceptions. </li>
 				<li> <a href="#navsysroutines_timer" >Timer Interrupt Routine</a> contains the kernel code to be executed during a timer interrupt. </li>
 				<li> <a href="#navsysroutines_interrupt" >Interrupt Routines</a> contains kernel code to be executed during interrupts (1 to 7). </li>
-				<li> <a href="#navpromgmt_init" >INIT and User Processes</a> is the memory space allocated for user pro- grams in execution.  </li>
+				<li> <a href="#navpromgmt_init" >INIT and User Processes</a> is the memory space allocated for user programs in execution.  </li>
 				</ul>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -257,20 +257,27 @@ A	 maximum of 32 PCBs can be stored in the memory, and hence the maximum number 
 
 				<article id="navpromgmt_pagetbl" class="grid col-full">
 				<h4>The Per-Process Page Tables</h4>
-				<p>Every process in XOS has a Per-Process Page Table. A total of 32 PCBs and 32 Page Tables in total are  available, 		which limits the number of processes that can be run to 32.</p>
+				<p>Every process in XOS has a Per-Process Page Table. A total of 32 PCBs and 32 Page Tables are available. This  limits the number of processes that can be run to 32. The structure of a Per-process Page Table entry is shown below</p>
 
 				<table class="doctable" style="width:50%">
 				<tr><td>Physical Page Number</td><td> Auxiliary Information</td>	</tr>			
 				</table>
 				</br>
 				<p>  
-				The Per-Process Page Table stores the physical page number corresponding to each logical page associated with the process. The logical page number can vary from 0 to 3 for each process. Therefore, each process has 4 entries in the page table. Per-Process Page Tables are stored in Page 2, words 1024 – 1279 in the memory ( 256 words = 32 processes × 4 entries )
+				The Per-Process Page Table stores the physical page number corresponding to each logical page associated with the process. The logical page number can vary from 0 to 3 for each process. Therefore, each process has 4 entries in the page table. Per-Process Page Tables are stored in Page 2, words 1024 – 1279 in the memory ( 256 words = 32 processes × 4 entries per process )
 				</p>
 				<p>
-					When a process is loaded, only the disk addresses of the program are stored initially. The actual pages are not loaded into memory. In <b>demand paging</b>, the actual pages are loaded only when the pages are accessed for the first time (Refer <a href="#navmemmgmt_paging" >Paging</a> and <a href="#navmemmgmt_vm">Virtual Memory</a>). Once all pages are loaded, each entry contains the page number where the data specified by the logical address resides in the memory and auxiliary information which includes reference bit etc, valid/invalid bit, . <br/>
-					Eg :
-				</p>
+					When a process is loaded, the actual pages are not loaded into memory. In <b>demand paging</b>, the actual pages are loaded only when the pages are accessed for the first time . Once all pages are loaded, the first word of each entry contains the physical page number where the data specified by the logical address resides in the memory. The second word contains the auxiliary information. The first two bits are reserved as reference(R) and valid/invalid(V) bit. The remaining bits can be used for other purposes fby the OS designer. The details of bits in Auxiliary information is given below. <br/>
 
+					<img src="doc/auxinfo.png" />
+					<ul>
+					<li> <i>Reference Bit (R)</i>: Initially, this bit is set to 0 (unreferenced) by the machine. On a page access, this bit is set to 1 by the machine. This bit is used for page replacement by the OS. (Refer <a href="#navmemmgmt_paging">Paging</a> and <a href="#navmemmgmt_vm">Virtual Memory</a>)
+
+					<li> <i>Valid/Invalid Bit (V) :</i> This bit indicates whether the entry of the page table is valid or invalid. The Valid/Invalid bit has value 1 if the first word of this  entry corresponds to a valid physical page number. It has value 0 if the entry is invalid. An first word of an invalid Per-process page table entry is either -1 (indicates that there is no physical page corresponding to the logical address) or a disk block number (the physical page corresponding to the logical address resides in this disk block and needs to be loaded to memory). The Valid/Invalid bit is set by the OS. If memory access is made to a page whose page table entry is invalid, the machine transfers control to the <a href="#navsysroutines_exhandler">Exception Handler</a> routine, which is responsible for loading the correct physical page.   </li>
+					</li>
+					</ul>	
+				</p>
+				<p> An example of page table is given below </p>
 				<table class="doctable" style="width:50%">
 					<tr>  <th>Physical Page Number</th>  <th> Auxiliary information <br/>(referenced and valid bit)</th> </tr>
 					<tr> <td>36 </td> <td> 01</td> </tr>
@@ -336,23 +343,8 @@ The INIT process is the first user program that is loaded by the OS after start 
 				</p>
 				<p>The Per-Process Page Table contains information relating to the actual location in the memory. Each valid entry of a page table contains the page number in the memory where the data specified by the logical address resides. The address of Page Table of the currently executing process is stored in PTBR and length of the page table is set to 4 in PTLR of the machine. 
 				</br>
-				The structure of an entry in the page table is given below.
-				</p>
-				<table class="doctable" style="width:50%">
-				<tr><td>Physical Page Number</td><td>Auxiliary Information</td>	</tr>			
-				</table>
-				
-				<ul>
-				<li><i>Physical Page Number</i>: The logical page numbers generated by the CPU for a process can be in the range 0 to 3. The actual location of these logical pages are given by the physical page number. Address translation is done by the machine (Refer <a href="xsm-spec.html#navaddr" target="blank"> Address Translation in XSM Specification </a>) </li>				
-				<li><i>Auxiliary Information:</i>: The 2nd word for the entry contains auxiliary information, which are a sequence of flags. The structure of auxiliary information is given below </li>		
-					<img src="doc/auxinfo.png" />
-					<ul>
-					<li> <i>Reference Bit (R)</i>: Initially, this bit is set to 0 (unreferenced) by the machine. On a page access, this bit is set to 1 by the machine. This bit is used for page replacement by the OS
+				The structure of an entry in the page table is given <a href="#navpromgmt_pagetbl"> here </a>.
 
-					<li> <i>Valid/Invalid Bit (V) </i> is a value 1 or 0 for valid and invalid respectively. It is valid if and only if the entry is a physical memory location. It is invalid if either the entry points to location on the disk or if its not in the logical address space of the process.</li>
-					</li>
-					</ul>		
-				</ul>
 				</article>			
 				<div class="up grid col-one-third" style="float:right">
 				<a href="#navtop" title="Go back up"> top &uarr;</a>

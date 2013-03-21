@@ -90,8 +90,10 @@
 
 
 
-
-
+			<h3>How to use this Roadmap? </h3>
+			<p> 
+				This roadmap is divided into stages 
+			</p>
 
 
 
@@ -106,7 +108,7 @@
 			<article  id="navstage1" class="grid col-full">
 			<h2>Stage 1: Setting up the System </h2>
 
-			<p> Follow the instructions in the <a href="usage-spec.html">Usage Documentation</a> to setup the system. This roadmap assumes that the entire package is extracted to $HOME/myxos. If the setting up of the system is done correctly the following directories will be created.
+			<p> Follow the instructions in the <a href="usage-spec.html#navsetup">setting up</a> instructions of the usage documentation to setup the system. This roadmap assumes that the entire package is extracted to $HOME/myxos. If the setting up of the system is done correctly the following directories will be created.
 			</p>
 
 			<ul>
@@ -283,16 +285,16 @@ peppermint wind</pre>
 				<p>When the XSM machine is started up, the <a href="xsm-spec.html#navrom"> ROM Code </a> is executed. ROM Code resides in page 0 of the memory. It is hard coded into the machine i.e the ROM code at physical address 0 (to 511) is "already there" when machine starts up. The ROM code is called the "bootstrap" loader in OS literature. ROM code does the following operations :
 				<ol>
 					<li>Loads block 0 of disk to page 1 of memory (physical address 512).</li>
-					<li>After loading the block to memory, it sets IP to 512 so that the next instruction to be executed is fetched from location 512 (page 1 in memory starts from location 512).</li>
+					<li>After loading the block to memory, it sets IP (Instruction Pointer) to 512 so that the next instruction to be executed is fetched from location 512 (page 1 in memory starts from location 512).</li>
 				</ol></p> 
-				<p>So if you write a program in SPL, compile it using SPL compiler and load the compiled code to block 0 of disk using xfs-interface, your  program will be executed by the machine. This program which is loaded to block 0 of disk is supposed to be the <a href="xos-spec.html#navsysroutines_osstartup">OS Startup Code</a>. As described above, this OS Startup Code is loaded from disk block 0 to memory page 1 by the ROM Code on machine startup. See <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization</a> </p>
+				<p>So if you write a program in SPL, compile it using SPL compiler and load the compiled code to block 0 of disk using xfs-interface, your  program will be executed by the machine. This program which is loaded to block 0 of disk is supposed to be the <a href="xos-spec.html#navsysroutines_osstartup">OS Startup Code</a>. As described above, this OS Startup Code is loaded from disk block 0 to memory page 1 by the ROM Code on machine startup.  (<b>WARNING</b>:The following links are for more information. Don't get lost in these links. If you don't understand, come back and proceed with the roadmap, <a href="xos-spec.html#navmemorg">Memory Organization</a>, <a href="xfs-spec.html#navdiskorg">Disk Organization</a>).</p>
 
 				<p/>The OS designer must design and program  the "OS Startup Code", compile it using the SPL compiler to generate executable program and copy this program to block 0 of the disk (using xfs interface). Once that is done, this code is loaded into page 1 of memory during boot up by the ROM code. Now this OS Startup code will start executing.</p>
 			
 				<p>In this stage, we will write a system program to<b> print odd numbers from 1 to n</b> and run it as the OS Startup Code in the machine. The steps to do this are explained in detail below. </p>
 				
 				<ol>
-					<li><p>Create the program to print odd numbers from 1 to n using <a href="spl-spec.html">SPL</a> (System Programmer's Language). See examples of SPL programs in <tt>$HOME/myxos/spl/samples</tt>. <b>NOTE: It is advised that the system programmer use only the Kernel registers R8 - R15 while writing SPL programs </b> as Program registers R0 - R7 are used by application programs.    </p>
+					<li><p>Create the program to print odd numbers from 1 to n using SPL. (SPL Specification need not be read now. It is given  in <a href="spl-spec.html"> SPL Documentation </a>) See examples of SPL programs in <tt>$HOME/myxos/spl/samples</tt>. <b>NOTE: It is advised that the system programmer use only the Kernel registers R8 - R15 while writing SPL programs </b> as Program registers R0 - R7 are used by user programs.    </p>
 						SPL Code to print odd numbers from 1 to n (taken as input)
 						<div class="syntax"> 
 <pre>
@@ -309,7 +311,7 @@ while(counter <= n) do
 endwhile; </pre>
 						</div>
 						<p>
-							An SPL program uses the system registers directly instead of variables. For convenience, you can alias the registers with appropriate identifers. See <a href="spl-spec.html#navalias">aliasing</a> in SPL. In the above program R8 is aliased as <i>counter</i> and R9 is aliased as <i>n</i>. The value of <i>n</i> or R9 is taken as input from the user.
+							An SPL program uses the system registers directly instead of variables. For convenience, you can alias the registers with appropriate identifers. See <a href="spl-spec.html#navalias" class="imp">aliasing</a> in SPL. In the above program R8 is aliased as <i>counter</i> and R9 is aliased as <i>n</i>. The value of <i>n</i> or R9 is taken as input from the user.
 						
 					</li>
 					</p>
@@ -364,16 +366,16 @@ Machine is halting
 
 			<article  id="navstage4" class="grid col-full">
 				<h2>Stage 4: Running a user program </h2>
-				<p> User programs or application programs are programmed using <a href="apl-spec.html">APL</a> or Application Programmer's Language. In stage 3, you wrote a system program and executed it. In this stage you will write a user program. </p>
+				<p> User programs or application programs are programmed using APL or Application Programmer's Language. In stage 3, you wrote a system program and executed it. In this stage you will write a user program. (APL Specification need not be read now. It is given  in <a href="apl-spec.html">  APL Documentation </a>)</p>
 				<p>
-					A user program is different from a system program. It is to be noted that a system program is executed in kernel mode ( See <a href="xsm-spec.html#navmodes">Privilege modes</a> ). The machine starts its execution in kernel mode. In kernel mode both privileged and unprivileged <a href="xsm-spec.html#navinstr">instructions</a> can be executed. All memory addresses are physical addresses in kernel mode.</p>
-					<p> A user program should be run in user mode. In user mode only unprivileged instructions can be executed. Also all memory addresses are logical in user mode. In user mode, the machine translates logical addresses to physical addresses using the <a href="xsm-spec.html#navaddr">address translation</a> scheme of the machine. The OS Startup code must load the user program to be executed from the disk to the memory and set up the page tables so that the address translation scheme works correctly. 
+					A user program is different from a system program. It is to be noted that a system program is executed in kernel mode ( See <a href="xsm-spec.html#navmodes" class="imp">Privilege modes</a> ). The machine starts its execution in kernel mode. In kernel mode both privileged and unprivileged <a href="xsm-spec.html#navinstr">instructions</a> can be executed. All memory addresses are physical addresses in kernel mode.</p>
+					<p> A user program should be run in user mode. In user mode only unprivileged instructions can be executed. Also all memory addresses are logical in user mode. In user mode, the machine translates logical addresses to physical addresses using the <a href="xsm-spec.html#navaddr" class="imp">address translation</a> scheme of the machine. The OS Startup code must load the user program to be executed from the disk to the memory and set up the page tables so that the address translation scheme works correctly. 
 				</p>
 				<p>
-				Before the start of execution of the user program, the mode of execution must be changed from kernel mode to user mode. The value of Instruction Pointer must be set to the starting logical address of the code of the user program (Since all addresses are logical in user mode, program starts executing from logical address 0). Both switching to user mode and setting of the IP is achieved by using <a href="spl-spec.html#naviretstmt"> ireturn</a> instruction. The ireturn instruction in SPL translates to the machine instruction <a href="xsm-spec.html#navinstr_iret">IRET</a>. </p>
+				Before the start of execution of the user program, the mode of execution must be changed from kernel mode to user mode. The value of Instruction Pointer must be set to the starting logical address of the code of the user program (Since all addresses are logical addresses in user mode, program starts executing from logical address 0). Both switching to user mode and setting of the IP is achieved by using <a href="spl-spec.html#naviretstmt"> ireturn</a> instruction. The ireturn instruction in SPL translates to the machine instruction <a href="xsm-spec.html#navinstr_iret">IRET</a>. </p>
 				
 
-				<p>In this stage, a user program is written in <a href="apl-spec.html">APL</a> is compiled and loaded to the disk as the <a href="xos-spec.html#navpromgmt_init">INIT</a> program. The first user program which is executed is called the INIT program. INIT program is stored in blocks 13-15 of the XFS disk. It does not have a FAT entry or a basic block. You will also write an OS Startup Code to load your INIT program from the disk to the memory and execute it. Note that the OS Startup code is a system program which runs in kernel mode. Hence it must be written in <a href="spl-spec.html">SPL</a>.</p>
+				<p>In this stage, a user program is written in APL is compiled and loaded to the disk as the <a href="xos-spec.html#navpromgmt_init">INIT</a> program. The first user program which is executed is called the INIT program. INIT program is stored in blocks 13-15 of the XFS disk. It does not have a FAT entry or a basic block. You will also write an OS Startup Code to load your INIT program from the disk to the memory and execute it. Note that the OS Startup code is a system program which runs in kernel mode. Hence it must be written in  SPL. (SPL Specification need not be read now. It is given  <a href="spl-spec.html"> in SPL Documentation </a>)</p>
 
 				<ol>
 					<li> Write a program in APL to print all prime numbers lesser than a number taken as input. See <a href="apl-spec.html#navexamples">Examples</a> of APL programs. In the roadmap, the path of the file is assumed to be <tt>$HOME/myxos/apl/apl_progs/prime.apl</tt>. This program will be the INIT program in this stage. </li><br/>
@@ -446,7 +448,7 @@ Machine is halting
 						 <div class="syntax">PTLR = 4; </div>
 						 Every process consists of 4 pages - 3 pages for code and 1 for stack (See <a href="xos-spec.html#navpromgmt_prostruct">Process Structure</a>). </li><br/>
 
-					 <p>Each page table entry contains 2 words. See <a href="xos-spec.html#navmemmgmt_paging">Paging</a> for the structure of page table entry. The first word of each entry indicates the physical page number corresponding to a logical page number. The logical page number is the index of the page table entry. The 2nd word of each entry contains the auxiliary information, which will be used for Virtual Memory Management in Stage 10. </p>
+					 <p>Each page table entry contains 2 words. See <a href="xos-spec.html#navpromgmt_pagetbl">Per-process Page table</a> for the structure of page table entry. The first word of each entry indicates the physical page number corresponding to a logical page number. The logical page number is the index of the page table entry. The 2nd word of each entry contains the auxiliary information, which will be used for Virtual Memory Management in Stage 10. </p>
 
 								 Setup entries for memory pages 16 to 18 (3 pages are used for code)  as well as one entry for memory page 19 (1 page is used for stack) in the page table. Set the first word of each entry to corresponding physical page number (16 to 19) and set the second word (Auxiliary information) as <b>11</b> (Valid and Referenced).</li><br/>
 							Setting up the entries of page table can be done in the following way
@@ -544,7 +546,7 @@ Machine is halting</pre>
 			<article  id="navstage5" class="grid col-full">
 			<h2>Stage 5: Interrupt Routines </h2>
 			<p> When an interrupt occurs while the XSM simulator is running, it transfers control to specific memory locations corresponding to the interrupt. Interrupts can be invoked either by hardware or software through instructions. In XSM, the only hardware interrupt is timer interrupt, which is triggered in fixed intervals of intstructions. However in general, a timer interrupt is triggered in fixed intervals of time. There are 6 software interrupts in XSM, invoked using machine instrutions <tt>INT 1</tt> to <tt>INT 7</tt>. </p>
-			<p>Interrupts can only be triggered or invoked in user mode. In Kernel mode interrupts are disabled. Upon encountering an interrupt, the machine transfers control to specific locations in memory and changes from user mode to kernel mode. These locations in memory contains Interrupt Routines. (See <a href="xos-spec.html#navmemorg">Memory Organization</a>). Interrupt routines is a set of privileged instructions which provides kernel level services to user programs. Memory page 8 contains the Timer Interrupt Routine which is invoked after specific intervals of instructions. Memory page 9 to 15 contain Interrupt Routine 1 to 7, invoked using <tt>INT 1</tt> to <tt>INT 7</tt> machine instructions respectively. The interrupt instructions <tt>INT 1</tt> to <tt>INT 7</tt> can be invoked from an application program using system call interfaces. You will be implementing system calls in the subsequent stages. In this stage you'll be implementing a sample timer interrupt and a software interrupt. See <a href ="xsm-spec.html#navintrrupt">Interrupts</a> for more details.
+			<p>Interrupts can only be triggered or invoked in user mode. In Kernel mode interrupts are disabled. Upon encountering an interrupt, the machine transfers control to specific locations in memory and changes from user mode to kernel mode. These locations in memory contains Interrupt Routines. (See <a href="xos-spec.html#navmemorg">Memory Organization</a>). Interrupt routines is a set of privileged instructions which provides kernel level services to user programs. Memory page 8 contains the Timer Interrupt Routine which is invoked after specific intervals of instructions. Memory page 9 to 15 contain Interrupt Routine 1 to 7, invoked using <tt>INT 1</tt> to <tt>INT 7</tt> machine instructions respectively. The interrupt instructions <tt>INT 1</tt> to <tt>INT 7</tt> can be invoked from a user program using system call interfaces. You will be implementing system calls in the subsequent stages. In this stage you'll be implementing a sample timer interrupt and a software interrupt. See <a href ="xsm-spec.html#navintrrupt">Interrupts</a> for more details.
 			</p>
 			
 			<h5>Implementing Software Interrupt</h5>
@@ -1100,7 +1102,7 @@ endwhile;					</pre>
 			<br/>
 			<p>The system call number must be fetched from the stack and conditionally the corresponding system call actions need to be performed. Actions that needs to be taken for each system call is discussed in detail in this stage. After programming the interrupt routine, it must be compiled using SPL compiler, and loaded to XFS disk using XFS interface. </p>
 			
-			<p>To check if the system call is functioning properly, make application programs which invoke the system call. Compile it using APL compiler and load it to disk as the INIT program. Run the machine by <b>disabling the timer</b>. You may use the XFS interface to check the working of file sytem calls.</p>
+			<p>To check if the system call is functioning properly, make user programs which invoke the system call. Compile it using APL compiler and load it to disk as the INIT program. Run the machine by <b>disabling the timer</b>. You may use the XFS interface to check the working of file sytem calls.</p>
 			
 			<p> Detailed information and actions corresponding to each system call is given below.</p>
 			
@@ -1339,7 +1341,7 @@ endwhile;					</pre>
 			<p> The OS maintains information about free memory pages in the <a href="xos-spec.html#navmemmgmt_mfl">memory free list</a> just like the disk maintains information about free disk blocks in the disk free list. Since fork loads a new process, it must check for free memory pages in the <i>memory free list</i> to allocate memory for this process. The OS Startup code is responsible for initializing the the memory free list. The entries for system reserved pages must be set as used in the memory free list. Since the OS startup code loads the INIT process to memory pages 16 to 19, these pages must also be marked as used in the memory free list. The interrupt routines 5, 6 and 7 must be loaded by the OS startup code.
 			</p>
 			
-			<p>After programming the OS Startup Code and the interrupt routines, compile and load them to the disk. To check if the system calls are functioning properly, make application programs which invoke these system calls. Compile these programs using APL compiler and load it to disk. Run the machine <b>with the timer enabled</b>.
+			<p>After programming the OS Startup Code and the interrupt routines, compile and load them to the disk. To check if the system calls are functioning properly, make user programs which invoke these system calls. Compile these programs using APL compiler and load it to disk. Run the machine <b>with the timer enabled</b>.
 			<div class="syntax"> $HOME/myxos/xsm/xsm</div> You have already programmed the timer interrupt routine in stage 6. Make sure it is loaded to the disk and the OS Startup Code loads the timer interrupt routine to the memory. </p>
 			
 			<h6>Modifying OS Startup Code</h6>

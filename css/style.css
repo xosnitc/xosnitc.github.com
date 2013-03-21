@@ -46,7 +46,11 @@ body { margin: 0; font-size: 13px; line-height: 1.6; }
 a { color: #0078CF; font-weight: normal;
 	cursor: pointer;  text-decoration: none;
 	transition:color 0.2s ease; -moz-transition:color 0.2s ease; -webkit-transition:color 0.2s ease; -o-transition:color 0.2s ease;}
-
+a.imp{
+	color: #0078CF; font-weight: bold;
+	cursor: pointer;  text-decoration: none;
+	transition:color 0.2s ease; -moz-transition:color 0.2s ease; -webkit-transition:color 0.2s ease; -o-transition:color 0.2s ease;
+}
 a:hover { color: #000; text-decoration: underline; background: rgba(0, 0, 0, .025);} 
 
 ::-moz-selection { background: #0078CF; color: #fff; text-shadow: none; }

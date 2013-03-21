@@ -138,7 +138,7 @@
 				<p>The operating system organizes memory as given below</p>
 				<img src="doc/memorg.png" />
 				<ul>
-				<li> <a href="#navsysroutines_osstartup" >OS Startup Code</a> loads the INIT process to memory, data structures like FAT and Disk Free List, and Interrupt Routines from the disk.</li>
+				<li> <a href="#navsysroutines_osstartup" >OS Startup Code</a> loads the INIT process to memory and sets up data structures like FAT, Disk Free List, and Memory Free List. It also loads the Interrupt Routines and Exception handler from the disk to the memory.</li>
 				<li>  <a href="#navpromgmt_pagetbl" >The Per-Process Page Tables</a>. used for address translation of logical addresses to physical address. </li>
 				<li><a href="#navmemmgmt_mfl">Memory Free List</a> is a list of free memory locations in the memory. </li>
 				<li><a href="#navfiles_swoft" >System Wide Open File Table</a>  contains a details of files which are opened by the processes.  </li>
@@ -198,7 +198,7 @@
 				
 				<br/>
 				<h5>Process Identifier (<tt>PID</tt>) </h5>	
-				The process identifier is a number from 0 to 31, which identifies the processes in memory. The PID of the current process can be calculated from the PTBR register.
+				The process identifier is a number from 0 to 31, which identifies the processes in memory. 
 		
 				</br></br>
 					<h5>Process State (<tt>STATE</tt>)</h5>
@@ -248,7 +248,7 @@
 
 
 	<p>  
-A	 maximum of 32 PCBs can be stored in the memory, and hence the maximum number of processes that can be run simultaneously is limited to 32. The PCB list is stored in pages 3 and 4 in the memory (words 1536 – 2559)
+A maximum of 32 PCBs can be stored in the memory, and hence the maximum number of processes that can be run simultaneously is limited to 32. The PCB list is stored in pages 3 and 4 in the memory (words 1536 – 2559)
 </p>
 				</article>			
 				<div class="up grid col-one-third" style="float:right">
@@ -267,13 +267,13 @@ A	 maximum of 32 PCBs can be stored in the memory, and hence the maximum number 
 				The Per-Process Page Table stores the physical page number corresponding to each logical page associated with the process. The logical page number can vary from 0 to 3 for each process. Therefore, each process has 4 entries in the page table. Per-Process Page Tables are stored in Page 2, words 1024 – 1279 in the memory ( 256 words = 32 processes × 4 entries per process )
 				</p>
 				<p>
-					When a process is loaded, the actual pages are not loaded into memory. In <b>demand paging</b>, the actual pages are loaded only when the pages are accessed for the first time . Once all pages are loaded, the first word of each entry contains the physical page number where the data specified by the logical address resides in the memory. The second word contains the auxiliary information. The first two bits are reserved as reference(R) and valid/invalid(V) bit. The remaining bits can be used for other purposes fby the OS designer. The details of bits in Auxiliary information is given below. <br/>
+					When a process is loaded, the actual pages are not loaded into memory. In <b>demand paging</b>, the actual pages are loaded only when the pages are accessed for the first time . Once all pages are loaded, the first word of each entry contains the physical page number where the data specified by the logical address resides in the memory. The second word contains the auxiliary information. The first two bits are reserved as reference(R) and valid/invalid(V) bit. The remaining bits can be used for other purposes by the OS designer. The details of bits in Auxiliary information is given below. <br/>
 
 					<img src="doc/auxinfo.png" />
 					<ul>
 					<li> <i>Reference Bit (R)</i>: Initially, this bit is set to 0 (unreferenced) by the machine. On a page access, this bit is set to 1 by the machine. This bit is used for page replacement by the OS. (Refer <a href="#navmemmgmt_paging">Paging</a> and <a href="#navmemmgmt_vm">Virtual Memory</a>)
 
-					<li> <i>Valid/Invalid Bit (V) :</i> This bit indicates whether the entry of the page table is valid or invalid. The Valid/Invalid bit has value 1 if the first word of this  entry corresponds to a valid physical page number. It has value 0 if the entry is invalid. An first word of an invalid Per-process page table entry is either -1 (indicates that there is no physical page corresponding to the logical address) or a disk block number (the physical page corresponding to the logical address resides in this disk block and needs to be loaded to memory). The Valid/Invalid bit is set by the OS. If memory access is made to a page whose page table entry is invalid, the machine transfers control to the <a href="#navsysroutines_exhandler">Exception Handler</a> routine, which is responsible for loading the correct physical page.   </li>
+					<li> <i>Valid/Invalid Bit (V) :</i> This bit indicates whether the entry of the page table is valid or invalid. The Valid/Invalid bit has value 1 if the first word of this  entry corresponds to a valid physical page number. It has value 0 if the entry is invalid. The first word of an invalid Per-process page table entry is either -1 (indicates that there is no physical page corresponding to the logical address) or a disk block number (the physical page corresponding to the logical address resides in this disk block and needs to be loaded to memory). The Valid/Invalid bit is set by the OS. If memory access is made to a page whose page table entry is invalid, the machine transfers control to the <a href="#navsysroutines_exhandler">Exception Handler</a> routine, which is responsible for loading the correct physical page.   </li>
 					</li>
 					</ul>	
 				</p>
@@ -282,7 +282,7 @@ A	 maximum of 32 PCBs can be stored in the memory, and hence the maximum number 
 					<tr>  <th>Physical Page Number</th>  <th> Auxiliary information <br/>(referenced and valid bit)</th> </tr>
 					<tr> <td>36 </td> <td> 01</td> </tr>
 					<tr> <td>311</td> <td> 00</td> </tr>
-					<tr> <td> 54</td> <td> 01</td> </tr>
+					<tr> <td>-1</td> <td> 00</td> </tr>
 					<tr> <td>490</td> <td> 00</td> </tr>
 				</table>
 
@@ -291,7 +291,7 @@ A	 maximum of 32 PCBs can be stored in the memory, and hence the maximum number 
 					<li> Reference bit of every entry is set as 0, indicating unreferenced</li>
 					<li> The 1st entry is a valid page in memory as the valid bit is 1.</li>
 					<li> The 2nd entry is invalid (valid bit is 0) and the disk block no corresponding to that entry is stored (311).</li>
-					<li> The 3rd entry is also a valid page (valid bit is 1). </li>
+					<li> The 3rd entry is invalid. There is no physical page associated with this logical address. </li>
 					<li> The 4th entry is invalid and the disk block no stored is 490. This corresponds to a page in the swap area.</li>
 
 				</ul>
@@ -363,7 +363,7 @@ The INIT process is the first user program that is loaded by the OS after start 
 				<h4>Virtual Memory</h4>
 				<p>XOS allows virtual memory management, i.e. running processes without having all the pages in memory. It makes use of a backing store or swap in the disk to replace pages from the memory and allocate the emptied memory to another process. This increases the total number of processes that can be run simultaneously on the OS.</p>
 				<p>
-				Before XOS starts executing a process, its page tables are set with disk block numbers i.e initially no pages are allocated to the process. For each page table entry, the flags are set as 0 (invalid) and 0 (unreferenced). When a page is referenced for the first time, it triggers a page fault exception (since valid bit is set as 0). The Exception Handler Routine is responsible for loading the required page from the disk to the memory. This strategy of loading pages when accessed for the first time, is known as <b>Pure Demand Paging</b>. </p>
+				When a process starts executing, no memory pages are allocated for it. Initially its, Per-process page tables are set with the  block numbers of the disk blocks which contain the data blocks of the program. For each page table entry, the Auxiliary Information are intialized to 0 (invalid) and 0 (unreferenced). When a page is referenced for the first time, it triggers a page fault exception (since valid bit is set as 0). The Exception Handler Routine is responsible for loading the required page from the disk to the memory. This strategy of loading pages when accessed for the first time, is known as <b>Pure Demand Paging</b>. </p>
 				<p>
 				On encountering a page fault exception, the Exception Handler Routine loads the required page from the disk to a free page in the memory. If no free page is available in the memory, a page replacement technique is used to select a victim page. The page replacement technique used in XOS is a second chance algorithm (Refer Silberschatz, Galvin, Gagne: Operating System Concepts) which uses the reference bits in the auxiliary information. The victim page is swapped out to to the disk (swap area) to accommodate the required page.</p>
 			</article> 
@@ -566,12 +566,14 @@ Apart from the file system data structures XOS maintains details about files ope
 			<article id="navsysroutines_exhandler" class="grid col-full">
 			<h4>Exception Handler</h4>
 			<p>When the machine encounters an exception it sets EFR (Exception Flag Register) with details corresponding to the exception and calls the exception handler routine (Page No. 7 in memory). (Refer <a href="xsm-spec.html#navexcep" target="blank"> Exceptions in XSM</a>) </p>
-			
+			<p>The structure of EFR is given below </p>
+
 			<img src="doc/EFR-structure.png" style="width:40%" width="20%">
+			
 			<p>XOS handles all exceptions other than Page Fault by killing the process
 which caused the exception.
 			<h5> Page Fault Exceptions </h5>
-			<p>The Cause field of EFR for Page Fault Exceptions is 0. Once a page fault occurs, the Exception Handler Routine loads the required page from the disk to the memory. The corresponding entry for the logical page which caused the exception to occur (indicated by BadVAddr field in EFR ) will be invalid in the page table of the process. </p>
+			<p>The Cause field of EFR for Page Fault Exceptions is 0. The logical page which caused the exception to occur (indicated by BadVAddr field in EFR ) will not have a corresponding valid entry in the page table of the process. If the page table entry contains a disk block number, the block is loaded from the disk to a free memory page, and this memory page number is stored in the page table entry (See <a href="#navmemmgmt_vm">Virtual Memory</a>). The Valid/Invalid bit is set to 1, and the exception handler returns back to the process. </p>
 			</article>		
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>

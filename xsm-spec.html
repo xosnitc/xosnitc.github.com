@@ -232,8 +232,8 @@
 							The number of entries in the page table is stored in <b>PTLR</b> (Page Table Length Register). 
 							Each entry of the page table is two words long.
 							<ul>
-								<li><p> First word of a valid page number ;3contains a physical page number corresponding to a logical page number.</p></li>
-								<li><p> The second word contains the Auxiliary information. The first bit in this word is used as <i>reference bit</i>. This bit is set to 0 initially. When a particular page is accessed the reference bit for the corresponding page in the page table is set to 1, indicating referenced. The second bit of the auxiliary information is used as a <i>Valid/Invalid</i> bit. It is set to 1 if the entry is a valid physical memory page or set to 0 otherwise. When an access to a page table entry with 0 as the Valid bit is made, mahcine sets the <a href="#navexcep">EFR (Exception Flag Register)</a> with the  IP of the instruction where the exception occured, logical address of the memory location that caused the exception and cause of the exception (page fault). (See  <a href="#navexcep">Exceptions</a>). The privilege mode is changed from user to kernel mode. The value of IP is set to page 7 or word address 3584 in the memory. If an access to a page whose page table entry has Valid/Invalid bit set to 1 is made, the physical address corresponding to the logical address is calculated using the method described.</p></li>
+								<li><p> First word of a valid page table entry contains a physical page number corresponding to a logical page number.</p></li>
+								<li><p> The second word contains auxiliary information. The first bit in this word is used as <i>reference bit</i>. This bit is set to 0 initially. When a particular page is accessed the reference bit for the corresponding page in the page table is set to 1, indicating referenced. The second bit of the auxiliary information is used as a <i>Valid/Invalid</i> bit. It is set to 1 if the entry is a valid physical memory page or set to 0 otherwise. When an access to a page table entry with 0 as the Valid bit is made, machine sets the <a href="#navexcep">EFR (Exception Flag Register)</a> with the  IP of the instruction where the exception occured, logical address of the memory location that caused the exception and cause of the exception (page fault). The privilege mode is changed from user to kernel mode. The value of IP is set to page 7 or word address 3584 in the memory. If an access to a page whose page table entry has Valid/Invalid bit set to 1 is made, the physical address corresponding to the logical address is calculated using the method described here.</p></li>
 							</ul>
 						<p>The logical page number is used to index the page table to get the corresponding physical page number.</p>
 							
@@ -535,7 +535,7 @@
 			<article id="navexcep" class="grid col-full">		
 				<h4>Exceptions</h4> 
 				<p> Exceptions are anomalous situations which changes the normal flow of execution. 
-				There is a flag associated with each exception and the details corresponding to the exception that occured is stored in <tt>EFR</tt>. 
+				There is a flag associated with each exception and the details corresponding to the exception that occured is stored in <tt>EFR</tt> (Exception Flag Register). 
 				If an exception occurs in User Mode, the machine transfers control of execution, i.e. 
 				changes the value of <tt>IP</tt> to page number 7 (address = 3584) where the Exception Handler Routine resides. 
 				However in Kernel Mode, the machine halts when it encounters an exception.<br/>
@@ -547,8 +547,8 @@
 					<li><p> <b>Value of IP</b>: Stores the value of <tt>IP</tt> at the point where the exception occured. 
 					The maximum length of <tt>IP</tt> is 5 digits.</p></li>
 					<li><p> <b>BadVAddr</b> (Bad Virtual Address). This field is relevant when a Page Fault Exception occurs. 
-					The logical page number which caused a page fault exception is stored here. The length of this field is 2 characters.</p></li>
-					<li><p> <b>Cause</b>: This field indicates a number which corresponds to the cause of the exception. eg : a page fault exception has value 0 stored in Cause field. The length of this field is 1 character.</p></li>
+					The logical page number which caused a page fault exception is stored here. The length of this field is 2 digits.</p></li>
+					<li><p> <b>Cause</b>: This field indicates a number which corresponds to the cause of the exception. eg : a page fault exception has value 0 stored in Cause field. The length of this field is 1 digit.</p></li>
 				</ul>
 				
 				<p>Exceptions can be caused when the following events occur.</p>

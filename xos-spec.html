@@ -247,9 +247,9 @@
 				<p>The list of PCBs stored in the memory is used as a Ready List by the operating system to schedule processes to CPU. The STATE in the PCB indicates whether a process is ready for execution or not. A new process in memory is scheduled for execution by circularly traversing through the list of PCBs stored in memory and selecting the first Ready process after the PCB of the currently running process in the list.</p>
 
 
-	<p>  
-A maximum of 32 PCBs can be stored in the memory, and hence the maximum number of processes that can be run simultaneously is limited to 32. The PCB list is stored in pages 3 and 4 in the memory (words 1536 – 2559)
-</p>
+				<p>  
+				A maximum of 32 PCBs can be stored in the memory, and hence the maximum number of processes that can be run simultaneously is limited to 32. The PCB list is stored in pages 3 and 4 in the memory (words 1536 – 2559)
+				</p>
 				</article>			
 				<div class="up grid col-one-third" style="float:right">
 				<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -267,7 +267,8 @@ A maximum of 32 PCBs can be stored in the memory, and hence the maximum number o
 				The Per-Process Page Table stores the physical page number corresponding to each logical page associated with the process. The logical page number can vary from 0 to 3 for each process. Therefore, each process has 4 entries in the page table. Per-Process Page Tables are stored in Page 2, words 1024 – 1279 in the memory ( 256 words = 32 processes × 4 entries per process )
 				</p>
 				<p>
-					When a process is loaded, the actual pages are not loaded into memory. In <b>demand paging</b>, the actual pages are loaded only when the pages are accessed for the first time . Once all pages are loaded, the first word of each entry contains the physical page number where the data specified by the logical address resides in the memory. The second word contains the auxiliary information. The first two bits are reserved as reference(R) and valid/invalid(V) bit. The remaining bits can be used for other purposes by the OS designer. The details of bits in Auxiliary information is given below. <br/>
+					When a process is loaded, the actual pages are not loaded into memory. In <b>demand paging</b>, the actual pages are loaded only when the pages are accessed for the first time . Once all pages are loaded, the first word of each entry contains the physical page number where the data specified by the logical address resides in the memory.
+					<p> The second word contains <b>auxiliary information</b>. The first two bits of auxiliary information are reserved as reference(R) bit and valid/invalid(V) bit. The remaining bits are not used by XOS, but can be used for future enhancements. The details of bits in Auxiliary information is given below. <br/></p>
 
 					<img src="doc/auxinfo.png" />
 					<ul>

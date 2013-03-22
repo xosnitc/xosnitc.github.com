@@ -367,7 +367,7 @@ Machine is halting
 				</p>
 
 				<p>
-				Before the start of execution of the user program, the mode of execution must be changed from kernel mode to user mode. The value of Instruction Pointer must be set to the starting logical address of the code of the user program (Since all addresses are logical addresses in user mode, program starts executing from logical address 0). Both switching to user mode and setting of the IP is achieved by using <a href="spl-spec.html#naviretstmt"> ireturn</a> instruction. The ireturn instruction in SPL translates to the machine instruction <a href="xsm-spec.html#navinstr_iret">IRET</a>. </p>
+				Before the start of execution of the user program, the mode of execution must be changed from kernel mode to user mode. The value of Instruction Pointer must be set to the starting logical address of the code of the user program (Since all addresses are logical addresses in user mode, program starts executing from logical address 0). Its important that you MUST read about <a href="runtime.html" class="imp">Runtime environment</a> before proceeding with the roadmap. Both switching to user mode and setting of the IP is achieved by using <a href="spl-spec.html#naviretstmt"> ireturn</a> instruction. The ireturn instruction in SPL translates to the machine instruction <a href="xsm-spec.html#navinstr_iret">IRET</a>. </p>
 				
 
 				<p>In this stage, a user program is written in APL. It is then compiled and loaded to the disk as the <a href="xos-spec.html#navpromgmt_init">INIT</a> program. The first user program which is executed is called the INIT program. INIT program is stored in blocks 13-15 of the XFS disk. It does not have a FAT entry or a basic block. You will also write an OS Startup Code to load your INIT program from the disk to the memory and execute it. Note that the OS Startup code is a system program which runs in kernel mode. Hence it must be written in  SPL. (SPL Specification need not be read now. It is given  <a href="spl-spec.html"> in SPL Documentation </a>)</p>
@@ -411,7 +411,7 @@ Machine is halting
 
 				<h6>OS Startup Code</h6>
 				<ol>
-					Interrupt Routine 7, Exception Handler routine and the program to print primes must be loaded from the XFS disk to the memory  by the OS Startup Code when the OS starts. The OS Startup Code must be written in <a href="spl-spec.html">SPL</a>, compiled and loaded to the disk as done in stage 3. The new OS Startup Code must do the following tasks. </br><br/>
+					Interrupt Routine 7, Exception Handler routine and the program to print primes must be loaded from the XFS disk to the memory  by the OS Startup Code. The OS Startup Code must be written in <a href="spl-spec.html">SPL</a>, compiled and loaded to the disk as done in stage 3. The new OS Startup Code must do the following tasks. </br><br/>
 
 					<li> <p>Load Exception Handler from disk block 1 to memory page 7 and Interrupt Routine 7 from disk block 9 to memory page 15 using <a href="spl-spec.html#navlsstmt" >load</a> instruction.  These programs are responsible for halting the machine on exceptions and upon finishing execution of the process respectively. 
 		
@@ -424,44 +424,48 @@ Machine is halting
 					<li><p>The program to print primes will be loaded as the INIT program. Since the INIT program is the first user program that is executed, you may assign a PID (Process Identifier) value 0.</p>
 
 					<p>
-					The first structure to setup is the INIT's Process Control Block. ( See <a href="xos-spec.html#navpromgmt_pcb">PCB</a> ). The <a href="xos-spec.html#navpromgmt_readylist">Ready List of PCBs</a> starts from memory address 1536. In general, the starting address of the PCB of a process is computed using the formula <pre>1536 + (PID x 32)</pre>
-					Each PCB is of size 32 words. Hence, PID x 32 will be the index into the Ready List of PCBs. PID of INIT process is 0, and hence its PCB's starting address is 1536. While writing SPL programs, you may use the <a href="spl-spec.html#navconst">predefined constant</a> <tt>READY_LIST</tt> instead of this value.
+					The first structure to setup is the Process Control Block for the INIT process. ( See <a href="xos-spec.html#navpromgmt_pcb">PCB</a> ). The <a href="xos-spec.html#navpromgmt_readylist">Ready List</a> starts from memory address 1536. In general, the starting address of the PCB of a process is computed using the formula <pre>1536 + (PID x 32)</pre>
+					Each PCB is of size 32 words. Hence, PID x 32 will give the index of the PCB within the Ready List of PCBs. Adding 1536, which is the starting address of the Ready List, will give the physical address of the PCB.  While writing SPL programs, you may use the <a href="spl-spec.html#navconst">predefined constant</a> <tt>READY_LIST</tt> instead of the value 1536 . PID of INIT process is set to 0, and hence its PCB's starting address is 1536.
 					The first word in the PCB stores the PID of the corresponding process. Set the 1st word of the PCB with the value 0 (which is the PID for INIT Process)
 							<div class="syntax">
 								[READY_LIST + 0] = 0 // Sets the entry for PID as 0
 							</div>	
-					<li>Load the <b>INIT program</b> (program to print primes) from the disk to the memory. In the memory, user programs are stored in pages 16-63. Since INIT is the first process, we will allocate the first 3 pages (pages 16-18) for code. Every running process will require a stack. Memory page 19 can be allocated for the stack.  See <a href="xos-spec.html#navpromgmt_prostruct">Process Structure</a>. The blocks 13-15 from disk is to be loaded to the memory pages 16-18. ( See <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization )</a></li>
+					<li>Load the <b>INIT program</b> (program to print primes) from the disk to the memory. In the memory, user programs are stored in pages 16-63. Since INIT is the first process, we will allocate the first 3 pages (pages 16-18) for code. Every running process will require a stack. (Understanding the <a href="runtime.html" class="imp">Runtime Environment</a> is a MUST at this point). Memory page 19 can be allocated for the stack. (See <a href="xos-spec.html#navpromgmt_prostruct">Process Structure</a>) . The blocks 13-15 from disk is to be loaded to the memory pages 16-18. ( See <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization )</a></li>
 							<div class="syntax">
 								load(16,13);<br/>
 								load(17,14);<br/>
 								load(18,15);<br/>
 							</div>
-					<li> Page Tables for INIT must be setup for address translation scheme to work correctly. See <a href="xsm-spec.html#navaddr">Address Translation</a>. The starting address of process page tables is 1024 (See <a href="xos-spec.html#navmemorg" >Memory Organization</a>). The PTBR or Page Table Base Register stores the starting address of the page table of a process. PTBR of a process is calculated using the formula <pre> 1024 + (PID x 8) </pre>
+					<li> Page Table for INIT must be set up for address translation scheme to work correctly. (Understanding <a href="xsm-spec.html#navaddr" class="imp">Address Translation</a> is a MUST at this point). The PTBR or Page Table Base Register stores the starting address of the page table of a process. The page table for each process has 8 words. The list of all page tables start at memory address 1024.(See <a href="xos-spec.html#navmemorg" >Memory Organization</a>).  SPL has a predefined constant <tt>PAGE_TABLE</tt> which stores the value 1024. Hence  PID x 8 will give the index of the page table of the particular process within the list of page tables. Adding 1024 to this value gives the physical address of the page table of this process. This physical address is stored in PTBR. Thus, PTBR of a process is calculated using the formula <pre> 1024 + (PID x 8) </pre>
 
 						 Since PID of INIT is 0, PTBR value of INIT is set as 1024. 
 						 <div class="syntax">PTBR = 1024; </div>
+						 <p></p>
 
-						 <b>PTLR</b> (Page Table Length Register) stores the number of entries in the page table of a process. In XOS the page table of every process will have 4 entries. So, PTLR is set as 4.<br/>
+						 <b>PTLR</b> (Page Table Length Register) stores the number of entries in the page table of a process. In XOS the page table of every process will have 4 entries (See <a href="runtime.html">Runtime Environment</a>). Thus, PTLR is set to 4.<br/>
 						 <div class="syntax">PTLR = 4; </div>
-						 Every process consists of 4 pages - 3 pages for code and 1 for stack (See <a href="xos-spec.html#navpromgmt_prostruct">Process Structure</a>). </li><br/>
+						 Every process consists of four pages. Three pages are for storing code and one page for the stack (See <a href="xos-spec.html#navpromgmt_prostruct">Process Structure</a>). </li><br/>
 
-					 <p>Each page table entry contains 2 words. See <a href="xos-spec.html#navpromgmt_pagetbl">Per-process Page table</a> for the structure of page table entry. The first word of each entry indicates the physical page number corresponding to a logical page number. The logical page number is the index of the page table entry. The 2nd word of each entry contains the auxiliary information, which will be used for Virtual Memory Management in Stage 10. </p>
+					 <p>Each page table entry contains 2 words.  There are 4 such entries in the page table of a process. The first word of each entry indicates the physical page number corresponding to a logical page number. The 2nd word of each entry contains auxiliary information (You MUST read about <a href="xos-spec.html#navpromgmt_pagetbl" class="imp">Per-process Page table</a>). </p>
 
-								 Setup entries for memory pages 16 to 18 (3 pages are used for code)  as well as one entry for memory page 19 (1 page is used for stack) in the page table. Set the first word of each entry to corresponding physical page number (16 to 19) and set the second word (Auxiliary information) as <b>11</b> (Valid and Referenced).</li><br/>
+					<p>Set up entries for memory pages 16 to 18 (3 pages for code)  as well as one entry for memory page 19 (1 page for stack) in the page table for the INIT process. Set the first word of each entry to corresponding physical page number (16 to 19) and set the second word (Auxiliary information) as <b>10</b> (Valid and not referenced). </p>
+
+					<p>The valid bit is set to 1 (indicating that the first word of this entry is a valid physical page number) because the actual page is loaded into the memory. This will not be done in demand paging, which will be done in Stage 10 (See <a href="xsm-spec.html#navaddr" class="imp">Address Translation</a>). The reference bit is set to 0, as the page is not referenced now. It is set to 1 by the machine, when an access to the page is made when the process executes.</p>
 							Setting up the entries of page table can be done in the following way
 							<div class="syntax">
-								[PTBR + 0] = 16;  // 1st Word of Page Table Entry 1 - Page Number<br/>
-								[PTBR + 1] = 11;  // 2nd Word of Page Table Entry 1 - Auxiliary Information<br/>
+								[PTBR + 0] = 16;  // Physical Page Number for Logical Page 0<br/>
+								[PTBR + 1] = 10;  // Auxiliary Information for Logical Page 0<br/>
 								.	<br/>
 								.	<br/>
 								.	<br/>
-								[PTBR + 6] = 19;  // 1st Word of Page Table Entry 4 - Page Number of stack <br/>
-								[PTBR + 7] = 11;  // 2nd Word of Page Table Entry 4 - Auxiliary Information<br/>
+								[PTBR + 6] = 19;  // Physical Page Number for Logical Page 3 (Stack) <br/>
+								[PTBR + 7] = 10;  // Auxiliary Information for Logical Page 3 (Stack)<br/>
 							</div>
 						
 					</li>					
 					
-					<li> Once  all structures are setup we can set <tt>STATE</tt> field in the PCB of INIT process is set to 2 (running). <div class="syntax">
+					<li> Once  all structures are set up, set up <tt>STATE</tt> field in the PCB of INIT process is set to 2 (running). (See <a href="xos-spec.html#navpromgmt_pcb">PCB</a> for more information about process states)
+						<div class="syntax">
 								[READY_LIST + 1] = 2; // Sets the entry for STATE as 2 (Running)
 							</div> The remaining entries of the PCB need not be set by the OS startup code. You will learn about these in subsequent stages.  
 							

@@ -14,7 +14,7 @@
 
 	<meta name="viewport" content="width=device-width">
 	<meta name="description" content="Build a simple opearting system">
-	<title>Documentation // eXperimental Operating System</title>
+	<title>XOS // Documentation // eXperimental Operating System</title>
 	<link rel="shortcut icon" type="image/png" href="favicon.png">
 	
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
@@ -448,7 +448,7 @@ Apart from the file system data structures XOS maintains details about files ope
 			<article id="navsyscalls_intro" class="grid col-full">
 			<h4>Introduction</h4>
 			<p>System calls are interfaces through which a process communicates with the OS. Each system call has a unique name associated with it (Halt, Open, Read, Fork etc). Each of these names maps to a unique system call number. Each system call in turn causes a software interrupt to occur. Note that multiple system calls can be mapped to the same interrupt.</p>
-			<p> All the arguments to the system call are pushed into the user stack of the process which invokes the system call. The system call number is pushed as the last argument. (Refer <a href="apl-spec.html" target="_blank" >APL Specification</a>)  </p>
+			<p> All the arguments to the system call are pushed into the user stack of the process which invokes the system call. The system call number is pushed as the last argument. (Refer <a href="apl-spec.html#navsyscalls" target="_blank" >System Calls</a> in APL Specification)  </p>
 			</article>			
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -459,7 +459,7 @@ Apart from the file system data structures XOS maintains details about files ope
 			<b>Halt </b></br>
 			<i>APL Syntax </i>: <tt>halt()</tt> <br/>
 			<i>System Call No. </i>: 0 <br/>
-			<p>The Halt system call is used to halt the machine. This system call works only when there is one process running. Halt system call invokes the interrupt <tt>INT 7</tt>. </p>
+			<p>The Halt system call is used to halt the machine. This system call works only when there is only one process running. Halt system call invokes the interrupt <tt>INT 7</tt>. </p>
 			</article>			
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -469,49 +469,50 @@ Apart from the file system data structures XOS maintains details about files ope
 			<article id="navsyscalls_file" class="grid col-full">
 			<h4>File System Calls</h4>
 			<p>File system calls are used by a process when it has to create, delete or manipulate Data files that reside on the disk(file system). There are seven file system calls. An interrupt is associated with each system call. All the necessary arguments for a system call are available in the user stack with the system call number as the last argument. </p>
-			
+			<p><b>NOTE:</b> Filenames must not exceed 10 characters </p>
 			<b>Create</b></br>
 			<i>APL Syntax </i>: <tt>int Create(fileName)</tt> <br/>
 			<i>System Call No. </i>: 1 <br/>
 			
 			<p>This system call is used to create a new file in the file system whose name is specified in the argument. The return value of the <tt>Create()</tt> system call is 0 if it is a success, and -1 otherwise. If the file already exists, the system call returns 0 (success). It invokes Interrupt 1 Routine. </p>
 
-			<b>Delete</b></br>
-			<i>APL Syntax </i>: <tt>int Delete(fileName)</tt> <br/>
-			<i>System Call No. </i>: 2 <br/>
-			
-			<p>This system call is used to delete the file from the file system whose name is specified in the argument. The return value of the  <tt>Delete()</tt> system call is 0 if it is a success, and -1 otherwise. It invokes Interrupt 1 Routine.</p>
 			
 			<b>Open</b></br>
 			<i>APL Syntax </i>: <tt>int Open(fileName)</tt> <br/>
-			<i>System Call No. </i>: 3 <br/>
+			<i>System Call No. </i>: 2 <br/>
 			
 			<p>This system call is used to open an existing file whose name is specified in the argument. It calls Interrupt 2 Routine. The return value of the <tt>Open()</tt> system call is an integer value called FileDescriptor, which is the index of the corresponding file’s entry in the Per-Process Open File Table. </p>
 			
 			<b>Close</b></br>
 			<i>APL Syntax </i>: <tt>int Close(fileDescriptor)</tt> <br/>
+			<i>System Call No. </i>: 3 <br/>
+			
+			<p>This system call is used to close an open instance of a file. fileDescriptor is the integer value returned by the corresponding <tt>Open()</tt> system call. The return value of the <tt>Close()</tt> system call is 0 if it is a success, and -1 otherwise. It invokes Interrupt 2 Routine. </p>
+
+			<b>Delete</b></br>
+			<i>APL Syntax </i>: <tt>int Delete(fileName)</tt> <br/>
 			<i>System Call No. </i>: 4 <br/>
 			
-			<p>This system call is used to close an open file. The file can only be closed by the process which opened it. fileDescriptor is an integer value returned by the corresponding <tt>Open()</tt> system call. The return value of the <tt>Close()</tt> system call is 0 if it is a success, and -1 otherwise. It invokes Interrupt 2 Routine. </p>
+			<p>This system call is used to delete the file from the file system whose name is specified in the argument. The return value of the  <tt>Delete()</tt> system call is 0 if it is a success, and -1 otherwise. It invokes Interrupt 1 Routine.</p>
+	
+			<b>Write</b></br>
+			<i>APL Syntax </i>: <tt>int Write(fileDescriptor, wordToWrite)</tt> <br/>
+			<i>System Call No. </i>: 5<br/>
 			
+			<p>This system call is used to write one word at the current seek position, into an open file ( identified by <tt>fileDescriptor</tt> ) from a string/integer variable ( identified by <tt>wordToWrite</tt> ). The return value of the <tt>Write()</tt> system call is 0 if it is a success or -1 otherwise. It invokes Interrupt 4 Routine. </p>
+
 			<b>Seek</b></br>
 			<i>APL Syntax </i>: <tt>int Seek(fileDescriptor, newLseek)</tt> <br/>
-			<i>System Call No. </i>: 5 <br/>
+			<i>System Call No. </i>: 6 <br/>
 			
 			<p>This system call is used to change the current value of the seek position in the per-process open file table entry of a file to the <tt>newLseek</tt> value. The return value of the <tt>Seek()</tt> system call is 0 if it is a success, and -1 otherwise. It invokes Interrupt 3 Routine. </p>
 			
 			<b>Read</b></br>
-			<i>APL Syntax </i>: <tt>int Read(fileDescriptor, destVariable)</tt> <br/>
-			<i>System Call No. </i>: 6 <br/>
-			
-			<p>This system call is used to read one word at the current seek position, from an open file ( identified by <tt>fileDescriptor</tt> ) and store the word to a string/integer variable ( identified by <tt>destVariable</tt> ). The return value of the <tt>Read()</tt> system call is 0 if it is a success or -1 otherwise. It invokes Interrupt 3 Routine. </p>
-			
-			<b>Write</b></br>
-			<i>APL Syntax </i>: <tt>int Write(fileDescriptor, sourceVariable)</tt> <br/>
+			<i>APL Syntax </i>: <tt>int Read(fileDescriptor, wordRead)</tt> <br/>
 			<i>System Call No. </i>: 7 <br/>
 			
-			<p>This system call is used to write one word at the current seek position, into an open file ( identified by <tt>fileDescriptor</tt> ) from a string/integer variable ( identified by <tt>sourceVariable</tt> ). The return value of the <tt>Write()</tt> system call is 0 if it is a success or -1 otherwise. It invokes Interrupt 4 Routine. </p>
-
+			<p>This system call is used to read one word at the current seek position, from an open file ( identified by <tt>fileDescriptor</tt> ) and store the word to a string/integer variable ( identified by <tt>wordRead</tt> ). The return value of the <tt>Read()</tt> system call is 0 if it is a success or -1 otherwise. It invokes Interrupt 3 Routine. </p>
+		
 			</article>	
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -526,19 +527,19 @@ Apart from the file system data structures XOS maintains details about files ope
 			<i>APL Syntax </i>: <tt>int Fork()</tt> <br/>
 			<i>System Call No. </i>: 8 <br/>
 			
-			<p>This system call is used to replicate the process which invoked this system call in the memory. The new process which is created is known as the child and the process which invoked this system call is known as its parent. The return value of the <tt>Fork()</tt> system call to the parent process is the PID (process identifier) of the child process.It invokes Interrupt 5 Routine </p>
+			<p>This system call is used to replicate the process which invoked it. The new process which is created is known as the child and the process which invoked this system call is known as its parent. The return value of the <tt>Fork()</tt> system call to the parent process is the PID (process identifier) of the child process and -2 for the child process. It invokes Interrupt 5 Routine </p>
 
 			<b>Exec</b></br>
 			<i>APL Syntax </i>: <tt>int Exec(filename)</tt> <br/>
 			<i>System Call No. </i>: 9 <br/>
 			
-			<p>This system call is used to load the program, whose name is specified in the argument, in the memory space of the current process and start its execution. The return value of the <tt>Exec()</tt> system call is 1 if it is a success, and 0 otherwise. It invokes Interrupt 6 Routine.</p>
+			<p>This system call is used to load the program, whose name is specified in the argument, in the memory space of the current process and start its execution. The return value of the <tt>Exec()</tt> system call is -1 if it failed. It invokes Interrupt 6 Routine.</p>
 			
 			<b>Exit</b></br>
 			<i>APL Syntax </i>: <tt>Exit()</tt> <br/>
 			<i>System Call No. </i>: 10 <br/>
 			
-			<p>This system call is used to terminate the execution of the process which invoked it and removes it from the memory . It loads the next available process. When there is only one process running, it halts the machine. It invokes Interrupt 7 Routine.</p>
+			<p>This system call is used to terminate the execution of the process which invoked it and removes it from the memory . It schedules the next ready process and starts executing it. When there is no other ready process to run, it halts the machine. It invokes Interrupt 7 Routine.</p>
 			
 			</article>			
 					

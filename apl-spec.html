@@ -16,7 +16,7 @@
 	
 	<meta name="description" content="Build a simple opearting system">
 	
-	<title>Documentation // eXperimental Operating System</title>
+	<title>APL // Documentation // eXperimental Operating System</title>
 	
 	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 	<link rel="shortcut icon" type="image/png" href="favicon.png">
@@ -443,7 +443,8 @@
 				<p>The standard input and output statements in APL are <b>read</b> and <b>print</b> respectively. 
 				The read statement reads an integer value from the standard input device into an integer variable or 
 				an indexed array variable or a string value into a string variable. The Print statement outputs a string literal 
-				or the value of string variable or an arithmetic expression into the standard output.<br/>
+				or the value of string variable or an arithmetic expression into the standard output.  <br/>
+				<p><b>NOTE:</b> String read or printed must not exceed 10 characters </p>
 				<tt>&nbsp&nbsp&nbsp	
 					<b>read</b> variable name;<br/>
 					&nbsp&nbsp&nbsp	<b>print</b> expression / string;</tt></p><br/>
@@ -464,8 +465,10 @@
 				<h4>Create</h4>
 				<p><b>Create</b> s a file with the specified filename in the filesystem. The return value of this system call is 0 in case of success 
 				and the appropriate error code in case of failure.<br/>
+				
 				<tt>&nbsp&nbsp&nbsp	
 					integer <b>Create</b> (string filename);</tt></p>
+				<p><b>NOTE:</b> filename must not exceed 10 characters </p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>

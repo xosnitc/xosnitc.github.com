@@ -16,7 +16,7 @@
 	
 	<meta name="description" content="Build a simple opearting system">
 	
-	<title>Documentation // eXperimental Operating System</title>
+	<title>XSM // Documentation // eXperimental Operating System</title>
 	
 	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 	<link rel="shortcut icon" type="image/png" href="favicon.png">
@@ -233,7 +233,7 @@
 							Each entry of the page table is two words long.
 							<ul>
 								<li><p> First word of a valid page table entry contains a physical page number corresponding to a logical page number.</p></li>
-								<li><p> The second word contains auxiliary information. The first bit in this word is used as <i>reference bit</i>. This bit is set to 0 initially. When a particular page is accessed, the machine sets the reference bit of the corresponding page table entry to 1 (indicating referenced). The second bit of the auxiliary information is used as a <i>Valid/Invalid</i> bit. It is set to 1 if the entry is a valid physical memory page or set to 0 otherwise. When an access to a page table entry with 0 as the Valid bit is made, machine sets the <a href="#navexcep">EFR (Exception Flag Register)</a> with the  IP of the instruction which caused the exception, logical page number of the memory location that caused the exception, and cause of the exception (page fault). The privilege mode is changed from user to kernel mode. The value of IP is set to page 7 or word address 3584 in the memory. If an access to a page whose page table entry has Valid/Invalid bit set to 1 is made, the physical address corresponding to the logical address is calculated using the method described here.</p></li>
+								<li><p> The second word contains auxiliary information. The first bit in this word is used as <i>reference bit</i>. This bit is set to 0 initially. When a particular page is accessed, the machine sets the reference bit of the corresponding page table entry to 1 (indicating referenced). The second bit of the auxiliary information is used as a <i>Valid/Invalid</i> bit. It is set to 1 if the entry is a valid physical memory page or set to 0 otherwise. When an access to a page table entry with 0 as the Valid bit is made, machine sets the <a href="#navexcep">EFR (Exception Flag Register)</a> with the  IP of the instruction which caused the exception, logical page number of the memory location that caused the exception, and caused of the exception (page fault). The privilege mode is changed from user to kernel mode. The value of IP is set to page 7 or word address 3584 in the memory. If an access to a page whose page table entry has Valid/Invalid bit set to 1 is made, the physical address corresponding to the logical address is calculated using the method described here.</p></li>
 							</ul>
 						<p>The logical page number is used to index the page table to get the corresponding <b>physical page number</b>.</p>
 							
@@ -345,8 +345,10 @@
 					If the register contains a non-integer value, an exception is raised. <a href="#navexcep"> (Refer Section: Exceptions)</a></p> 
 						<ul style="list-style-type:disc">
 							<li> <p> <tt>ADD, SUB, MUL, DIV and MOD</tt>.<br/>
-							<i>General Syntax</i> : <tt>OP Ri, Rj</tt><br/>
+							<i> Syntax</i> : <tt>OP Ri, Rj</tt><br/>
 							The result of <tt>Ri op Rj</tt> is stored in <tt>Ri</tt>.</p> </li>
+							<i> Syntax</i> : <tt>OP Ri, INTEGER</tt><br/>
+							The result of <tt>Ri op INTEGER</tt> is stored in <tt>Ri</tt>. </li>
 							<li> <p> <tt>INR</tt><br/>
 							<i>Syntax</i> : <tt>INR Ri</tt><br/>
 							Increments the value of register <tt>Ri</tt> by 1.</p> </li>

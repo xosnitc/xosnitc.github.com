@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+
+<head>
+	<meta charset="UTF-8">
+	
+	<!-- Remove this line if you use the .htaccess -->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+	<meta name="viewport" content="width=device-width">
+	
+	<meta name="description" content="Build a simple opearting system">
+	
+	<title>Runtime Environment // Documentation // eXperimental Operating System</title>
+	
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+	<link rel="shortcut icon" type="image/png" href="favicon.png">
+	
+
+	<link rel="stylesheet" href="css/style.css">
+	
+	<!--[if lt IE 9]>
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+</head>
+
+
+
+<body>
+<!-- Prompt IE 7 users to install Chrome Frame -->
+<!--[if lt IE 8]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
+
+<div class="container">
+
+	<header id="navtop">
+		<a href="index.html" class="logo fleft">
+			<img src="img/logo.png" alt="XOS">
+		</a>
+		
+		<nav class="fright">
+			<ul><li><a href="index.html" >Home</a></li>
+				<li><a href="about.html">About</a></li>
+				<li><a href="documentation.html" class="navactive">Documentation</a></li>
+				<li><a href="downloads.html">Downloads</a></li>
+				<li><a href="roadmap.html">Roadmap</a></li></ul>
+			</ul>
+		</nav>
+	</header>
+
+
+	<div class="services-page main grid-wrap">
+
+		<header class="grid col-full">
+			<hr>
+			<p class="fleft">Runtime Environment</p> <br/><br/>
+					<!-- <a href="doc/usage.pdf" class="button"> Download as PDF </a> -->
+		</header>
+
+
+		<aside class="grid col-one-quarter mq2-col-full">
+		
+			<menu>
+				<ul>
+
+					<li><a href="#navintro" class="sec" >Introduction</a></li>
+					<li><a href="#navmachineview" class="sec" > Machine view of a process</a></li>
+						<li><a href="#navmemory" class="subsec" > Memory</a></li>
+						<li><a href="#navregisters" class="subsec" > Registers</a></li>
+						<li><a href="#navinstr" class="subsec" > Instructions</a></li>
+					<li><a href="#navtranslate" class="sec" >Translating APL Programs</a></li>
+					<li><a href="#navfncalls" class="subsec" >Function calls in APL</a></li>
+					<li><a href="#navsyscalls" class="subsec" >System calls in APL</a></li>
+		
+				</ul>
+			</menu>
+		</aside>
+		
+		<section class="grid col-three-quarters mq2-col-full">
+		
+			
+			
+			<div class="grid-wrap">
+			<article  id="navintro" class="grid col-full">
+				<h2>Introduction</h2>
+				<p>  Runtime Environment of a process refers to execution environment provided to the process by the operating system. The runtime environment dictates how executable code is loaded into memory, where data is stored, and how function calls and system calls take place. </p>
+
+				<p> A user program in execution is termed as a process. User programs are written in APL, which is a high level language. When an APL program is compiled, it generates XSM machine instructions. These machine instructions are unprivileged instructions and will be run in the USER mode (See <a href="xsm-spec.html#navmodes">Privilege Modes</a>).  An operating system capable of supporting multiprogramming can provide this view to more than one process concurrently. We'll learn about the view of a process in detail in the further sections. </p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>			
+
+
+
+
+			<article  id="navmachineview" class="grid col-full">
+				<h2>Machine view of a process</h2>
+				<p>
+					Every user process has a limited view of the machine. Also it accesses only a limited set of registers and memory. It cannot use certain instructions directly. These instructions are called privileged instructions (See <a href="xsm-spec#navinstr">Instructions</a> in XSM). The privileged instructions are accessed by the user program through system calls (see <a href="xos-spec.html#navsyscalls">System Calls</a>). 
+	 			</p>
+	 			</article>
+ 				<article id="navmemory" class="grid col-full">
+				<p> <h4>Memory</h4>
+				
+					In XOS, a process views memory as a contiguous block with starting address 0. The size of the block is 2048 words. However, XSM allocates memory as pages. Each page has 512 words. This means that a process can have use at most 4 pages. Although the user process views this as contiguous 4 pages in memory, it may not be contiguous in the physical memory. The contiguous view that a process gets of the memory is called its <b>Logical address space</b>. When this is mapped to the physical memory, it is called its <b>Physical Address Space</b>. Logical addresses are translated to physical addresses by the machine using the <a href="xos-spec.html#navaddr">Address translation</a> scheme of XSM. The process is unaware of the existence of a physical address space and the address translation mechanism is hidden from it.
+				</p>
+				<p>
+					Of the 4 pages that the process uses, the first 3 pages are used for storing the code of the program and the 4th page (address 1536 - 2047) is used as the stack of the process. <b>Stack</b> of a process is a data structure for saving runtime variables, and function call arguments of the process. Read about stack in <a href="#navfncalls" class="subsec" >function calls in APL</a>.
+				</p>
+				</article>
+
+				<article id="navregisters" class="grid col-full">
+				 <p><h4>Registers</h4>
+				Although XSM has 34 registers, including program registers, kernel registers, temporary registers and special purpose registers, a particular user process has access to a limited set of registers (See <a href="xsm-spec.html#navregset">Register Set</a> in XSM). The register set that is visible to a user process includes only the Program Registers (R0 - R7), SP, BP and IP. Out of which, IP cannot be read / modified. The SP or Stack Pointer points to the address of the top of the stack. BP will be used in function calls. Read about stack in <a href="#navfncalls" class="subsec" >function calls in APL</a>.  </p>
+				 <p><img src="doc/prostruct.png"></p>
+				<p>IP points to the address of the next instruction to be executed within the code. </p>
+				</article>
+
+				<article id="navinstr" class="grid col-full">	
+				<p> <h4>Instructions</h4>
+				
+					XSM provides a set of unprivileged instructions. Only these instructions are available to the user program. The user program written in a high level language in APL will compile to only unprivileged instructions. The unprivileged instructions are <tt>MOV</tt>, Arithmetic Instructions, Logic Instructions, Stack Instructions (<tt>PUSH</tt> and <tt>POP</tt>), Sub-routine instructions, input/output instructions, debug instructions, <tt>END</tt> and <tt>INT</tt> (see <a href="xsm-spec.html#navinstr">Instructions</a> in XSM).
+				</p>
+				</article>
+		
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>			
+			
+
+
+			<article  id="navtranslate" class="grid col-full">
+				<h2>Translating APL programs</h2>
+				<p> APL compiler translates an APL program into XSM machine instructions. There are two fundamental aspects about compilers that you must understand. First is how the APL compiler translates a Function Call. Second is how the APL compiler generates instructions for a system call. </p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
+			<article  id="navfncalls" class="grid col-full">
+				<h4>Function Calls</h4>
+				<p> A function call or a subroutine invocation is done by the machine instruction <tt>CALL</tt>. The function call uses the stack to pass arguments to the system call and get back the return value. The stack of the user process stores information about the active subroutines of the program. An active subroutine is one that has been called but is yet to complete execution, after which control should be handed back to the point of call (Source: Wikipedia). </p>
+				<p> The activation record corresponding to an active sub-routine 
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>		
+
+			<article  id="navsyscalls" class="grid col-full">
+				<h4>System Calls</h4>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>		
+			</div> <!-- 100%articles-->
+
+		
+		</section>	
+		
+		
+	</div> <!--main-->
+<div class="divide-top">
+	<footer class="grid-wrap">
+		<ul class="grid col-one-third social">
+			<li><a href="http://github.com/xosnitc">Github</a></li>
+		</ul>
+	
+		<div class="up grid col-one-third ">
+			<a href="#navtop" title="Go back up">&uarr;</a>
+		</div>
+		
+		<nav class="grid col-one-third ">
+			<ul><li><a href="index.html" >Home</a></li>
+				<li><a href="about.html">About</a></li>
+				<li><a href="documentation.html">Documentation</a></li>
+				<li><a href="downloads.html">Downloads</a></li>
+				<li><a href="roadmap.html">Roadmap</a></li></ul>
+			</ul>
+		</nav>
+	</footer>
+</div>
+
+</div>
+
+<!-- Javascript - jQuery -->
+<script src="http://code.jquery.com/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="js/jquery-1.7.2.min.js"><\/script>')</script>
+
+<!--[if (gte IE 6)&(lte IE 8)]>
+<script src="js/selectivizr.js"></script>
+<![endif]-->
+
+<script src="js/scripts.js"></script>
+
+<!-- Asynchronous Google Analytics snippet. Change UA-XXXXX-X to be your site's ID. -->
+<script>
+  var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+</body>
+</html>

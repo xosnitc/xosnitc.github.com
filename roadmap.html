@@ -171,8 +171,15 @@
 
 						You will be back in the UNIX shell and a file named <b>disk.xfs</b> is created in the location <b>$HOME/myxos/xfs-interface/</b>. This UNIX file simulates the hard disk for the machine simulator. The disk is formatted as XFS or Experimental File System. See <a href="xfs-spec.html#navintro"> XFS Specification </a>
 					</li>
+					<li>
+					<p>The <a href="xfs-spec.html#navdfl" class="imp">Disk Free List</a> in XFS is a data structure which keeps track of used and unused blocks in the disk. An unused block is indicated by 0 and a used block is indicated by 1. Check the contents of the Disk Free List after formatting the disk. Use the <b>copy</b> command to copy Disk Free List (Disk Free List is stored in disk block number 11) to a UNIX file  <i>$HOME/myxos/dfl.txt</i>. The contents of this file will be as follows</p>		
+					<img src="doc/dfl1.png"> <br/><br/>
 
-						<li> Create a file in your UNIX machine with sample data.	<br/>	
+<p> The first 16 blocks (blocks 0 to 15) are reserved for disk structures and INIT program. See <a href="xfs-spec.html">Disk Organization</a>. Hence it is marked as 1 (used) and the remaining entries for blocks 16 to 512 are 0 (unused). 
+.</pre>
+					</li></p>
+
+						<li><p> Create a file in your UNIX machine with sample data.	<br/>	
 							A sample data file is given below
 							
 <pre>There is a place where the sidewalk ends
@@ -181,11 +188,13 @@ And there the grass grows soft and white,
 And there the sun burns crimson bright,
 And there the moon-bird rests from his flight
 To cool in the peppermint wind.</pre>
-								<br/>
-								Save the file as <b>$HOME/myxos/sample.dat</b>
-						</li>
+								
+						Save the file as <b>$HOME/myxos/sample.dat</b>
+						</li></p>
 
-						<li> Load this data file ($HOME/myxos/sample.dat) to the XFS disk from your UNIX machine.  This can be done by the following commands
+
+
+						<li> <p>Load this data file ($HOME/myxos/sample.dat) to the XFS disk from your UNIX machine.  This can be done by the following commands
 							<div class="syntax"> 
 <pre>cd $HOME/myxos/xfs-interface
 ./xfs-interface
@@ -196,7 +205,9 @@ To cool in the peppermint wind.</pre>
 <pre># load --data $HOME/myxos/sample.dat</pre>
 							</div>
 						This will load the file to the XFS disk. A FAT entry will be created for this file. <a href="xfs-spec.html#navfat">FAT</a> or File Allocation Table contains information such as the file name, file size and the block number of <a href="xfs-spec.html#navfile">basic block</a>. The basic block corresponding to a file will contain locations of the file blocks. Read about  <a href="xfs-spec.html#navfile" class="imp">XFS (Experimental File System)</a> before proceeding in the roadmap.
-						</li>
+						</li> </p>
+
+
 
 						<li> Find out the FAT entry corresponding to the loaded file. Use the <b>copy</b> command to copy FAT entries (FAT is stored in disk block number 10) to a UNIX file (say <i>$HOME/myxos/fat_block.txt</i>).
 							<div class="syntax">
@@ -223,6 +234,10 @@ To cool in the peppermint wind.</pre>
 .
 .</pre>						
 					This indicates that the only data block of this file is block number 17. Remaining -1 entries, indicates that the remaining entries are invalid. There is only one data block for this file at block number 17.		</li><br/>	
+						
+						<li> <p>Now check the contents of the disk free list. 2 more entries will be marked as used. One is the basic block for this file and the other will be data block for the file. (See <a href="xfs-spec.html#navfile" class="imp">Files</a> in XFS) The contents of this disk free list will be as follows</p>		
+						<img src="doc/dfl2.png"><br/><br/>
+						</li>
 						
 						<li> Copy the data blocks from the XFS disk and display it as a UNIX file <tt>$HOME/myxos/data.txt</tt>. 
 						<div class ="syntax">
@@ -821,7 +836,7 @@ Machine is halting
 				<br/>
 			
 				<h6>Timer Interrupt Routine</h6> <br/>
-				<p> Next task to be done in this stage, is to program the Timer Interrupt in SPL, compile it and load it to the disk. The Timer Interrupt routine is the XOS scheduler The scheduler is responsible for scheduling out the currently running process and allocate the CPU for a ready process. Scheduling out involves freeing the machine registers used by the process and saving it. Then the registers corresponding to the new process is loaded to machine registers. And it is scheduled for execution. The detailled set of actions that the timer interrupt routine must perform follows:
+				<p> Next task to be done in this stage, is to program the Timer Interrupt in SPL, compile it and load it to the disk. The Timer Interrupt routine is the XOS <b>scheduler</b>. The scheduler is responsible for scheduling out the currently running process and allocate the CPU for a ready process. Scheduling out involves freeing the machine registers used by the process and saving it. Then the registers corresponding to the new process is loaded to machine registers. After scheduling, the control is transferred to the new process. The detailed set of actions that the timer interrupt routine must perform follows:
 					<ol>
 						<li> Find the PID or Process Identifier of the currently running process. In XOS, PID is calculated from the value of the <tt>PTBR</tt> using the formula <b><tt> (PTBR - 1024) / 8</tt></b>. This is because, the Per-Process Page tables are stored in memory from address 1024 onwards and each page table is of size 8 words. The PTBR value gives the starting address of the page table of the current process. Hence this calculation will give the Process ID for the currently running process (Note that this calculation is specific to XOS. In other operating systems Process ID may not be computable from the value of PTBR). <div class="syntax"><pre>alias currentPID S0;
 currentPID = (PTBR - 1024) / 8;</pre>
@@ -880,7 +895,7 @@ physicalSP = ([PTBR + 2 * (SP / 512)] * 512) + (SP % 512);
 							</li>							
 						 </ul>
 						</li>
-						<li> Now, the next process to be scheduled for execution is to be selected. To do this, scan the <a href="xos-spec.html#navpromgmt_readylist">Ready List of PCBs</a> in a circular manner starting from the PCB of current process to check for the next process with STATE value 1 (Ready) in its PCB. This scheduling algorithms is known as "Round-Robin" scheduling. Every process gets equal share of the CPU time. For other scheduling algorithms, refer Silberschatz, Galvin, Gagne: Operating System Concepts. Store the address of the  PCB of the newly found process in a register. In this roadmap we have assumed this register's alias to be <tt>newPCB</tt>.</li>
+						<li> Now, the next process to be scheduled for execution is to be selected. To do this, scan the <a href="xos-spec.html#navpromgmt_readylist">Ready List of PCBs</a> in a circular manner starting from the PCB of current process to check for the next process with STATE value 1 (Ready) in its PCB. This scheduling algorithm is known as <b>Round-Robin</b> scheduling. Every process gets equal share of the CPU time (for other scheduling algorithms, refer Silberschatz, Galvin, Gagne: Operating System Concepts). Store the address of the  PCB of the newly found process in a register. In this roadmap we have assumed this register's alias to be <tt>newPCB</tt>.</li>
 
 						<li> The register values of the newly found process were stored in its PCB when it was scheduled out at an earlier point in time. Now these values needs to be fetched from the PCB and loaded back into the machine registers, so that execution will resume from where it was scheduled out. Load the fields except IP from this PCB to the corresponding registers. Note that IP value cannot be modified directly (See <a href="xsm-spec.html#navinstr">XSM Instructions</a>).   </li>
 
@@ -928,9 +943,17 @@ physicalSP = ([PTBR + 2 * (SP / 512)] * 512) + (SP % 512);
 			<article id="navstage7" class="grid col-full">
 				<h2>Stage 7: Creating Files </h2>
 		
-				<p> In this stage, you'll learn to implement a <a href="xos-spec.html#navsyscalls"> system call </a>. System calls are interfaces provided by the operating system to the user programs to run a system routine. APL provides interfaces to invoke system calls in the form of instructions such as Create(), Open(), Fork() etc. These instructions in APL translate to a series of stack operations followed by the <tt>INT</tt> machine instruction. <tt>INT</tt> instruction invokes an Interrupt Routine as described in Stage 5. After returning back from the interrupt routine, it pops out the required values from the stack. </p>
+				<p> In this stage, you'll learn to implement a <a href="xos-spec.html#navsyscalls"> system call </a>. System calls are interfaces provided by the operating system to the user programs to run a system routine. APL provides interfaces to invoke system calls in the form of built-in functions such as Create(), Open(), Fork() etc. These instructions in APL translate to XSM instructions which correspond to a series of stack operations followed by the <tt>INT</tt> machine instruction.  <tt>INT</tt> instruction invokes an Interrupt Routine as described in Stage 5. APL also generates instructions to retrieve the return value of the system call, to restore the stack to the state before the call, and continue execution of the program upon return from the system call. </p>
 
-				<p> There are 3 steps involved in performing a system call. STEP 1 is to set up the stack for the system call by pushing arguments and system call number. The system call number is specified by the OS and by definition, is different from the interrupt routine number.  Control is passed to the interrupt routine corresponding to the system call. The instructions which perform these actions are generated by the APL compiler, when the user program written in APL (which invokes the system call) is compiled. You may read about how APL compiler translates various system calls in <a href="syscalls.html">System Call Translation</a>. STEP 2 is programming the corresponding interrupt routine in SPL to perform the required actions of the system call and returning back to the user program. In this stage you will be writing an interrupt routine corresponding to the <b>Create</b> system call. STEP 3 includes the actions done after returning back from the system call to the user program which invoked the system call. Certain instructions to fetch the return value and remove values from the stack is performed. These instructions will automatically be generated by the APL compiler  corresponding to the system call ( See <a href="syscalls.html">System Call Translation</a>). STEP 1 will be done by the instructions generated by the APL compiler. You will need to understand carefully, what is being done, so that you can program the Interrupt Routine. This is done in STEP 2. After returning from the system call, a few instructions to restore the stack is also generated by the APL compiler and the user programs resumes execution. In short, you need to do only STEP 2 to implement a system call. But an understanding of STEP 1 and STEP 3 is necessary to get STEP 2 done.
+				<p> There are 3 steps involved in performing a system call. </p>
+				<p>STEP 1 is to set up the stack for the system call by pushing arguments and system call number. The system call number is specified by the OS (See <a href="xos-spec.html#navsyscalls">System Calls</a>. Do not confuse this with the interrupt routine number).  Control is passed to the interrupt routine corresponding to the system call. When the APL program which invoked the system call is compiled, the instructions which perform the above actions are automatically generated. You may read about how APL compiler translates various system calls in <a href="runtime.html#syscalls">System Call Translation</a>. </p>
+				
+				<p>STEP 2 involves programming the corresponding interrupt routine in SPL to perform the required actions of the system call and returning back to the user program. In this stage, you will be writing an interrupt routine corresponding to the <b>Create</b> system call. This will be described in detail later in this stage. </p> 
+
+				<p>STEP 3 includes the actions done after return from the system call back to the user program which invoked the system call. Instructions to fetch the return value and restore the stack to the previous state before the call are performed. These instructions will be automatically generated by the APL compiler corresponding to the system call ( See <a href="syscalls.html">System Call Translation</a>).</p>
+
+				<p>(<b>NOTE:</b> Instructions for STEP 1 and STEP 3 will be automatically generated by the APL compiler. To implement a system call, you need to write the program only for step 2. But a proper understanding of STEP 1 and STEP 3 is absolutely necessary to get STEP 2 done. <a href="runtime.html" class="imp">Runtime Environment</a> must be read and understood at this point, in order to continue.)</p>
+				
 
 				<h4> STEP 1 : Invoking a system call</h4>
 				<p>A user program  invokes a system call by first pushing the arguments and system call number into the process stack and then invoking <tt> INT </tt> instruction corresponding to the system call. A system call in APL compiles to the a set of machine instructions like the one shown below.</p>
@@ -943,60 +966,68 @@ PUSH R0			// Push an empty space for RETURN VALUE
 PUSH <i>System_Call_No</i> 	// Push system call number		
 INT <i>number</i> 		// Invoke the corresponding INT instruction</div></pre>
 				
-			
+<p>(NOTE: The machine code above is in the form of pseudo code. To view the actual machine code generated, see <a href="runtime.html#syscalls" >System Call Translation</a>) </p>
 				
 				 <img src="doc/syscallstack1.png" style="width:50%; float:left; margin-right:5%; ">
 				 
 				<p><b>a) Shows the stack operations performed by the user program before
-				 an <tt>INT</tt> instruction in the compiled APL program (See machine instructions above) </b>. The arguments are pushed to stack in an order such that last argument comes on top. A push instruction <tt>PUSH R0</tt> is done to put an empty space for the return value in the stack. The interrupt routine (containing the system call implementation) which you will write in STEP 2, must ensure that the return value is stored in this space.  The system call number is pushed to the stack. In STEP 2, you will need this value. </p>
+				 an <tt>INT</tt> instruction in the compiled APL program (See machine instructions above) </b>. The arguments are pushed to stack in an order such that last argument comes on top. A push instruction <tt>PUSH R0</tt> is done to put an empty space for the return value in the stack. The interrupt routine which you will write in STEP 2, must ensure that the return value is stored in this space.  The system call number is pushed to the stack. In STEP 2, you will need this value. </p>
 				
 				<p>
-				 <b>b)  shows the contents of the stack when the <tt>INT</tt> instruction is executed </b>. The <tt>INT</tt> instruction will push the value of <tt>IP + 2</tt> on to the stack. This value is the address of the instruction after the <tt>INT</tt> instruction in the user program.  Each instruction is 2 words, hence IP is incremented by 2.This IP value will be used in STEP 2 in order to return back from the system call to the next instruction.  The <tt>INT</tt> instruction changes mode from USER to KERNEL mode and  passes control to the Interrupt Routine corresponding to the system call. </p>
+				 <b>b)  shows the contents of the stack after the <tt>INT</tt> instruction is executed </b>. The <tt>INT</tt> instruction will push the value of <tt>IP + 2</tt> on to the stack. This value is the address of the instruction after the <tt>INT</tt> instruction in the user program.  Each instruction is 2 words, hence IP is incremented by 2.This IP value will be used in STEP 2 in order to return back from the system call to the next instruction.  The <tt>INT</tt> instruction changes mode from USER to KERNEL mode and  passes control to the Interrupt Routine corresponding to the system call. </p>
 	<br/><br/>
 
 				<h4> STEP 2: The System Call Implementation</h4>
-				<p> This is the step that you will be doing in this stage. The system call is implemented in the corresponding interrupt routine. The interrupt routine will be programmed in SPL. You can implement more than one system call using the same Interrupt Routine. In that case, you will require a system call number to identify the system call that was invoked by the user program. This system call number was pushed in the stack in STEP 1. This value can be obtained from the stack, and based on the system call number, the required actions must be performed by the Interrupt routine. This step can be divided into 3 sub steps: </p>  
+				<p> This is the step that you will be doing in this stage. The system call is implemented in the corresponding interrupt routine. The interrupt routine will be programmed in SPL. You can implement more than one system call using the same Interrupt Routine. In that case, you will require the system call number to identify the system call that was invoked by the user program. This system call number was pushed in the stack in STEP 1. This value can be obtained from the stack, and based on the system call number, the required actions must be performed by the Interrupt routine. This step can be divided into 3 sub steps: </p>  
 				
 				<p><b>a) Fetching system call number and arguments</b>: Fetch the system call number and arguments (if any) from the corresponding locations on the stack. See the figure in STEP 1. </p>
-				<p><b>b) Programming the interrupt routine</b>: Based on the system call number the required actions must be performed. Arguments fetched should be used in the implementation of the system call.  </p>
+				<p><b>b) Programming the interrupt routine</b>: Based on the system call number, the required actions must be performed.  </p>
 				
 				<img src="doc/syscallstack2.png" style="width:50%; float:right; margin-right:5%; ">
 
 				<p><b>c) Returning from the system call</b> 
 				<br/>
-				Return value of the system call should be stored in the space allocated in the stack. See the figure (i). Returning back from the interrupt routine to the user program is done using the  <tt>IRET</tt> machine instruction. Figure (i) shows the contents of the stack after the interrupt routine had performed all the required actions corresponding to the system call and just before the <tt>IRET</tt> instruction in the interrupt routine. Note that this is similar to Step 2 of the previous figure. However the interrupt routine will have filled the empty space for the <tt>RETURN VALUE</tt> with the required result after all the system call actions have been performed. In the figure in STEP 1, this space would be empty.</p>
+				Return value of the system call should be stored in the space allocated for <tt>RETURN VALUE</tt> in the stack. See the figure. Returning back from the interrupt routine to the user program is done using the  <tt>IRET</tt> machine instruction. </p>
 				<p>
-				 <p>Figure (ii) shows the contents of the stack immediately after the <tt>IRET</tt> instruction.  The value on the top of the stack will be popped and stored in the <tt>IP</tt> register by the <tt>IRET</tt> instruction. This value will be the address of the instruction after the <tt>INT</tt> instruction in the user program. This was stored in the stack in STEP 1.</p>
+				 <p>In the figure aside, (i) shows the contents of the stack just before the <tt>IRET</tt> instruction. (ii) shows the contents of the stack immediately after the <tt>IRET</tt> instruction.  The value on the top of the stack will be popped and stored in the <tt>IP</tt> register by the <tt>IRET</tt> instruction. This value will be the address of the instruction after the <tt>INT</tt> instruction in the user program. Note that the address of next instruction was stored in the stack in STEP 1.</p>
 			
 				<h4>STEP 3: After returning from the system call. </h4>
-				<p> The IRET instruction transfers control back to the user program to the instruction after the <tt>INT</tt> instruction. The following machine instructions are present after the <tt>INT</tt> instruction in the compiled machine code given in STEP 1. </p>
+				<p> The IRET instruction transfers control back to the user program to the instruction after the <tt>INT</tt> instruction. The following machine instructions are present after the <tt>INT</tt> instruction in the APL compiled machine code given in STEP 1. </p>
 				<div class="syntax"> <pre>
 POP <i>System Call Number </i>		// Pop and discard system call number
 POP <i>RETURN_VALUE</i>		// Pop and SAVE the return value
 POP <i>Argument_n</i>			// Pop and discard arguments
 .
 .
-POP <i>Argument_1</i></div></pre>				
+POP <i>Argument_1</i></div></pre>	
 
-<p> The machine code above pops the values from the stack. The system call number and arguments were inputs to the system call and hence it can be discarded now. The return value which is stored in the stack by the system call is fetched and used by the user program. </p>
+<p>(NOTE: The machine code above is in the form of pseudo code. To view the actual machine code generated, see <a href="runtime.html#syscalls" >System Call Translation</a>) </p>
+
+<p> The machine code above pops the values from the stack. The system call number and arguments were inputs to the system call and hence they may be discarded now. The return value which is stored in the stack by the system call is fetched and used by the user program. </p>
 
 			<p>
-			You may see <a href="syscalls.html">System Call Translation</a> to understand how APL translates every system call to machine instructions.		 
-
+			You are encouraged to see <a href="syscalls.html">System Call Translation</a> to understand how APL translates every system call to machine instructions.		 
 			</p>	
 				<br/>
-				
-				 <p>In this stage you'll implement the Create system call. To do this, you must modify the OS Startup code and Interrupt 1 routine. Create system call is to create files in the XFS disk.  (See <a href="xos-spec.html#navsyscalls_file">File System Calls</a>).</p>
 
+
+				<h5>Create System Call</h5>
+
+				 <p>In this stage you'll implement the Create system call. To do this, you must modify the OS Startup code and Interrupt 1 routine. User programs invoke the <b>Create</b> system call to create a new file in the XFS disk.  (See <a href="xos-spec.html#navsyscalls_file">File System Calls</a>).</p>
 
 				<h6> Modifying the OS Startup Code</h6>
-			 <p>In the last stage you have tested out the multiprogramming functionality by running two processes simultaneously. However to implement and test File System Calls  Create(), Delete(), Open(), Close(), Read(), Write() and Seek(), you may disable the timer and run the machine. </p>
+			 <p>In the last stage you have tested out the multiprogramming functionality by running two processes simultaneously. However to implement and test File System Calls  Create(), Delete(), Open(), Close(), Read(), Write() and Seek(), you may disable the timer and run the machine in single process mode in this stage as well as the next stage. </p>
 			 
-			 <p> Since in this stage, the machine is to be run in single processing mode without the timer interrupt, you do not need the OS Startup Code to load two programs. The OS Startup Code modifications done in Stage 6 can be discarded as it was done to test the timer interrupt routine. Modify the OS Startup Code you used in Stage 5 which loads only one process to memory. These additional tasks need to be performed by the new OS Startup Code before the <b>ireturn;</b> instruction for Create system call to work properly.</p>
+			 <p> Since in this stage, the machine is to be run in single process mode, you do not need the OS Startup Code to load two programs. The OS Startup Code modifications done in Stage 6 can be discarded as it was done to test the timer interrupt routine. Use the OS Startup Code in Stage 5 which loads only one process to memory. The following additional tasks need to be performed by the OS Startup Code before switching to user mode ( before <b>ireturn;</b> instruction) for <b>Create</b> system call to work properly.</p>
 				<ol>
-				<li> When a file is created by the system call, a new FAT entry is to be created. The OS maintains a memory copy of the filesystem structures like <a href="xos-spec.html#navfiles_fat">FAT</a> and <a href="xos-spec.html#navfiles_dfl">Disk Free List</a>. The Disk Free List is a file system data structure which keeps track of used and unused blocks in the disk. (See <a href="xfs-spec.html#navdfl">Disk Free List</a> in XFS). The memory copy of these structures are changed by the OS when File System Calls are performed, and it is then committed back to the disk. Load <a href="xos-spec.html#navfiles_fat">FAT</a> from disk block 10 to memory page 5 and <a href="xos-spec.html#navfiles_dfl">Disk Free List</a> from the disk block 11 to memory page 6. Refer <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization </a>. </li>
+				<li> <p>When a file is created by the system call, a new FAT entry is to be created. The OS maintains a memory copy of the filesystem structures like FAT and Disk Free List. The Disk Free List is a file system data structure which keeps track of used and unused blocks in the disk. (See <a href="xos-spec.html#navfiles_fat" class="imp">FAT</a> and <a href="xfs-spec.html#navdfl" class="imp">Disk Free List</a> in XFS). The memory copy of these structures are changed by the OS when File System Calls are performed, and it is then committed back to the disk (see <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization </a>). 
+				<ul>
+					<li>
+						Load FAT from disk block 10 to memory page 5 </li>
+					<li> Load Disk Free List from the disk block 11 to memory page 6</li>
+				</ul>
 				</li>
-				
+				</p>
 				<li> You already have the instruction to load Interrupt routine 1 from the disk to the memory in stage 5.  Check if this instruction <tt><b>load (9, 3)</b></tt> is present in the OS Startup Code.  This instruction loads the Interrupt 1 routine residing in disk block 3 to memory page 9. (See <a href="xos-spec.html#navmemorg" >Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization</a>).
 					
 				</li>
@@ -1004,7 +1035,7 @@ POP <i>Argument_1</i></div></pre>
 				
 				<h6> Modifying Interrupt 1 Routine</h6>
 				<p>
-				The previous implementation of Interrupt 1 Routine to print <tt>In INT 1</tt> is to be discarded. Interrupt 1 is used by two system calls Create and Delete. The system call number is to be obtained from the stack. The system call number is at the 2nd position from the stack, i.e. SP - 1. This is explained in the figures given above. Since interrupt routines execute in kernel mode, you will need to calculate the physical address of SP using the formula described in Stage 6. Get the system call number in a register which is aliased as <tt>sysCallNo</tt>. Fetch the arguments from 3rd position onwards in the stack, i.e. SP - 2 onwards. Put the arguments in registers. </p>		
+				The previous implementation of Interrupt 1 Routine to print <tt>"In INT 1"</tt> is to be discarded. Interrupt 1 is used by two system calls Create and Delete. The system call number is to be obtained from the stack. The system call number is at the 2nd position from the top of the stack, i.e. SP - 1. This is explained in the figures given above. Since interrupt routines execute in kernel mode, you will need to calculate the physical address of SP using the formula described in Stage 6. Get the system call number in a register which is aliased as <tt>sysCallNo</tt>. Fetch the arguments from 3rd position onwards in the stack, i.e. SP - 2 onwards. Put the arguments in registers. </p>		
 				 <p> Based on the <tt>sysCallNo</tt> perform the required actions.</p>	
 				 A skeleton of the new Interrupt 1 Routine is given below. 
 				</p>
@@ -1015,7 +1046,7 @@ POP <i>Argument_1</i></div></pre>
 alias physicalSP S0;
 physicalSP = ([PTBR + 2 * (SP / 512)] * 512) + (SP % 512);
 .
-// Get system call no. from the stack and put it in registers
+// Get system call no. from the stack and put it in a register
 // Get arguments from stack and put it in registers
 .
 if ( sysCallNo == 1) then
@@ -1037,39 +1068,40 @@ endif;	</pre>
 				<i>Arguments</i>: filename <br/>
 				<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
 				<br/>				
-				<p> The Create system calls takes the <tt>filename</tt> of the file to be created as the argument. It checks for a free block in the disk, and if its found, it will allocate this block as the basic block of the new file. It will create a FAT entry for the newly created file. Detailed instructions on how to get this done is given below.
+				<p> The Create system calls takes the <tt>filename</tt> of the file to be created as the argument. It checks for a free block in the disk, and if its found, it will allocate this block as the basic block of the new file. It will create a FAT entry for the newly created file. Detailed instructions to do this is given below.
 				
 				</p>
 
 
 
 				<ol>
-				<li><p> First of all, the memory copy of the <a href="xfs-spec.html#navdfl">disk free list</a> is searched till block number 447 to find a free block. Blocks 448 - 511  are reserved for <a href="xfs-spec.html#navdiskorg">swap area</a> which will be used for virtual memory management (<a href="roadmap.html#navstage9">Stage 10</a>). A free block is indicated by a 0 entry in the Disk Free List. The index of such an entry gives the block number of the free block.
+				<li><p> First of all, the memory copy of the <a href="xfs-spec.html#navdfl">disk free list</a> (loaded to page 6 by the OS Startup Code) is searched till block number 447 to find a free block. Blocks 448 - 511  are reserved for <a href="xfs-spec.html#navdiskorg">swap area</a> which will be used for virtual memory management (<a href="roadmap.html#navstage9">Stage 10</a>). A free block is indicated by a 0 entry in the Disk Free List. The index of such an entry gives the block number of the free block. (A disk formatted using XFS will have 1(used) for blocks 0 - 15 and 0(unused) for blocks 16 - 512 in its disk free list). 
 				
 				</li></p>
-				<li> <p> If no free block is found, return from the system call with return value -1, indicating failure. To do this, put -1 at the 2nd position from the top of stack as shown in Figure 2, and use <b>ireturn;</b> instruction. This will pass the control back to the user program. The user program can fetch the return value from the appropriate position in the stack. </li></p>
+				<li> <p> If no free block is found, return from the system call with return value -1, indicating failure. To do this, put -1 at the 2nd position from the top of stack as shown in Figure 2, and use <b>ireturn;</b> instruction. This will pass the control back to the user program. The user program will fetch the return value from the appropriate position in the stack. </li></p>
 				
 				<li>If a free block is found, it is used as the <a href="xfs-spec.html#navfile">basic block</a> of the file to be created. A basic block of the file stores the block numbers of the data blocks of the file. The data blocks will have the contents of the file. </li></p>
 				
 			
 
-				<li> <p>Create system call has only 1 argument, <tt>filename</tt>. You have already fetched the arguments and placed them in registers. 
+				<li> <p>Create system call has only 1 argument, <b>filename</b>. You have already fetched the arguments and placed them in registers. 
 				</li></p>
 				
-				<li> <p>The memory copy of the <a href="xos-spec.html#navfiles_fat">FAT</a> is to be searched with this <tt>filename</tt> to check a file with the same name already exists. If it exists return from the system call with 0, indicating success. For convenience you may use the <a href="spl-spec.html#navconst">predefined constant</a> <tt>FAT</tt> in SPL which stores the address of memory copy of FAT.
+				<li> <p>The memory copy of the <a href="xos-spec.html#navfiles_fat">FAT</a> is to be searched with this <tt>filename</tt> to check if a file with the same name already exists. If it exists, return from the system call with 0, indicating success. According specification, trying to a create a file which exists returns success without any action being performed. For convenience you may use the <a href="spl-spec.html#navconst">predefined constant</a> <tt>FAT</tt> in SPL which stores the address of memory copy of FAT.
 				</li></p>
 
 				<li> <p>Next, the memory copy of the <a href="xos-spec.html#navfiles_fat">FAT</a> is searched for a free entry. A free entry in the FAT is indicated by -1 in the entry for basic block (word 2 of each FAT entry). If no free entry is found, return with -1, indicating failure.  </li></p>
 				
-				<li> <p>If a free FAT entry is found, set the <b>File Name</b> field with the filename given as argument. The <b>File Size</b> field in the FAT entry is initialized to 0. The <b>Block No. of Basic Block</b> is set to the block number of the free block found in Step 1. 
+				<li> <p>If a free FAT entry is found, set the <b>File Name</b> field with the filename given as argument to the system call. The <b>File Size</b> field in the FAT entry is initialized to 0. The <b>Block No. of Basic Block</b> field in the FAT entry is set to the block number of the free block found in Step 1. 
 				</li></p>
 
 		
-				<li><p> Scratchpad is a memory page used to load a disk block from disk to memory for reading or editing. It uses the same memory page as OS Startup Code. See <a href="xos-spec.html#navfiles_scratchpad">scratchpad</a>. Load the <a href="xfs-spec.html#navfile">basic block</a> of the file from the disk to the <a href="xos-spec.html#navfiles_scratchpad">scratchpad</a>. 
+				<li><p> To load a disk block temporarily to memory, the OS uses a <a href="xos-spec.html#navfiles_scratchpad">scratchpad</a>. Scratchpad is a memory page used to load a disk block to memory for reading or editing. It uses the same memory page as OS Startup Code (page 1). Note that the OS Startup Code will have finished its execution after boot up and hence its memory page can be reused. Load the <a href="xfs-spec.html#navfile">basic block</a> of the file from the disk to the <a href="xos-spec.html#navfiles_scratchpad">scratchpad</a>. 
 				</li></p>
 				<li> <p>All the words in the basic block loaded to the scratchpad must be set to 0. This indicates that there are no data blocks currently for this file. After this is done, the basic block residing in the scratchpad needs to be stored back to the disk. Store the memory page 1 (corresponds to the scratchpad) to disk block number corresponding to the basic block of the newly created files. Use the <tt>store</tt> statement in SPL to do this. (See <a href="spl-spec.html#navstatements">statements</a> in SPL). </li></p>
 
-				<li> <p> The entry in the Disk Free List for the basic block is set to 1, indicating that it has now been allocated.The updated copies of <a href="xos-spec.html#navfiles_fat">FAT</a> and <a href="xos-spec.html#navfiles_dfl">Disk Free List</a> in the memory are then stored back to the disk.</li></p>
+				<li> <p> The entry in the Disk Free List for the basic block is set to 1, indicating that it has now been allocated. </li></p> 
+				<li>The updated copies of <a href="xos-spec.html#navfiles_fat">FAT</a> and <a href="xos-spec.html#navfiles_dfl">Disk Free List</a> in the memory are then stored back to the disk. (NOTE: In real operating systems, as disk update is costly, the disk data structures are not immediately committed to disk. Here this is done for simplicity).</li></p>
 				
 				<li><p> Return from the system call with return value 0, indicating success. An <b>ireturn</b> instruction is used to transfer control back to user program which invoked the system call. </li></p>
 	
@@ -1094,7 +1126,7 @@ integer main()
 				<li><p> Run the machine with the timer disabled</p><div class="syntax"> $HOME/myxos/xsm/xsm --timer=0</div></li>
 				
 			</ol>
-			<p>If the system call execution did not fail in between 0 will be printed and the machine will halt. The correct output is given below</p>
+			<p>If the system call execution did not fail in between, 0 will be printed and the machine will halt. The correct output is given below</p>
 			<tt><pre>
 0 
 Machine is halting     </pre>

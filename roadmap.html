@@ -286,12 +286,12 @@ peppermint wind</pre>
 				<p>In this stage, we will write a system program to<b> print odd numbers from 1 to n</b> and run it as the OS Startup Code in the machine. The steps to do this are explained in detail below. </p>
 				
 				<ol>
-					<li><p>Create the program to print odd numbers from 1 to n using SPL. (SPL Specification need not be read now. It is given  in <a href="spl-spec.html"> SPL Documentation </a>) See examples of SPL programs in <tt>$HOME/myxos/spl/samples</tt>. <b>NOTE: It is advised that the system programmer use only the Kernel registers R8 - R15 while writing SPL programs </b> as Program registers R0 - R7 are used by user programs.    </p>
+					<li><p>Create the program to print odd numbers from 1 to n using SPL. (SPL Specification need not be read now. It is given  in <a href="spl-spec.html"> SPL Documentation </a>) See examples of SPL programs in <tt>$HOME/myxos/spl/samples</tt>. <b>NOTE: It is advised that the system programmer use only the Kernel registers S0 - S15 while writing SPL programs </b> as Program registers R0 - R7 are used by user programs.    </p>
 						SPL Code to print odd numbers from 1 to n (taken as input)
 						<div class="syntax"> 
 <pre>
-alias counter R8;
-alias n R9;
+alias counter S0;
+alias n S1;
 print "Enter n:";
 read n;
 counter = 0;
@@ -303,7 +303,7 @@ while(counter <= n) do
 endwhile; </pre>
 						</div>
 						<p>
-							An SPL program uses the system registers directly instead of variables. For convenience, you can alias the registers with appropriate identifers. See <a href="spl-spec.html#navalias" class="imp">aliasing</a> in SPL. In the above program R8 is aliased as <i>counter</i> and R9 is aliased as <i>n</i>. The value of <i>n</i> or R9 is taken as input from the user.
+							An SPL program uses the system registers directly instead of variables. For convenience, you can alias the registers with appropriate identifers. See <a href="spl-spec.html#navalias" class="imp">aliasing</a> in SPL. In the above program S0 is aliased as <i>counter</i> and S1 is aliased as <i>n</i>. The value of <i>n</i> or S1 is taken as input from the user.
 						
 					</li>
 					</p>
@@ -746,9 +746,9 @@ Machine is halting
 						<li><p>Page Table for this process must be setup. The starting address of the page table of a process is calculated using the formula discussed in stage 4. </p>
 						<tt>1024 + PID * 8</tt>
 						<p><br/>
-						The register R8 is aliased as <tt>PTBR_Process1</tt> and assigned this value as shown below. See <a href="spl-spec,html#navalias">Aliasing</a> in SPL Specification.</p> 
+						The register S0 is aliased as <tt>PTBR_Process1</tt> and assigned this value as shown below. See <a href="spl-spec,html#navalias">Aliasing</a> in SPL Specification.</p> 
 						<div class="syntax">
-						alias PTBR_Process1 R8;<br/>	
+						alias PTBR_Process1 S0;<br/>	
 						PTBR_Process1 = 1024 + 1 * 8;
 						</div>
 						</li>
@@ -807,12 +807,12 @@ Machine is halting
 				<p> Next task to be done in this stage, is to program the Timer Interrupt in SPL, compile it and load it to the disk. The Timer Interrupt routine is the XOS scheduler </p>
 					The timer interrupt routine must perform the following actions:
 					<ol>
-						<li> Find the PID or Process Identifier of the currently running process. In XOS, PID is calculated from the value of the <tt>PTBR</tt> using the formula <b><tt> (PTBR - 1024) / 8</tt></b>. This is because, the Per-Process Page tables are stored in memory from address 1024 onwards and each page table is of size 8 words. The PTBR value gives the starting address of the page table of the current process. Hence this calculation will give the Process ID for the currently running process (Note that this calculation is specific to XOS. In other operating systems Process ID may not be computable from the value of PTBR). <div class="syntax"><pre>alias currentPID R8;
+						<li> Find the PID or Process Identifier of the currently running process. In XOS, PID is calculated from the value of the <tt>PTBR</tt> using the formula <b><tt> (PTBR - 1024) / 8</tt></b>. This is because, the Per-Process Page tables are stored in memory from address 1024 onwards and each page table is of size 8 words. The PTBR value gives the starting address of the page table of the current process. Hence this calculation will give the Process ID for the currently running process (Note that this calculation is specific to XOS. In other operating systems Process ID may not be computable from the value of PTBR). <div class="syntax"><pre>alias currentPID S0;
 currentPID = (PTBR - 1024) / 8;</pre>
 						</div> </li>		
 										
 						<li><p>Find the location of the  <a href="xos-spec.html#navpromgmt_pcb">PCB</a> of the current process using the formula 1536 + 32 * currentPID, as discussed previously</li>
-						<div class="syntax"><pre>alias currentPCB R9;
+						<div class="syntax"><pre>alias currentPCB S1;
 currentPCB = READY_LIST + 32 * currentPID;</pre>
 						</div> </li>	
 						</p>
@@ -839,7 +839,7 @@ currentPCB = READY_LIST + 32 * currentPID;</pre>
 							<p> <b>NOTE</b>: In user mode, logical addresses are translated to physical address by the machine using its <a href="xsm-spec.html#navaddr">address translation</a> scheme. However, in kernel mode, you will need to manually translate any logical address to physical address using the procedure described above.</p>
 							
 							<p> The above calculations is summarized into the following instructions for getting the physical address of SP,
-			<div class="syntax">alias physicalSP R10;</br>
+			<div class="syntax">alias physicalSP S2;</br>
 physicalSP = ([PTBR + 2 * (SP / 512)] * 512) + (SP % 512);
 						</div>							
 							</p>
@@ -872,7 +872,7 @@ physicalSP = ([PTBR + 2 * (SP / 512)] * 512) + (SP % 512);
 						</p>
 						<div class="syntax">
 							SP = SP + 1; <br/>
-							alias newphysicalSP R10; <br/>
+							alias newphysicalSP S2; <br/>
 							newphysicalSP = ([PTBR + 2 * (SP / 512)] * 512) + (SP % 512); <br/>
 							[ newphysicalSP ] = [ newPCB + 4 ]; // Stores IP field value of PCB on the stack <br/>
 							
@@ -976,7 +976,7 @@ INT <i>number</i> 		// Invoke the corresponding INT instruction</div></pre>
 
 				<div class="syntax">
 				<pre>
-alias physicalSP R8;
+alias physicalSP S0;
 physicalSP = ([PTBR + 2 * (SP / 512)] * 512) + (SP % 512);
 .
 // Get system call no. from the stack and put it in registers
@@ -1098,7 +1098,7 @@ Machine is halting     </pre>
 			
 				<div class="syntax">
 				<pre>
-alias counter R8;			
+alias counter S0;			
 counter = 0;
 while ( counter <  128) do			// 64 entries, each of size 2 words
 	[ FILE_TABLE + counter + 0] = -1;	// Set FAT Index to -1

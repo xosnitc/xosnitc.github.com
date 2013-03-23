@@ -156,7 +156,7 @@
 			
 			<article  id="navregisters" class="grid col-full">
 				<h4>Registers</h4>
-				<p>	SPL allows the use of 22 registers for various operations. (<tt>R0-R15, BP, SP, IP, PTBR, PTLR, EFR</tt>)</p>
+				<p>	SPL allows the use of 30 registers for various operations. (<tt>R0-R7, S0 - S15,  BP, SP, IP, PTBR, PTLR, EFR</tt>)</p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -190,7 +190,7 @@
 			<article  id="navregset" class="grid col-full">
 				<h2>Register Set</h2>
 				<p>	SPL doesn’t allow the use of declared variables. Instead a fixed set of registers is provided. 
-				The register set in SPL contains 26 registers. There is a direct mapping between these registers and the machine registers in XSM.</p>
+				The register set in SPL contains 30 registers. There is a direct mapping between these registers and the machine registers in XSM.</p>
 				
 				<img src="doc/register-set.png" style="width:40%"/>
 			</article>
@@ -274,7 +274,7 @@
 				A word in the memory is accessed by specifying the addressing element, i.e. memory location within [ ]. 
 				This corresponds to the value stored in the given address. An arithmetic expression or an addressing expression can be used to specify the address.<br/>
 				Examples of addressing expressions:<br/>
-				<tt>[1024], [R3], [R5+[R7]+128], [FAT + R2] </tt>etc.</p>
+				<tt>[1024], [S3], [S5+[S7]+128], [FAT + S2] </tt>etc.</p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -311,7 +311,7 @@
 				<tt>&nbsp&nbsp&nbsp <b>alias</b> alias_name register_name ;</tt></p>
 			
 			<div class="syntax">
-				alias counter R8;
+				alias counter S0;
 			</div>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -337,10 +337,10 @@
 				
 				<tt>&nbsp&nbsp&nbsp Register / Alias / [Address] = Register / Number / String / Expression / [Address] ;</tt></p>
 			 <div class="syntax">
-				R8 = R0 * 10 + 5; <br/>
+				S0 = S2 * 10 + 5; <br/>
 				counter = counter + 1; <br/>
 				[PTBR + 3] = [1024] + 10; <br/>
-				R9 = "hello world"; <br/>
+				S1 = "hello world"; <br/>
 			</div>
 			</article>
 			<div class="up grid col-one-third" style="float:right">

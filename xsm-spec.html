@@ -155,7 +155,7 @@
 				<h2>Registers</h2>
 				<h4>Introduction</h4>
 				<p>
-				The XSM architecture maintains 26 registers (each one <b>word</b>).
+				The XSM architecture maintains 34 registers (each one <b>word</b>).
 				</p>
 			</article>
 			
@@ -166,17 +166,14 @@
 			<article  id="navregset" class="grid col-full">
 				<h4>Register Set</h4>
 				<p>
-				There are 16 General Purpose Registers (GPR), R0 - R15, of which R0 - R7 are Program Registers and R8 - R15 are Kernel Registers. 
-				There are 4 temporary registers T0 - T3 which are reserved for code translation. 
-				The registers T0 - T3 are not intended to be used by the system programmer.
-				In addition to these 20 registers there are 6 Special Purpose Registers(SPR) namely BP (Base Pointer), SP (Stack Pointer), 
-				IP (Instruction Pointer), PTBR (Page Table Base Register) and PTLR (Page Table Length Register) and the EFR (Exception Flag Register).
+				<p>There are 28 General Purpose Registers (GPR), of which R0 - R7 are Program Registers and S0 - S15 are Kernel Registers. There are 4 temporary registers T0 - T3 which are reserved for code translation. The registers T0 - T3 are not intended to be used by the system programmer.</p>
+				<p>In addition to these 28 registers there are 6 Special Purpose Registers 	(SPR) namely BP (Base Pointer), SP (Stack Pointer), IP (Instruction Pointer), PTBR (Page Table Base Register) and PTLR (Page Table Length Register) and the EFR (Exception Flag Register).</p>
 				</p>
 				
 				<table class="doctable">
 					<tr> <th>Name</th> <th>Register</th> </tr>
 					<tr> <td>Program Registers</td> <td>R0 - R7</td> </tr>
-					<tr> <td>Kernel Registers</td> <td>R8 - R15</td> </tr>
+					<tr> <td>Kernel Registers</td> <td>S0 - S15</td> </tr>
 					<tr> <td>Temporary Registers</td> <td>T0 - T3</td> </tr>
 					<tr> <td>Base Pointer</td> <td>BP </td> </tr>
 					<tr> <td>Stack Pointer</td> <td>SP</td> </tr>
@@ -508,8 +505,7 @@
 
 							<li> <p> <b>Kernel mode</b> : Both privileged and unprivileged instructions can be executed in this mode. 
 							The value of <tt>IP</tt> and <tt>EFR</tt> cannot be explicitly changed by any instruction. 
-							Also these registers cannot be used in addressing memory locations. 
-							All other registers can be used in Kernel Mode. Address translation does not occur in kernel mode, as all addresses are physical addresses. In kernel mode interrupts are disabled. See Interrupts below.</p> </li>
+							Also these registers cannot be used in addressing memory locations. All other registers can be used in Kernel Mode. Address translation does not occur in kernel mode, as all addresses are physical addresses. In kernel mode interrupts are disabled. See Interrupts below.</p> </li>
 					</ul>
 					
 								

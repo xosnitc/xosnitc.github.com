@@ -86,7 +86,7 @@
 			<div class="grid-wrap">
 			
 			<h3>How to use this Roadmap? </h3>
-			<p>	This roadmap is divided into stages. Each stage is to be done in the sequential order. Incrementally you will build XOS according to its specification. Links are provided throughout the document for further reference. There are two kinds of links, <a href="#" class="imp">important links</a> and <a href="#">informative links</a>. <a href="#" class="imp">Important links</a> must be visited and the immediate section to which the link points to must be read to proceed in the roadmap. <a href="#">Informative links</a> may be clicked if you want more information at a particular point. However this information may not be necessary at that point. You can proceed with the roadmap without visiting these links also. </p> 
+			<p>	This roadmap is divided into stages. Each stage is to be done in the sequential order. Incrementally you will build XOS according to its specification. Links are provided throughout the document for further reference. There are two kinds of links, <a href="#" class="imp">important links</a> and <a href="#">informative links</a>. You must visit the <a href="#" class="imp">Important links</a>  the read the immediate section to which the link points to,  in order to proceed with the roadmap. <a href="#">Informative links</a> may be clicked if you want more information at a particular point. However this information may not be necessary at that point. You can proceed with the roadmap without visiting these links also. </p> 
 
 
 <!---  **************************** STAGE 1 *************************************************** -->
@@ -129,12 +129,13 @@
 				<li><b> $HOME/myxos/doc </b><br/>
 				This directory contains the complete specification for <a href="xos-spec.html">XOS</a> (Experimental Operating System), <a href="xsm-spec.html">XSM</a> (Experimental String Machine), <a href="xfs-spec.html">XFS</a> (Experimental File System), <a href="apl-spec.html">APL</a> (Application Programmers Language) and <a hre="spl-spec.html">SPL</a>(System Programmers Language) and <a href="usage-spec.html">Usage Documentation</a> </li>
 			</ul>
+					<p><h6>Assignment</h6> Read and understand the <a href="xfs-spec.html">Filesystem(XFS) Specification</a>.</p>
 			</article>
 
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>	
-			
+	
 	
 
 
@@ -194,11 +195,10 @@ To cool in the peppermint wind.</pre>
 							<div class="syntax"> 
 <pre># load --data $HOME/myxos/sample.dat</pre>
 							</div>
-						This will load the file to the XFS disk. A FAT entry will be created for this file. <a href="xfs-spec.html#navfat">FAT</a> or File Allocation Table contains information such as the file name, file size and the block number of <a href="xfs-spec.html#navfile">basic block</a>. The basic block corresponding to a file will contain locations of the file blocks. See <a href="xfs-spec.html#navfile">files</a> in XFS.
+						This will load the file to the XFS disk. A FAT entry will be created for this file. <a href="xfs-spec.html#navfat">FAT</a> or File Allocation Table contains information such as the file name, file size and the block number of <a href="xfs-spec.html#navfile">basic block</a>. The basic block corresponding to a file will contain locations of the file blocks. Read about  <a href="xfs-spec.html#navfile" class="imp">XFS (Experimental File System)</a> before proceeding in the roadmap.
 						</li>
 
-						<li> Find out the FAT entry corresponding to the loaded file. See <a href="xfs-spec.h
-							tml#navdiskorg">disk organization</a> of XFS Disk. Use the <b>copy</b> command to copy FAT entries (FAT is stored in disk block number 10) to a UNIX file (say <i>$HOME/myxos/fat_block.txt</i>).
+						<li> Find out the FAT entry corresponding to the loaded file. Use the <b>copy</b> command to copy FAT entries (FAT is stored in disk block number 10) to a UNIX file (say <i>$HOME/myxos/fat_block.txt</i>).
 							<div class="syntax">
 <pre># copy 10 10 $HOME/myxos/fat_block.txt
 # exit</pre>
@@ -253,9 +253,13 @@ To cool in the
 peppermint wind</pre>
 					</li>				
 			</ol>
+			<p><h6>Assignment</h6> Read and understand the <a href="xsm-spec.html">Machine(XSM) Specification</a>.</p>
 			</article>
 
-
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+			
 
 
 
@@ -266,10 +270,7 @@ peppermint wind</pre>
 
 <!---  **************************** STAGE 3 *************************************************** -->
 
-			<div class="up grid col-one-third" style="float:right">
-			<a href="#navtop" title="Go back up"> top &uarr;</a>
-			</div>	
-			
+
 
 			<article  id="navstage3" class="grid col-full">
 				<h2>Stage 3: Starting the machine </h2>
@@ -318,7 +319,7 @@ endwhile; </pre>
 					</div>
 
 					</li>
-
+					<p>Note that the <tt>--os</tt> option loads the file to Block 0 of the XFS disk </p>
 					<li> Run the machine using the command 
 						<div class="syntax">
 $HOME/myxos/xsm/xsm
@@ -339,6 +340,8 @@ Machine is halting
 </tt></pre>
 
 				<p> You may also write a few SPL programs on your own and run it on the machine to get familiarized with SPL syntax. Try using the instructions like <a href="spl-spec.html#navbreakpointstmt"><i>breakpoint</i></a> which translates to <a href="xsm-spec.html#navinstr_brkp">BRKP</a> machine instruction. This instruction is useful for debugging. It displays the contents of all the machine registers at the point where the instruction is used.</p>
+
+			<p><h6>Assignment</h6> Read and understand the <a href="runtime.html">Runtime environment </a>.</p>
 			</article>
 
 			<div class="up grid col-one-third" style="float:right">
@@ -361,17 +364,18 @@ Machine is halting
 				<p> User programs or application programs are programmed using APL or Application Programmer's Language. In stage 3, you wrote a system program and executed it. In this stage you will write a user program. (APL Specification need not be read now. It is given  in <a href="apl-spec.html">  APL Documentation </a>)</p>
 
 				<p>
-				A user program is different from a system program. It is to be noted that a system program is executed in kernel mode ( See <a href="xsm-spec.html#navmodes" class="imp">Privilege modes</a> ). The machine starts its execution in kernel mode. In kernel mode both privileged and unprivileged <a href="xsm-spec.html#navinstr">instructions</a> can be executed. All memory addresses are physical addresses in kernel mode.</p>
+				A user program is different from a system program. It is to be noted that a system program is executed in kernel mode ( See <a href="xsm-spec.html#navmodes" class="imp">Privilege modes</a> ). The machine starts its execution in kernel mode. In kernel mode both privileged and unprivileged <a href="xsm-spec.html#navinstr">instructions</a> can be executed. <b> All memory addresses are physical addresses in kernel mode </b>.</p>
 				
-				<p> A user program should be run in user mode. In user mode only unprivileged instructions can be executed. Also all memory addresses are logical in user mode. In user mode, the machine translates logical addresses to physical addresses using the <a href="xsm-spec.html#navaddr" class="imp">address translation</a> scheme of the machine. The OS Startup code must load the user program to be executed from the disk to the memory and set up the page tables before switching to the user mode, so that the address translation scheme works correctly. 
+				<p> A user program should be run in user mode. In user mode only unprivileged instructions can be executed. <b>All memory addresses are logical in user mode </b>. In user mode, <b> the machine translates logical addresses to physical addresses using the <a href="xsm-spec.html#navaddr" class="imp">address translation</a> scheme of the machine </b>. The OS Startup code must load the user program to be executed from the disk to the memory and set up the page tables before switching to the user mode, so that the address translation scheme works correctly. 
 				</p>
 
 				<p>
-				Before the start of execution of the user program, the mode of execution must be changed from kernel mode to user mode. The value of Instruction Pointer must be set to the starting logical address of the code of the user program (Since all addresses are logical addresses in user mode, program starts executing from logical address 0). Its important that you MUST read about <a href="runtime.html" class="imp">Runtime environment</a> before proceeding with the roadmap. Both switching to user mode and setting of the IP is achieved by using <a href="spl-spec.html#naviretstmt"> ireturn</a> instruction. The ireturn instruction in SPL translates to the machine instruction <a href="xsm-spec.html#navinstr_iret">IRET</a>. </p>
+				Before the start of execution of the user program, the mode of execution must be changed from kernel mode to user mode. The value of Instruction Pointer must be set to the starting logical address of the code of the user program (Since all addresses are logical addresses in user mode, program starts executing from logical address 0). Its important that you MUST read about <a href="runtime.html" class="imp">Runtime environment</a> before proceeding with the roadmap. Both switching to user mode and setting of the IP are achieved by using <a href="spl-spec.html#naviretstmt"> ireturn</a> instruction. The ireturn instruction in SPL translates to the machine instruction <a href="xsm-spec.html#navinstr_iret">IRET</a>. </p>
 				
 
 				<p>In this stage, a user program is written in APL. It is then compiled and loaded to the disk as the <a href="xos-spec.html#navpromgmt_init">INIT</a> program. The first user program which is executed is called the INIT program. INIT program is stored in blocks 13-15 of the XFS disk. It does not have a FAT entry or a basic block. You will also write an OS Startup Code to load your INIT program from the disk to the memory and execute it. Note that the OS Startup code is a system program which runs in kernel mode. Hence it must be written in  SPL. (SPL Specification need not be read now. It is given  <a href="spl-spec.html"> in SPL Documentation </a>)</p>
 
+				<p>( <b>NOTE:</b> In SPL, you can write privileged instructions and access machine registers and the entire memory directly using physical addresses. The OS routines which run in kernel mode is written in SPL. SPL compiles to the instruction set available in Kernel Mode. On the other hand, APL is used write user programs. APL is a high level programming language. It compiles to instructions available in the User mode. An APL program has a limited view of the machine and uses logical addressing.  Read about <a href="runtime.html" class="imp">Runtime environment</a> to understand the logical address space viewed by a user program. APL is used to test out the functioning of the OS routines that you write in SPL.)</p>
 				<ol>
 					<li> Write a program in APL to print all prime numbers lesser than a number taken as input. See <a href="apl-spec.html#navexamples">Examples</a> of APL programs. In the roadmap, the path of the file is assumed to be <tt>$HOME/myxos/apl/apl_progs/prime.apl</tt>. This program will be the INIT program in this stage. </li><br/>
 					<li> Compile your APL program using the command
@@ -411,7 +415,7 @@ Machine is halting
 
 				<h6>OS Startup Code</h6>
 				<ol>
-					Interrupt Routine 7, Exception Handler routine and the program to print primes must be loaded from the XFS disk to the memory  by the OS Startup Code. The OS Startup Code must be written in <a href="spl-spec.html">SPL</a>, compiled and loaded to the disk as done in stage 3. The new OS Startup Code must do the following tasks. </br><br/>
+					Interrupt Routine 7, Exception Handler routine and the program to print primes must be loaded from the XFS disk to the memory  by the OS Startup Code. The OS Startup Code executes in kernel mode and hence must be written in <a href="spl-spec.html">SPL</a>, compiled and loaded to the disk as done in stage 3. The new OS Startup Code must do the following tasks. </br><br/>
 
 					<li> <p>Load Exception Handler from disk block 1 to memory page 7 and Interrupt Routine 7 from disk block 9 to memory page 15 using <a href="spl-spec.html#navlsstmt" >load</a> instruction.  These programs are responsible for halting the machine on exceptions and upon finishing execution of the process respectively. 
 		
@@ -432,11 +436,11 @@ Machine is halting
 							</div>	
 					<li>Load the <b>INIT program</b> (program to print primes) from the disk to the memory. In the memory, user programs are stored in pages 16-63. Since INIT is the first process, we will allocate the first 3 pages (pages 16-18) for code. Every running process will require a stack. (Understanding the <a href="runtime.html" class="imp">Runtime Environment</a> is a MUST at this point). Memory page 19 can be allocated for the stack. (See <a href="xos-spec.html#navpromgmt_prostruct">Process Structure</a>) . The blocks 13-15 from disk is to be loaded to the memory pages 16-18. ( See <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization )</a></li>
 							<div class="syntax">
-								load(16,13);<br/>
-								load(17,14);<br/>
-								load(18,15);<br/>
+								load(16,13);		// Load 1st page of code from disk to memory<br/>
+								load(17,14);		// Load 2nd page of code from disk to memory<br/>
+								load(18,15);		// Load 3rd page of code from disk to memory<br/>
 							</div>
-					<li> Page Table for INIT must be set up for address translation scheme to work correctly. (Understanding <a href="xsm-spec.html#navaddr" class="imp">Address Translation</a> is a MUST at this point). The PTBR or Page Table Base Register stores the starting address of the page table of a process. The page table for each process has 8 words. The list of all page tables start at memory address 1024.(See <a href="xos-spec.html#navmemorg" >Memory Organization</a>).  SPL has a predefined constant <tt>PAGE_TABLE</tt> which stores the value 1024. Hence  PID x 8 will give the index of the page table of the particular process within the list of page tables. Adding 1024 to this value gives the physical address of the page table of this process. This physical address is stored in PTBR. Thus, PTBR of a process is calculated using the formula <pre> 1024 + (PID x 8) </pre>
+					<li> Page Table for INIT must be set up for address translation scheme to work correctly. This is because INIT is a user process and addresses generated are logical. Machine translates these logical addresses to physical addresses by looking up the page table for INIT. (Understanding <a href="xsm-spec.html#navaddr" class="imp">Address Translation</a> is a MUST at this point). The PTBR or Page Table Base Register stores the starting address of the page table of a process. The page table for each process has 8 words. The list of all page tables start at memory address 1024.(See <a href="xos-spec.html#navmemorg" >Memory Organization</a>).  SPL has a predefined constant <tt>PAGE_TABLE</tt> which stores the value 1024. Hence  PID x 8 will give the index of the page table of the particular process within the list of page tables. Adding 1024 to this value gives the physical address of the page table of this process. This physical address is stored in PTBR. Thus, PTBR of a process is calculated using the formula <pre> 1024 + (PID x 8) </pre>
 
 						 Since PID of INIT is 0, PTBR value of INIT is set as 1024. 
 						 <div class="syntax">PTBR = 1024; </div>
@@ -464,18 +468,19 @@ Machine is halting
 						
 					</li>					
 					
-					<li> Once  all structures are set up, <tt>STATE</tt> field in the PCB of INIT process is set to 2 (running). (See <a href="xos-spec.html#navpromgmt_pcb">PCB</a> for more information about process states)
+					<li> Once all structures are set up, <tt>STATE</tt> field in the PCB of INIT process is set to 2 (running). (See <a href="xos-spec.html#navpromgmt_pcb">PCB</a> for more information about process states). When there are more than one process in memory, the running process is identified by looking at the STATE field in the Ready List of PCBs. 
 						<div class="syntax">
 								[READY_LIST + 1] = 2; // Sets the entry for STATE as Running
-							</div> The remaining entries of the PCB need not be set by the OS startup code. You will learn about these in subsequent stages.  
-							
+							</div> 
+							<p>	 The remaining entries of the PCB need not be set by the OS startup code. You will learn about these in subsequent stages.  </p>
+
 					</li> <br/>
 					
 
 					<li> 
 						<p> Next we need to set the stack pointer (<b>SP</b>) register. Each program in memory has an associated runtime stack. A runtime stack holds the local variables and function parameters while a process is running (See <a href="runtime.html" class="imp" >Runtime environment</a>). The Stack Pointer or <b>SP</b> points to the top of this stack.</p>
 
-						<p>The stack of every process in XOS starts at logical address 3 x 512 (= 1536) which corresponds to logical page number 3 ( logical page numbering of a process starts from 0). It grows in till logical address 4 x 512 - 1 (= 2047). </p>
+						<p>The stack of every process in XOS starts at logical address 3 x 512 (= 1536) which corresponds to logical page number 3 ( logical page numbering of a process starts from 0). It can grow upto logical address 4 x 512 - 1 (= 2047). If stack grows beyond this value, machine triggers an exception (See <a href="xsm-spec.html#navexcep">Exceptions</a>). </p>
 
 						<p> Before OS Startup Code transfers control to the user program, the value of <b>SP</b> must be set to its starting logical address ( 3 * 512 = 1536). Every user program runs in user mode. In user mode, all addresses are logical addresses. Since SP is used by the user program, its address should be a logical address. </p>
 
@@ -491,7 +496,7 @@ Machine is halting
 								<li> The value in the top of the user stack (pointed to by SP) is stored in IP or Instruction Pointer. The IP register contains the logical address of the next instruction to be executed in user mode. IP cannot be changed explicitly by the programmer using any instruction other than branching instructions, subroutine instructions, <tt>IRET</tt> and <tt>INT</tt> instructions (See <a href="xsm-spec.html#navinstr">instructions</a>).
 								</li> <li> Decrement the value of SP by 1 </li>
 							</ol>
-						<p> For an <tt>IRET</tt> instruction to function properly, the value at the top of the stack should be the address of the next instruction. This value gets stored in IP.</p>
+						<p> For an <tt>IRET</tt> instruction to function properly, the value at the top of the stack should be the logical address of the next instruction. This value gets stored in IP.</p>
 
 						<p> The code pages of every program in memory starts from logical address 0. (See <a href="runtime.html" class="imp" >Runtime environment</a>). Hence <b>IP</b> or instruction pointer needs to be set to 0 before a process starts executing. As IP cannot be set explicitly, put the value 0 to the top of the stack, and <tt>IRET</tt> instruction will implicitly set the IP to this value. Since the OS Startup Code runs in KERNEL mode, the physical address of SP must be used to  access the top of the stack. Stack of INIT process is allocated physical page number 19. Its corresponding physical address is 19 * 512. Hence, the following instruction will put 0 in the top of the stack. 
 
@@ -546,8 +551,8 @@ Machine is halting</pre>
 
 			<article  id="navstage5" class="grid col-full">
 			<h2>Stage 5: Interrupt Routines </h2>
-			<p> When an interrupt occurs while the XSM simulator is running, it transfers control to specific memory locations corresponding to the interrupt. Interrupts can be invoked either by software (through INT instruction) or by hardware. In XSM, the only hardware interrupt is the timer interrupt, which is triggered in fixed intervals of intstructions. (In general machines, a timer interrupt is triggered in fixed intervals of time using a timer device). There are 7 software interrupts in XSM, invoked using machine instrutions <tt>INT 1</tt> to <tt>INT 7</tt>. </p>
-			<p>Interrupts can only be triggered or invoked in user mode. In Kernel mode interrupts are disabled. Upon encountering an interrupt, the machine transfers control to specific locations in memory and changes from user mode to kernel mode. These memory locations contains Interrupt Routines. (See <a href="xos-spec.html#navmemorg">Memory Organization</a>). User programs can access operating system services by invoking software interrupts.  Memory page 8 contains the Timer Interrupt Routine. Memory page 9 to 15 contain Interrupt Routines 1 to 7. These are invoked using <tt>INT 1</tt> to <tt>INT 7</tt> machine instructions respectively. </p>
+			<p> When an interrupt occurs while the XSM simulator is running, it transfers control to specific memory locations corresponding to the interrupt. Interrupts can be invoked either by software (through INT instruction) or by hardware. In XSM, the only hardware interrupt is the timer interrupt, which is triggered in fixed intervals of instructions. (In real machines, a timer interrupt is triggered in fixed intervals of time using a timer device). There are seven software interrupts in XSM, invoked using machine instructions <tt>INT 1</tt> to <tt>INT 7</tt>. </p>
+			<p>Interrupts can only be triggered or invoked in user mode. In Kernel mode interrupts are disabled. Upon encountering an interrupt, the machine transfers control to specific locations in memory and changes from user mode to kernel mode. These memory locations contains Interrupt Routines. Since interrupt routines are executed in kernel mode, use SPL to write them.  User programs can access operating system services by invoking software interrupts.  Memory page 8 contains the Timer Interrupt Routine. Memory page 9 to 15 contain Interrupt Routines 1 to 7 (See <a href="xos-spec.html#navmemorg">Memory Organization</a>). These are invoked using <tt>INT 1</tt> to <tt>INT 7</tt> machine instructions respectively. </p>
 
 			<p>(<b>NOTE:</b> The interrupt instructions <tt>INT 1</tt> to <tt>INT 7</tt> can be invoked from an APL program using system call interfaces. You will be implementing system calls in the subsequent stages. If you are curious, jump ahead and read about <A href="xos-spec.html#navsyscalls">System Calls</a> )</p> 
 			<p>
@@ -630,7 +635,7 @@ Machine is halting
 			<h5>Implementing Timer Interrupt</h5>
 			<p> The XSM simulator has a timer which invokes the timer interrupt routine after specific number of instructions . (Note that, in real machines, a timer interrupt is triggered in fixed intervals of time using a timer device).  The  <a href="xsm-spec.html#navtimer">Timer Interrupt Routine</a> resides in Page Number 8 (See <a href="xos-spec.html#navmemorg">Memory Organization</a>) of the memory. 			</p>
 
-			<p>Your task is to display <tt>"TIMER"</tt> everytime a timer interrupt is triggered. Create a timer interrupt routine, which prints <tt>"TIMER"</tt>. The Timer Interrupt Routine is loaded to memory by the OS Startup Code. A sample program to print numbers up to 20 is compiled using APL compiler and used as INIT program. The Machine is run without disabling the timer. 	When a timer interrupt occurs, the control is passed to the timer interrupt routine. This routine prints <tt>"TIMER"</tt> and returns to the user program. </p>
+			<p>Your task is to display <tt>"TIMER"</tt> every time a timer interrupt is triggered. Create a timer interrupt routine, which prints <tt>"TIMER"</tt>. The Timer Interrupt Routine is loaded to memory by the OS Startup Code. A sample program to print numbers up to 20 is compiled using APL compiler and used as INIT program. The Machine is run without disabling the timer. 	When a timer interrupt occurs, the control is passed to the timer interrupt routine. This routine prints <tt>"TIMER"</tt> and returns to the user program. </p>
 
 			<p>(<b>NOTE:</b> Timer Interrupt is triggered at fixed intervals of instructions. The interval can be specified when the XSM simulator is started - see <a href="usage-spec.html#navxsm">Usage</a> of XSM. Default interval for timer interrupt is 10 instructions) 
 			</p>
@@ -699,11 +704,24 @@ Machine is halting
 			</div>	
 
 
+
+
+
+
+
+
+
+
+
+
+
+<!--*********************************STAGE 6 ******************************** -->
+
 			<article  id="navstage6" class="grid col-full">
 			<h2>Stage 6: Getting started with Multiprogramming</h2>
 			<p>Multiprogramming refers to running more than one process simultaneously. Each process has a limited view of the entire machine. (Read <a href="runtime.html" class="imp">Runtime Environment</a> for more details). An OS capable of multiprogramming like XOS can provide this view to more than one process concurrently. In this stage, you will learn how to run two processes concurrently on the machine.</p>
 
-			<p> In XSM, when a timer interupt is triggered, the control is passed to the timer interrupt routine (Page 8). In the previous stage you made the timer interrupt to display <tt>"TIMER"</tt> at fixed intervals. However, the actual function of timer interrupt routine is to schedule processes in memory. </p>
+			<p> In XSM, when a timer interrupt is triggered, the control is passed to the timer interrupt routine (Page 8). In the previous stage you made the timer interrupt to display <tt>"TIMER"</tt> at fixed intervals. <b> However, the actual function of timer interrupt routine is to schedule processes in memory.</b> </p>
 			
 			<p>The timer interrupt routine should save the context of the current process in its Process Control Block (<a href="xos-spec.html#navpromgmt_pcb">PCB</a>). Context of a process refers to the program registers (R0 - R7), SP, BP, IP, PTBR and PTLR of the process. It should then schedule and dispatch a new process to be run on the machine. This means that another process will be picked from the ready list of PCBs. The context of this process is obtained from its PCB and copied into machine registers. The control of execution is then transferred to the instruction pointed to by the IP of this process. In this stage you will run two programs concurrently on the machine. You should run XSM simulator without disabling the timer. <br/>
 			</p>
@@ -728,15 +746,14 @@ Machine is halting
 					</p>
 					<p>Before the <tt>ireturn</tt> statement in the OS Startup Code, it should load and set up the process structures for the second process.</p>
 					<ol>
-						<li><p>The PID (Process Identifier) for the second process will be 1. This is because, the INIT process has been assigned PID value 0.</p>
-						<p>PID field in the PCB of the second process is set to 1. As noted in Stage 4, the starting address of PCB for any running process is calculated using the formula: </p>
+						<li><p>The PID (Process Identifier) for the second process may be set to 1. This is because, the INIT process has been assigned PID value 0. Hence you must set the PID field of the second process as 1. As noted in Stage 4, the starting address of PCB for any running process is calculated using the formula: </p>
 						<p>1536 + (PID x 32) </tt></p>
 						The value 1536 is stored in the the predefined SPL constant <tt>READY_LIST</tt>.
 							<div class="syntax">
 								[READY_LIST + 32] = 1; 		// Sets the entry for PID as 1<br/>
 							</div>
 						</li>
-						<li> Load the code blocks of the second program from disk to pages 20 - 22 in memory (In this roadmap, we have assumed that the code blocks are stored in blocks 17 - 19 in the disk.  See Step 5 of the previous section. Note that, you must use the XFS interface to find the actual block numbers in your disk).  Pages 16 to 19 have already been allocated for the INIT process. So the second, process can be allocated pages after 19. For convenience we have used pages 20 to 23 in the memory. (See <a href="xos-spec.html#navmemorg">Memory Organization</a>). Page 20 to 22 will contain the code corresponding to this process and page 23 will be used as the stack (See <a href="xos-spec.html#navpromgmt_prostruct">Process Structure</a>).
+						<li> Load the code blocks of the second program from disk to pages 20 - 22 in memory (In this roadmap, we have assumed that the code blocks are stored in blocks 17 - 19 in the disk.  See Step 5 of the previous section. Note that, you must use the XFS interface to find the actual block numbers in your disk). Note that the pages allocated for user processes start from page number 16 onwards and  pages 16 to 19 have already been allocated for the INIT process. So the second, process can be allocated pages after 19. For convenience we have used pages 20 to 23 in the memory. (See <a href="xos-spec.html#navmemorg">Memory Organization</a>). Page 20 to 22 will contain the code corresponding to this process and page 23 will be used as the stack (See <a href="xos-spec.html#navpromgmt_prostruct">Process Structure</a>).
 							<div class="syntax">
 								load(20,17);<br/>
 								load(21,18);<br/>
@@ -793,7 +810,7 @@ Machine is halting
 							The rest of the entries of the PCB may not be set now. You will deal with them in subsequent stages.
 							</ul>
 						</li> <br/>
-						<li> Add the instruction to load the timer interrupt routine from disk block 2 to memory page 8. See <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization </a>. 
+						<li> Before switching to user mode, the timer interrupt routine must be loaded to memory. Add the instruction to load the timer interrupt routine from disk block 2 to memory page 8. See <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization </a>. 
 							<div class="syntax">
 								load(8,2);
 							</div>
@@ -804,8 +821,7 @@ Machine is halting
 				<br/>
 			
 				<h6>Timer Interrupt Routine</h6> <br/>
-				<p> Next task to be done in this stage, is to program the Timer Interrupt in SPL, compile it and load it to the disk. The Timer Interrupt routine is the XOS scheduler </p>
-					The timer interrupt routine must perform the following actions:
+				<p> Next task to be done in this stage, is to program the Timer Interrupt in SPL, compile it and load it to the disk. The Timer Interrupt routine is the XOS scheduler The scheduler is responsible for scheduling out the currently running process and allocate the CPU for a ready process. Scheduling out involves freeing the machine registers used by the process and saving it. Then the registers corresponding to the new process is loaded to machine registers. And it is scheduled for execution. The detailled set of actions that the timer interrupt routine must perform follows:
 					<ol>
 						<li> Find the PID or Process Identifier of the currently running process. In XOS, PID is calculated from the value of the <tt>PTBR</tt> using the formula <b><tt> (PTBR - 1024) / 8</tt></b>. This is because, the Per-Process Page tables are stored in memory from address 1024 onwards and each page table is of size 8 words. The PTBR value gives the starting address of the page table of the current process. Hence this calculation will give the Process ID for the currently running process (Note that this calculation is specific to XOS. In other operating systems Process ID may not be computable from the value of PTBR). <div class="syntax"><pre>alias currentPID S0;
 currentPID = (PTBR - 1024) / 8;</pre>
@@ -834,7 +850,7 @@ currentPCB = READY_LIST + 32 * currentPID;</pre>
 							<b><pre>Physical Page Number = [ Location of page table entry + 0 ] </pre></b>
 							<p> Offset into the page is calculated as </p>
 							<pre><b>offset = logical_address % 512</b></pre> 
-							<p> The physical address is computed by multiplying the physical page number by page size (=512) and adding the offest. </p>
+							<p> The physical address is computed by multiplying the physical page number by page size (=512) and adding the offset. </p>
 							<pre><b>Physical Address = Physical Page Number x 512 + offset </pre></b></p>
 							<p> <b>NOTE</b>: In user mode, logical addresses are translated to physical address by the machine using its <a href="xsm-spec.html#navaddr">address translation</a> scheme. However, in kernel mode, you will need to manually translate any logical address to physical address using the procedure described above.</p>
 							
@@ -845,7 +861,7 @@ physicalSP = ([PTBR + 2 * (SP / 512)] * 512) + (SP % 512);
 							</p>
 							<p>
 							(<b>WARNING</b>: Understand carefully how physicalSP is obtained from SP. Do not follow the formula blindly.)</p><p>
-							IP of the current process is on the  top of the stack. Having obtained the physical address of SP, you can fetch this IP value from the stack and save it in the IP field of  PCB. This can be done using the following instruction.</p>
+							IP of the current process is on the  top of the stack. Having obtained the physical address of SP, you can fetch this IP value from the stack and save it in the IP field of  <a href="xos-spec.html#navpromgmt_pcb">PCB</a>. This can be done using the following instruction.</p>
 		<div class="syntax">[ currentPCB + 4 ] = [ physicalSP ]; // Save IP of current process in the PCB from the stack</div>
 							</li>
 							<li>Set PTBR and PTLR fields of the PCB with the values in <tt>PTBR</tt> and <tt>PTLR</tt>
@@ -864,7 +880,7 @@ physicalSP = ([PTBR + 2 * (SP / 512)] * 512) + (SP % 512);
 							</li>							
 						 </ul>
 						</li>
-						<li> Now, the next process to be scheduled for execution is to be selected. To do this, scan the <a href="xos-spec.html#navpromgmt_readylist">Ready List of PCBs</a> in a circular manner starting from the PCB of current process to check for the next process with STATE value 1 (Ready) in its PCB. Store the address of the  PCB of the newly found process in a register. In this roadmap we have assumed this register's alias to be <tt>newPCB</tt>.</li>
+						<li> Now, the next process to be scheduled for execution is to be selected. To do this, scan the <a href="xos-spec.html#navpromgmt_readylist">Ready List of PCBs</a> in a circular manner starting from the PCB of current process to check for the next process with STATE value 1 (Ready) in its PCB. This scheduling algorithms is known as "Round-Robin" scheduling. Every process gets equal share of the CPU time. For other scheduling algorithms, refer Silberschatz, Galvin, Gagne: Operating System Concepts. Store the address of the  PCB of the newly found process in a register. In this roadmap we have assumed this register's alias to be <tt>newPCB</tt>.</li>
 
 						<li> The register values of the newly found process were stored in its PCB when it was scheduled out at an earlier point in time. Now these values needs to be fetched from the PCB and loaded back into the machine registers, so that execution will resume from where it was scheduled out. Load the fields except IP from this PCB to the corresponding registers. Note that IP value cannot be modified directly (See <a href="xsm-spec.html#navinstr">XSM Instructions</a>).   </li>
 
@@ -912,12 +928,14 @@ physicalSP = ([PTBR + 2 * (SP / 512)] * 512) + (SP % 512);
 			<article id="navstage7" class="grid col-full">
 				<h2>Stage 7: Creating Files </h2>
 		
-				<p> In this stage, you'll learn to implement a <a href="xos-spec.html#navsyscalls"> system call </a>. System calls are interfaces provided by the operating system to the user programs to run a system routine. System Calls are provided as commands in APL like Create(), Open(), Fork() etc. These system calls in APL translate to a series of stack operations followed by the <tt>INT</tt> machine instruction. <tt>INT</tt> instruction invokes an Interrupt Routine as described in Stage 5.</p>
-				<p>A user program  invokes a system call by first pushing the registers, arguments and system call number into the process stack and then invoking <tt> INT </tt> instruction corresponding to the system call. </p>
-		
-				<p>For e.g. a system call in APL compiles to the a set of machine instructions like the one shown below.</p>
+				<p> In this stage, you'll learn to implement a <a href="xos-spec.html#navsyscalls"> system call </a>. System calls are interfaces provided by the operating system to the user programs to run a system routine. APL provides interfaces to invoke system calls in the form of instructions such as Create(), Open(), Fork() etc. These instructions in APL translate to a series of stack operations followed by the <tt>INT</tt> machine instruction. <tt>INT</tt> instruction invokes an Interrupt Routine as described in Stage 5. After returning back from the interrupt routine, it pops out the required values from the stack. </p>
+
+				<p> There are 3 steps involved in performing a system call. STEP 1 is to set up the stack for the system call by pushing arguments and system call number. The system call number is specified by the OS and by definition, is different from the interrupt routine number.  Control is passed to the interrupt routine corresponding to the system call. The instructions which perform these actions are generated by the APL compiler, when the user program written in APL (which invokes the system call) is compiled. You may read about how APL compiler translates various system calls in <a href="syscalls.html">System Call Translation</a>. STEP 2 is programming the corresponding interrupt routine in SPL to perform the required actions of the system call and returning back to the user program. In this stage you will be writing an interrupt routine corresponding to the <b>Create</b> system call. STEP 3 includes the actions done after returning back from the system call to the user program which invoked the system call. Certain instructions to fetch the return value and remove values from the stack is performed. These instructions will automatically be generated by the APL compiler  corresponding to the system call ( See <a href="syscalls.html">System Call Translation</a>). STEP 1 will be done by the instructions generated by the APL compiler. You will need to understand carefully, what is being done, so that you can program the Interrupt Routine. This is done in STEP 2. After returning from the system call, a few instructions to restore the stack is also generated by the APL compiler and the user programs resumes execution. In short, you need to do only STEP 2 to implement a system call. But an understanding of STEP 1 and STEP 3 is necessary to get STEP 2 done.
+
+				<h4> STEP 1 : Invoking a system call</h4>
+				<p>A user program  invokes a system call by first pushing the arguments and system call number into the process stack and then invoking <tt> INT </tt> instruction corresponding to the system call. A system call in APL compiles to the a set of machine instructions like the one shown below.</p>
 				<div class="syntax"> <pre>
-PUSH <i>Argument_1</i>	// Push arguments to the stack
+PUSH <i>Argument_1</i>		// Push arguments to the stack
 .
 .
 PUSH <i>Argument_n</i>
@@ -925,29 +943,47 @@ PUSH R0			// Push an empty space for RETURN VALUE
 PUSH <i>System_Call_No</i> 	// Push system call number		
 INT <i>number</i> 		// Invoke the corresponding INT instruction</div></pre>
 				
-				<p><b>FIGURE 1: Contents of the stack when a system call is exectued.</b> </p>
+			
+				
 				 <img src="doc/syscallstack1.png" style="width:50%; float:left; margin-right:5%; ">
 				 
-				<p><b>Step 1</b> shows the stack operations done before an <tt>INT</tt> instruction (See machine instructions above). The arguments are pushed to stack in an order such that last argument comes on top. A push instruction <tt>PUSH R0</tt> is done to put an empty space for the return value in the stack. This space will store the value returned by the System Call. The return value of the system call can be fetched by the user program from this position. We can implement more than one system call using an Interrupt Routine. When control is passed to the interrupt routine, it identifies the system call the user intended to perform by a system call number. This system call number is pushed to the user stack. The interrupt routine will fetch this value from the stack and identify which system call is to be performed.</p>
+				<p><b>a) Shows the stack operations performed by the user program before
+				 an <tt>INT</tt> instruction in the compiled APL program (See machine instructions above) </b>. The arguments are pushed to stack in an order such that last argument comes on top. A push instruction <tt>PUSH R0</tt> is done to put an empty space for the return value in the stack. The interrupt routine (containing the system call implementation) which you will write in STEP 2, must ensure that the return value is stored in this space.  The system call number is pushed to the stack. In STEP 2, you will need this value. </p>
 				
 				<p>
-				 <b>Step 2</b> shows the contents of the stack when the <tt>INT</tt> instruction is executed. The <tt>INT</tt> instruction will push the value of <tt>IP + 2</tt> on to the stack. This is address of the next instruction that is to be executed after the control returns from the system call. When the control of execution returns from the system call, the register <tt>IP</tt> is set to the value on the top of the stack. This value is the address of the instruction after the <tt>INT</tt> instruction in the user program. The <tt>INT</tt> instruction passes control to the Interrupt Routine corresponding to the system call.</p>
+				 <b>b)  shows the contents of the stack when the <tt>INT</tt> instruction is executed </b>. The <tt>INT</tt> instruction will push the value of <tt>IP + 2</tt> on to the stack. This value is the address of the instruction after the <tt>INT</tt> instruction in the user program.  Each instruction is 2 words, hence IP is incremented by 2.This IP value will be used in STEP 2 in order to return back from the system call to the next instruction.  The <tt>INT</tt> instruction changes mode from USER to KERNEL mode and  passes control to the Interrupt Routine corresponding to the system call. </p>
 	<br/><br/>
 
-
-
+				<h4> STEP 2: The System Call Implementation</h4>
+				<p> This is the step that you will be doing in this stage. The system call is implemented in the corresponding interrupt routine. The interrupt routine will be programmed in SPL. You can implement more than one system call using the same Interrupt Routine. In that case, you will require a system call number to identify the system call that was invoked by the user program. This system call number was pushed in the stack in STEP 1. This value can be obtained from the stack, and based on the system call number, the required actions must be performed by the Interrupt routine. This step can be divided into 3 sub steps: </p>  
 				
-
-				<p><b>FIGURE 2: Contents of the stack when it returns back to the user program from an interrupt routine. Control returns from the interrupt routine  to user program using an <tt>IRET</tt> instruction.</b> </p>
-				 <img src="doc/syscallstack2.png" style="width:50%; float:right; margin-right:5%; ">
- 				
-				<p><b>Step 1</b> shows the contents of the stack before the <tt>IRET</tt> instruction. This step shows the condition of the stack after the interrupt routine had performed all the required actions corresponding to the system call. Note that this is similar to Step 2 of the previous figure. However the interrupt routine will have filled the empty space for the <tt>RETURN VALUE</tt> with the required result after all the system call actions have been performed. In the previous figure this space would be empty.</p>
+				<p><b>a) Fetching system call number and arguments</b>: Fetch the system call number and arguments (if any) from the corresponding locations on the stack. See the figure in STEP 1. </p>
+				<p><b>b) Programming the interrupt routine</b>: Based on the system call number the required actions must be performed. Arguments fetched should be used in the implementation of the system call.  </p>
 				
+				<img src="doc/syscallstack2.png" style="width:50%; float:right; margin-right:5%; ">
+
+				<p><b>c) Returning from the system call</b> 
+				<br/>
+				Return value of the system call should be stored in the space allocated in the stack. See the figure (i). Returning back from the interrupt routine to the user program is done using the  <tt>IRET</tt> machine instruction. Figure (i) shows the contents of the stack after the interrupt routine had performed all the required actions corresponding to the system call and just before the <tt>IRET</tt> instruction in the interrupt routine. Note that this is similar to Step 2 of the previous figure. However the interrupt routine will have filled the empty space for the <tt>RETURN VALUE</tt> with the required result after all the system call actions have been performed. In the figure in STEP 1, this space would be empty.</p>
 				<p>
-				 <b>Step 2</b> shows the contents of the stack immediately after the <tt>IRET</tt> instruction. The value on the top of the stack will be popped and stored in the <tt>IP</tt> register. This value will be the address of the  instruction after the <tt>INT</tt> instruction in the user program. </p>
-				 
+				 <p>Figure (ii) shows the contents of the stack immediately after the <tt>IRET</tt> instruction.  The value on the top of the stack will be popped and stored in the <tt>IP</tt> register by the <tt>IRET</tt> instruction. This value will be the address of the instruction after the <tt>INT</tt> instruction in the user program. This was stored in the stack in STEP 1.</p>
+			
+				<h4>STEP 3: After returning from the system call. </h4>
+				<p> The IRET instruction transfers control back to the user program to the instruction after the <tt>INT</tt> instruction. The following machine instructions are present after the <tt>INT</tt> instruction in the compiled machine code given in STEP 1. </p>
+				<div class="syntax"> <pre>
+POP <i>System Call Number </i>		// Pop and discard system call number
+POP <i>RETURN_VALUE</i>		// Pop and SAVE the return value
+POP <i>Argument_n</i>			// Pop and discard arguments
+.
+.
+POP <i>Argument_1</i></div></pre>				
 
-			</p>
+<p> The machine code above pops the values from the stack. The system call number and arguments were inputs to the system call and hence it can be discarded now. The return value which is stored in the stack by the system call is fetched and used by the user program. </p>
+
+			<p>
+			You may see <a href="syscalls.html">System Call Translation</a> to understand how APL translates every system call to machine instructions.		 
+
+			</p>	
 				<br/>
 				
 				 <p>In this stage you'll implement the Create system call. To do this, you must modify the OS Startup code and Interrupt 1 routine. Create system call is to create files in the XFS disk.  (See <a href="xos-spec.html#navsyscalls_file">File System Calls</a>).</p>
@@ -1126,7 +1162,7 @@ endwhile;					</pre>
 			<br/>
 			<p>The system call number must be fetched from the stack and based on the system call number the corresponding system call actions need to be performed. Actions that needs to be taken for each system call is discussed in detail in this stage. After programming the interrupt routine, it must be compiled using SPL compiler, and loaded to XFS disk using XFS interface. </p>
 			
-			<p>To check if the system call is functioning properly, make user programs which invoke the system call. Compile it using APL compiler and load it to disk as the INIT program. Run the machine by <b>disabling the timer</b>. You may use the XFS interface to check the working of file sytem calls.</p>
+			<p>To check if the system call is functioning properly, make user programs which invoke the system call. Compile it using APL compiler and load it to disk as the INIT program. Run the machine by <b>disabling the timer</b>. You may use the XFS interface to check the working of file system calls.</p>
 			
 			<p> Detailed information and actions corresponding to each system call is given below.</p>
 			
@@ -1243,7 +1279,7 @@ endwhile;					</pre>
 				LSEEK position is the word number in the file at which reading or writing takes place. The LSEEK position divided by 512 gives the index of the basic block entry. This entry will have the block number of the data block to which the word is to be written. If this entry is invalid indicated by -1, then allocate a new block in the following way.
 					<ul>
 						<li> Find a free block in the disk. To do this traverse through the memory copy of the <a href="xfs-spec.html#navdfl">Disk Free List</a> till the entry for block 447 (Blocks 448 onwards is Swap, which is reserved for virtual memory management).
-						<li> If no free block is avaliable. Return from the system call, with return value -1 indicating failure </li>
+						<li> If no free block is available. Return from the system call, with return value -1 indicating failure </li>
 						<li> Otherwise, set 1 in the entry for the  free block in the Disk Free List.</li> 
 						<li> Add this block number to the basic block of the file.</li>
 						<li> Commit the basic block from scratchpad back to the disk. </li>

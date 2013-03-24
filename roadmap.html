@@ -898,9 +898,14 @@ currentPID = (PTBR - 1024) / 8;</pre>
 currentPCB = READY_LIST + 32 * currentPID;</pre>
 						</div> </li>	
 						</p>
-					
+						<li><p>Set the STATE field of the current PCB to 1 (Ready). This is because, when the timer interrupt routine schedules another process for execution, this process will be ready and waiting for the CPU. </li></p>
+						<div class="syntax">
+								[ currentPCB  + 1 ] = 1; 	// Set STATE to READY<br/>
+							</div>		
 						<li>The Timer Interrupt Routine must store back the current registers to the PCB of the current process. It can then assign the registers with the values corresponding to the next scheduled process.
 						 <ul>
+							
+							
 							<li> Set BP and SP fields in the PCB with values in registers <tt>BP</tt> and <tt>SP - 1</tt>. When an interrupt occurs, the value of IP is stored automatically on the top of the stack and SP is incremented. Hence SP - 1 is the correct value of SP of this process ignoring the <tt>IP</tt> pushed by the interrupt at the top of the stack. 
 							<div class="syntax">
 								[ currentPCB  + 2 ] = BP;<br/>
@@ -946,7 +951,7 @@ physicalSP = ([PTBR + 2 * (SP / 512)] * 512) + (SP % 512);
 							</li>							
 						 </ul>
 						</li>
-						<li> Now, the next process to be scheduled for execution is to be selected. To do this, scan the <a href="xos-spec.html#navpromgmt_readylist">Ready List of PCBs</a> in a circular manner starting from the PCB of current process to check for the next process with STATE value 1 (Ready) in its PCB. This scheduling algorithm is known as <b>Round-Robin</b> scheduling. Every process gets equal share of the CPU time (for other scheduling algorithms, refer Silberschatz, Galvin, Gagne: Operating System Concepts). Store the address of the  PCB of the newly found process in a register. In this roadmap we have assumed this register's alias to be <tt>newPCB</tt>.</li>
+						<li> Now, the next process to be scheduled for execution is to be selected. To do this, scan the <a href="xos-spec.html#navpromgmt_readylist">Ready List of PCBs</a> in a circular manner starting from the next PCB  to check for the process with STATE value 1 (Ready) in its PCB. This scheduling algorithm is known as <b>Round-Robin</b> scheduling. Every process gets equal share of the CPU time (for other scheduling algorithms, refer Silberschatz, Galvin, Gagne: Operating System Concepts). Store the address of the  PCB of the newly found process in a register. In this roadmap we have assumed this register's alias to be <tt>newPCB</tt>.</li>
 
 						<li> The register values of the newly found process were stored in its PCB when it was scheduled out at an earlier point in time. Now these values needs to be fetched from the PCB and loaded back into the machine registers, so that execution will resume from where it was scheduled out. Load the fields except IP from this PCB to the corresponding registers. Note that IP value cannot be modified directly (See <a href="xsm-spec.html#navinstr">XSM Instructions</a>).   </li>
 
@@ -959,7 +964,7 @@ physicalSP = ([PTBR + 2 * (SP / 512)] * 512) + (SP % 512);
 							[ newphysicalSP ] = [ newPCB + 4 ]; // Stores IP field value of PCB on the stack <br/>
 							
 						</div>
-						<li> Set the STATE field of the current PCB to 1 (Ready) and the new PCB to 2 (Running). .</li>
+						<li> Set the STATE field of the new PCB to 2 (Running). </li>
 						<li> Now you can transfer control to the new process, using <b>ireturn</b> instruction. This changes the execution mode from KERNEL mode to  USER mode </li>
 					</ul>
 				</li>

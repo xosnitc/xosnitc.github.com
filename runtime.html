@@ -109,6 +109,7 @@
 				
 					In XOS, a process views memory as a contiguous block with starting address 0. The size of the block is 2048 words. However, XSM allocates memory as pages. Each page has 512 words. This means that a process can have use at most 4 pages. Although the user process views this as contiguous 4 pages in memory, it may not be contiguous in the physical memory. The contiguous view that a process gets of the memory is called its <b>Logical address space</b>. When this is mapped to the physical memory, it is called its <b>Physical Address Space</b>. Logical addresses are translated to physical addresses by the machine using the <a href="xos-spec.html#navaddr">Address translation</a> scheme of XSM. The process is unaware of the existence of a physical address space and the address translation mechanism is hidden from it.
 				</p>
+				 <p><img src="doc/prostruct1.png"></p>
 				<p>
 					Of the 4 pages that the process uses, the first 3 pages are used for storing the code of the program and the 4th page (address 1536 - 2047) is used as the stack of the process. <b>Stack</b> of a process is a data structure for saving runtime variables, and function call arguments of the process. Read about stack in <a href="#navfncalls" class="subsec" >function calls in APL</a>.
 				</p>
@@ -117,7 +118,7 @@
 				<article id="navregisters" class="grid col-full">
 				 <p><h4>Registers</h4>
 				Although XSM has 34 registers, including program registers, kernel registers, temporary registers and special purpose registers, a particular user process has access to a limited set of registers (See <a href="xsm-spec.html#navregset">Register Set</a> in XSM). The register set that is visible to a user process includes only the Program Registers (R0 - R7), SP, BP and IP. Out of which, IP cannot be read / modified. The SP or Stack Pointer points to the address of the top of the stack. BP will be used in function calls. Read about stack in <a href="#navfncalls" class="subsec" >function calls in APL</a>.  </p>
-				 <p><img src="doc/prostruct.png"></p>
+				
 				<p>IP points to the address of the next instruction to be executed within the code. </p>
 				</article>
 
@@ -144,8 +145,29 @@
 			
 			<article  id="navfncalls" class="grid col-full">
 				<h4>Function Calls</h4>
-				<p> A function call or a subroutine invocation is done by the machine instruction <tt>CALL</tt>. The function call uses the stack to pass arguments to the system call and get back the return value. The stack of the user process stores information about the active subroutines of the program. An active subroutine is one that has been called but is yet to complete execution, after which control should be handed back to the point of call (Source: Wikipedia). </p>
-				<p> The activation record corresponding to an active sub-routine 
+				<p> A function call or a subroutine invocation is done by the machine instruction <tt>CALL</tt>. The stack to pass arguments to the function and get back the return value. The stack of the user process stores information about the active subroutines of the program. An active subroutine is one that has been called but is yet to complete execution. Control should be handed back to the point of call after completing the function execution.  </p>
+
+				<p> The activation record corresponding to an active subroutine (or the active function) is shown below. The bottom position of the activation record is pointed to by the BP, and the top of the stack is by SP. The region between BP an SP within the stack is the activation record of the active function. See the figure below.</p>
+					
+					<img src="doc/activationrecord.png" style="width:200px" />
+				<br/><br/>
+					<p>(<b>NOTE</b> In XOS, stack grows from a lower memory address to a higher memory address. )
+				</p>
+				<p> The stack contents when a function call is made is shown in the figure below </p>
+				<img src="doc/fncall.png" style="width:600px" />
+				<br/><br/>
+				<p> When a CALLER function invokes a CALLEE function, a few actions are performed</p>
+				<ol>
+					<li> Before making the <tt>CALL</tt> instruction to transfer control to the another function, the used registers and arguments are pushed into the stack. (See figure)</li>
+					<li>An empty space for the return value is pushed for RETURN VALUE. The CALLEE function will store the return value in this space after it is computed. </li>
+					<li> The <tt>CALL</tt> instruction will push the address of IP specified as <tt>RETURN ADDRESS</tt> into the stack. This is because the <tt>CALL</tt> instruction changes IP to the address of the CALLEE's instructions. After the CALLEE performs its actions it must return back to the point after the function call. Hence the current IP must be backed up</li>
+				</ol>
+				<p> The activation record for a CALLER function stores its local variables and the arguments it passes to the CALLEE, the RETURN VALUE and the RETURN ADDRESS.
+				<p> The CALLEE function does the following </p>
+				<ol>
+					<li> Before 
+
+
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>

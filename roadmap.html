@@ -1157,11 +1157,21 @@ Machine is halting     </pre>
 				
 
 
-			<p>XOS uses two data structures to maintain information about opened files. They are <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a> and <a href="xos-spec.html#navpromgmt_pcb">Per-Process Open-File Table</a>. There is one system-wide open file table for XOS which stores the FAT index corresponding to each opened file and the number of times that file has been opened. There is a per-process open file table for every process in its PCB. The per-process open file table stores the system-wide open file table index corresponding to an open instance of a file, and the LSEEK position of this open instance, which indicates the word in the file to which the process currently points to for read/write operations. A single file may be opened more than once by the same or different processes. Each open instance has an entry in the corresponding per-process file table. But there will only be one entry corresponding to an opened file in the System Wide open file table. <b>File Open Count</b> field of the System Wide Open File Table entry stores the number of open instances of a file. </p>
+			<p>XOS uses four data structures to maintain information about files and disk blocks. They are FAT, Disk Free List, System-wide open file table, and per-process open file tables. The <a href="xfs-spec.html#navfat">FAT</a> and <a href="xfs-spec.html#dfl">Disk Free List</a> are permanent data structures on the disk, i.e. the data structures will be stored in the disk and will be retained after machine shuts down. FAT maintains a list of all files in the disk. The Disk Free List keeps track of the used and unused blocks of the disk. A memory copy of these structures are maintained by XOS when it is run. Recall that the OS Startup Code copies FAT from disk block 10 to memory page 5 and the Disk Free List from disk block 11 to memory page 6. XOS commits these data structures to disk whenever changes are made to them. You have already read about FAT and Disk Free List in the previous stage. </p>
+
+			<p>The other two data structures,  <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a> and <a href="xos-spec.html#navpromgmt_pcb">Per-Process Open-File Tables</a> are used by XOS to maintain information about files opened by processes. These data structures are stored in the main memory of the machine and are required only when the operating system is running. They are lost when the system shuts down.  </p>
+
+			 <p>System-wide open file table stores the FAT index corresponding to each opened file and the number of times that file has been opened. It is located from words 1344 to 1471 of the memory in Page 2. System Wide Open File Table consists of a maximum of 64 entries. Therefore, there can be at most 64 open files in the system at any time. A single file may be opened more than once by the same or different processes.  But there will only be one entry corresponding to an opened file in the System Wide open file table. <b>File Open Count</b> field of the System Wide Open File Table entry stores the number of open instances of a file.  </p>
+
+			<p> Per-process open file table for each process resides in its <a href="xos-spec.html#navpromgmt_pcb">PCB</a>. Per-process open file table has an entry for each file opened by the process. The same file can be opened more than once by the same process. In that case, there will be multiple entries corresponding to each open instance of this file. The per-process open file table stores the index of the system-wide open file table entry for the file, and the LSEEK position of the open instance of a file. The LSEEK position indicates the location in the file where a word is read from or written to correspoinding to the open instance of the file. The index of the per-process open file table entry is known as the <b>file descriptor</b>. The Per-process open file table is stored in the PCB from words 15 to 30 (16 words). Since each entry has size 2 words, there are 8 entries in every per-process open file table. Therefore, a maximum of 8 files can be opened by a process at a time.   </p>
+
 
 			<h6>Modifying OS Startup Code</h6>
+			
+			<p> The OS Startup Code loads the FAT and Disk Free List  from disk to memory. It  initializes the System Wide Open File Table and the Per-process Open File Table of the INIT process. It also loads the interrupt routines corresponding to File System Calls from disk to memory.</p>
+
 			<ol>
-			<li> <p>All entries of the <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a> must be set to invalid initially. This is because no files are open when the OS starts. An invalid entry is indicated by -1 in the <b>FAT Index</b> field of all entries. The <b>File Open Count</b> field of all entries must be set to 0.</b>. For convenience, you may use the predefined constant <tt>FILE_TABLE</tt> in SPL which stores the address of the System Wide Open File Table. </li></p>
+			<li> <p>All entries of the <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a> must be set to invalid initially. This is because no files are open when the OS starts. An invalid entry is indicated by -1 in the <b>FAT Index</b> field. The <b>File Open Count</b> field of all entries must be set to 0. For convenience, you may use the predefined constant <tt>FILE_TABLE</tt> in SPL which stores the address of the System Wide Open File Table. </li></p>
 			
 			
 				<div class="syntax">
@@ -1174,9 +1184,9 @@ while ( counter <  128) do			// 64 entries, each of size 2 words
 	counter = counter + 2;			// Move to next entry
 endwhile;					</pre>
 				</div>
-				<li> <p>The only process OS Startup Code loads to memory is the INIT process. Hence all the entries of the Per-Process Open File Table of the INIT process must be best to invalid. This is because no files are opened by the INIT process. An invalid Per-Process File Table entry is indicated by -1 in both the fields (Pointer to System-Wide Open File Table entry and LSEEK position).  </li>	</p>
+				<li> <p>The only process that the OS Startup Code loads into memory is the INIT process. Hence all the entries of the  <a href="xos-spec.html#navpromgmt_pcb">Per-Process Open File Table</a> of the INIT process must be set to invalid. This is because INIT process has not started running, and therefore has not opened any files. An invalid entry in the Per-Process Open File Table is indicated by -1 in both the fields (Pointer to System-Wide Open File Table entry and LSEEK position).  </li>	</p>
 				
-				<li> <p>File System Calls are implemented using interrupt routines 1 to 4. You have already written code to load interrupt routine 1 from the disk to memory. Similarly add instructions to load Interrupt Routines 2, 3 and 4 from disk to memory. (See <a href="xos-spec.html#navmemorg" >Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization</a>). </li>		</p>
+				<li> <p>File System Calls are implemented using interrupt routines 1 to 4. You have already written code to load interrupt routine 1 from the disk to memory. Similarly add instructions in the OS Startup Code to load Interrupt Routines 2, 3 and 4 from disk to memory. (See <a href="xos-spec.html#navmemorg" >Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization</a>). </li>		</p>
 			</ol>
 
 			<h6>Programming Interrupt Routines</h6>
@@ -1206,7 +1216,7 @@ endwhile;					</pre>
 			<i>System Call No</i>: 2 <br/>
 			<i>Interrupt Routine No</i>: 2 <br/>
 			<i>Arguments</i>: filename of the file to be opened <br/>
-			<i>Return Value</i>: Index of open instance in per-process file table (Success) or -1 (Failure) <br/> 
+			<i>Return Value</i>: Index of open instance in Per-Process Open File table (Success) or -1 (Failure) <br/> 
 			<ol>
 				<li><p>First, you need to check if a file with the given <b>filename</b> exists in the disk. To do this, memory copy of FAT is searched for the <tt>filename</tt> given as argument to the system call. Steps to obtain the argument from the stack is explained in detail in Stage 7. If the entry is not found, -1 is returned, indicating failure. Otherwise, store the index of the FAT entry in a register.</li></p>
 
@@ -1218,19 +1228,19 @@ endwhile;					</pre>
 				
 					</ul>
 			 </li></p>
-				
+
 			
 
-				<li> <p>Every process will have a <a href="xos-spec.html#navpromgmt_pcb">Per-Process File Table</a> in its PCB. This stores the details of open instances of files by that process. Note that a single file may be opened more than once by the same process. Find the location of the PCB of the current process by obtaining the Process ID using the method described in Stage 6. A free entry is searched in the <a href="xos-spec.html#navpromgmt_pcb">per-process open file table in the PCB</a> of the process. A free entry is indicated by -1 in the first field (Pointer to <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a>). If there are no free entries -1 is returned by the system call. Otherwise, store the index of the Per-process file table entry in a register. Set the first field (<b>Pointer to System-Wide File Table Entry</b>) of this entry to the index of the System-wide open file table entry stored in Step 2 and set <b>LSEEK Position</b> field to 0.  				
+				<li> <p>Every process will have a <a href="xos-spec.html#navpromgmt_pcb">Per-Process Open File Table</a> in its <a href="xos-spec.html#navpcb">PCB</a>. This stores the details of open instances of files by that process. Note that a single file may be opened more than once by the same process. Find the location of the PCB of the current process by obtaining the Process ID using the method described in Stage 6. A free entry is searched in the <a href="xos-spec.html#navpromgmt_pcb">per-process open file table in the PCB</a> of the process. A free entry is indicated by -1 in the first field (Pointer to <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a>). If there are no free entries -1 is returned by the system call. Otherwise, store the index of the Per-Process Open File table entry in a register. Set the first field (<b>Pointer to System-Wide File Table Entry</b>) of this entry to the index of the System-wide open file table entry stored in Step 2 and set <b>LSEEK Position</b> field to 0.  				
 				</li></p>
 
 		
 
 				<li> <p> Set the <b>FAT Index</b> field of the System Wide file table entry found in Step 2 with the FAT Index found in Step 1. This field in the system wide open file table points to the FAT entry for the file.  Increment the <b>File Open Count</b> field in the system-wide open file table by 1. XOS keeps track of number of times a file has been opened in the <b>File Open Count</b> field for each open file in the System-wide open file table.  </li></p>
 			
-				<li> The index of the entry in the per-process open file table created in step 3 is returned as a return value of the system call. This is known as the file descriptor. </li>
+				<li> The index of the entry in the per-process open file table created in step 3 is returned the a return value of the system call. This is known as the file descriptor for the open instance. </li>
 			</ol>
-
+				<p><b>IMPORTANT NOTE:</b> Changes to any memory or file data structures are made only after all error conditions in the Open system call is checked. Otherwise a file that failed to open will have its entries created. This is to be noted when you implement all other system calls also. </b></p>
 
 			<h5> Close System Call </h5>
 			<i>Description</i>: Closes a file opened by the process.<br/>
@@ -1241,7 +1251,7 @@ endwhile;					</pre>
 			<br/>
 			<p>The argument, <b>fileDescriptor</b> is the index of per-process open file table entry for the open instance of the file to be closed. When a file's open instance is closed this entry is deleted and the file open count in the system wide open file table is decremented. Specific tasks to be done by the Close is given below  </p>
 			<ol> 
-				<li><p> Check if the argument <b>fileDescriptor</b> is valid. A valid <b>fileDescriptor</b>  will have value from 0 to 7. Return from the system call with -1, indicating failure if the <tt>fileDescriptor</tt> is invalid. </li></p>
+				<li><p> Check if the argument <b>fileDescriptor</b> is valid. A valid <b>fileDescriptor</b>  will have value from 0 to 7 (Why?). Return from the system call with -1, indicating failure if the <tt>fileDescriptor</tt> is invalid. </li></p>
 				
 				<li><p> Index into the per-process open file table in the PCB of the process with the <b>fileDescriptor</b>. If the entry is invalid, which is indicated by a -1 in the first field of the entry (pointer to System-wide Open File Table entry), return from the system call with -1, indicating failure.</li></p>
 				
@@ -1353,7 +1363,7 @@ endwhile;					</pre>
 				<li> <p>Using the <b>Pointer to System Wide Open File Table Entry</b> field, index to the System Wide Open File Table to get the FAT Index Entry.   </li></p>
 				
 				<li> <p>Fetch the <b>file size</b> of the file from the FAT and store it in a register. </li></p>
-				<li> <p>Check if the new LSEEK position specified as argument is valid. If it is not valid, return from the system call with -1, indicating failure. LSEEK position is valid if it takes a value from 0 to <b>file size</b>. </li></p>
+				<li> <p>LSEEK position is valid if it takes a value from 0 to <b>file size</b>. Check if the new LSEEK position specified as argument is valid. If it is not valid, return from the system call with -1, indicating failure.  </li></p>
 				
 				<li><p>Change the <b>LSEEK</b> in the per-process file table to <b>newLseek</b>.</li></p>
 				<li><p> Return with 0 (indicating success).</li></p>
@@ -1369,7 +1379,7 @@ endwhile;					</pre>
 			<i>Return Value</i>: 0 (success) and -1 (failure) </br>
 			<br/>
 			<p> 
-			The Read system call takes the fileDescriptor given as argument to identify the file open instance in the per-process file table.  Read system call is used to read one word at the position pointed to by LSEEK in the file and store it in the variable <b>wordRead</b> specified as argument in APL. Follow these steps to get this done. 
+			The Read system call takes the fileDescriptor given as argument to identify the open instance of the file in the per-process file table.  Read system call is used to read one word at the position pointed to by LSEEK in the file and store it in the variable <b>wordRead</b> specified as argument in APL. Follow these steps to get this done. 
 			</p>
 		  	<ol>
 				<li><p> Return from the system call with -1, indicating failure if the <b>fileDescriptor</b> specified as argument is invalid.</li></p>
@@ -1418,7 +1428,7 @@ endwhile;					</pre>
 			<article  id="navstage9" class="grid col-full">
 			<h2>Stage 9: Process and Machine System Calls</h2>
 			<p>  
-			There are 3 process system calls, <b>Fork, Exec</b> and <b> Exit</b>, which are used to create a new process, replace an existing process with a new process and exit from a process respectively. The only machine system call in XOS is <b>Halt</b> which is used to shut down the machine.</p>
+			There are three process system calls, <b>Fork, Exec</b> and <b> Exit</b>, which are used to create a new process, replace an existing process with a new process and exit from a process respectively (see  <a href="xos-spec.html#navsyscalls_process">process system calls</a>). The only machine system call in XOS is <b>Halt</b> which is used to shut down the machine (see  <a href="xos-spec.html#navsyscalls_machine">machine system calls</a>)</p>
 			
 			<p> The interrupt routines corresponding to these system calls must be programmed in SPL.  The interrupt routines must perform actions necessary for each system call. The various process and machine system calls and their corresponding interrupt routines are given in the table below :</p>
 			<p>
@@ -1438,7 +1448,7 @@ endwhile;					</pre>
 			
 			<h6>Modifying OS Startup Code</h6>
 		  		<ol>
-		  			<li><p>Load Interrupt 5, 6 and 7 Routines from disk to memory. (See <a href="xos-spec.html#navmemorg" >Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization</a>). These interrupt routines in the disk will contain the process and machine system call implementation.
+		  			<li><p>The OS Startup Code should load Interrupt 5, 6 and 7 Routines from disk to memory. (See <a href="xos-spec.html#navmemorg" >Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization</a>). These interrupt routines in the disk will contain the process and machine system call implementation. Your task in this stage is to program interrupt routines 5, 6 and 7.
 		  			</li> </p>
 		  			<li> <p>Pages 0 to 15 in the memory are reserved for operating system.  (See <a href="xos-spec.html#navmemorg" >Memory Organization</a>). The pages 16 to 19 are allocated for the INIT process by the OS Startup Code. These pages must be marked as used in the memory free list and the remaining pages must be marked as unused. Used pages are indicated with 1 and unused pages are indicated with 0 in the memory free list.
 		  			</li> </p>
@@ -1455,7 +1465,7 @@ endwhile;					</pre>
 			<i>Arguments</i>: None<br/>
 			<i>Return Value</i>: In the parent process, PID of the process created (success) or -1 (failure). In the child process, -2 <br/><br/> 
 
-			<p>Interrupt 5 Routine must be programmed in SPL, compiled and loaded to disk. The Fork system call must find space to create PCB for the child process (which is the replica of the currently running process) in the Ready List of PCBs. It must also ensure that sufficient free memory pages are available. Set the PCB values and Page Table entries accordingly. Make similar open instances of files for the child process as for the parent process and return back to the parent process after setting the return value correctly. The setting of return value for the child process may not be done by the interrupt service routine. The code to do this is automatically done by the APL compiler when a fork system call is compiled. The detailed set of steps to be done for Fork system call is given below.</p>
+			<p>Interrupt 5 Routine must be programmed in SPL, compiled and loaded to disk. The Fork system call must find space to create PCB for the child process in the Ready List of PCBs. The child process will be a replica of the currently running process (the Fork system call will fail if sufficient memory is not available for replicating the current process). PCB entries and Page Table entries are to be set up correctly by the Fork system call. Fork system call also duplicates the open instances of files of the parent process. The setting of return value for the child process may not be done by the interrupt service routine. The code to do this is automatically done by the APL compiler when a fork system call is compiled. The detailed set of steps to be done for Fork system call is given below.</p>
 
 		  	<ol>
 			<li> <p>Find a terminated process in the Ready List of PCBs. The PCB of a terminated process can be used by a new process in the memory. To do this, the <em>Ready list</em> of PCBs is traversed to find a PCB with <b>STATE</b> field as 0. <b>STATE</b> field 0 indicates a terminated process. If no such PCB is found, return with -1 from the system call indicating error. This means that the system call could not find space for the PCB of the new process. </li></p>
@@ -1468,7 +1478,7 @@ endwhile;					</pre>
 				<ul>
 					<li> The page table of the parent process is checked to count the number of valid pages. The <a href="xos-spec.html#navmemmgmt_mfl">memory free list</a> is checked to find an equal number of free pages. If there is not enough free pages in the memory free list, return with -1 indicating failure. </li> 
 					
-					<li> Otherwise an equal number of pages are allocated for the new child process. To do this, first update the memory free list by setting the required number of free pages as used.The correponding entries in the memory free list must be set to 1, indicating these pages are used.</li>
+					<li> Otherwise an equal number of pages are allocated for the new child process. To do this, first update the memory free list by setting the required number of free pages as used.The corresponding entries in the memory free list must be set to 1, indicating these pages are used.</li>
 					
 					<li> Find the per-process page table of the new child process. The child process' <b>PTBR</b> (address of its page table) is computed using PID stored in Step 3 as explained in previous stages.  </li>
 					
@@ -1487,7 +1497,7 @@ endwhile;					</pre>
 
 
 			<li> <p>The Per-Process Open File table of the parent process is copied to child's PCB. For each entry in the per-process open file table, increment the <b>File Open Count</b> for the file's entry in the system-wide open file table. The per-process open file table has a field which points to that file's entry in the system wide open file table.</li></p>
-			
+			<li><p> Set the STATE field in the PCB of the child process as READY. </p>
 			<li> Control is passed back to the parent process using <b>ireturn</b> instruction.</b>
 		  	</ol>
 		  

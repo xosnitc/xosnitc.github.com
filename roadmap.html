@@ -172,8 +172,35 @@
 						You will be back in the UNIX shell and a file named <b>disk.xfs</b> is created in the location <b>$HOME/myxos/xfs-interface/</b>. This UNIX file simulates the hard disk for the machine simulator. The disk is formatted as XFS or Experimental File System. See <a href="xfs-spec.html#navintro"> XFS Specification </a>
 					</li>
 					<li>
-					<p>The <a href="xfs-spec.html#navdfl" class="imp">Disk Free List</a> in XFS is a data structure which keeps track of used and unused blocks in the disk. An unused block is indicated by 0 and a used block is indicated by 1. Check the contents of the Disk Free List after formatting the disk. Use the <b>copy</b> command to copy Disk Free List (Disk Free List is stored in disk block number 11) to a UNIX file  <i>$HOME/myxos/dfl.txt</i>. The contents of this file will be as follows</p>		
-					<img src="doc/dfl1.png"> <br/><br/>
+					<p>The <a href="xfs-spec.html#navdfl" class="imp">Disk Free List</a> in XFS is a data structure which keeps track of used and unused blocks in the disk. An unused block is indicated by 0 and a used block is indicated by 1. Check the contents of the Disk Free List after formatting the disk. Use the <b>df</b> command to view the Disk Free List (Disk Free List is stored in disk block number 11). The output will be as follows:</p>		
+					<pre>
+0 	 - 	 1  
+1 	 - 	 1  
+2 	 - 	 1  
+3 	 - 	 1  
+4 	 - 	 1  
+5 	 - 	 1  
+6 	 - 	 1  
+7 	 - 	 1  
+8 	 - 	 1  
+9 	 - 	 1  
+10 	 - 	 1  
+11 	 - 	 1  
+12 	 - 	 1  
+13 	 - 	 1  
+14 	 - 	 1  
+15 	 - 	 1  
+16 	 - 	 0  
+17 	 - 	 0  
+18 	 - 	 0  
+19 	 - 	 0
+.
+.
+.
+.
+No of Free Blocks = 496
+Total no of Blocks = 512
+					</pre><br/>
 
 <p> The first 16 blocks (blocks 0 to 15) are reserved for disk structures and INIT program. See <a href="xfs-spec.html">Disk Organization</a>. Hence it is marked as 1 (used) and the remaining entries for blocks 16 to 512 are 0 (unused). 
 .</pre>
@@ -235,8 +262,34 @@ To cool in the peppermint wind.</pre>
 .</pre>						
 					This indicates that the only data block of this file is block number 17. Remaining -1 entries, indicates that the remaining entries are invalid. There is only one data block for this file at block number 17.		</li><br/>	
 						
-						<li> <p>Now check the contents of the disk free list. 2 more entries will be marked as used. One is the basic block for this file and the other will be data block for the file. (See <a href="xfs-spec.html#navfile" class="imp">Files</a> in XFS) The contents of this disk free list will be as follows</p>		
-						<img src="doc/dfl2.png"><br/><br/>
+						<li> <p>Now check the contents of the disk free list. 2 more entries will be marked as used. One is the basic block for this file (block number 16) and the other will be data block for the file (block number 17). (See <a href="xfs-spec.html#navfile" class="imp">Files</a> in XFS) The contents of this disk free list will be as follows</p>		
+<pre>
+0 	 - 	 1  
+1 	 - 	 1  
+2 	 - 	 1  
+3 	 - 	 1  
+4 	 - 	 1  
+5 	 - 	 1  
+6 	 - 	 1  
+7 	 - 	 1  
+8 	 - 	 1  
+9 	 - 	 1  
+10 	 - 	 1  
+11 	 - 	 1  
+12 	 - 	 1  
+13 	 - 	 1  
+14 	 - 	 1  
+15 	 - 	 1  
+16 	 - 	 1  
+17 	 - 	 1  
+18 	 - 	 0  
+19 	 - 	 0
+.
+.
+.
+.
+No of Free Blocks = 498
+Total no of Blocks = 512</pre><br/>
 						</li>
 						
 						<li> Copy the data blocks from the XFS disk and display it as a UNIX file <tt>$HOME/myxos/data.txt</tt>. 
@@ -752,7 +805,7 @@ Machine is halting
 						<li> Write another APL program to print all even numbers from 1 to 20 and save it as <b>$HOME/myxos/apl/apl_progs/even.apl</b> </li>
 						<li> Compile this program using APL compiler and load the <b>$HOME/myxos/apl/apl_progs/even.xsm</b> file generated to the disk using XFS Interface as an executable file. </li>
 						<div class="syntax"># load --exec $HOME/myxos/apl/apl_progs/even.xsm </div>
-						<li> Use the XFS interface to find the data blocks to which this file is loaded as done in Stage 2. In this roadmap, we assume that this file is loaded to blocks 16 - 19. The basic block of the file is in block 16 and the data blocks are in blocks 17, 18 and 19. Note that this may not be the actual scenario. </li>
+						<li> Use the XFS interface to find the data blocks to which this file is loaded as done in Stage 2. In this roadmap, we assume that the basic block of the file is in block 16 and it has a single data block with block number 17. Note that this may not be the actual scenario if you have other files loaded in the disk. </li>
 					</ol>
 			<br/>
 			
@@ -768,12 +821,10 @@ Machine is halting
 								[READY_LIST + 32] = 1; 		// Sets the entry for PID as 1<br/>
 							</div>
 						</li>
-						<li> Load the code blocks of the second program from disk to pages 20 - 22 in memory (In this roadmap, we have assumed that the code blocks are stored in blocks 17 - 19 in the disk.  See Step 5 of the previous section. Note that, you must use the XFS interface to find the actual block numbers in your disk). Note that the pages allocated for user processes start from page number 16 onwards and  pages 16 to 19 have already been allocated for the INIT process. So the second, process can be allocated pages after 19. For convenience we have used pages 20 to 23 in the memory. (See <a href="xos-spec.html#navmemorg">Memory Organization</a>). Page 20 to 22 will contain the code corresponding to this process and page 23 will be used as the stack (See <a href="xos-spec.html#navpromgmt_prostruct">Process Structure</a>).
+						<li> Load the code blocks of the second program from disk to memory (In this roadmap, we have assumed that the file has only one code block which is stored in block 17.  See Step 5 of the previous section. Note that, you must use the XFS interface to find the actual block numbers in your disk. There can be a maximum of 3 code blocks for any executable file). Note that the pages allocated for user processes start from page number 16 onwards and  pages 16 to 19 have already been allocated for the INIT process. So the second, process can be allocated pages after 19. For convenience we have used page 20 in the memory to load the code block for our program. (See <a href="xos-spec.html#navmemorg">Memory Organization</a>). Page 20 will contain the code corresponding to this program and page 21 will be used as the stack (See <a href="xos-spec.html#navpromgmt_prostruct">Process Structure</a>).
 							<div class="syntax">
-								load(20,17);<br/>
-								load(21,18);<br/>
-								load(22,19);<br/>
-							</div>
+								load(20,21 );<br/>	// 
+							//	</div>
 						</li>
 						<li><p>Page Table for this process must be setup. The starting address of the page table of a process is calculated using the formula discussed in stage 4. </p>
 						<tt>1024 + PID * 8</tt>
@@ -1452,6 +1503,8 @@ endwhile;					</pre>
 		  			</li> </p>
 		  			<li> <p>Pages 0 to 15 in the memory are reserved for operating system.  (See <a href="xos-spec.html#navmemorg" >Memory Organization</a>). The pages 16 to 19 are allocated for the INIT process by the OS Startup Code. These pages must be marked as used in the memory free list and the remaining pages must be marked as unused. Used pages are indicated with 1 and unused pages are indicated with 0 in the memory free list.
 		  			</li> </p>
+		  			<li><p> Initialize all PCBs with STATE field 0. This will be necessary when the Fork System call searches for a free PCB. A free or terminated process in XOS is indicated by STATE 0 in its PCB. 
+		  			</li></p>
 		  		</ol>			
 			<h6>Programming interrupt routines</h6>
 			
@@ -1465,16 +1518,16 @@ endwhile;					</pre>
 			<i>Arguments</i>: None<br/>
 			<i>Return Value</i>: In the parent process, PID of the process created (success) or -1 (failure). In the child process, -2 <br/><br/> 
 
-			<p>Interrupt 5 Routine must be programmed in SPL, compiled and loaded to disk. The Fork system call must find space to create PCB for the child process in the Ready List of PCBs. The child process will be a replica of the currently running process (the Fork system call will fail if sufficient memory is not available for replicating the current process). PCB entries and Page Table entries are to be set up correctly by the Fork system call. Fork system call also duplicates the open instances of files of the parent process. The setting of return value for the child process may not be done by the interrupt service routine. The code to do this is automatically done by the APL compiler when a fork system call is compiled. The detailed set of steps to be done for Fork system call is given below.</p>
+			<p>Interrupt 5 Routine must be programmed in SPL, compiled and loaded to disk. The Fork system call must find space to create PCB for the child process in the Ready List of PCBs. The child process will be a replica of the currently running process (the Fork system call will fail if sufficient memory is not available for replicating the current process). PCB entries and Page Table entries are to be set up correctly by the Fork system call. Fork system call also duplicates the open instances of files of the parent process (including setting up the entries in the per-process open file table for the child process and system-wide open file table). The detailed set of steps to be done by the Fork system call is given below.</p>
 
 		  	<ol>
-			<li> <p>Find a terminated process in the Ready List of PCBs. The PCB of a terminated process can be used by a new process in the memory. To do this, the <em>Ready list</em> of PCBs is traversed to find a PCB with <b>STATE</b> field as 0. <b>STATE</b> field 0 indicates a terminated process. If no such PCB is found, return with -1 from the system call indicating error. This means that the system call could not find space for the PCB of the new process. </li></p>
+			<li> <p>Find a process in the Ready List of PCBs with STATE 0 (initially STATEs of all PCBs will be set to 0. Also, upon termination of a process, the STATE will be set to 0. The PCB of a terminated process can be used by a new process in the memory). To do this, the <em>Ready list</em> of PCBs is traversed to find a PCB with <b>STATE</b> field as 0. If no such PCB is found, return with -1 from the system call indicating error. This means that the system call could not find space for the PCB of the new process. </li></p>
 
 			<li> <p>If a PCB with <b>STATE</b> 0 is found, the index of the PCB in the ready list is stored in a register.  </li></p>
 	
-				<li><p> Set the <b>PID</b> field of the PCB of the child process with the value obtained in Step 2.</li></p>
+			<li><p> Set the <b>PID</b> field of the PCB of the child process with the value obtained in Step 2. In XOS, this value is the PID. However this is not be true in general for operating systems.</li></p>
 						
-			<li><p> The valid pages in memory occupied by the currently executing process (parent process) must be duplicated in the memory. This is one of the steps done in replicating the parent process by a Fork system call. The replica of the parent process in the memory is called the child process. The pages used by the parent process is duplicated in the following way.</li>
+			<li><p> The valid pages in memory occupied by the currently executing process (parent process) must be duplicated in the memory. This is one of the steps done in replicating the parent process by a Fork system call. The replica of the parent process in the memory is called the child process. The pages used by the parent process are duplicated in the following way.</li>
 				<ul>
 					<li> The page table of the parent process is checked to count the number of valid pages. The <a href="xos-spec.html#navmemmgmt_mfl">memory free list</a> is checked to find an equal number of free pages. If there is not enough free pages in the memory free list, return with -1 indicating failure. </li> 
 					
@@ -1482,22 +1535,25 @@ endwhile;					</pre>
 					
 					<li> Find the per-process page table of the new child process. The child process' <b>PTBR</b> (address of its page table) is computed using PID stored in Step 3 as explained in previous stages.  </li>
 					
-					<li>The page table of the current process must be copied to the page table of the new process. Change the valid entries of the page table with the physical page numbers of the free pages allocated now. </li>
+					<li>The page table of the current process must be copied to the page table of the new process. Update  <b>physical page number</b> field of the valid <a href="xos-spec.html#navpromgmt_pagetbl">page table</a> entries of the child process with the physical page numbers of the free pages allocated now. </li>
 				</ul>
 				</p>
 			
 
 			<li><p>The <b>PTBR</b> field of the child process' PCB must be set to the <b>PTBR</b> computed in the previous step.</li></p>
-			<li><p> The <b>IP</b> field of the child process must be set correctly. The code pages of the parent process and child process will be in different locations even though  the contents will be the same. Only the physical addresses of IP will be different for both the processes. The logical address of IP will be the same for the parent and the child process. So, get the value of IP from the top of the stack. This IP is logical and is pushed by the <tt>INT</tt> instruction.  Store this value to the <b>IP</b> field in the PCB of the child process.</li></p>
+			<li><p> The <b>IP</b> field of the child process must be set correctly. The code pages of the parent process and child process will be in different locations even though  the contents will be the same. Only the physical addresses of IP will be different for both the processes. The logical address of IP will be the same for the parent and the child process. So, get the value of IP from the top of the stack. This IP is logical and was pushed by the <tt>INT</tt> instruction at the time of the system call.  Store this value to the <b>IP</b> field in the PCB of the child process.</li></p>
 			
-			<li><p> Set the <b>SP</b> field in the PCB of the child process to SP - 1. This is because the stack of the parent process will contain the IP value on the top of the stack. When control returns back to the parent process, from the Fork system call, the value on the top of the stack is removed from the stack by the <tt>IRET</tt> instruction. This removal does not take place in the child process, as <tt>IRET</tt> transfers control back to the parent process. Hence you will have to manually set the decremented value of SP in the PCB of the child process. When the timer schedules the child process for execution, this value <b>SP - 1</b> from the PCB is taken and stored in SP. This gives an effect similar to removing the IP value on top of the stack.</li></p>
+			<li><p> Set the <b>SP</b> field in the PCB of the child process to SP - 1. This is because the stack of the parent process will contain the IP value on the top of the stack. When control returns back to the parent process, from the Fork system call, the value on the top of the stack is removed from the stack by the <tt>IRET</tt> instruction. This removal does not take place in the child process, as <tt>IRET</tt> transfers control back to the parent process. Hence you will have to manually set the decremented value of SP in the PCB of the child process. When the timer schedules the child process for execution, this value <b>SP - 1</b> from the PCB is taken and stored in SP. This gives an effect similar to removing the IP value on top of the stack. (<b>IMPORTANT NOTE</b>: Don't blindly follow the steps to get things done. Understand carefully why SP - 1 is stored in the PCB of the child process)</li></p>
 							
-			<li><p> The current register values are (except PTBR, SP and IP) are copied to the child process' PCB. These include, BP, R0 to R7.  (<b>DO NOT</b> copy values from parent's PCB to child's PCB as it may not be equal to current values).  </li></p>
+			<li><p> The current register values (except PTBR, SP and IP) are copied to the child process' PCB. These include, BP, R0 to R7.  (You must copy the machine registers directly. <b>DO NOT</b> copy values from parent's PCB to child's PCB as it may have changed during execution).  </li></p>
 			
 
 
-			<li> <p>The Per-Process Open File table of the parent process is copied to child's PCB. For each entry in the per-process open file table, increment the <b>File Open Count</b> for the file's entry in the system-wide open file table. The per-process open file table has a field which points to that file's entry in the system wide open file table.</li></p>
-			<li><p> Set the STATE field in the PCB of the child process as READY. </p>
+			<li> <p>The <a href="xos-spec.html#navpromgmt_pcb">Per-Process Open File table</a> of the parent process is copied to child's PCB. For each entry in the per-process open file table, increment the <b>File Open Count</b> for the file's entry in the <a href="xos-spec.html#navfiles_swoft">system-wide open file table</a>. The per-process open file table has a field which points to that file's entry in the system wide open file table.</li></p>
+
+			<li><p> Set the STATE field in the PCB of the child process as READY.</li> </p>
+			<li><p> The PID for the child process obtained in Step 2, is stored in the Return value space of the stack of the parent process. </li></p>
+			<li><p> The value -2 is stored in the return value space of the stack of the child process. </li></p>
 			<li> Control is passed back to the parent process using <b>ireturn</b> instruction.</b>
 		  	</ol>
 		  
@@ -1508,6 +1564,7 @@ endwhile;					</pre>
 	print "Before Fork";
 	pid = Fork();
 	print "After Fork";
+	return 0;
 }</pre>
 		  	</div>
 		  	<p>Compile and load this program to the XFS disk as the INIT program. Run the machine without disabling the timer. The output will be as follows:</p>		
@@ -1520,7 +1577,8 @@ endwhile;					</pre>
 		  	</tt> 
 		  	<p>
 		  
-		  This indicates that the process is replicated after the Fork instruction. 'After Fork' printed twice is by the parent process and the child process. Since only one of the print statements is executed twice, setting IP is also done correctly.
+		  This indicates that the process is replicated after the Fork instruction. 'After Fork' printed twice. One is by the parent process and the other is by the child process. Since only one of the print statements is executed twice, setting IP is also done correctly.
+
 			</p>
 			<h5>Exec system call :</h5>
 			<i>Description:</i> used to load and run a new process from a currently running process. The current process is overwritten by new process i.e. the process data structures and memory of the current process is used by the new process. </br>
@@ -1535,7 +1593,7 @@ endwhile;					</pre>
 
 			 The Interrupt 6 Routine performs actions to check if the specified file exists, load the code of the file to the respective memory locations. Close all files of the current process, set the SP, and put IP on the top of the stack. Return from the system call. Detailed instructions on how to get this done is given below.
 			 <ol>
-		 		<li><p> Exec system call needs to load the program which has the <b>filename</b> specified as <argument from the disk to the memory. To do this, first sarch for the <b>filename</b> given as argument in the memory copy of FAT. If it doesn't exist, i.e. if file with the given filename is not present in the disk,  return -1 (indicating failure). </li></p>
+		 		<li><p> Exec system call needs to load the program which has the <b>filename</b> specified as argument from the disk to the memory. To do this, first search for the <b>filename</b> given as argument in the memory copy of FAT. If it doesn't exist, i.e. if file with the given filename is not present in the disk,  return -1 (indicating failure). </li></p>
 
 		 		<li> <p>If a FAT entry is found, fetch the basic block of this file and place it in the <a href="xos-spec.html#navfiles_scratchpad">scratchpad</a>. This is to find the data blocks corresponding to this file, which will be the code blocks for the program.
 		 		</li></p>
@@ -1582,19 +1640,18 @@ endwhile;					</pre>
 			Both Exit and Halt are implemented in Interrupt 7 Routine. It is to be programmed in SPL, compiled and loaded to the disk using XFS Interface. It does the following tasks 
 				<ol>
 					<li> If there is only one process, halt the system using <tt>HALT</tt> instruction irrespective of the system call. Search the Ready List of PCBs. If there is only one process with <b>STATE</b> field not equal to 0 in the Ready List of PCBs, then halt the system.  </li>
-					<li> If its Exit system call, the process which invoked it needs to be terminated. Do the following actions to terminate teh current process.</li>
+					<li> If it is Exit system call, the process which invoked it needs to be terminated. Do the following actions to terminate the current process.</li>
 						<ol style="list-style-type:lower-roman;">
-							<li> Find the PCB of the current process. Traverse through the Ready List of PCBs to find the PCB with <b>STATE</b> set as running.
+							<li> Find the PCB of the current process. Traverse through the Ready List of PCBs to find the PCB with <b>STATE</b> set as running. As noted earlier, this can be calculated from the value of PTBR.
 							</li>
-							<li> Close all open instances of files by the process as done for <b>Close</b> system call</li>.
+							<li> Close all open instances of files by the process as done for <b>Close</b> system call.</li>
 							<li> Set the STATE in the PCB to 0. This indicates that the process has terminated. </li>
 							<li> Invalidate all entries in its per-process page table. To do this, set <tt>Address</tt> field to -1 and the <b>Valid/Invalid</b> bit in the auxiliary information to 0. This indicates that the page table entry is invalid.</li>
-
-							<li> Find the next waiting process from the  <a href="xos-spec.html#navpromgmt_readylist">Ready List of PCBs</a>. The  next waiting process is obtained by circularly searching the linked list to get a process with <b>STATE</b> 0 other than thte current process. If no such process is found, r</li>
+							<li> Find the next waiting process from the  <a href="xos-spec.html#navpromgmt_readylist">Ready List of PCBs</a>. The  next waiting process is obtained by circularly searching the linked list to get a process with <b>STATE</b> 0 other than the current process. If no such process is found, return from the system call.</li>
 							<li> Get the IP from its PCB and store it in its stack (Compute physical address of its SP)</li>
 							<li> And use <b>ireturn</b> instruction to transfer control.</li>
 						</ol>
-					<li> Otherwise, exit with -1 </li>	
+					<li> Otherwise, return from the system call. </li>	
 
 				</ol>
 	 		<p>Write APL programs to test Halt and Exit system calls. Compile and load it to the disk. Run the machine and check if the Exit() an Halt() works properly.</p>

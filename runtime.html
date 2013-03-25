@@ -829,7 +829,6 @@ PUSH R0		// Space for 'a' in stack
 MOV R0, 1	
 MOV R1, BP
 ADD R0, R1
-MOV R0, -2
 // Preparing for system calls
 PUSH R0		// Pushing space for RETURN VALUE
 MOV R1, 8	// Pushing system call number = 5

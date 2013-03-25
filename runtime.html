@@ -87,7 +87,7 @@
 			<div class="grid-wrap">
 			<article  id="navintro" class="grid col-full">
 				<h2>Introduction</h2>
-				<p>  Runtime Environment of a process refers to execution environment provided to the process by the operating system. The runtime environment dictates how executable code is loaded into memory, where data is stored, and how function calls and system calls take place. </p>
+				<p>  Runtime Environment of a process refers to execution environment provided to the process by the operating system.  </p>
 
 				<p> A user program in execution is termed as a process. User programs are written in APL, which is a high level language. When an APL program is compiled, it generates XSM machine instructions. These machine instructions are unprivileged instructions and will be run in the USER mode (See <a href="xsm-spec.html#navmodes">Privilege Modes</a>).  An operating system capable of supporting multiprogramming can provide this view to more than one process concurrently. We'll learn about the view of a process in detail in the further sections. </p>
 			</article>
@@ -107,11 +107,11 @@
  				<article id="navmemory" class="grid col-full">
 				<p> <h4>Memory</h4>
 				
-					In XOS, a process views memory as a contiguous block with starting address 0. The size of the block is 2048 words. However, XSM allocates memory as pages. Each page has 512 words. This means that a process can have use at most 4 pages. Although the user process views this as contiguous 4 pages in memory, it may not be contiguous in the physical memory. The contiguous view that a process gets of the memory is called its <b>Logical address space</b>. When this is mapped to the physical memory, it is called its <b>Physical Address Space</b>. Logical addresses are translated to physical addresses by the machine using the <a href="xos-spec.html#navaddr">Address translation</a> scheme of XSM. The process is unaware of the existence of a physical address space and the address translation mechanism is hidden from it.
+					In XOS, a process views memory as a contiguous block with starting address 0. The size of the block is 2048 words. However, XSM allocates memory as pages. Each page has 512 words. This means that a process can have use at most 4 pages. Although the user process views this as contiguous 4 memory pages, OS may allocate it as non-contiguous pages in the physical memory. The contiguous view that a process gets of the memory is called its <b>Logical address space</b>. When this is mapped to the physical memory, it is called its <b>Physical Address Space</b>. Logical addresses are translated to physical addresses by the machine using the <a href="xos-spec.html#navaddr">Address translation</a> scheme of XSM. The process is unaware of the existence of a physical address space and the address translation mechanism is hidden from it.
 				</p>
 				 <p><img src="doc/prostruct1.png"></p>
 				<p>
-					Of the 4 pages that the process uses, the first 3 pages are used for storing the code of the program and the 4th page (address 1535 - 2047) is used as the stack of the process. <b>Stack</b> of a process is a data structure for saving runtime variables, and function call arguments of the process. Read about stack in <a href="#navfncalls" class="subsec" >function calls in APL</a>.
+					Of the 4 pages that the process uses, the first 3 pages are used for storing the code of the program and the 4th page (address 1536 - 2047) is used as the stack of the process. <b>Stack</b> of a process is a data structure for saving runtime variables and function call arguments of the process. Return value of a function is also passed through the stack. Read about stack in <a href="#navfncalls" class="subsec" >function calls in APL</a>.
 				</p>
 				</article>
 
@@ -125,8 +125,10 @@
 				<article id="navinstr" class="grid col-full">	
 				<p> <h4>Instructions</h4>
 				
-					XSM provides a set of unprivileged instructions. Only these instructions are available to the user program. The user program written in a high level language in APL will compile to only unprivileged instructions. The unprivileged instructions are <tt>MOV</tt>, Arithmetic Instructions, Logic Instructions, Stack Instructions (<tt>PUSH</tt> and <tt>POP</tt>), Sub-routine instructions, input/output instructions, debug instructions, <tt>END</tt> and <tt>INT</tt> (see <a href="xsm-spec.html#navinstr">Instructions</a> in XSM).
+					XSM provides a set of unprivileged instructions. Only these instructions are available to the user program. The user program written in a high level language like APL will compile to only unprivileged instructions. The unprivileged instructions are <tt>MOV</tt>, Arithmetic Instructions, Logic Instructions, Stack Instructions (<tt>PUSH</tt> and <tt>POP</tt>), Sub-routine instructions, input/output instructions, debug instructions, <tt>END</tt> and <tt>INT</tt> (see <a href="xsm-spec.html#navinstr">Instructions</a> in XSM).
 				</p>
+<br/><br/>
+				<p><b>NOTE:</b> This limited view is given to the user process by the operating system (XOS). APL is a language which is used to write user programs for XOS. These user programs will run in XOS with a limited machine view allowed for user processes. Hence the translated machine code will use only the limited set of instructions, registers and memory described above. The System Pogrammer's Language(SPL), on the other hand is designed to write system programs and has a complete view of the instructions, registers and  memory. </p>
 				</article>
 		
 			<div class="up grid col-one-third" style="float:right">
@@ -137,7 +139,7 @@
 
 			<article  id="navtranslate" class="grid col-full">
 				<h2>Translating APL programs</h2>
-				<p> APL compiler translates an APL program into XSM machine instructions. There are two fundamental aspects about compilers that you must understand. First is how the APL compiler translates a Function Call. Second is how the APL compiler generates instructions for a system call. </p>
+				<p> APL compiler translates an APL program into XSM machine instructions. There are two fundamental aspects about compilers that you must understand. First is how the APL compiler translates a Function Call. Second is how the APL compiler generates instructions for a system call.</p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -145,7 +147,7 @@
 			
 			<article  id="navfncalls" class="grid col-full">
 				<h3>Function Calls</h3>
-				<p> A function call or a subroutine invocation is done by the machine instruction <tt>CALL</tt>. The stack to pass arguments to the function and get back the return value. The stack of the user process stores information about the active subroutines of the program. An active subroutine is one that has been called but is yet to complete execution. Control should be handed back to the point of call after completing the function execution.  </p>
+				<p> A function call or a subroutine invocation is done by the machine instruction <tt>CALL</tt>. The stack is used to pass arguments to the function and get back the return value. Stack is necessary for a programming language that supports recursion. This will be explained in detail, later in this page. Note that APL is a language that supports recursion. The stack of the user process stores information about the active subroutines of the program. An active subroutine is one that has been called but is yet to complete execution. Control should be handed back to the point of call after completing the function execution.   </p>
 
 				<p> The activation record corresponding to an active subroutine (or the active function) is shown below. The bottom position of the activation record is pointed to by the BP, and the top of the stack is by SP. The region between BP an SP within the stack is the activation record of the active function. See the figure below.</p>
 					
@@ -157,32 +159,44 @@
 				<img src="doc/fncall.png" style="width:600px" />
 				<br/><br/>
 				
-				<p><h6>A: When a CALLER function invokes a CALLEE function, a few actions are performed</h6></p>
+				<p><h6>A: Actions when a CALLER function invokes a CALLEE function</h6></p>
 				<ol>
-					<li> The used registers and arguments are pushed into the stack. (See figure)</li>
-					<li> An empty space for the return value is pushed, specified as RETURN VALUE in the above figure. The CALLEE function will store the return value in this space after it is computed. </li>
-					<li> The <tt>CALL</tt> instruction will push the address of IP specified as <tt>RETURN ADDRESS</tt> into the stack. This is because the <tt>CALL</tt> instruction changes IP to the address of the CALLEE's instructions. After the CALLEE performs its actions it must return back to the point after the function call. Hence the current IP must be backed up</li>
+					<li> The user registers and arguments are pushed into the stack. (See figure). The registers are pushed to backup its values. The CALLEE can now freely use these registers. Arguments are the inputs to the CALLEE function to perform its actions. The arguments become accessible to the CALLEE from the stack.</li>
+					<li> An empty space for the return value is pushed into the stack, specified as RETURN VALUE in the above figure. The CALLEE function will store the return value in this space after it is computed. The CALLER will access this return value from the stack after return from the CALLEE.</li>
+					<li> The <tt>CALL</tt> instruction will push the address of IP into the stack, specified as <tt>RETURN ADDRESS</tt> . This is because the <tt>CALL</tt> instruction changes IP to the address of the CALLEE's starting instruction. After the CALLEE performs its actions it must return back to the point after the function call. Hence the current IP must be backed up</li>
 				</ol>
-				<p> APL generates instructions doing steps 1 and 2. It also generates the <tt>CALL</tt> instruction which does step 3.
-				<p> The activation record for a CALLER function stores its local variables, the arguments it passes to the CALLEE function, the RETURN VALUE and the RETURN ADDRESS.
-				<p><h6>B: Actions in the CALLEE function</h6></p>
-				<p> The <tt>CALL</tt> instruction passes control to the starting instruction of the CALLEE function. The first few instructions generated by APL in the CALLEE function does the following actions</p>
-				<ol>
-					<li><p>Push the current value of <b>BP</b> to the stack. The activation record of the active function is identified by BP. When a new function is invoked BP needs to be changed to the base of its activation record. The old value of BP must be backed up in the stack so that it can be reset when it returns back to the CALLER function. </li></p>
+				<p> APL generates instructions for doing steps 1 and 2. It also generates the machine instruction <tt>CALL</tt> which does step 3.</p>
+				<!--<p> The activation record for a CALLER function contains its local variables, the arguments it passes to the CALLEE function, the RETURN VALUE and the RETURN ADDRESS. Stack allocation of local variables will be discussed in more detail later.</p> -->
 
-					<li><p>The BP is changed to the value on top the stack. </li></p>
-					<li><p>The local variables of the APL program will be allocated space in the stack. This is done by incrementing SP. The region between SP and BP is known as the activation record of the CALLEE function</li></p>
+				<p><h6>B: Actions upon entry into the CALLEE function</h6></p>
+				<p> The <tt>CALL</tt> instruction passes control to the starting instruction of the CALLEE function. The first few instructions generated by APL compiler for the CALLEE function does the following actions</p>
+				<ol>
+					<li><p>Push the current value of <b>BP</b> to the stack. The base of the activation record of the current function is identified by BP. When the CALLEE function is invoked, BP needs to be changed to the base of activation record of the CALLEE function. Hence, the old value of BP corresponding to the CALLER function must be backed up in the stack so that it can be recovered when control returns back to the CALLER function after completion of CALLEE. </li></p>
+
+					<li><p>BP is changed to the value of SP. This is because, the activation record of the CALLEE  starts at this point. The CALLEE is the current function and BP must point to the starting point of its activation record. As long as the CALLEE function does not call another function, or does not return back to the CALLER, BP will not change. The region in the stack above this BP till SP will be its activation record. As SP can change during execution, the activation record also varies during execution of the function. </li></p>
+				
 
 				</ol>
-					<p><h6>C: Returning from the system call</h6></p>
-				The function then performs the required actions, and returns back to the CALLER function.This is done using the <tt>return;</tt> APL instruction which translates to <tt>RET</tt> machine instruciton. The steps done in detail are given below:
+			
+			<p><h6>C: Internal stack operations by the CALLEE function</h6></p>
+			<p>The local variables declared in the CALLEE program has to be allocated memory. This is done in the stack. Each local variable will be allocated a word in the stack. The Stack Pointer will be updated accordingly. APL compiler will generate machine instructions to do this, when local variables are declared. During runtime of the CALLEE, this space may be modified when local variables are assigned values. The region between SP and BP is known as the activation record of the CALLEE function.</p>
+		
+				
+
+
+					<p><h6>D: Actions in the CALLEE function during return</h6></p>
+				Upon completion, the CALLEE function must return back to the CALLER. This is done using the APL statement, <tt>return;</tt> which translates to the <tt>RET</tt> machine instruciton. The steps done are given below in detail:
 				<ol>
-					<li> The function stores the return value computed in the space provided in the activation record of the CALLEE function.</li>
-					<li> All the local variables of the function are popped from the stack</li>
-					<li> <b>OLD BP</b> is popped out from the stack. <b>BP</b> is set to <b>OLD BP</b>. 
+					<li> The function stores the return value computed in the RETURN VALUE field of the activation record of the CALLER function.</li>
+					<li> All the local variables of the function are popped from the stack as they are no longer required.</li>
+					<li> <b>OLD BP</b> is popped out from the stack. <b>BP</b> is set to <b>OLD BP. </b>. 
 					</li> 
-					<li> Then the <tt>RET</tt> instruction is generated by the APL. The <tt>RET</tt> instruction sets the IP to the value on top of the stack. Now the top of the stack points to the top of the activation record of the CALLER function. This value, specified as <b>RETURN ADDRESS</b> was pushed by the CALL instruction. When IP is set to this value, it passes control to the instruction after the <tt>CALL</tt> instruction in the CALLER function.</li>
-					 <li> The CALLER function obtains the return value from the stack and stores it in a register. It pops out the arguments in its activation record and it is discarded. It also restores the backed up register values. The instructions to do this are generated by APL compiler after the CALL instruction </li>
+					<li> Then the <tt>RET</tt> instruction is generated by the APL. The <tt>RET</tt> instruction sets the IP to the value on top of the stack. Now the top of the stack points to the top of the activation record of the CALLER function. This value, specified as <b>RETURN ADDRESS</b> was pushed by the CALL instruction. When IP is set to this value, it passes control to the instruction after the <tt>CALL</tt> instruction (that invoked the CALLEE) in the CALLER function.</li>
+				</ol>
+
+				<p><h6>E: Actions in the CALLER function after return</h6></p>
+				<ol>					
+				 <li> The CALLER function obtains the return value from the stack and stores it in a register. It pops out the arguments in its activation record and they are discarded. It also restores the backed up register values, so that the execution of CALLER can resume. Machine instructions to perform the above actions will follow the CALL instruction (which invoked the CALLEE) in the machine code generated by the APL compiler. </li>
 					
 				</ol>
 				<p> An example of translating a recursive program to computing the factorial of the number  is shown below</p>
@@ -210,8 +224,9 @@ integer main()
 }	</pre>
 				</div>
 				
-				When the above APl program is compiled, the output file generated will contain machine code. The compiled output is shown below (Comments are given for understanding the code. Instruction size is 2 words. Word number is shown on the left for each instruction)
+				When the above APL program is compiled, the output file generated will contain machine code. The compiled output is shown below (Comments are given for understanding the code. Instruction size in XSM is <b>two</b> words. Word number is shown on the left for each instruction)
 <div class="syntax"><pre>
+
 0:	START
 2:	MOV SP, 1535	// Initialize SP to 1535 (Before Logical Page Number 3)
 4:	MOV BP, 1535	// Initialize BP to 1535 (Before Logical Page Number 3)
@@ -223,8 +238,8 @@ integer main()
 10:	MOV BP, SP	// BP is changed to SP
 12:	PUSH R0		// Allocating space for local variable 'f
 14:	MOV R0, -3	// Argument 1 is obtained at 3rd position below BP.
-16:	MOV R1, BP	// ...
-18:	ADD R0, R1	// ...
+16:	MOV R1, BP	// ... it takes more than one XSM instruction
+18:	ADD R0, R1	// ... to achieve an action
 20:	MOV R0, [R0]	// ...
 22:	MOV R1, 1	// Checking if condition and branching		
 24:	EQ R0, R1	// ...
@@ -242,7 +257,7 @@ integer main()
 48:	MOV R2, BP  	// ...
 50:	ADD R1, R2  	// ...
 52:	MOV R1, [R1]	// ...
-54:	PUSH R1		// ... Backing up registers
+54:	PUSH R1		// ... Backing up registers (only R1, R0 used)
 56:	PUSH R0		// ... ...
 58:	MOV R0, -3	// ... Calculating argument 'n-1' for recursive call
 60:	MOV R1, BP	// ... ...
@@ -253,6 +268,7 @@ integer main()
 70:	PUSH R0		// ... Push argument 'n-1' to stack
 72:	PUSH R0		// ... Push a space for return value before function call
 74:	CALL 8		// ... Recursive call to fact(). jumps to address 8
+	// The following code is executed after return from fact()
 76:	POP R2		// ... Popping out the RETURN VALUE from the stack
 78:	POP R3		// ... Popping out the arguments from the stack
 80:	POP R0		// ... Popping out the backed up registers from the stack
@@ -277,12 +293,12 @@ integer main()
 112:	MOV BP,SP	// BP is changed to SP
 114:	PUSH R0		// Allocating space for local variable 'n'
 116:	PUSH R0		// Allocating space for local variable 'result'
-118:	MOV R0, 1	// Getting location of 'n' in the stack (BP + 1)
+118:	MOV R0, 1	// Computing location of 'n' in the stack (BP + 1)
 120:	MOV R1, BP	// ...
 122:	ADD R0, R1	// ...
 124:	IN R1		// Reading 'n' from user
 126:	MOV [R0], R1	// Saving the value of 'n' to the stack
-128:	MOV R0, 2	// Getting location of 'result' in the stack (BP + 2)
+128:	MOV R0, 2	// Computing location of 'result' in the stack (BP + 2)
 130:	MOV R1, BP	// ...
 132:	ADD R0, R1	// ...
 134:	PUSH R0		// Backing up registers for function call
@@ -293,6 +309,7 @@ integer main()
 144:	PUSH R0		// Pushing arguments to stack 
 146:	PUSH R0		// Allocating space for RETURN VALUE
 148:	CALL 8		// Function call to fact(), jumps to address 8
+	// The following code is executed after return from fact()
 150:	POP R1		// Popping out the RETURN VALUE from the stack
 152:	POP R2		// Popping out the arguments from the stack
 154:	POP R0		// Popping out backed up registers
@@ -318,12 +335,12 @@ integer main()
 
 			<article  id="navsyscalls" class="grid col-full">
 				<h3>System Calls</h3>
-			<p> System calls are like built in functions in APL. When they are invoked, it generates an INT instruction, which transfers control to location in memory where the system call implementation is present. The system call implementation will be inside an interrupt routine and it has superuser privileges. Read about various <a href="apl-spec.html#navsyscalls">system calls</a> available in APL.</p>
-			
-			<p> There are three steps in executing a system call. Invoking the system call, performing the system call and after returning from the system call. The instructions to do the first and last steps are generated by APL. Lets understand how APL does the first and last step.</p>
+			<p> System calls are like built in functions in APL. When APL translates a system call, it generates an INT instruction, which transfers control to an interrupt service routine that contains the system call implementation. The interrupt routine runs in superuser mode. Read about various <a href="apl-spec.html#navsyscalls">system calls</a> available in APL.</p>
+<p>(NOTE: This page describes how a system call in a user program is translated by the APL compiler. The actions done by the system call (within the corresponding interrupt routine) is to be programmed in SPL, by the XOS programmer.)</p>
+			<p> There are three steps in executing a system call. Invoking the system call, performing the system call and returning from the system call. The instructions to do the first and last steps are generated by APL. This page describes how APL does these steps.</p>
 
 				<h5>Invoking a system call</h5>
-				<p>An user process  invokes a system call by first pushing the arguments and system call number into the process stack and then invoking <tt> INT </tt> instruction corresponding to the system call. A system call in APL compiles to the a set of machine instructions like the one shown below.</p>
+				<p>An user process  invokes a system call by first pushing the arguments and system call number into the stack and then invoking the <tt> INT </tt> machine instruction corresponding to the system call. A system call in APL compiles to the a set of machine instructions like the one shown below.</p>
 				<div class="syntax"> <pre>
 PUSH <i>Argument_1</i>		// Push arguments to the stack
 .
@@ -337,16 +354,14 @@ INT <i>number</i> 		// Invoke the corresponding INT instruction</div></pre>
 				
 				 <img src="doc/syscallstack1.png" style="width:50%; float:left; margin-right:5%; ">
 				 
-				<p><b>a) Shows the stack operations performed by the user program before
-				 an <tt>INT</tt> instruction in the compiled APL program (See machine instructions above) </b>. The arguments are pushed to stack in an order such that last argument comes on top. A push instruction <tt>PUSH R0</tt> is done to put an empty space for the return value in the stack. The system call implementation must ensure that the return value is stored in this space.  The system call number is pushed to the stack. The system call implementation will require this value to identify the system call. </p>
+				<p><b>a) Shows the stack operations performed by the user program before <tt>INT</tt> instruction (See machine instructions above) </b>. The arguments are pushed to stack in an order such that last argument comes on top. A push instruction <tt>PUSH R0</tt> is done to put an empty space in the stack for the return value. The system call implementation must ensure that the return value is stored in this space.  The system call number is pushed to the stack. The interrupt routine needs this value to identify the system call. </p>
 				
 				<p>
-				 <b>b)  Shows the contents of the stack after the <tt>INT</tt> instruction is executed </b>. The <tt>INT</tt> instruction will push the value of <tt>IP + 2</tt> on to the stack. This value is the address of the instruction after the <tt>INT</tt> instruction in the user program.  Each instruction is 2 words, hence IP is incremented by 2.This IP value will be used by interrupt routine in order to return back from the system call to the next instruction.  The <tt>INT</tt> instruction changes mode from USER to KERNEL mode and  passes control to the Interrupt Routine corresponding to the system call. </p>
-			<br/><br/>
-
+				 <b>b)  Shows the contents of the stack after the <tt>INT</tt> instruction is executed. </b> The <tt>INT</tt> instruction will push the value of <tt>IP + 2</tt> on to the stack. This value is the address of the instruction after the <tt>INT</tt> instruction in the user program.  Each instruction is 2 words, hence IP is incremented by 2. This IP value will be used by interrupt routine to return back from the system call to the next instruction in the calling program.  The <tt>INT</tt> instruction changes mode from USER to KERNEL mode and  passes control to the Interrupt Routine corresponding to the system call. </p>
 			
-				<h5> After returning from the system call. </h5>
-				<p> The interrupt routine instruction transfers control back to the user program to the instruction after the <tt>INT</tt> instruction. The following machine instructions are present after the <tt>INT</tt> instruction in the APL compiled machine code given in the previous step. </p>
+			
+				<h5> After return from the system call. </h5>
+				<p> The interrupt routine instruction transfers control back to the user program to the instruction following the <tt>INT</tt> instruction. The following machine instructions are present after the <tt>INT</tt> instruction in the APL compiled machine code given in the previous step. </p>
 				<div class="syntax"> <pre>
 POP <i>System Call Number </i>	// Pop and discard system call number
 POP <i>RETURN_VALUE</i>	// Pop and save the return value
@@ -360,9 +375,9 @@ POP <i>Argument_1</i></div></pre>
 			<p> The machine code above pops the values from the stack. The system call number and arguments were inputs to the system call and hence they may be discarded now. The return value which is stored in the stack by the system call is fetched and used by the user program. </p>
 			</article>
 			<br/>
-			<br/>
+			
 			<article  id="navsyscallstranslate" class="grid col-full">
-			<h4>System calls and their translation</h4>
+			<br/>	<h4>System calls and their translation</h4>
 			<p>In this section, example APL programs invoking a system call and their translated machine code is shown. The code is commented for better understanding.</p>
 			</article>
 		
@@ -409,7 +424,7 @@ MOV BP,SP
 PUSH R0		// Space for 'a' in stack
 MOV R0, 1	
 MOV R1, BP
-ADD R0, R1
+ADD R0, R1	// address of 'a' is in R0
 // preparing stack for system call
 MOV R1, "File"	// Pushing argument filename
 PUSH R1		// ...
@@ -418,7 +433,7 @@ MOV R1, 1	// Pushing system call number = 1
 PUSH R1		// ...
 // invoking interrupt routine
 INT 1		// Transfers control to interrupt 1
-// The interrupt routine returns back here 
+// actions after interrupt routine returns
 POP R2		// Pop out system call number
 POP R1		// Pop out return value
 POP R2		// Pop out the argument 
@@ -469,7 +484,7 @@ MOV BP,SP
 PUSH R0		// Space for 'a' in stack
 MOV R0, 1	
 MOV R1, BP
-ADD R0, R1
+ADD R0, R1	// address of 'a' is in R0
 // preparing stack for system call
 MOV R1, "File"	// Pushing argument filename
 PUSH R1		// ...
@@ -478,7 +493,7 @@ MOV R1, 2	// Pushing system call number = 2
 PUSH R1		// ...
 // invoking interrupt routine
 INT 2		// Transfers control to interrupt 2
-// The interrupt routine returns back here 
+// actions after interrupt routine returns
 POP R2		// Pop out system call number
 POP R1		// Pop out return value
 POP R2		// Pop out the argument 
@@ -527,7 +542,7 @@ MOV BP,SP
 PUSH R0		// Space for 'a' in stack
 MOV R0, 1	
 MOV R1, BP
-ADD R0, R1
+ADD R0, R1	// address of 'a' is in R0
 // preparing stack for system call
 MOV R1, 0	// Pushing argument fileDescriptor
 PUSH R1		// ...
@@ -536,7 +551,7 @@ MOV R1, 3	// Pushing system call number = 3
 PUSH R1		// ...
 // invoking interrupt routine
 INT 2		// Transfers control to interrupt 2
-// The interrupt routine returns back here 
+// actions after interrupt routine returns
 POP R2		// Pop out system call number
 POP R1		// Pop out return value
 POP R2		// Pop out the argument 
@@ -584,7 +599,7 @@ MOV BP,SP
 PUSH R0		// Space for 'a' in stack
 MOV R0, 1	
 MOV R1, BP
-ADD R0, R1
+ADD R0, R1	// address of 'a' is in R0
 // preparing stack for system call
 MOV R1, "File"	// Pushing argument filename
 PUSH R1		// ...
@@ -593,7 +608,7 @@ MOV R1, 4	// Pushing system call number = 4
 PUSH R1		// ...
 // invoking interrupt routine
 INT 1		// Transfers control to interrupt 1
-// The interrupt routine returns back here 
+// actions after interrupt routine returns
 POP R2		// Pop out system call number
 POP R1		// Pop out return value
 POP R2		// Pop out the argument 
@@ -638,7 +653,7 @@ MOV BP,SP
 PUSH R0		// Space for 'a' in stack
 MOV R0, 1	
 MOV R1, BP
-ADD R0, R1
+ADD R0, R1	// address of 'a' is in R0
 // Preparing for system calls
 MOV R1, 0	// Pushing argument 0
 PUSH R1		// ...
@@ -652,7 +667,7 @@ MOV R1, 5	// Pushing system call number = 5
 PUSH R1		// ...
 // invoking interrupt routine
 INT 4		// Transfers control to interrupt 4
-// The interrupt routine returns back here 
+// actions after interrupt routine returns
 POP R2		// Pop out system call number
 POP R1		// Pop out return value
 POP R2		// Pop out arguments
@@ -698,8 +713,8 @@ PUSH BP
 MOV BP,SP
 PUSH R0		// Space for 'a' in stack
 MOV R0, 1	
-MOV R1, BP
-ADD R0, R1
+MOV R1, BP	
+ADD R0, R1	// address of 'a' is in R0
 // Preparing for system calls
 MOV R1, 0	// Pushing argument 0
 PUSH R1		// ...
@@ -710,7 +725,7 @@ MOV R1, 6	// Pushing system call number = 6
 PUSH R1		// ...
 // invoking interrupt routine
 INT 3		// Transfers control to interrupt 3
-// The interrupt routine returns back here 
+// actions after interrupt routine returns
 POP R2		// Pop out system call number
 POP R1		// Pop out return value
 POP R2		// Pop out arguments
@@ -737,8 +752,10 @@ INT 7		// Invoking interrupt  7 (exit)	</pre></div>
 
 integer main()
 {	
-	integer a;// FileDescriptor
-	string b;// Word read will be here
+	integer a;
+	string b;
+	// Word read will be in b
+	// Assume fileDescriptor=0
 	a = Read(0,b);
 	return 0;
 }</pre></div>		</div>
@@ -759,7 +776,7 @@ PUSH R0		// Space for 'a' in stack
 PUSH R0		// Space for 'b' in stack
 MOV R0, 1	
 MOV R1, BP
-ADD R0, R1
+ADD R0, R1	// address of 'a' is in R0
 // Preparing for system calls
 MOV R1, 0	// Pushing argument 0
 PUSH R1		// ...
@@ -773,7 +790,7 @@ MOV R1, 7	// Pushing system call number = 5
 PUSH R1		// ...
 // invoking interrupt routine
 INT 3		// Transfers control to interrupt 3
-// The interrupt routine returns back here 
+// actions after interrupt routine returns
 POP R2		// Pop out system call number
 MOV R1, 2	// Get the location on 'b'
 MOV R2, BP	// ...
@@ -782,7 +799,7 @@ POP R2		// Pop out the RETURN VALUE
 // Argument 'b' was passed as reference.
 POP R3		// Pop and save argument to 'b'
 MOV [R1], R3	// ...
-MOV R1, R2	// ...
+MOV R1, R2	// Move return value from R2 to R1
 POP R2		// Pop out argument 0
 MOV [R0], R1	// Store the return value in 'a'
 MOV R0, 10	// Preparing for exit system call
@@ -828,14 +845,14 @@ MOV BP,SP
 PUSH R0		// Space for 'a' in stack
 MOV R0, 1	
 MOV R1, BP
-ADD R0, R1
+ADD R0, R1	// address of 'a' is in R0
 // Preparing for system calls
 PUSH R0		// Pushing space for RETURN VALUE
 MOV R1, 8	// Pushing system call number = 5
 PUSH R1		// ...
 // invoking interrupt routine
 INT 5		// Transfers control to interrupt 5
-// The interrupt routine returns back here 
+// actions after interrupt routine returns
 POP R2		// Pop out system call number
 POP R1		// Pop out the RETURN VALUE
 MOV [R0], R1	// Store the return value in 'a'
@@ -881,7 +898,7 @@ MOV BP,SP
 PUSH R0		// Space for 'a' in stack
 MOV R0, 1	
 MOV R1, BP
-ADD R0, R1
+ADD R0, R1	// address of 'a' is in R0
 // preparing stack for system call
 MOV R1, "File"	// Pushing argument filename
 PUSH R1		// ...
@@ -890,7 +907,7 @@ MOV R1, 9	// Pushing system call number = 9
 PUSH R1		// ...
 // invoking interrupt routine
 INT 6		// Transfers control to interrupt 6
-// The interrupt routine returns back here 
+// actions after interrupt routine returns
 POP R2		// Pop out system call number
 POP R1		// Pop out return value
 POP R2		// Pop out the argument 
@@ -939,7 +956,7 @@ PUSH R0		// ...
 INT 7		// Transfers control to interrupt 7
 // Ideally, it should exit this process and stops execution
 POP R0		// Executed, only if exit fails.
-MOV R0, 10	// Exit() is also added at the end by APL
+MOV R0, 10	// Default Exit() call
 PUSH R0		// ...
 INT 7		// ...</pre></div>			
 
@@ -982,8 +999,8 @@ MOV R0, 0	// Pushing system call number = 0
 PUSH R0		// ...
 // invoking interrupt routine
 INT 7		// Transfers control to interrupt 7
-POP R0		// If not halted, pops the system call number
-MOV R0, 10	// Exit() is added at the end by APL
+POP R0		// Pops the system call number
+MOV R0, 10	// Default Exit() call
 PUSH R0		// ...
 INT 7		// ...</pre></div>			
 
@@ -1002,6 +1019,7 @@ INT 7		// ...</pre></div>
 		
 		
 	</div> <!--main-->
+
 <div class="divide-top">
 	<footer class="grid-wrap">
 		<ul class="grid col-one-third social">

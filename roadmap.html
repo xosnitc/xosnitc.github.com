@@ -1351,6 +1351,14 @@ endwhile;					</pre>
 				<li><p> Return from the system call with 0 (success)</li></p>
 			</ol>
 
+			<h5> Exercise : </h5>
+			<ol>
+				<li> Write an APL program to create a file (eg. "myfile.dat") using the Create system call. Check whether the file exists in the disk using xfs interface.</li>
+				<li> Write another program to delete the file ("myfile.dat") created earlier.</li>
+				<li> Open a file and try to delete the file before executing a Close system call. It should return an error since opened files cannot deleted unless they are closed. Now try to delete after executing the Close system call.</li>
+
+			</ol>	
+
 			<h5> Write System Call </h5>	
 			
 			<i>Description:</i> Used to write a single word to a file opened by the process<br/>
@@ -1463,6 +1471,12 @@ endwhile;					</pre>
 				<li> Return with 0, indicating success </li>
 		  	</ol>
 		  	
+		  	<h5> Exercise :</h5>
+		  	<ol>
+		  		<li> Try executing the Read, Seek and Write system calls without creating or opening a file. Try to read from an empty file.</li>
+		  		<li> Change the seek position to the end of the file and try to write a new word into it. Try changing the seek position to an invalid location (greater than filesize). </li>
+		  		<li> Open a file and write some words into that file. Open the same file again and read the words using the new file descriptor.</li>
+		  	</ol>
 		  	
 
 			</article>

@@ -374,7 +374,7 @@ POP <i>Argument_1</i></div></pre>
 			<h5>Create</h5>
 			
 			
-			<div style="width:45%; float:left">
+			<div style="width:44%; float:left">
 				<i>Description:</i>  Creates a file in the XFS disk<br/>
 				<i>System Call No</i>: 1 <br/>
 				<i>Interrupt Routine No</i>: 1 <br/>
@@ -382,7 +382,7 @@ POP <i>Argument_1</i></div></pre>
 				<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
 				
 				<div class="syntax"><pre>
-// APL program
+// <b>APL program to invoke Create</b>
 
 integer main()
 {	
@@ -394,38 +394,38 @@ integer main()
 			</div>
 
 
-			<div class="syntax" style="width:45%; float:right"><pre>
-// Compiled XSM machine code
+			<div class="syntax" style="width:52%; float:right"><pre>
+// <b>Compiled XSM machine code</b>
 
 START		
 MOV SP, 1535	// Initializes SP to 1535
 MOV BP, 1535	// Initializes BP to 1535
 JMP 00008	// Jump to main() function
 
-// main() function starts here
-
+// main() function
+//================
 PUSH BP		
 MOV BP,SP
-PUSH R0		// Space for local variable 'a' of main()
+PUSH R0		// Space for 'a' in stack
 MOV R0, 1	
 MOV R1, BP
 ADD R0, R1
-
-// preparing for system call
-MOV R1, "File"	// Pushing argument filename = "File"
+// preparing stack for system call
+MOV R1, "File"	// Pushing argument filename
 PUSH R1		// ...
 PUSH R0		// Pushing space for RETURN VALUE
 MOV R1, 1	// Pushing system call number = 1
 PUSH R1		// ...
-INT 1		// Transfers control to interrupt routine 1
-// The interrupt routine returns back here after completion of system call
+// invoking interrupt routine
+INT 1		// Transfers control to interrupt 1
+// The interrupt routine returns back here 
 POP R2		// Pop out system call number
 POP R1		// Pop out return value
-POP R2		// Pop out the argument to the system call
-MOV [R0], R1	// Saving the return value to local variable 'a'
+POP R2		// Pop out the argument 
+MOV [R0], R1	// Saving the return value in 'a'
 MOV R0, 10	// Preparing for exit system call
 PUSH R0		// ...
-INT 7		// Invoking interrupt routine 7 (to exit from process)</pre></div>		
+INT 7		// Invoking interrupt  7 (exit)</pre></div>		
 
 			</article>
 
@@ -437,14 +437,14 @@ INT 7		// Invoking interrupt routine 7 (to exit from process)</pre></div>
 			<article  id="navsyscallsopen" class="grid col-full">
 			<h5>Open</h5>
 			
-			<div style="width:45%; float:left">
+			<div style="width:44%; float:left">
 				<i>Description:</i> The Open system call is used to open a file present in the XFS disk. <br/>
 				<i>System Call No</i>: 2 <br/>
 				<i>Interrupt Routine No</i>: 2 <br/>
 				<i>Arguments</i>: filename of the file to be opened <br/>
 				<i>Return Value</i>: Index of open instance in Per-Process Open File table (Success) or -1 (Failure) <br/>
 				<div class="syntax"><pre>
-// APL program
+// <b>APL program to invoke Open</b>
 
 integer main()
 {	
@@ -454,38 +454,38 @@ integer main()
 }</pre>
 				</div>
 			</div>
-			<div class="syntax" style="width:45%; float:right"><pre>
-// Compiled XSM machine code
+			<div class="syntax" style="width:52%; float:right"><pre>
+// <b>Compiled XSM machine code</b>
 
 START		
 MOV SP, 1535	// Initializes SP to 1535
 MOV BP, 1535	// Initializes BP to 1535
 JMP 00008	// Jump to main() function
 
-// main() function starts here
-
+// main() function
+//================
 PUSH BP		
 MOV BP,SP
-PUSH R0		// Space for local variable 'a' of main()
+PUSH R0		// Space for 'a' in stack
 MOV R0, 1	
 MOV R1, BP
 ADD R0, R1
-
-// preparing for system call
-MOV R1, "File"	// Pushing argument filename = "File"
+// preparing stack for system call
+MOV R1, "File"	// Pushing argument filename
 PUSH R1		// ...
 PUSH R0		// Pushing space for RETURN VALUE
 MOV R1, 2	// Pushing system call number = 2
 PUSH R1		// ...
-INT 2		// Transfers control to interrupt routine 2
-// The interrupt routine returns back here after completion of system call
+// invoking interrupt routine
+INT 2		// Transfers control to interrupt 2
+// The interrupt routine returns back here 
 POP R2		// Pop out system call number
 POP R1		// Pop out return value
-POP R2		// Pop out the argument to the system call
-MOV [R0], R1	// Saving the return value to local variable 'a'
+POP R2		// Pop out the argument 
+MOV [R0], R1	// Saving the return value in 'a'
 MOV R0, 10	// Preparing for exit system call
 PUSH R0		// ...
-INT 7		// Invoking interrupt routine 7 (to exit from process)</pre></div>			
+INT 7		// Invoking interrupt  7 (exit)</pre></div>			
 
 			</article>
 			
@@ -495,41 +495,55 @@ INT 7		// Invoking interrupt routine 7 (to exit from process)</pre></div>
 			<article  id="navsyscallsclose" class="grid col-full">
 			<h5>Close</h5>
 			
-			<div class="syntax" style="width:45%; float:left"><pre>
-// APL program
+			<div style="width:44%; float:left">
+			<i>Description</i>: Closes a file opened by the process.<br/>
+			<i>System Call No</i>: 3 <br/>
+			<i>Interrupt Routine No</i>: 2 <br/>
+			<i>Arguments</i>: fileDescriptor <br/>
+			<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>			
+			<div class="syntax"><pre>
+// <b>APL program to invoke Close</b>
 
 integer main()
 {	
 	integer a;
 	a = Close(0);
 	return 0;
-}</pre></div>
-			<div class="syntax" style="width:45%; float:right"><pre>
-// Compiled XSM machine code
+}</pre>			</div>
+			</div>
 
-START
-MOV SP, 1535
-MOV BP, 1535
-JMP 00008
-PUSH BP
+			<div class="syntax" style="width:51%; float:right"><pre>
+// <b> Compiled XSM machine code</b>
+
+START		
+MOV SP, 1535	// Initializes SP to 1535
+MOV BP, 1535	// Initializes BP to 1535
+JMP 00008	// Jump to main() function
+
+// main() function
+//================
+PUSH BP		
 MOV BP,SP
-PUSH R0
-MOV R0, 1
+PUSH R0		// Space for 'a' in stack
+MOV R0, 1	
 MOV R1, BP
 ADD R0, R1
-MOV R1, 0
-PUSH R1
-PUSH R0
-MOV R1, 3
-PUSH R1
-INT 2
-POP R2
-POP R1
-POP R2
-MOV [R0], R1
-MOV R0, 10
-PUSH R0
-INT 7</pre></div>			
+// preparing stack for system call
+MOV R1, 0	// Pushing argument fileDescriptor
+PUSH R1		// ...
+PUSH R0		// Pushing space for RETURN VALUE
+MOV R1, 3	// Pushing system call number = 3
+PUSH R1		// ...
+// invoking interrupt routine
+INT 2		// Transfers control to interrupt 2
+// The interrupt routine returns back here 
+POP R2		// Pop out system call number
+POP R1		// Pop out return value
+POP R2		// Pop out the argument 
+MOV [R0], R1	// Saving the return value in 'a'
+MOV R0, 10	// Preparing for exit system call
+PUSH R0		// ...
+INT 7		// Invoking interrupt  7 (exit)</pre></div>			
 
 			</article>
 			
@@ -539,8 +553,14 @@ INT 7</pre></div>
 			<article  id="navsyscallsdelete" class="grid col-full">
 			<h5>Delete</h5>
 			
-			<div class="syntax" style="width:45%; float:left"><pre>
-// APL program
+			<div style="width:44%; float:left">
+			<i>Description:</i> Deletes a file in the disk with the filename given as argument. <br/>
+			<i>System Call No</i>: 4 <br/>
+			<i>Interrupt Routine No</i>: 1 <br/>
+			<i>Arguments</i>: filename <br/>
+			<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>					
+			<div class="syntax"><pre>
+// <b>APL program to invoke Delete</b>
 
 integer main()
 {	
@@ -548,136 +568,99 @@ integer main()
 	a = Delete("File");
 	return 0;
 }</pre></div>
-			<div class="syntax" style="width:45%; float:right"><pre>
-// Compiled XSM machine code
+			</div>
+			<div class="syntax" style="width:52%; float:right"><pre>
+// <b> Compiled XSM machine code</b>
 
-START
-MOV SP, 1535
-MOV BP, 1535
-JMP 00008
-PUSH BP
+START		
+MOV SP, 1535	// Initializes SP to 1535
+MOV BP, 1535	// Initializes BP to 1535
+JMP 00008	// Jump to main() function
+
+// main() function
+//================
+PUSH BP		
 MOV BP,SP
-PUSH R0
-MOV R0, 1
+PUSH R0		// Space for 'a' in stack
+MOV R0, 1	
 MOV R1, BP
 ADD R0, R1
-MOV R1, "File"
-PUSH R1
-PUSH R0
-MOV R1, 4
-PUSH R1
-INT 1
-POP R2
-POP R1
-POP R2
-MOV [R0], R1
-MOV R0, 10
-PUSH R0
-INT 7</pre></div>			
+// preparing stack for system call
+MOV R1, "File"	// Pushing argument filename
+PUSH R1		// ...
+PUSH R0		// Pushing space for RETURN VALUE
+MOV R1, 4	// Pushing system call number = 4
+PUSH R1		// ...
+// invoking interrupt routine
+INT 1		// Transfers control to interrupt 1
+// The interrupt routine returns back here 
+POP R2		// Pop out system call number
+POP R1		// Pop out return value
+POP R2		// Pop out the argument 
+MOV [R0], R1	// Saving the return value in 'a'
+MOV R0, 10	// Preparing for exit system call
+PUSH R0		// ...
+INT 7		// Invoking interrupt  7 (exit)</pre></div>			
 
 			</article>
 			
-						
-			<article  id="navsyscallsread" class="grid col-full">
-			<h5>Read</h5>
-			
-			<div class="syntax" style="width:45%; float:left"><pre>
-// APL program
 
-integer main()
-{	
-	integer a;
-	string b;
-	a = Read(0,b);
-	return 0;
-}</pre></div>
-			<div class="syntax" style="width:45%; float:right"><pre>
-// Compiled XSM machine code
-
-START
-MOV SP, 1535
-MOV BP, 1535
-JMP 00008
-PUSH BP
-MOV BP,SP
-PUSH R0
-PUSH R0
-MOV R0, 1
-MOV R1, BP
-ADD R0, R1
-MOV R1, 0
-PUSH R1
-MOV R1, 2
-MOV R2, BP
-ADD R1, R2
-MOV R1, [R1]
-PUSH R1
-PUSH R0
-MOV R1, 7
-PUSH R1
-INT 3
-POP R2
-MOV R1, 2
-MOV R2, BP
-ADD R1, R2
-POP R2
-POP R3
-MOV [R1], R3
-MOV R1, R2
-POP R2
-MOV [R0], R1
-MOV R0, 10
-PUSH R0
-INT 7</pre></div>			
-
-			</article>		
-			
-			
-			
 			<article  id="navsyscallswrite" class="grid col-full">
 			<h5>Write</h5>
 			
-			<div class="syntax" style="width:45%; float:left"><pre>
-// APL program
+			<div style="width:44%; float:left">
+			<i>Description:</i> Used to write a single word to a file opened by the process<br/>
+			<i>System Call No</i>: 5 <br/>
+			<i>Interrupt Routine No</i>: 4 <br/>
+			<i>Arguments</i>: 1. fileDescriptor, 2. wordToWrite <br/>
+			<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
+			<div class="syntax"><pre>
+// <b>APL program to invoke Write</b>
 
 integer main()
 {	
 	integer a;
 	a = Write(0,a);
 	return 0;
-}</pre></div>
-			<div class="syntax" style="width:45%; float:right"><pre>
-// Compiled XSM machine code
+}</pre></div>		</div>
+			<div class="syntax" style="width:52%; float:right"><pre>
+// <b> Compiled XSM machine code</b>
 
-START
-MOV SP, 1535
-MOV BP, 1535
-JMP 00008
-PUSH BP
+START		
+MOV SP, 1535	// Initializes SP to 1535
+MOV BP, 1535	// Initializes BP to 1535
+JMP 00008	// Jump to main() function
+
+// main() function
+//================
+PUSH BP		
 MOV BP,SP
-PUSH R0
-MOV R0, 1
+PUSH R0		// Space for 'a' in stack
+MOV R0, 1	
 MOV R1, BP
 ADD R0, R1
-MOV R1, 0
-PUSH R1
-MOV R1, 1
-MOV R2, BP
-ADD R1, R2
-MOV R1, [R1]
-PUSH R1
-PUSH R0
-MOV R1, 5
-PUSH R1
-INT 4
-POP R2
-POP R1
-POP R2
-POP R2
-MOV [R0], R1
-MOV R0, 10
-PUSH R0
-INT 7</pre></div>			
+// Preparing for system calls
+MOV R1, 0	// Pushing argument 0
+PUSH R1		// ...
+MOV R1, 1	// Pushing argument a
+MOV R2, BP	// ...
+ADD R1, R2	// ...
+MOV R1, [R1]	// ...
+PUSH R1		// ...
+PUSH R0		// Pushing space for RETURN VALUE
+MOV R1, 5	// Pushing system call number = 5
+PUSH R1		// ...
+// invoking interrupt routine
+INT 4		// Transfers control to interrupt 4
+// The interrupt routine returns back here 
+POP R2		// Pop out system call number
+POP R1		// Pop out return value
+POP R2		// Pop out arguments
+POP R2		// ...
+MOV [R0], R1	// Store the return value in 'a'
+MOV R0, 10	// Preparing for exit system call
+PUSH R0		// ...
+INT 7		// Invoking interrupt  7 (exit)</pre></div>			
 
 			</article>
 			
@@ -686,89 +669,180 @@ INT 7</pre></div>
 			
 			<article  id="navsyscallsseek" class="grid col-full">
 			<h5>Seek</h5>
-			
-			<div class="syntax" style="width:45%; float:left"><pre>
-// APL program
+			<div style="width:44%; float:left">
+			<i>Description</i>: Changes the LSEEK position<br/>
+			<i>System Call No</i>: 6 <br/>
+			<i>Interrupt Routine No</i>: 3 <br/>
+			<i>Arguments</i>: 1. fileDescriptor 2. newLseek <br/>
+			<i>Return Value</i>: 0 (Success) or -1 (Failure) <br/>			
+			<div class="syntax"><pre>
+// <b>APL program to invoke Seek</b>
 
 integer main()
 {	
 	integer a;
 	a = Seek(0,10);
 	return 0;
-}</pre></div>
-			<div class="syntax" style="width:45%; float:right"><pre>
-// Compiled XSM machine code
+}</pre></div>		</div>
+			<div class="syntax" style="width:52%; float:right"><pre>
+// <b> Compiled XSM machine code</b>
 
-START
-MOV SP, 1535
-MOV BP, 1535
-JMP 00008
-PUSH BP
+START		
+MOV SP, 1535	// Initializes SP to 1535
+MOV BP, 1535	// Initializes BP to 1535
+JMP 00008	// Jump to main() function
+
+// main() function
+//================
+PUSH BP		
 MOV BP,SP
-PUSH R0
-MOV R0, 1
+PUSH R0		// Space for 'a' in stack
+MOV R0, 1	
 MOV R1, BP
 ADD R0, R1
-MOV R1, 0
-PUSH R1
-MOV R1, 10
-PUSH R1
-PUSH R0
-MOV R1, 6
-PUSH R1
-INT 3
-POP R2
-POP R1
-POP R2
-POP R2
-MOV [R0], R1
-MOV R0, 10
-PUSH R0
-INT 7</pre></div>			
+// Preparing for system calls
+MOV R1, 0	// Pushing argument 0
+PUSH R1		// ...
+MOV R1, 10	// Pushing argument 10
+PUSH R1		// ...
+PUSH R0		// Pushing space for RETURN VALUE
+MOV R1, 6	// Pushing system call number = 6
+PUSH R1		// ...
+// invoking interrupt routine
+INT 3		// Transfers control to interrupt 3
+// The interrupt routine returns back here 
+POP R2		// Pop out system call number
+POP R1		// Pop out return value
+POP R2		// Pop out arguments
+POP R2		// ...
+MOV [R0], R1	// Store the return value in 'a'
+MOV R0, 10	// Preparing for exit system call
+PUSH R0		// ...
+INT 7		// Invoking interrupt  7 (exit)	</pre></div>			
 
 			</article>
 			
 			
+						
+			<article  id="navsyscallsread" class="grid col-full">
+			<h5>Read</h5>
+			<div style="width:44%; float:left">
+			<i>Description</i>: Reads a word from a file to the variable passed as argument. <br/>
+			<i>System Call No</i>: 7 <br/>
+			<i>Interrupt Routine No</i>: 3 <br/>
+			<i>Arguments</i>: 1) fileDescriptor 2) wordRead<br/>
+			<i>Return Value</i>: 0 (success) and -1 (failure) </br>			
+			<div class="syntax"><pre>
+// <b>APL program to invoke Read</b>
 
+integer main()
+{	
+	integer a;// FileDescriptor
+	string b;// Word read will be here
+	a = Read(0,b);
+	return 0;
+}</pre></div>		</div>
+			<div class="syntax" style="width:52%; float:right"><pre>
+// <b> Compiled XSM machine code</b>
+
+
+START		
+MOV SP, 1535	// Initializes SP to 1535
+MOV BP, 1535	// Initializes BP to 1535
+JMP 00008	// Jump to main() function
+
+// main() function
+//================
+PUSH BP		
+MOV BP,SP
+PUSH R0		// Space for 'a' in stack
+PUSH R0		// Space for 'b' in stack
+MOV R0, 1	
+MOV R1, BP
+ADD R0, R1
+// Preparing for system calls
+MOV R1, 0	// Pushing argument 0
+PUSH R1		// ...
+MOV R1, 2	// Pushing argument b
+MOV R2, BP	// ...
+ADD R1, R2	// ...
+MOV R1, [R1]	// ...
+PUSH R1		// ...
+PUSH R0		// Pushing space for RETURN VALUE
+MOV R1, 7	// Pushing system call number = 5
+PUSH R1		// ...
+// invoking interrupt routine
+INT 3		// Transfers control to interrupt 3
+// The interrupt routine returns back here 
+POP R2		// Pop out system call number
+MOV R1, 2	// Get the location on 'b'
+MOV R2, BP	// ...
+ADD R1, R2	// ...
+POP R2		// Pop out the RETURN VALUE
+// Argument 'b' was passed as reference.
+POP R3		// Pop and save argument to 'b'
+MOV [R1], R3	// ...
+MOV R1, R2	// ...
+POP R2		// Pop out argument 0
+MOV [R0], R1	// Store the return value in 'a'
+MOV R0, 10	// Preparing for exit system call
+PUSH R0		// ...
+INT 7		// Invoking interrupt  7 (exit)</pre></div>			
+
+			</article>		
+			
+			
+			
 			
 			
 			
 			<article  id="navsyscallsfork" class="grid col-full">
 			<h5>Fork</h5>
-			
-			<div class="syntax" style="width:45%; float:left"><pre>
-// APL program
+			<div style="width:44%; float:left">
+			<i>Description</i>: Replicates the process which invoked this system call in the memory. <br/> 
+			<i>System Call No</i>: 8 <br/>
+			<i>Interrupt Routine No</i>: 5 <br/>
+			<i>Arguments</i>: None<br/>
+			<i>Return Value</i>: In the parent process, PID of the process created (success) or -1 (failure). In the child process, -2 <br/>			
+			<div class="syntax"><pre>
+// <b>APL program to invoke Fork</b>
 
 integer main()
 {	
 	integer a;
 	a = Fork();
 	return 0;
-}</pre></div>
-			<div class="syntax" style="width:45%; float:right"><pre>
-// Compiled XSM machine code
+}</pre></div>		</div>
+			<div class="syntax" style="width:52%; float:right"><pre>
+// <b> Compiled XSM machine code</b>
 
-START
-MOV SP, 1535
-MOV BP, 1535
-JMP 00008
-PUSH BP
+START		
+MOV SP, 1535	// Initializes SP to 1535
+MOV BP, 1535	// Initializes BP to 1535
+JMP 00008	// Jump to main() function
+
+// main() function
+//================
+PUSH BP		
 MOV BP,SP
-PUSH R0
-MOV R0, 1
+PUSH R0		// Space for 'a' in stack
+MOV R0, 1	
 MOV R1, BP
 ADD R0, R1
 MOV R0, -2
-PUSH R0
-MOV R1, 8
-PUSH R1
-INT 5
-POP R2
-POP R1
-MOV [R0], R1
-MOV R0, 10
-PUSH R0
-INT 7</pre></div>			
+// Preparing for system calls
+PUSH R0		// Pushing space for RETURN VALUE
+MOV R1, 8	// Pushing system call number = 5
+PUSH R1		// ...
+// invoking interrupt routine
+INT 5		// Transfers control to interrupt 5
+// The interrupt routine returns back here 
+POP R2		// Pop out system call number
+POP R1		// Pop out the RETURN VALUE
+MOV [R0], R1	// Store the return value in 'a'
+MOV R0, 10	// Preparing for exit system call
+PUSH R0		// ...
+INT 7		// Invoking interrupt  7 (exit)</pre></div>			
 
 			</article>
 			
@@ -778,40 +852,53 @@ INT 7</pre></div>
 			<article  id="navsyscallsexec" class="grid col-full">
 			<h5>Exec</h5>
 			
-			<div class="syntax" style="width:45%; float:left"><pre>
-// APL program
+			<div style="width:44%; float:left">
+			<i>Description:</i> used to load and run a new process from a currently running process. The current process is overwritten by new process i.e. the process data structures and memory of the current process is used by the new process. </br>
+			<i>System Call No</i>: 9 <br/>
+			<i>Interrupt Routine No</i>: 6 <br/>
+			<i>Arguments</i>: filename <br/>
+			<i>Return Value</i>: 0 (success) and -1 (failure) </br>			
+			<div class="syntax" ><pre>
+// <b>APL program to invoke Exec</b>
 
 integer main()
 {	
 	integer a;
 	a = Exec("File");
 	return 0;
-}</pre></div>
-			<div class="syntax" style="width:45%; float:right"><pre>
-// Compiled XSM machine code
+}</pre></div>		</div>
+			<div class="syntax" style="width:52%; float:right"><pre>
+// <b> Compiled XSM machine code</b>
 
-START
-MOV SP, 1535
-MOV BP, 1535
-JMP 00008
-PUSH BP
+START		
+MOV SP, 1535	// Initializes SP to 1535
+MOV BP, 1535	// Initializes BP to 1535
+JMP 00008	// Jump to main() function
+
+// main() function
+//================
+PUSH BP		
 MOV BP,SP
-PUSH R0
-MOV R0, 1
+PUSH R0		// Space for 'a' in stack
+MOV R0, 1	
 MOV R1, BP
 ADD R0, R1
-MOV R1, "File"
-PUSH R1
-PUSH R0MOV R1, 9
-PUSH R1
-INT 6
-POP R2
-POP R1
-POP R2
-MOV [R0], R1
-MOV R0, 10
-PUSH R0
-INT 7</pre></div>			
+// preparing stack for system call
+MOV R1, "File"	// Pushing argument filename
+PUSH R1		// ...
+PUSH R0		// Pushing space for RETURN VALUE
+MOV R1, 9	// Pushing system call number = 9
+PUSH R1		// ...
+// invoking interrupt routine
+INT 6		// Transfers control to interrupt 6
+// The interrupt routine returns back here 
+POP R2		// Pop out system call number
+POP R1		// Pop out return value
+POP R2		// Pop out the argument 
+MOV [R0], R1	// Saving the return value in 'a'
+MOV R0, 10	// Preparing for exit system call
+PUSH R0		// ...
+INT 7		// Invoking interrupt  7 (exit)</pre></div>			
 
 			</article>
 			
@@ -820,31 +907,42 @@ INT 7</pre></div>
 			
 			<article  id="navsyscallsexit" class="grid col-full">
 			<h5>Exit</h5>
-			
-			<div class="syntax" style="width:45%; float:left"><pre>
-// APL program
+			<div style="width:44%; float:left">
+			<i>Description</i>: <br/>Terminate the execution of the process which invoked it. Exit removes this process from the memory. If there is only one process, it halts the system.<br/>
+			<i>System Call No</i>: 10 <br/>
+			<i>Interrupt Routine No</i>: 7 <br/>
+			<i>Arguments</i>: None<br/>
+			<i>Return Value</i>:-1 on failure, exits on success </br>			
+			<div class="syntax" ><pre>
+// <b>APL program to invoke Exit</b>
 
 integer main()
 {	
 	Exit();
 	return 0;
-}</pre></div>
-			<div class="syntax" style="width:45%; float:right"><pre>
-// Compiled XSM machine code
+}</pre></div>		</div>
+			<div class="syntax" style="width:52%; float:right"><pre>
+// <b> Compiled XSM machine code</b>
 
-START
-MOV SP, 1535
-MOV BP, 1535
-JMP 00008
-PUSH BP
+START		
+MOV SP, 1535	// Initializes SP to 1535
+MOV BP, 1535	// Initializes BP to 1535
+JMP 00008	// Jump to main() function
+
+// main() function
+//================
+PUSH BP		
 MOV BP,SP
-MOV R0, 10
-PUSH R0
-INT 7
-POP R0
-MOV R0, 10
-PUSH R0
-INT 7</pre></div>			
+// preparing stack for the system call
+MOV R0, 10	// Pushing system call number = 10
+PUSH R0		// ...
+// invoking interrupt routine
+INT 7		// Transfers control to interrupt 7
+// Ideally, it should exit this process and stops execution
+POP R0		// Executed, only if exit fails.
+MOV R0, 10	// Exit() is also added at the end by APL
+PUSH R0		// ...
+INT 7		// ...</pre></div>			
 
 			</article>
 			
@@ -854,31 +952,41 @@ INT 7</pre></div>
 			
 			<article  id="navsyscallshalt" class="grid col-full">
 			<h5>Halt</h5>
-			
-			<div class="syntax" style="width:45%; float:left"><pre>
-// APL program
+			<div style="width:44%; float:left">
+			<i>Description</i>: <br/> If there is only one process in memory, it halts the system. Otherwise returns -1, indicating error. <br/>
+			<i>System Call No</i>: 0 <br/>
+			<i>Interrupt Routine No</i>: 7 <br/>
+			<i>Arguments</i>: None<br/>
+			<i>Return Value</i>:-1 on failure, halts on success </br>			
+			<div class="syntax"><pre>
+// <b>APL program to invoke Halt</b>
 
 integer main()
 {	
 	Halt();
 	return 0;
-}</pre></div>
-			<div class="syntax" style="width:45%; float:right"><pre>
-// Compiled XSM machine code
+}</pre></div>		</div>
+			<div class="syntax" style="width:52%; float:right"><pre>
+// <b> Compiled XSM machine code</b>
 
-START
-MOV SP, 1535
-MOV BP, 1535
-JMP 00008
-PUSH BP
+START		
+MOV SP, 1535	// Initializes SP to 1535
+MOV BP, 1535	// Initializes BP to 1535
+JMP 00008	// Jump to main() function
+
+// main() function
+//================
+PUSH BP		
 MOV BP,SP
-MOV R0, 0
-PUSH R0
-INT 7
-POP R0
-MOV R0, 10
-PUSH R0
-INT 7</pre></div>			
+// preparing stack for the system call
+MOV R0, 0	// Pushing system call number = 0
+PUSH R0		// ...
+// invoking interrupt routine
+INT 7		// Transfers control to interrupt 7
+POP R0		// If not halted, pops the system call number
+MOV R0, 10	// Exit() is added at the end by APL
+PUSH R0		// ...
+INT 7		// ...</pre></div>			
 
 			</article>
 			

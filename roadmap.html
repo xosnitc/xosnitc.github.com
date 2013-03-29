@@ -1221,8 +1221,9 @@ Machine is halting     </pre>
 
 			<p> Per-process open file table for each process resides in its <a href="xos-spec.html#navpromgmt_pcb">PCB</a>. Per-process open file table has an entry for each file opened by the process. The same file can be opened more than once by the same process. In that case, there will be multiple entries corresponding to each open instance of this file. The per-process open file table stores the index of the system-wide open file table entry for the file, and the LSEEK position of the open instance of a file. The LSEEK position indicates the location in the file where a word is read from or written to correspoinding to the open instance of the file. The index of the per-process open file table entry is known as the <b>file descriptor</b>. The Per-process open file table is stored in the PCB from words 15 to 30 (16 words). Since each entry has size 2 words, there are 8 entries in every per-process open file table. Therefore, a maximum of 8 files can be opened by a process at a time.   </p>
 			<br/>
-			<img src="doc/fileopen.png"/><br/>
-			<p> In the above example, a process has already opened a file , and is now opening a new file (named 'myfile.dat'). The already opened file has an entry at index 0 in the Per-process Open File Table. For the newly opened file, an entry at index 1, is made in the Per-process Open File Table. The file has an entry in the system-wide open file table (at index 0). This index in the System-wide open file table is stored in the <b>Pointer to System-wide open file table entry</b> field in the Per-process open file table. The LSEEK position will be initialized to 0 as no words are read or written, or the position is not changed by the user.<b>
+			An example of how every file data structure is connected for a file opened by a process is shown below: <br/><br/>
+			<img src="doc/fileopen.png"/><br/><br/>
+			<p> In the above example, a process has already opened a file , and is now opening a new file (named 'myfile.dat'). The already opened file has an entry at index 0 in the Per-process Open File Table. For the newly opened file, an entry at index 1, is made in the Per-process Open File Table. The file has an entry in the system-wide open file table (at index 0). This index in the System-wide open file table is stored in the <b>Pointer to System-wide open file table entry</b> field in the Per-process open file table. The LSEEK position will be initialized to 0 as no words are read or written, or the position is not changed by the user.</p>
 
 			<h6>Modifying OS Startup Code</h6>
 			
@@ -1264,6 +1265,10 @@ endwhile;					</pre>
 			
 			<p>To check if the system call is functioning properly, make user programs which invoke the system call. Compile it using APL compiler and load it to disk as the INIT program. Run the machine by <b>disabling the timer</b>. You may use the XFS interface to check the working of file system calls.</p>
 			
+			
+			<p><b>WARNING:</b> Use maxinum number of registers (from the set S0 - S15) and avoid repeated computation of values to limit the number of instructions in an interrupt routine. An interrupt routine cannot exceed more than 256 instructions (or 256 x 2 = 512 words), as only one page is allocated for each interrupt routine.</p>
+
+
 			<p> Detailed information and actions corresponding to each system call is given below.</p>
 			
 			

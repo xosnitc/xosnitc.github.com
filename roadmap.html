@@ -1346,8 +1346,9 @@ endwhile;					</pre>
 				
 				<li><p> Otherwise, follow the steps to delete the file
 					<ul>
-					<li>Load the <a href="xfs-spec.html#navfile"><b>Basic Block</b></a> to the <a href="xos-spec.html#navfiles_scratchpad">Scratchpad</a>. The Basic Block contains the block numbers of all the data blocks of the file. The data blocks must be set as unused in the memory copy of the <a href="xfs-spec.html#navdf">Disk Free List</a>
+					<li>Load the <a href="xfs-spec.html#navfile"><b>Basic Block</b></a> to the <a href="xos-spec.html#navfiles_scratchpad">Scratchpad</a>. The Basic Block contains the block numbers of all the data blocks of the file. Load the first data block from disk to the scratchpad. Erase all values in the data file, by storing ""(empty string) in every word. Store back the data block to the disk from the scratchpad. This data block must be set as unused in the memory copy of the <a href="xfs-spec.html#navdf">Disk Free List</a>. Do this step again for the second, third, fourth data blocks and so on.
 					</li>
+					<li> Erase all vallues of the basic block of the file, by storing "" (empty stirng) to every word. Save back the basic block to the disk </li>
 					<li> Set the entry for the basic block of the file in the Disk Free List to 0 (unused)</li>
 					<li> Invalidate the <a href="xos-spec.html#navfiles_fat">FAT</a> entry by setting -1 in the <b>filename</b> filed and  <b>Basic Block Number</b> field.</li>
 					</ul>
@@ -1357,12 +1358,12 @@ endwhile;					</pre>
 				
 				<li><p> Return from the system call with 0 (success)</li></p>
 			</ol>
-
+			<p><b>NOTE:</b> In UNIX, the end of files are marked using a special EOF character, and filesize is calculated as the number of bytes from the first byte to the EOF character. However in XOS, file size is always multiple of 512 and there is no EOF character. If a block is allocated to a file, that entire block will be considered part of the file. Hence erasing data blocks and basic blocks is necessary when a file is deleted, so that junk words in a data block of a deleted file won't appear in a newly created file.</p>
 			<h5> Exercise : </h5>
 			<ol>
 				<li> Write an APL program to create a file (eg. "myfile.dat") using the Create system call. Check whether the file exists in the disk using xfs interface.</li>
 				<li> Write another program to delete the file ("myfile.dat") created earlier.</li>
-				<li> Open a file and try to delete the file before executing a Close system call. It should return an error since opened files cannot deleted unless they are closed. Now try to delete after executing the Close system call.</li>
+				<li> Open a file and try to delete the file before executing a Close system call. It should return an error since opened files cannot deleted unless they are closed. Now try to delete after executing the Close system call. THis should successfully delete the file. Check using <b>ls</b> command in XFS interface to see if the file is deleted. Check the basic block and data blocks of the file to see if its erased completely</li>
 
 			</ol>	
 
@@ -1477,10 +1478,11 @@ endwhile;					</pre>
 				<li><p> Increment LSEEK Position by 1 in the Per-Process Open File Table. This is because a word is read and LSEEK position must be pointing to the next word. </li></p>
 				<li> Return with 0, indicating success </li>
 		  	</ol>
-		  	
+		  	<p><b>NOTE:</b> In real operating systems, read and write does not reflect on the disk immediately as in XOS. A concept called file caching is used, where blocks of the file is temporarily stored in an area in the  memory known as the <b>system file cache</b>. Read and write take place in this cache and the changes are committed to disk at a later point, usually when the file is closed. The policy of delaying the writing of the data to the file and holding it in the cache until the cache is flushed is called lazy writing. </p>
+		  	<p><b>NOTE</b>: Also, read and write are blocking system calls in real operating systems. When a process issues a Read/Write system call, the CPU will block the process and send a signal to the DMA (Direct Memory Access) controller, to transfer blocks from disk to memory or back directly. When this is done, the interrupt sends a signal back to the processor which wakes up the process which issued the system call. However in XOS, they are implemented as non-blocking system calls, with machine instructions like <tt>LOAD</tt> and <tt>STORE</tt> to transfer disk blocks to and from memory. XOS is a simplification of the actual Read and Write and reads or writes just one word at a time.</p>
 		  	<h5> Exercise :</h5>
 		  	<ol>
-		  		<li> Try executing the Read, Seek and Write system calls without creating or opening a file. Try to read from an empty file.</li>
+		  		<li> Try invoking the Read, Seek and Write system calls without creating or opening a file. Try to read from an empty file. These should return errors.</li>
 		  		<li> Change the seek position to the end of the file and try to write a new word into it. Try changing the seek position to an invalid location (greater than filesize). </li>
 		  		<li> Open a file and write some words into that file. Open the same file again and read the words using the new file descriptor.</li>
 		  	</ol>

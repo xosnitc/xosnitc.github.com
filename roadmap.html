@@ -1708,7 +1708,9 @@ endwhile;					</pre>
 							<li> Get the IP from its PCB and store it in top of the stack (Compute physical address of its SP)</li>
 							<li> And use <b>ireturn</b> instruction to transfer control to the new process.</li>
 						</ol>
-					<li> If its a Halt system call with more than one process in memory, return from the system call with -1 indicating failure. </li>	
+					<li> If its a Halt system call with more than one process in memory, return from the system call with -1 indicating failure.
+
+					 </li>	
 
 				</ol>
 	 		<p>Write APL programs to test Halt and Exit system calls. Compile and load it to the disk. Run the machine and check if the Exit() an Halt() works properly.</p>
@@ -1733,13 +1735,60 @@ endwhile;					</pre>
 			<article  id="navstage10" class="grid col-full">
 			<h2>Stage 10: Exception Handling and Demand Paging</h2>
 			<p> 
-				<a href="xos-spec.html#navsysroutines_exhandler">Exception Handler</a> in XOS handles exceptions caused by machine. When an exception occurs, the machine sets the <tt>EFR</tt> (Exception Flag Register) and calls the Exception Handler in Page 7. You must read about <a href="xsm-spec.html#navexcep">Exceptions</a> before proceeding .
+				<a href="xos-spec.html#navsysroutines_exhandler">Exception Handler</a> in XOS handles exceptions caused by machine. When an exception occurs, the machine sets the <tt>EFR</tt> (Exception Flag Register) and calls the Exception Handler in Page 7. You must read about <a href="xsm-spec.html#navexcep" class="imp">Exceptions</a> before proceeding .
 			</p>
 
 
 			This stage involves programming the Exception handler in SPL, compiling and loading it to disk. The OS Startup Code must be modified to load the exception handler from disk to memory on startup. 
 
-			The exception handler in XOS must be able to handle page faults. It must terminate the process on every other kinds of exceptions. The following set of actions must be performed sequentially by the Exception handler. 
+			<p>The exception handler in XOS must be able exceptions. On every exception other than the page fault, the process which caused the exception must be made to exit. A page fault exception occurs when the machine tries to translate a logical address by looking at an invalid page table entry. When a page fault exception occurs, the exception handler routine checks if the page resides in the disk. If it does, it must be loaded to the memory and the page table must be updated. Otherwise, the process has tried to access an illegal memory and hence the process must be made to exit after displaying an error.This is similar to 'Segmentation Fault' in UNIX. You may read this Wikipedia article on <a href="http://en.wikipedia.org/wiki/Segmentation_fault">Segmentation Fault</a> for more information. </p>
+
+
+			<h6>Modifications to OS Startup Code</h6>
+			The OS startup code must load the exception handler routine from disk block 1 to memory page 7. This was already done in the previous stages. When the INIT process is loaded, only the disk addresses of the code blocks needs to be set in the page table and its <tt>Auxiliary Information</tt> is set to "00" (Invalid and Unreferenced). Put the <tt>Physical Address</tt> field of remaining entries are set to -1 with  <tt>Auxiliary Information</tt>  as "00". The disk blocks need not be loaded initially. It will be loaded by the exception handler following the <a href="xos-spec.html#nnavmemmgmt_vm">pure demand paging strategy</a> as and when required. However the stack of the INIT process needs to be allocated as done in previous stages. This is because stack must be always present in the memory because an IRET instruction in any system routine will need to access the stack, and within a system routine, the machine will automatically halt on exceptions. Only the entry for physical page number corresponding to the stack in the Memory Free List is set as Used, as code pages are not loaded from disk to memory.
+
+
+			<br/><br/>
+			<h6>Modifications to Exec</h6>
+			When the new process is loaded, the pages are not loaded from disk to memory by the Exec system call. The page table is initialized with disk addresses of the corresponding code blocks and its auxiliary information is set to "00". The stack of the current process can be reused by the new process. The auxiliary information of the entry for stack must be "01" (not referenced and valid). Checking for sufficient number of pages required which was done in the previous implementation of Exec is not required and must be discarded. (Steps 3 and 4 in Exec System Call in previous stage must not be done).
+
+			<br/><br/>
+
+			<h6> Modifications to Fork </h6>
+			
+			<p> Valid code pages occupied by the parent process need not be duplicated for the child process as done for Fork earlier (step 4 in Fork system call). Step 4 in Fork System call must be modified as given below.
+
+However the stack page needs to be duplicated in the same way by checking the memory free list, allocating a free page and setting the 4th entry in the page table of the child process with the physical page number of the allocated page and auxiliary information as "01". 
+
+	
+					<ul>
+					<li> The <a href="xos-spec.html#navmemmgmt_mfl">memory free list</a> is checked to find 1 free pages. This free page is for the stack. Note that the stack must be allocated before hand and must always remain in memory as explained  earlier. If there is no free page in the memory, return with -1 indicating failure. </li> 
+					
+					<li> Otherwise, this free page is allocated as the stack of the child process. To do this, first update the memory free list by setting the  corresponding entry to 1,  indicating used. </li>
+					
+					<li> The stack page of the parent process must be copied word-by-word to the stack page of the child allocated now.</li>
+
+					<li> Find the per-process page table of the new child process. The child process' <b>PTBR</b> (address of its page table) is computed using the PID of the child process.  </li>
+					
+					<li> The 4th entry of the page table of the child process must be set to the physical page number of the stack page allocated and the auxiliary information of this entry is set to "01" (unreferenced and valid). </li>
+					
+					<li>For each valid code page of the parent process (indicated by 1 in the Valid bit of Auxiliary information of the corresponding page table entry), the disk address of this page must be stored in the child process page table. However at this point of time, the disk address of these pages are not available as it was known only when the program is loaded to memory. Hence, these pages must be stored back to a temporary area in the disk, so that we can initialize the page table entries of the child process with these disk addresses. The temporary area in the disk is known as the "Swap Area" and resides in disk blocks 448 - 511. Store each valid page in a free swap block, by checking the Disk Free List. For each swap block used, set the corresponding entry in the Disk Free List as 1 (indicating used). This swap disk block number is stored in the Physical Page Number field of the child process with auxiliary information set to "00" (not referenced and invalid). The exception handler is responsible for loading the page from the disk to memory when a page fault exception occurs. .</li>
+
+					<li> For each invalid page of the parent process (indicated by 0 in the Valid bit of the Auxiliary information of the corresponding page table entry), if it is a disk address less than 448 (not swap area), copy the entry directly to the page table of the child. This is because it is the actual disk address of the code of the program an can be reused for the child. If it is a disk address >= 448 (swap area), check the disk free list and get a free swap block. Copy the contents of current swap block to the newly allocated swap block by using scratchpad (load it from disk to scratchpad. Store it back to new disk block from the scratchpad). Set the page table of the child with the newly allocated swap block number and copy the <tt>Auxiliary Information</tt> from the parent's page table entry. Why can't we use the same swap block as the parent? This is because, the parent process might swap in the page from the swap area of the disk to the memory and it will clear this swap block, but the child process will still be having this swap block number in its page table. If the address is -1 indicating that the entry is not a disk block, copy the entry to the corresponding entry of the page table of the child process.
+					</li>
+ 
+ 					<li> Commit the disk free list back to the disk from the memory</li>
+					
+				</ul>
+			</p>
+			
+
+<br/><br/>
+
+			<h6> Programming Exception Handler </h6>
+		
+
+			<p>The following set of actions must be performed sequentially by the Exception handler. </p>
 			<ol>
 				<li> The details corresponding to the exception is stored in EFR register. The individual values in EFR must be extracted to registers. 
 					<div class="syntax">
@@ -1752,57 +1801,60 @@ Ip_addr = (EFR/1000);		//Gets value of IP at the point of exception
 					</div>
 				</li> 
 				<li> 
-					If <tt>Cause</tt> is a value other than 0, it means that it is not a page fault. In this case, display the cause of the error by the value in the Cause bit and exit the process which caused the exception. Follow the steps done in Exit system call implementation to exit a process.
+					If <tt>Cause</tt> is a value other than 0, it means that it is not a page fault. In this case, display the cause of the error according to the value in the Cause bit and exit the process which caused the exception. Follow the steps done in Exit system call implementation to exit a process.
 				</li>
 				<li>
 					If <tt>Cause</tt> it is 0 indicating a Page Fault, the following actions have to be performed.
 					<ol style="list-style-type:lower-roman">
 
-						<li> Allocate a free page by searching through the memory free list. If a free page is not found, follow the page replacement technique like <i>Second Chance Algorithm</i> to find a free page. The page replacement technique is explained in detail below. Store its page number in a register </li>
-						<li> Get the <tt>physical page number</tt> field corresponding to <tt>VPagenum</tt> from the Per-Process page table of process that caused the exception.The <tt>VPagenum</tt> obtained from EFR is the logical page number which caused the Page Fault. The physical page number can be obtained by checking the per-process page table.</li>
-						<li> If the <tt>physical page number</tt> field of the <a href="xos-spec.html#navpromgmt_page">Per-Process Page Table</a> is a disk block number, load the disk block to the free page allocated by the Page Replacement Algorithm. A valid disk block number will be from 13 to 447. Disk blocks 0 to 7 are reserved for the operating system, and pages 448 to 512, is for the stack. It will also have the <b>Valid/Invalid</b> bit as 0, indicating that it is an invalid entry, i.e. it is not a physical page number.  If the entry in the page table is not a disk address, this step can be omitted. </li>
-						<li> Set the Per-Process Page Table entry corresponding to  <tt>VPagenum</tt> with the page number of free page and set the <tt>Auxiliary flag</tt> as "11". (Referenced and Valid) </li>
-						<li> Place Ip_addr obtained from the EFR on top of the stack of the current process. The <tt>IRET</tt> instruction will set IP to this value. Tp do this, put Ip_addr to the memory location pointed to by the physical address of SP. Store Ip_addr as such on the stack, and do not increment it to one. This is because the instruction that caused the page fault execption needs to be executed again, once the page is allocated. Hence donot point it to the next instruction by incrementing 1. </li>
+						<li> Allocate a free page by searching through the memory free list. If a free page is found, update the memory free list entry for this page by setting it to 1 (indicating used). The page number is stored to a register. </li>
+						<li> If a free page is not found, follow the page replacement technique like <i>Second Chance Algorithm</i> to find a free page. The page replacement technique is explained in detail below. 
+						<br/><br/>
+						<h6>Page-Replacement Algorithm</h6>	
+						<p>The page replacement technique used in XOS is a <i>Second Chance Algorithm</i> which uses the <i>reference bits</i> in the auxiliary information. The victim page or the page to be replaced is selected by first searching the per-process page tables of all processes. The first page with <b>Reference bit</b> of the Auxiliary information as 0 is selected. While searching it sets the reference bit of auxiliary information of all pages with 0. This gives the page which is accessed recently a second chance before getting replaced. 
+						<ol style="list-style-type:lower-alpha">
+							<li>
+							It scans the valid entries in the  Per-Process Page Tables of all processes in a circular manner and checks for a page with reference bit 0. The 4th entry in each [page table is for stack and it needs to be present in the memory always. Hence it is skipped in this search and will never be selected for replacement.
+							</li>
+							<li>
+							The scanning starts from the current page table entry which issued a page fault.
+							</li>
+							<li> Whenever a page with reference bit 1 is encountered it is set to 0 and goes to the next page, giving a referenced page a second chance. </li>
+							<li> When a page with reference bit 0 is encountered, it is selected as the victim page. The steps to swap out the victim page is given as follows </li>
+								<ul >
+									<li> This page which is identified as the victim page, must be swapped out. Swapping out means storing it in the Swap area of the disk and freeing the memory page. The Memory copy of Disk Free List is scanned for a free block in the swap area (blocks 448 - 511). </li>
+									<li> If no free block is found the corresponding process will be made to exit following the steps in Exit system call.	</li>
+									<li> If a free block is found, the victim page in memory is stored in this disk block. </li>
+									<li>The Disk Free List is updated by setting the entry for the swap disk block as 0, indicating used. </li>
+									<li>The entry for the victim page in the Per-Process Page Table is updated with the address of this block in the swap area of the disk and is set as invalid (Valid bit in the auxiliary information is set to 0). </li>
+								</ul>
+							<li> The physical page number of the victim page allocated by the page replacement algorithm is stored in a register.</li>
+						</ol></p>
+
+					
+
+						<li> Get the <b>physical page number</b> field corresponding to <b>VPagenum</b> of EFR,  from the Per-Process page table of process that caused the exception. The <b>VPagenum</b> obtained from EFR is the logical page number which caused the Page Fault. The <b>Physical page number</b> field can be obtained by checking the per-process page table.</li>
+
+
+						<li> If the <b>Physical Page Number</b> field of the <a href="xos-spec.html#navpromgmt_page">Per-Process Page Table</a> is the actual disk block number corresponding to the code, load the disk block to the free page allocated. Disk block number for code blocks of programs can vary from 13 to 447. Disk blocks 0 to 12 are reserved for the operating system, and blocks 448 to 512, is for the Swap Area.  </li>
+
+						<li> If the <b>Physical Page Number</b> field of the <a href="xos-spec.html#navpromgmt_page">Per-Process Page Table</a> is the swap disk block number, load the disk block to the free page allocated and free the swap disk block by setting the corresponding entry as unused in the Disk Free List. Swap Disk block can vary from 448 to 511.
+
+						<li> If the <b>Physical Page Number</b> field of the <a href="xos-spec.html#navpromgmt_page">Per-Process Page Table</a> is -1, indicating that a reference to an invalid address was made by the user, exit from the current process by following the steps in Exit system call </li>
+
+						<li> Set the  <b>VPagenum</b> with the page number of memory page allocated and set the <b>Auxiliary information</b> as "11". (Referenced and Valid) </li>
+
+						<li> Increment SP by 1 because a new value needs to be placed on top of the stack. Place <b>Ip_addr</b> obtained from the EFR on top of the stack of the current process. The <b>Ip_addr</b> gives the address of the instruction which issued the page fault. This instruction must be executed again, and hence IP value must be set to point to this instruction. The <tt>IRET</tt> instruction will correctly set IP to this value. </li>
+
 						<li> Return to USER Mode using <b>ireturn</b> instruction. </li>
 					</ol>
 				</li>
 				<br/>
 			</ol>
-				<h6>Page-Replacement Algorithm</h6>
-				<p>The page replacement technique used in XOS is a <i>Second Chance Algorithm</i> which uses the <i>reference bits</i> in the auxiliary information. The victim page or the page to be replaced is is selected by first searching the per-process page tables of all processes. The first page with <b>Reference bit</b> of the Auxiliary infromation as 0 is selected. While searching it sets the reference bit of auxiliary infromation of all pages with 0. This gives the page which is accessed recently in class, a second chance before getting replaced. 
-					<ol>
-						<li>
-						It scans the valid entries in the  Per-Process Page Tables of all processes in a circluar manner and checks for a page with reference bit '0'.
-						</li>
-						<li>
-						The scanning starts from the current page table entry which issued a page fault.
-						</li>
-						<li> Whenever a page with reference bit '1' is encountered it is set to '0' and goes to the next page, giving a referenced page a second chance. </li>
-						<li> When a page with reference bit '0' is encountered it is selected as the victim page. Then </li>
-							<ol style="list-style-type:lower-roman">
-								<li> This page which is identified as the victim page, must be placed in teh stack. The Memory copy of Disk Free List is scanned for a free block in the swap area (blocks 448 - 511). </li>
-								<li> If no free block is found the corresponding process will be terminated	</li>
-								<li> If a free block is found, the victim page is stored in the memory is stored back the disk. The Disk Free List is updated. </li>
-								<li>The entry for the victim page in the Per-Process Page Table is updated with the address of this block in the swap area of the disk and is set as invalid. </li>
-							</ol>
-
-			</ol>
-			<h6>Modifications to OS Startup Code and Exec system calls</h6>
-			When a process is loaded, only the disk addresses of the corresponding code blocks needs to be set in the page table and its <tt>Auxiliary Information</tt> is set to "00" (Invalid and Unreferenced). Put the <tt>Physical Address</tt> field of remaining entries are set to -1 with  <tt>Auxiliary Information</tt>  as "00". The disk blocks need not be loaded initially. It will be loaded by <a href="xos-spec.html#nnavmemmgmt_vm">pure demand paging strategy</a> when required.
-			<br/>
-			<h6> Modifications to Fork </h6>
-			For Fork system call, when it copies the address space, duplicate all valid addresses as done earlier. If the entry in the page table of the parent process is invalid, 
-				<ul>
-					<li>
-						If it is a disk address less than 448 (not swap area), copy the entry directly to the page table of the child.
-					</li>
-					<li>
-						If it is a disk address >= 448 (swap area), check the disk free list and get a free swap block. Copy the contents of current swap block to the newly allocated swap block by using scratchpad. Set the page table of the child with the newly allocated swap block number and copy the <tt>Auxiliary Information</tt> from the parent's page table entry. 
-					</li>
-					<li>
-						If the address is -1 indicating that the entry is not a disk block, do nothing.
-					</li>
-				</ul>
+			
+	
+			
+		
 
 
 			</article>

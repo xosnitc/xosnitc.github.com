@@ -415,15 +415,33 @@ Now open test to see the contents of os_startup.xsm
 				<h6> Running </h6>
 				<p> Within your XSM directory, use the following command to run the simulator </p>
 				<ul>
-					<li><p> <tt>./xsm &ltoptional-flags&gt &ltpath-to-file&gt</tt></p></li>
-				</ul> 
-				<p>The <tt>&ltoptional-flags&gt</tt> can be : </p>
-				<ul>
-					<li><p> <tt>--debug or -d</tt>: This flag sets the machine into DEBUG mode. In DEBUG mode, the machine executes till the first BRKP instruction and then the user can  single step instruction by instruction or continue to the next BRKP instruction. </p></li>
-
-					<li><p> <tt>--timer=value or -t=value</tt>: This flag sets the number of instructions after which timer interrupt is triggered to <tt>value</tt>. <b>--timer=0</b> disables the timer. The range of value is from 0 to 1024   </p></li>
+					<li><p> <tt>--debug </tt>: This flag sets the machine into DEBUG mode when it encounters a <tt>breakpoint</tt> instruction. Further details given in the section below.</p></li>
+					<li><p> <tt>--timer=value</tt>: This flag sets the number of instructions after which timer interrupt is triggered to <tt>value</tt>. <b>--timer=0</b> disables the timer. The range of value is from 0 to 1024   </p></li>
 				</ul>
 
+				<h6> Debugging </h6>
+				<p> The <tt>--debug </tt> flag is used to debug the running machine. When this flag is set and the machine encounters a <tt>breakpoint</tt> instruction, it is set into the DEBUG mode. In this mode a prompt is displayed which allows the user to enter commands to inspect the state of the machine. </p>
+				<p> The commands in DEBUG mode are</p>
+				<ul>
+					<li><p> <tt> step / s </tt> :<br/> The execution proceeds by a single step</p> </li>
+					<li><p> <tt> continue / c </tt> :<br/> The execution proceeds till the next <tt>breakpoint</tt> instruction. </p> </li>
+					<li><p> <tt> reg / r </tt> :<br/> Displays the contents of all the registers in the machine namely <tt>IP, SP, BP, PTBR, PTLR, EFR, R0-R7, S0-S15 and T0-T3</tt>. <br/> Sample usage : <tt>reg S9, r EFR, reg SP </tt></p> </li>
+					<li><p> <tt> reg / r &ltregister_name&gt </tt> :<br/> Displayes the content of the specified register. <br/> Sample usage : <tt>r R5, reg PTLR</tt></p> </li>
+					<li><p> <tt> reg / r &ltregister_name_1&gt &ltregister_name_1&gt </tt> : <br/>Displays the contents of the registers from &ltregister_name_1&gt to &ltregister_name_1&gt.</p> </li>
+					<li><p> <tt> mem / m &ltpage_num&gt </tt> :<br/> Displays contents of the memory page &ltpage_num&gt. <br/> Sample usage : <tt>mem 5, m 20 </tt> </p> </li>
+					<li><p> <tt> mem / m &ltpage_num_1&gt &ltpage_num_2&gt </tt> :<br/> Displays the contents of the memory from pages &ltpage_num_1&gt to &ltpage_num_2&gt. <br/> Sample usage : <tt>mem 5 8, m 0 10 </tt></p> </li>
+					<li><p> <tt> pcb / p </tt> :<br/> Displays the Process Control Block of the process with the state as RUNNING.</p> </li>
+					<li><p> <tt> pcb / p &ltpid&gt </tt> :<br/> Displays the Process Control Block of the process with the given <tt>&ltpid&gt</tt>. </p> </li>
+					<li><p> <tt> pagetable / pt </tt> :<br/>Displays the Page Table at the location pointed by <tt>PTBR</tt> (Page Table Base Register). </p></li>
+					<li><p> <tt> pagetable / pt &ltpid&gt </tt> :<br/> Displays the &ltpid&gt<sup>th</sup> Page Table. </p></li>
+					<li><p> <tt> filetable / ft </tt> :<br/> Displays the System Wide Open File Table.</p></li>
+					<li><p> <tt> memfreelist / mf </tt> :<br/> Displays the Memory Free List.</p></li>
+					<li><p> <tt> diskfreelist / df </tt> :<br/> Displays the Memory copy of Disk Free List.</p></li>
+					<li><p> <tt> fat </tt> :<br/> Displays the memory copy of the File Allocation Table (FAT).</p></li>
+					<li><p> <tt> exit / e </tt> :<br/>  Exits the debug prompt and halts the machine.</p></li>
+					<li><p> <tt> help / h </tt> :<br/> Displays commands.</p></li>
+
+				</ul>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>

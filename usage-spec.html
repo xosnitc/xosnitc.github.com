@@ -419,9 +419,11 @@ Now open test to see the contents of os_startup.xsm
 				</ul> 
 				<p>The <tt>&ltoptional-flags&gt</tt> can be : </p>
 				<ul>
-					<li><p> <tt>--debug </tt>: This flag sets the machine into DEBUG mode. In DEBUG mode, the contents of registers is displayed after each instruction. </p></li>
-					<li><p> <tt>--timer=value</tt>: This flag sets the number of instructions after which timer interrupt is triggered to <tt>value</tt>. <b>--timer=0</b> disables the timer. The range of value is from 0 to 1024   </p></li>
+					<li><p> <tt>--debug or -d</tt>: This flag sets the machine into DEBUG mode. In DEBUG mode, the machine executes till the first BRKP instruction and then the user can  single step instruction by instruction or continue to the next BRKP instruction. </p></li>
+
+					<li><p> <tt>--timer=value or -t=value</tt>: This flag sets the number of instructions after which timer interrupt is triggered to <tt>value</tt>. <b>--timer=0</b> disables the timer. The range of value is from 0 to 1024   </p></li>
 				</ul>
+
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>

@@ -407,7 +407,7 @@ Enter n:
 Machine is halting
 </tt></pre>
 
-				<p> You may also write a few SPL programs on your own and run it on the machine to get familiarized with SPL syntax. Try using the instructions like <a href="spl-spec.html#navbreakpointstmt"><i>breakpoint</i></a> which translates to <a href="xsm-spec.html#navinstr_brkp">BRKP</a> machine instruction. This instruction is useful for debugging. It displays the contents of all the machine registers at the point where the instruction is used.</p>
+				<p> You may also write a few SPL programs on your own and run it on the machine to get familiarized with SPL syntax. Try using the instructions like <a href="spl-spec.html#navbreakpointstmt"><i>breakpoint</i></a> which translates to <a href="xsm-spec.html#navinstr_brkp">BRKP</a> machine instruction. This instruction is useful for debugging. Refer <a href="usage-spec.html#navxsm">XSM Debugger</a></p>
 
 			<p><h6>Assignment</h6> Read and understand the <a href="runtime.html">Runtime environment </a>.</p>
 			</article>
@@ -1219,11 +1219,13 @@ Machine is halting     </pre>
 
 			 <p>System-wide open file table stores the FAT index corresponding to each opened file and the number of times that file has been opened. It is located from words 1344 to 1471 of the memory in Page 2. System Wide Open File Table consists of a maximum of 64 entries. Therefore, there can be at most 64 open files in the system at any time. A single file may be opened more than once by the same or different processes.  But there will only be one entry corresponding to an opened file in the System Wide open file table. <b>File Open Count</b> field of the System Wide Open File Table entry stores the number of open instances of a file.  </p>
 
-			<p> Per-process open file table for each process resides in its <a href="xos-spec.html#navpromgmt_pcb">PCB</a>. Per-process open file table has an entry for each file opened by the process. The same file can be opened more than once by the same process. In that case, there will be multiple entries corresponding to each open instance of this file. The per-process open file table stores the index of the system-wide open file table entry for the file, and the LSEEK position of the open instance of a file. The LSEEK position indicates the location in the file where a word is read from or written to correspoinding to the open instance of the file. The index of the per-process open file table entry is known as the <b>file descriptor</b>. The Per-process open file table is stored in the PCB from words 15 to 30 (16 words). Since each entry has size 2 words, there are 8 entries in every per-process open file table. Therefore, a maximum of 8 files can be opened by a process at a time.   </p>
-			<br/>
+			<p> Per-process open file table for each process resides in its <a href="xos-spec.html#navpromgmt_pcb">PCB</a>. Per-process open file table has an entry for each file opened by the process. The same file can be opened more than once by the same process. In that case, there will be multiple entries corresponding to each open instance of this file. The per-process open file table stores the index of the system-wide open file table entry for the file, and the LSEEK position of the open instance of a file. The LSEEK position indicates the location in the file where a word is read from or written to corresponding to the open instance of the file. The index of the per-process open file table entry is known as the <b>file descriptor</b>. The Per-process open file table is stored in the PCB from words 15 to 30 (16 words). Since each entry has size 2 words, there are 8 entries in every per-process open file table. Therefore, a maximum of 8 files can be opened by a process at a time.   </p>
+	
+			<p> Note that while there is a per-process open file table corresponding to each process in memory, there is only one system-wide open file table in the memory which is shared by all the processes</p>
+
 			An example of how every file data structure is connected for a file opened by a process is shown below: <br/><br/>
 			<img src="doc/fileopen.png"/><br/><br/>
-			<p> In the above example, a process has already opened a file , and is now opening a new file (named 'myfile.dat'). The already opened file has an entry at index 0 in the Per-process Open File Table. For the newly opened file, an entry at index 1, is made in the Per-process Open File Table. The file has an entry in the system-wide open file table (at index 0). This index in the System-wide open file table is stored in the <b>Pointer to System-wide open file table entry</b> field in the Per-process open file table. The LSEEK position will be initialized to 0 as no words are read or written, or the position is not changed by the user.</p>
+			<p> In the above example, the current process has just opened a new file (named 'myfile.dat') and the entries in the 3 tables shown above have been set accordingly. The process has already opened another file which has its entry at index 0 in the Per-process Open File Table. For the newly opened file, an entry at index 1, is made in the Per-process Open File Table. The file has an entry in the system-wide open file table (at index 0). In the system wide open file table, the <b>File Open Count</b> field corresponding to this file has value 2 indicating that the file was opened two times, the first time by some other process and the second time by the current process. This index in the System-wide open file table is stored in the <b>Pointer to System-wide open file table entry</b> field in the Per-process open file table.  The LSEEK position will be initialized to 0 as no words are read or written. The OS programmer is responsible for making and updating entries in all these structures in the File system call implementation.</p>
 
 			<h6>Modifying OS Startup Code</h6>
 			
@@ -1358,12 +1360,13 @@ endwhile;					</pre>
 				
 				<li><p> Return from the system call with 0 (success)</li></p>
 			</ol>
-			<p><b>NOTE:</b> In UNIX, the end of files are marked using a special EOF character, and filesize is calculated as the number of bytes from the first byte to the EOF character. However in XOS, file size is always multiple of 512 and there is no EOF character. If a block is allocated to a file, that entire block will be considered part of the file. Hence erasing data blocks and basic blocks is necessary when a file is deleted, so that junk words in a data block of a deleted file won't appear in a newly created file.</p>
+			<p><b>NOTE:</b> In UNIX, the end of files are marked using a special EOF character, and filesize is calculated as the number of bytes from the first byte to the EOF character. However in XOS, file size is always multiple of 512 and there is no EOF character. If a block is allocated to a file, that entire block will be considered part of the file. Hence erasing data blocks and basic blocks is necessary when a file is deleted, so that junk words in a data block of a deleted file won't appear in a newly created file when this block is reallocated for it.</p>
+
 			<h5> Exercise : </h5>
 			<ol>
-				<li> Write an APL program to create a file (eg. "myfile.dat") using the Create system call. Check whether the file exists in the disk using xfs interface.</li>
+				<li> Write an APL program to create a file (eg. "myfile.dat") using the Create system call. Check whether the file exists in the disk using XFS interface.</li>
 				<li> Write another program to delete the file ("myfile.dat") created earlier.</li>
-				<li> Open a file and try to delete the file before executing a Close system call. It should return an error since opened files cannot deleted unless they are closed. Now try to delete after executing the Close system call. THis should successfully delete the file. Check using <b>ls</b> command in XFS interface to see if the file is deleted. Check the basic block and data blocks of the file to see if its erased completely</li>
+				<li> Open a file and try to delete the file before executing a Close system call. It should return an error since opened files cannot deleted unless they are closed. Now try to delete after executing the Close system call. This should successfully delete the file. Check using <b>ls</b> command in XFS interface to see if the file is deleted. Check the basic block and data blocks of the file to see if its erased completely</li>
 
 			</ol>	
 
@@ -1478,8 +1481,13 @@ endwhile;					</pre>
 				<li><p> Increment LSEEK Position by 1 in the Per-Process Open File Table. This is because a word is read and LSEEK position must be pointing to the next word. </li></p>
 				<li> Return with 0, indicating success </li>
 		  	</ol>
-		  	<p><b>NOTE:</b> In real operating systems, read and write does not reflect on the disk immediately as in XOS. A concept called file caching is used, where blocks of the file is temporarily stored in an area in the  memory known as the <b>system file cache</b>. Read and write take place in this cache and the changes are committed to disk at a later point, usually when the file is closed. The policy of delaying the writing of the data to the file and holding it in the cache until the cache is flushed is called lazy writing. </p>
-		  	<p><b>NOTE</b>: Also, read and write are blocking system calls in real operating systems. When a process issues a Read/Write system call, the CPU will block the process and send a signal to the DMA (Direct Memory Access) controller, to transfer blocks from disk to memory or back directly. When this is done, the interrupt sends a signal back to the processor which wakes up the process which issued the system call. However in XOS, they are implemented as non-blocking system calls, with machine instructions like <tt>LOAD</tt> and <tt>STORE</tt> to transfer disk blocks to and from memory. XOS is a simplification of the actual Read and Write and reads or writes just one word at a time.</p>
+		  	<p><b>NOTE 1:</b> In real operating systems, read and write does not reflect on the disk immediately as in XOS. A concept called <b>file caching</b> is used, where blocks of the file is temporarily stored in an area in the  memory known as the <b>system file cache</b>. A pointer to the file cache is maintained in the per-process file table or the system-wide open file table. Read and write take place in this cache and the changes are committed to disk at a later point or when the file is closed.  The policy of delaying the writing of the data to the file and holding it in the cache until the cache is flushed is called <b>lazy writing</b>. (Read <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/aa364218(v=vs.85).aspx">File Caching</a> in Windows</p>
+
+		  	<p><b>NOTE 2</b>: The read and write system calls are blocking system calls in real operating systems. When a process issues a read/write system call, the OS will block the process. This is done by setting the STATE field in the PCB to Waiting (this state is not available in XOS). It will then invoke DMA (Direct Memory Access) controller, to transfer blocks from disk to memory or back directly. It schedules another process for execution and transfers control to the new process. After the reading or writing is done, the DMA controller sends a signal back to the processor which invokes an interrupt. This interrupt wakes up the process which issued the read/write system call. This is done by setting up the return value for the system call in the stack of the process and changing the STATE of the process to Ready. The interrupt routine will return back to the currently running The scheduler is responsible for fetching the ready process (which issued the read/write system call) for execution at a later point in time. 
+		  	</p><p>
+		  	In XOS, they are implemented as non-blocking system calls, with machine instructions like <tt>LOAD</tt> and <tt>STORE</tt> to transfer disk blocks to and from memory. The corresponding interrupt routines make use of these instructions. The Read/Write system calls in XOS which read or write one words at a time are (over) simplifications of the actual read and write system calls in UNIX and other operating systems. </p>
+
+
 		  	<h5> Exercise :</h5>
 		  	<ol>
 		  		<li> Try invoking the Read, Seek and Write system calls without creating or opening a file. Try to read from an empty file. These should return errors.</li>
@@ -1560,11 +1568,11 @@ endwhile;					</pre>
 
 			<li> <p>If a PCB with <b>STATE</b> 0 is found, the index of this PCB in the ready list is stored in a register.  </li></p>
 	
-			<li><p> Set the <b>PID</b> field of the PCB of the child process with the value obtained in Step 2, i.e. the index within the ready list. In XOS, this value is considered to be the PID or Process Identifier for the child process. In general, for real operating systems PID need not be the index of the PCB in the ready list. </li></p>
+			<li><p> Set the <b>PID</b> field of the PCB of the child process with the value obtained in Step 2, i.e. the index within the ready list. In XOS, this value is considered to be the PID or Process Identifier for the child process. (In general, for real operating systems PID need not be the index of the PCB in the ready list. In fact, ready list is implemented as a ready queue in real operating systems.)  </li></p>
 						
 			<li><p> The valid pages in memory occupied by the currently executing process (parent process) must be duplicated in the memory. The pages used by the parent process are duplicated in the following way.</li>
 				<ul>
-					<li> The page table of the parent process is checked to count the number of valid pages. The <a href="xos-spec.html#navmemmgmt_mfl">memory free list</a> is checked to find an equal number of free pages. If there is not enough free pages in the memory free list, return with -1 indicating failure. </li> 
+					<li> The page table of the parent process is checked to count the number of valid pages. The <a href="xos-spec.html#navmemmgmt_mfl">memory free list</a> is checked to find an equal number of free pages. If there is not enough free pages in the memory free list, return from the system call with return value -1, indicating failure. </li> 
 					
 					<li> Otherwise an equal number of pages are allocated for the new child process. To do this, first update the memory free list by setting the  corresponding entries for required number of free pages to 1, indicating used. </li>
 					
@@ -1578,13 +1586,13 @@ endwhile;					</pre>
 				</p>
 			
 
-			<li><p>The <b>PTBR</b> field of the child process' PCB must be set to the <b>PTBR</b> computed in the previous step.</li></p>
+			<li><p>The <b>PTBR</b> field in the PCB of the child process must be set to the <b>PTBR</b> computed in the previous step.</li></p>
 
-			<li><p> The <b>IP</b> field of the child process must be set correctly. The code pages of the parent process and child process will be in different locations even though  the contents will be the same. Only the physical addresses of IP will be different for both the processes. The logical address of IP will be the same for the parent and the child process. So, get the value of IP from the top of the stack. This IP is logical and was pushed by the <tt>INT</tt> instruction at the time of the system call.  Store this value to the <b>IP</b> field in the PCB of the child process.</li></p>
+			<li><p> The <b>IP</b> field in the PCB of the child process must be set correctly. The code pages of the parent process and child process will be in different locations even though  the contents will be the same. Only the physical addresses of IP will be different for both the processes. The logical address of IP will be the same for the parent and the child process. So, get the value of IP from the top of the stack. This IP is logical and was pushed by the <tt>INT</tt> instruction at the time of the system call.  Store this value to the <b>IP</b> field in the PCB of the child process.</li></p>
 			
 			<li><p> Set the <b>SP</b> field in the PCB of the child process to SP - 1. This is because the stack of the parent process will contain the IP value on the top of the stack. When control returns back to the parent process, from the Fork system call, the value on the top of the stack is removed from the stack by the <tt>IRET</tt> instruction. This removal does not take place in the child process, as <tt>IRET</tt> transfers control back to the parent process. Hence you will have to manually set the decremented value of SP in the PCB of the child process. When the timer schedules the child process for execution, this value <b>SP - 1</b> from the PCB is taken and stored in SP. This gives an effect similar to removing the IP value on top of the stack. (<b>IMPORTANT NOTE</b>: Don't blindly follow the steps to get things done. Understand carefully why SP - 1 is stored in the PCB of the child process)</li></p>
 							
-			<li><p> The current register values (except PTBR, SP and IP) are copied to the child process' PCB. These include, BP, R0 to R7.  (You must copy the machine registers directly. <b>DO NOT</b> copy values from parent's PCB to child's PCB as it may have changed during execution).  </li></p>
+			<li><p> The current register values (except PTBR, SP and IP) are copied to the corresponding fields in the PCB of the child process. These include, BP, R0 to R7.  (You must copy the machine registers directly. <b>DO NOT</b> copy values from parent's PCB to child's PCB as it may have changed during execution).  </li></p>
 			
 
 
@@ -1619,7 +1627,7 @@ endwhile;					</pre>
 		  	</tt> 
 		  	<p>
 		  
-		  This indicates that the process is replicated after the Fork instruction. 'After Fork' printed twice. One is by the parent process and the other is by the child process. Since only one of the print statements is executed twice, setting IP is also done correctly.
+		  This indicates that the process is replicated after the Fork instruction. 'After Fork' is printed twice. One is by the parent process and the other is by the child process. Since only one of the print statements is executed twice, setting IP is also done correctly.
 
 			</p>
 
@@ -1642,7 +1650,7 @@ endwhile;					</pre>
 		 		</li></p>
 
 		 		<li><p>
-		 		Count the number of code blocks of the new program. An executable program on the disk can have at most 3 data blocks. Also, count the number of valid code pages (excluding the 4th entry for stack) in the page table of the current process. 
+		 		Count the number of code blocks of the new program. An executable program on the disk can have at most 3 code blocks. Also, count the number of valid code pages (excluding the 4th entry for stack) in the page table of the current process. 
 		 			<ul>
 		 				<li>If the current process has more code pages than the code blocks of the new program, deallocate them by setting memory free list entries to 0 (unused). Also set the physical page number field of the excess pages to -1 and auxiliary information as "00" in the page table of the current process. Note that the same page table will be used for the new process unlike Fork system call.</li>
 		 				<li>
@@ -1739,18 +1747,17 @@ endwhile;					</pre>
 			</p>
 
 
-			This stage involves programming the Exception handler in SPL, compiling and loading it to disk. The OS Startup Code must be modified to load the exception handler from disk to memory on startup. 
+			<p>This stage involves programming the Exception handler in SPL, compiling and loading it to disk. The OS Startup Code must be modified to load the exception handler from disk to memory on startup. </p>
 
-			<p>The exception handler in XOS must be able exceptions. On every exception other than the page fault, the process which caused the exception must be made to exit. A page fault exception occurs when the machine tries to translate a logical address by looking at an invalid page table entry. When a page fault exception occurs, the exception handler routine checks if the page resides in the disk. If it does, it must be loaded to the memory and the page table must be updated. Otherwise, the process has tried to access an illegal memory and hence the process must be made to exit after displaying an error.This is similar to 'Segmentation Fault' in UNIX. You may read this Wikipedia article on <a href="http://en.wikipedia.org/wiki/Segmentation_fault">Segmentation Fault</a> for more information. </p>
+			<p>The exception handler in XOS is responsible for handling exceptions. On every exception other than the page fault, the process which caused the exception must be made to exit. A page fault exception occurs when the machine tries to translate a logical address by looking at an invalid page table entry. When a page fault exception occurs, the exception handler routine checks if the page resides in the disk. If it does, it must be loaded to the memory and the page table must be updated. Otherwise, the process has tried to access an illegal memory and hence the process must be made to exit after displaying an error.This is similar to 'Segmentation Fault' in UNIX. You may read this Wikipedia article on <a href="http://en.wikipedia.org/wiki/Segmentation_fault">Segmentation Fault</a> for more information. </p>
 
 
 			<h6>Modifications to OS Startup Code</h6>
-			The OS startup code must load the exception handler routine from disk block 1 to memory page 7. This was already done in the previous stages. When the INIT process is loaded, only the disk addresses of the code blocks needs to be set in the page table and its <tt>Auxiliary Information</tt> is set to "00" (Invalid and Unreferenced). Put the <tt>Physical Address</tt> field of remaining entries are set to -1 with  <tt>Auxiliary Information</tt>  as "00". The disk blocks need not be loaded initially. It will be loaded by the exception handler following the <a href="xos-spec.html#nnavmemmgmt_vm">pure demand paging strategy</a> as and when required. However the stack of the INIT process needs to be allocated as done in previous stages. This is because stack must be always present in the memory because an IRET instruction in any system routine will need to access the stack, and within a system routine, the machine will automatically halt on exceptions. Only the entry for physical page number corresponding to the stack in the Memory Free List is set as Used, as code pages are not loaded from disk to memory.
-
+			The OS startup code must load the exception handler routine from disk block 1 to memory page 7. This was already done in the previous stages. When the INIT process is loaded, only the disk addresses of the code blocks needs to be set in the page table and its <b>Auxiliary Information</b> is set to "00" (Invalid and Unreferenced). Put the <b>Physical Address</b> field of remaining entries are set to -1 with  <b>Auxiliary Information</b>  as "00". The disk blocks need not be loaded initially. It will be loaded by the exception handler following the <a href="xos-spec.html#navmemmgmt_vm">pure demand paging strategy</a> as and when required. However the stack of the INIT process needs to be allocated as done in previous stages. This is because stack must be always present in the memory as an IRET instruction within any system routine will need to access the stack. Set the entry in the memory free list for the page allocated for the stack to 1 (indicating used). As code pages for INIT process are not loaded currently, the memory free list entries for the code pages must be set to 0 (unused).
 
 			<br/><br/>
 			<h6>Modifications to Exec</h6>
-			When the new process is loaded, the pages are not loaded from disk to memory by the Exec system call. The page table is initialized with disk addresses of the corresponding code blocks and its auxiliary information is set to "00". The stack of the current process can be reused by the new process. The auxiliary information of the entry for stack must be "01" (not referenced and valid). Checking for sufficient number of pages required which was done in the previous implementation of Exec is not required and must be discarded. (Steps 3 and 4 in Exec System Call in previous stage must not be done).
+			When the new process is loaded, the pages must not be loaded from disk to memory by the Exec system call. The page table is initialized with disk addresses of the corresponding code blocks and its auxiliary information is set to "00" (not referenced and invalid). Refer to <a href="xos-spec.html#navmemmgmt_vm">virtual memory</a>. The stack of the current process can be reused by the new process. The auxiliary information of the entry for stack must be "01" (not referenced and valid). Checking for sufficient number of pages required which was done in the previous implementation of Exec is not required and must be discarded. Hence, Steps 3 and 4 in Exec System Call in previous stage must not be done.
 
 			<br/><br/>
 
@@ -1758,11 +1765,10 @@ endwhile;					</pre>
 			
 			<p> Valid code pages occupied by the parent process need not be duplicated for the child process as done for Fork earlier (step 4 in Fork system call). Step 4 in Fork System call must be modified as given below.
 
-However the stack page needs to be duplicated in the same way by checking the memory free list, allocating a free page and setting the 4th entry in the page table of the child process with the physical page number of the allocated page and auxiliary information as "01". 
 
 	
 					<ul>
-					<li> The <a href="xos-spec.html#navmemmgmt_mfl">memory free list</a> is checked to find 1 free pages. This free page is for the stack. Note that the stack must be allocated before hand and must always remain in memory as explained  earlier. If there is no free page in the memory, return with -1 indicating failure. </li> 
+					<li> The <a href="xos-spec.html#navmemmgmt_mfl">memory free list</a> is checked to find 1 free page. This free page is for the stack. Note that the stack must be allocated beforehand and must always remain in memory as explained  earlier. If there is no free page in the memory, return with -1 indicating failure. </li> 
 					
 					<li> Otherwise, this free page is allocated as the stack of the child process. To do this, first update the memory free list by setting the  corresponding entry to 1,  indicating used. </li>
 					

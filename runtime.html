@@ -965,48 +965,7 @@ INT 7		// ...</pre></div>
 			
 			
 			
-			
-			<article  id="navsyscallshalt" class="grid col-full">
-			<h5>Halt</h5>
-			<div style="width:44%; float:left">
-			<i>Description</i>: <br/> If there is only one process in memory, it halts the system. Otherwise returns -1, indicating error. <br/>
-			<i>System Call No</i>: 0 <br/>
-			<i>Interrupt Routine No</i>: 7 <br/>
-			<i>Arguments</i>: None<br/>
-			<i>Return Value</i>:-1 on failure, halts on success </br>			
-			<div class="syntax"><pre>
-// <b>APL program to invoke Halt</b>
-
-integer main()
-{	
-	Halt();
-	return 0;
-}</pre></div>		</div>
-			<div class="syntax" style="width:52%; float:right"><pre>
-// <b> Compiled XSM machine code</b>
-
-START		
-MOV SP, 1535	// Initializes SP to 1535
-MOV BP, 1535	// Initializes BP to 1535
-JMP 00008	// Jump to main() function
-
-// main() function
-//================
-PUSH BP		
-MOV BP,SP
-// preparing stack for the system call
-MOV R0, 0	// Pushing system call number = 0
-PUSH R0		// ...
-// invoking interrupt routine
-INT 7		// Transfers control to interrupt 7
-POP R0		// Pops the system call number
-MOV R0, 10	// Default Exit() call
-PUSH R0		// ...
-INT 7		// ...</pre></div>			
-
-			</article>
-			
-			
+		
 			
 			
 			<div class="up grid col-one-third" style="float:right">

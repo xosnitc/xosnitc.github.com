@@ -93,6 +93,7 @@
 						<li><a href="#navcontinuestmt" class="subsec" >Continue Statement</a></li>
 						<li><a href="#navreturnstmt" class="subsec" >Return Statement</a></li>
 						<li><a href="#navrwstmt" class="subsec" >Read/Print Statement</a></li>
+						<li><a href="#navbreakpointstmt" class="subsec" >Breakpoint Statement</a></li>
 					<li><a href="#navsyscalls" class="sec" >System Calls</a></li>
 						<li><a href="#navcreate" class="subsec" >Create</a></li>
 						<li><a href="#navopen" class="subsec" >Open</a></li>
@@ -104,7 +105,6 @@
 						<li><a href="#navfork" class="subsec" >Fork</a></li>
 						<li><a href="#navexec" class="subsec" >Exec</a></li>
 						<li><a href="#navexit" class="subsec" >Exit</a></li>
-						<li><a href="#navhalt" class="subsec" >Halt</a></li>
 					<li><a href="#navexamples" class="sec" >Sample Programs</a></li>
 				</ul>
 			</menu>
@@ -150,7 +150,7 @@
 					<tr> <td>while</td> <td>do</td> <td>endwhile</td> <td>break</td> <td>continue</td> <td>integer</td> </tr>
 					<tr> <td>string</td> <td>main</td> <td>return</td> <td>decl</td> <td>enddecl</td> <td>Create</td> </tr>
 					<tr> <td>Open</td> <td>Write</td> <td>Seek</td> <td>Read</td> <td>Close</td> <td>Delete</td> </tr>
-					<tr> <td>Fork</td> <td>Exec</td> <td>Exit</td> <td></td> <td></td> <td></td> </tr>
+					<tr> <td>Fork</td> <td>Exec</td> <td>Exit</td> <td>breakpoint</td> <td></td> <td></td> </tr>
 				</table>
 				
 				</p>
@@ -449,13 +449,24 @@
 					<b>read</b> variable name;<br/>
 					&nbsp&nbsp&nbsp	<b>print</b> expression / string;</tt></p><br/>
 			</article>
+
+			<article  id="navbreakpointstmt" class="grid col-full">
+				<h4>Breakpoint Statement</h4>
+				<p> A <b>Breakpoint</b> statement is used to debug the program. The program when run in debug mode pauses the execution at this instruction.<br/>
+			</p>
+				<tt>&nbsp&nbsp&nbsp
+					<b>breakpoint</b>;</tt></p>
+			</article>
+		
+
+
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>	
 			
 			<article  id="navsyscalls" class="grid col-full">
 				<h2>System Calls</h2>
-				<p>System Calls allow the programs written in APL to interact with the operating system running on the XSM architecture. 11 System Calls are supported by APL.</p>
+				<p>System Calls allow the programs written in APL to interact with the operating system running on the XSM architecture. 10 System Calls are supported by APL.</p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -578,12 +589,7 @@
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>
 			
-			<article  id="navhalt" class="grid col-full">
-				<h4>Halt</h4>
-				<p>This system call is used to halt the machine.<br/>
-				<tt>&nbsp&nbsp&nbsp	
-					void <b>Halt</b> ();</tt></p>
-			</article>
+
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>

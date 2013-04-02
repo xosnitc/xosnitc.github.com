@@ -88,7 +88,6 @@
 					
 					<li><a href="#navsyscalls" class="sec" >System Calls</a></li>
 						<li><a href="#navsyscalls_intro" class="subsec" >Introduction</a></li>
-						<li><a href="#navsyscalls_machine" class="subsec" >Machine System Calls</a></li>
 						<li><a href="#navsyscalls_file" class="subsec" >File System Calls</a></li>
 						<li><a href="#navsyscalls_process" class="subsec" >Process System Calls</a></li>
 						
@@ -354,7 +353,7 @@ The INIT process is the first user program that is loaded by the OS after start 
 				
 			<article id="navmemmgmt_mfl" class="grid col-full">
 				<h4>Memory Free List</h4>
-				<p>The free list of the memory consists of 64 entries. Each entry is of size one word. Thus, the total size of the free list is thus 64 words. It is present in words 1280 to 1343 in memory. (words 256 to 319 of Page ) of the memory. Each entry of the free list contains a value of either 0 or 1 indicating whether the corresponding page in the memory is free or not respectively.</p>
+				<p>The free list of the memory consists of 64 entries. Each entry is of size one word. Thus, the total size of the free list is thus 64 words. It is present in words 1280 to 1343 in memory. (words 256 to 319 of Page ) of the memory. Each entry of the free list contains a value of either 0 or 1 indicating whether the corresponding page in the memory is free or not respectively. When a page is shared by more than one process the entry is set to the number of process sharing that page. </p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -447,23 +446,13 @@ Apart from the file system data structures XOS maintains details about files ope
 	
 			<article id="navsyscalls_intro" class="grid col-full">
 			<h4>Introduction</h4>
-			<p>System calls are interfaces through which a process communicates with the OS. Each system call has a unique name associated with it (Halt, Open, Read, Fork etc). Each of these names maps to a unique system call number. Each system call in turn causes a software interrupt to occur. Note that multiple system calls can be mapped to the same interrupt.</p>
+			<p>System calls are interfaces through which a process communicates with the OS. Each system call has a unique name associated with it ( Open, Read, Fork etc). Each of these names maps to a unique system call number. Each system call in turn causes a software interrupt to occur. Note that multiple system calls can be mapped to the same interrupt.</p>
 			<p> All the arguments to the system call are pushed into the user stack of the process which invokes the system call. The system call number is pushed as the last argument. (Refer <a href="apl-spec.html#navsyscalls" target="_blank" >System Calls</a> in APL Specification)  </p>
 			</article>			
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>	
-			
-			<article id="navsyscalls_machine" class="grid col-full">
-			<h4>Machine System Calls</h4>
-			<b>Halt </b></br>
-			<i>APL Syntax </i>: <tt>halt()</tt> <br/>
-			<i>System Call No. </i>: 0 <br/>
-			<p>The Halt system call is used to halt the machine. This system call works only when there is only one process running. Halt system call invokes the interrupt <tt>INT 7</tt>. </p>
-			</article>			
-			<div class="up grid col-one-third" style="float:right">
-			<a href="#navtop" title="Go back up"> top &uarr;</a>
-			</div>			
+	
 
 
 			<article id="navsyscalls_file" class="grid col-full">

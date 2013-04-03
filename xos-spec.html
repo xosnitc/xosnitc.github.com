@@ -136,6 +136,24 @@
 				<h2>Memory Organization</h2>
 				<p>The operating system organizes memory as given below</p>
 				<img src="doc/memorg.png" />
+
+				<table class="doctable">
+					<tr> <th>Block No</th> <th>Contents</th> <th>Word Address</th> <th> of Words</th></tr>
+					<tr> <td>0</td> <td>OS Startup Code</td> </tr>
+					<tr> <td>1</td> <td>Exception Handler</td> </tr>
+					<tr> <td>2</td> <td>Timer Interrupt Routine </td> </tr>
+					<tr> <td>3</td> <td>Interrupt 1 Routine </td> </tr>
+					<tr> <td>...</td> <td>...</td> </tr>
+					<tr> <td>9</td> <td>Interrupt 7 Routine </td> </tr>
+					<tr> <td>10</td> <td>File Allocation Table (FAT) </td> </tr>
+					<tr> <td>11</td> <td>Disk Free List </td> </tr>
+					<tr> <td>12</td> <td>Unallocated </td> </tr>
+					<tr> <td>13 -- 15</td> <td>INIT Code </td> </tr>
+					<tr> <td>16 -- 447</td> <td>User Blocks </td> </tr>
+					<tr> <td>448 -- 511</td> <td>Swap Area </td> </tr>
+				</table>
+
+
 				<ul>
 				<li> <a href="#navsysroutines_osstartup" >OS Startup Code</a> loads the INIT process to memory and sets up data structures like FAT, Disk Free List, and Memory Free List. It also loads the Interrupt Routines and Exception handler from the disk to the memory.</li>
 				<li>  <a href="#navpromgmt_pagetbl" >The Per-Process Page Tables</a>. used for address translation of logical addresses to physical address. </li>

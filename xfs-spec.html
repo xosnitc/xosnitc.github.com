@@ -70,7 +70,7 @@
 					<li><a href="#navdiskorg" class="sec">Disk Organization</a></li>
 					<li><a href="#navfile" class="sec">File</a></li>
 					<li><a href="#navfat" class="sec" >File Allocation Table (FAT)</a></li>				
-					<li><a href="#navdfl" class="sec" >Disk Free Lists</a></li>
+					<li><a href="#navdfl" class="sec" >Disk Free List</a></li>
 				</ul>
 			</menu>
 		</aside>
@@ -103,29 +103,32 @@
 				<p>The disk is organized by the file system as shown below.</p>
 				
 				<table class="doctable">
-					<tr> <th>Block No</th> <th>Contents</th> </tr>
-					<tr> <td>0</td> <td>OS Startup Code</td> </tr>
-					<tr> <td>1</td> <td>Exception Handler</td> </tr>
-					<tr> <td>2</td> <td>Timer Interrupt Routine </td> </tr>
-					<tr> <td>3</td> <td>Interrupt 1 Routine </td> </tr>
-					<tr> <td>...</td> <td>...</td> </tr>
-					<tr> <td>9</td> <td>Interrupt 7 Routine </td> </tr>
-					<tr> <td>10</td> <td>File Allocation Table (FAT) </td> </tr>
-					<tr> <td>11</td> <td>Disk Free List </td> </tr>
-					<tr> <td>12</td> <td>Unallocated </td> </tr>
-					<tr> <td>13 -- 15</td> <td>INIT Code </td> </tr>
-					<tr> <td>16 -- 447</td> <td>User Blocks </td> </tr>
-					<tr> <td>448 -- 511</td> <td>Swap Area </td> </tr>
+					<tr> <th>Block No</th> <th>Contents</th> <th># of blocks</th></tr>
+					<tr> <td>0</td> 		<td>OS Startup Code</td> 		<td>1</td> </tr>
+					<tr> <td>1 - 2</td> 	<td>Exception Handler</td> 		<td>2</td> </tr>
+					<tr> <td>3 - 4</td> 	<td>Timer Interrupt Routine</td><td>2</td> </tr>
+					<tr> <td>5 - 6</td> 	<td>Interrupt 1 Routine </td>	<td>2</td>	 </tr>
+					<tr> <td>7 - 8</td> 	<td>Interrupt 2 Routine </td> 	<td>2</td></tr>
+					<tr> <td>9 - 10</td> 	<td>Interrupt 3 Routine </td> 	<td>2</td></tr>
+					<tr> <td>11 - 12</td> 	<td>Interrupt 4 Routine </td> 	<td>2</td></tr>
+					<tr> <td>13 - 14</td> 	<td>Interrupt 5 Routine </td> 	<td>2</td></tr>
+					<tr> <td>15 - 16</td> 	<td>Interrupt 6 Routine </td> 	<td>2</td></tr>
+					<tr> <td>17 - 18</td> 	<td>Interrupt 7 Routine </td> 	<td>2</td></tr>
+					<tr> <td> 19 </td> 		<td>File Allocation Table (FAT) <td>1</td></td> </tr>
+					<tr> <td> 20 </td> 		<td>Disk Free List </td> 		<td>1</td></tr>
+					<tr> <td>21 - 23</td> 	<td>INIT Code </td> 			<td>3</td></tr>
+					<tr> <td>24 - 447</td> 	<td>User Blocks </td> 			<td>424</td></tr>
+					<tr> <td>448 - 511</td> <td>Swap Area </td>				<td>64</td> </tr>
 				</table>
 				
 				<br/><br/>
 				<ul style="list-style-type:disc">
 					<li> <p> <b>OS Startup Code</b> : Block 0 is the location of operating system code required during machine boot.  </p> </li>
-					<li> <p> <b>Exception and Interrupt Handler</b> : Blocks from 1 - 9 is intended for ISR (Interrupt Service Routines) for interrupt and exception handling which is done by the Operating System. </p> </li>
+					<li> <p> <b>Exception and Interrupt Handler</b> : Blocks from 1 - 18 are intended for Interrupt Routines for interrupt and exception handling which is done by the Operating System. </p> </li>
 					<li> <p> <b>FAT</b> or File Allocation table contains details about the files stored on the disk. </p> </li>
 					<li> <p> <b>Disk Free List</b> has 512 entries, one entry for each block in the disk, indicating whether it is used or unused. </p> </li>
 					<li> <p> <b>INIT</b> Code It has the code for INIT process, which is the first user program run by the OS after startup. </p> </li>
-					<li> <p> <b>User Blocks</b>. Blocks from 16 to 447 are used to store user data files and user programs. </p> </li>
+					<li> <p> <b>User Blocks</b>. Blocks from 24 to 447 are used to store user data files and user programs. </p> </li>
 					<li> <p> <b>Swap Area</b> The file system also provides a swap area for the operating system to implement demand paging. Swap Area is reserved exclusively for use by the operating system. </p> </li>
 				</ul>
 			</article>
@@ -162,7 +165,7 @@
 						</ul>
 					</li>
 				</ul>
-				<!--<img src="doc/.png" width="20%" /> -->
+				<img src="doc/basic_block_example.png" style="max-width:70%" /> 
 				<br/><b> Example </b>
 				<ul>
 					<li>Consider the example illustrated by figure 3. From the figure, we infer the following.</li>
@@ -191,7 +194,7 @@ basic block are marked as 0 </li>
 			<ul>
 			<li<Each entry is of size 8 words. </li>
 			<li>Total size of the FAT is thus 512 words, which occupies 1 block.</li>
-			<li>It is a disk data structure and occupies block number 10 on the disk.</li>
+			<li>It is a disk data structure and occupies block number 19 on the disk.</li>
 			</ul>
 				<h4>Structure of FAT</h4>
 				The structure of a FAT entry is shown below: <br/>
@@ -228,12 +231,12 @@ basic block are marked as 0 </li>
 			<li>The Free List of the disk consists of 512 entries. Each entry is of size
 			one word.</li>
 			<li>The size of the free list is thus 1 block or 512 words.</li>
-			<li>It is present in blocks 11 of the disk. Refer figure 1.</li>
+			<li>It is present in blocks 20 of the disk. Refer <a href="xfs-spec.html#navdiskorg">Disk Organization</a>.</li>
 			<li>For each block in the disk there is an entry in the Disk Free List which
 			contains a value of either 0 or 1 indicating whether the corresponding
 			block in the disk is free or used respectively. Each entry in the Disk
 			Free List is of size one word.</li>
-			<li>Blocks 0 to 12 are system reserved and are marked as 1 in the Disk
+			<li>Blocks 0 to 20 are system reserved and are marked as 1 in the Disk
 			Free List so that they cannot be used for saving user files. The file
 			system also ensures that user files are not stored on the Swap Area.</li>
 			</ul>

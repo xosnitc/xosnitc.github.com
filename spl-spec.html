@@ -226,7 +226,23 @@
 				These constants are mostly starting addresses of various OS components in the memory.
 				The predefined set of constants provided in SPL are</p>
 				
-				<img src="doc/predefined-constants.png" style="width:40%"/>
+		
+
+				<table class="doctable">
+					<tr> <th>Name</th> <th>Default Value</th> </tr>
+					<tr> <td>SCRATCHPAD</td> 	<td>512</td> </tr>
+					<tr> <td>PAGE_TABLE</td> 	<td>1024</td> </tr>
+					<tr> <td>MEM_LIST</td> 		<td>1280</td> </tr>
+					<tr> <td>FILE_TABLE</td> 	<td>1344 </td> </tr>
+					<tr> <td>READY_LIST</td> 	<td>1356</td> </tr>
+					<tr> <td>FAT</td> 		  	<td>2560 </td> </tr>
+					<tr> <td>DISK_LIST</td> 	<td>3072 </td> </tr>
+					<tr> <td>EX_HANDLER</td> 	<td>3584 </td> </tr>
+					<tr> <td>T_INTERRUPT</td> 	<td>4608 </td> </tr>
+					<tr> <td>INTERRUPT</td> 	<td>5632 </td> </tr>
+					<tr> <td>USER_PROG</td> 	<td>12800 </td> </tr>
+				</table>
+
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -464,7 +480,7 @@
 				
 					<tt>&nbsp&nbsp&nbsp<b>inline</b> "<i>MACHINE INSTRUCTION</i>";</tt>
 					<br/><br/>
-				<p>e.g. <tt>inline "JMP 7680";</tt></p>
+				<p>e.g. <tt>inline "JMP 11776";</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>

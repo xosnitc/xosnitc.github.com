@@ -353,7 +353,7 @@ The INIT process is the first user program that is loaded by the OS after start 
 				
 			<article id="navmemmgmt_mfl" class="grid col-full">
 				<h4>Memory Free List</h4>
-				<p>The free list of the memory consists of 64 entries. Each entry is of size one word. Thus, the total size of the free list is thus 64 words. It is present in words 1280 to 1343 in memory. (words 256 to 319 of Page ) of the memory. Each entry of the free list contains a value of either 0 or 1 indicating whether the corresponding page in the memory is free or not respectively. When a page is shared by more than one process the entry is set to the number of process sharing that page. </p>
+				<p>The free list of the memory consists of 64 entries. Each entry is of size one word. Thus, the total size of the free list is thus 64 words. It is present in words 1280 to 1343 in memory. (words 256 to 319 of Page ) of the memory. Each entry of the free list contains a value of either 0 or 1 indicating whether the corresponding page in the memory is free or not respectively. When a page is shared by more than one process, the entry stores the number of processes that share the page. </p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>

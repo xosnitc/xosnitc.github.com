@@ -1124,7 +1124,7 @@ endif;	</pre>
 				<i>Arguments</i>: filename <br/>
 				<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>
 				<br/>				
-				<p> The Create system calls takes the <tt>filename</tt> of the file to be created as the argument. It checks for a free block in the disk, and if its found, it will allocate this block as the basic block of the new file. It will create a FAT entry for the newly created file. Detailed instructions to do this is given below.
+				<p> The Create system call takes the <tt>filename</tt> of the file to be created as the argument. It checks for a free block in the disk, and if its found, it will allocate this block as the basic block of the new file. It will create a FAT entry for the newly created file. Detailed instructions to do this is given below.
 				
 				</p>
 
@@ -1568,7 +1568,8 @@ endwhile;					</pre>
 			<li> <p>If a PCB with <b>STATE</b> 0 is found, the index of this PCB in the ready list is stored in a register.  </li></p>
 	
 			<li><p> Set the <b>PID</b> field of the PCB of the child process with the value obtained in Step 2, i.e. the index within the ready list. In XOS, this value is considered to be the PID or Process Identifier for the child process. (In general, for real operating systems PID need not be the index of the PCB in the ready list. In fact, ready list is implemented as a ready queue in real operating systems.)  </li></p>
-						
+			<div id="navfork4">
+			</div>			
 			<li><p> The valid pages in memory occupied by the currently executing process (parent process) must be duplicated in the memory. The pages used by the parent process are duplicated in the following way.</li>
 				<ol style="list-style-type:lower-roman;">
 					<li> The page table of the parent process is checked to count the number of valid pages. The <a href="xos-spec.html#navmemmgmt_mfl">memory free list</a> is checked to find an equal number of free pages. If there is not enough free pages in the memory free list, return from the system call with return value -1, indicating failure. </li> 
@@ -1736,18 +1737,18 @@ endwhile;					</pre>
 
 
 			<h6>Modifications to OS Startup Code</h6>
-			The OS startup code must load the exception handler routine from disk block 1 to memory page 7. This was already done in the previous stages. When the INIT process is loaded, only the disk addresses of the code blocks needs to be set in the page table and its <b>Auxiliary Information</b> is set to "00" (Invalid and Unreferenced). The disk blocks need not be loaded initially. It will be loaded by the exception handler following the <a href="xos-spec.html#navmemmgmt_vm">pure demand paging strategy</a> as and when required. However the stack of the INIT process needs to be allocated as done in previous stages. This is because stack must be always present in the memory as an IRET instruction within any system routine will need to access the stack. Set the entry in the memory free list for the page allocated for the stack to 1 (indicating used). As code pages for INIT process are not loaded currently, the memory free list entries for the code pages must be set to 0 (unused).
+			The OS startup code must load the exception handler routine from disk block 1 to memory page 7. This was already done in the previous stages. When the INIT process is loaded, only the disk addresses of the code blocks needs to be set in the page table and its <b>Auxiliary Information</b> is set to "00" (Invalid and Unreferenced). The disk blocks need not be loaded initially. It will be loaded by the exception handler following the <a href="xos-spec.html#navmemmgmt_vm">pure demand paging strategy</a> as and when required. However the stack of the INIT process needs to be allocated as done in previous stages. This is because stack must be always present in the memory as an IRET instruction within any system routine will need to access the stack and page fault handler will not be invoked in KERNEL mode. Set the entry in the memory free list for the page allocated for the stack to 1 (indicating used). As code pages for INIT process are not loaded currently, the memory free list entries for the code pages must be set to 0 (unused).
 
 			<br/><br/>
 
 			<h6> Modifications to Fork </h6>
 			
-			<p> Valid code pages occupied by the parent process need not be duplicated for the child process as done for Fork earlier (step 4 in Fork system call). Step 4 in Fork System call must be modified as given below.
+			<p> Valid code pages occupied by the parent process need not be duplicated for the child process as done for Fork earlier (step 4 in Fork system call). <a href="#navfork4">Step 4</a> in Fork System call must be modified as given below.
 
 
 	
 					<ol style="list-style-type:lower-roman;">
-					<li> The <a href="xos-spec.html#navmemmgmt_mfl">memory free list</a> is checked to find 1 free page. This free page is for the stack. Note that the stack must be allocated beforehand and must always remain in memory as explained  earlier. If there is no free page in the memory, return with -1 indicating failure. </li> 
+					<li> The <a href="xos-spec.html#navmemmgmt_mfl">memory free list</a> is checked to find 1 free page. This free page is for the stack. Note that the stack must be allocated beforehand and must always remain in memory as explained  earlier. If there is no free page in the memory, return with -1 indicating failure. (<b>NOTE:</b> If a free page for stack is not available, some other page can be swapped out to the disk to make space for this page. However, this is avoided for simplicity.)</li> 
 					
 					<li> Otherwise, this free page is allocated as the stack of the child process. To do this, first update the memory free list by setting the  corresponding entry to 1,  indicating used. </li>
 					
@@ -1757,7 +1758,7 @@ endwhile;					</pre>
 					
 					<li> The 4th entry of the page table of the child process must be set to the physical page number of the stack page allocated and the auxiliary information of this entry is set to "01" (unreferenced and valid). </li>
 					
-					<li>  Copy the entries in the page table of the parent process (except the 4th entry which is for the stack) one by one to the page table of the child process including the auxiliary information. After copying each entry, do the following, 
+					<li>  Copy the entries in the page table of the parent process (except the 4th entry which is for the stack) one by one to the page table of the child process including the auxiliary information. After copying an entry, do the following, 
 					<br/>
 					<ul>
 						<li><p> If the entry is a valid code page in memory (indicated by 1 in the Valid bit of Auxiliary information of the corresponding page table entry), increment the entry for this page in the memory free list by 1. This will indicate that this page is shared by more than one process.  For e.g. if a process forks itself once, the memory free list entries for its code pages in memory will have value 2 (as compared to 1 for used). An entry 2 in the memory free list indicates that the corresponding page is shared by 2 processes. If it forks again, increment it to 3 and so on. In real operating systems this is done by a shared bit in the page table and a reference counter for each page. In XOS, the reference counter is implemented in the memory free list itself.</li> </p>
@@ -1775,20 +1776,20 @@ endwhile;					</pre>
 
 			<br/>
 			<h6>Modifications to Exec</h6>
-			When the new process is loaded, the code pages must not be loaded from disk to memory by the Exec system call. Only the disk block numbers of the code pages needs to be set in the page table.Hence, Steps 3 and 4 in Exec System Call in previous stage must not be done, and instead do the following,
+			When the new process is loaded, the code pages must not be loaded from disk to memory by the Exec system call. Only the disk block numbers of the code pages needs to be set in the page table. Hence, Steps 3 and 4 in Exec System Call in previous stage must not be done, and instead of those steps do the following,
 				
-				<p>3. Traverse through the page table entries of the current process and before setting the disk block number of the code blocks of the new program, check the following 
+				<p>Traverse through the page table entries excluding the entry for the stack of the current process and before setting the disk block number of the code blocks of the new program, check the following 
 					<ul>
 						<li> For each valid code page (indicated by 1 in the Valid bit of Auxiliary information of the corresponding page table entry), decrement the memory free list entry for this page by 1. This is because the reference count or the number of processes sharing that page will now get decremented by 1, since a new process will occupy the place of this process after Exec. This is similar to Copy-on-write mechanism in real operating system. Read this Wikipedia article on <a href="http://en.wikipedia.org/wiki/Copy-on-write">Copy-on-write</a> for more information. </li>
 						<li> If the entry is invalid (indicated by 0 in the Valid bit of the Auxiliary information of the corresponding page table entry) and the <b>Physical Page Number</b> field has value greater than or equal to 448, decrement the entry in the Disk Free List for this disk block by 1. This is because the swap block is not used by this process and the sharing count is reduced by 1.</li>
 
 					</ul>
-					4. The page table is initialized with disk addresses of the corresponding code blocks and its auxiliary information is set to "00" (not referenced and invalid). Refer to <a href="xos-spec.html#navmemmgmt_vm">virtual memory</a>.  Put the <b>Physical Address</b> field of remaining entries are set to -1 with  <b>Auxiliary Information</b>  as "00". The stack of the current process can be reused by the new process. The auxiliary information of the entry for stack must be "01" (not referenced and valid). 
+					The page table is initialized with disk addresses of the corresponding code blocks and its auxiliary information is set to "00" (not referenced and invalid). Refer to <a href="xos-spec.html#navmemmgmt_vm">virtual memory</a>.  Put the <b>Physical Address</b> field of remaining entries are set to -1 with  <b>Auxiliary Information</b>  as "00". The stack of the current process can be reused by the new process. The page table entry for stack is initialized as done in the previous implementation of Exec. The auxiliary information of the entry for stack must be "01" (not referenced and valid). 
 
 				</p>
 				
 			<h6>Modifications to Exit</h6>
-			Exit must not set the pages in the memory free list as 0 or unused directly. It must decrement the entry of the memory free list by 1. Modify Step 2 (iv) in Exit system call implementation accordingly.
+			Exit must not set the pages in the memory free list as 0 (or unused) directly. It must decrement the entry of the memory free list by 1. Modify Step 2 (iv) in Exit system call implementation accordingly. Moreover, if the page table entry is a disk block in the swap area of the disk, decrement the disk free list entry for this block by 1. This indicates that this block is no longer shared by the process which is about to Exit now. Commit the disk free list back to the disk.
 
 <br/><br/>
 
@@ -1807,30 +1808,35 @@ Ip_addr = (EFR/1000);		//Gets value of IP at the point of exception
 						
 					</div>
 				</li> 
+
+							
 				<li> 
-					If <tt>Cause</tt> is a value other than 0, it means that it is not a page fault. In this case, display the cause of the error according to the value in the Cause bit and exit the process which caused the exception. Follow the steps done in Exit system call implementation to exit a process.
+					If <tt>Cause</tt> is a value other than 0, it means that it is not a page fault. In this case, display the cause of the error according to the value in the Cause bit and exit the process which caused the exception. Follow the steps done in Exit system call implementation to exit a process. (<b>NOTE:</b> You may end up with many instructions if you copy the steps here, instead you may jump to the starting address of Interrupt 7, which is for Exit system call. To jump, you may use the <a href="spl-spec.html#navinlinestmt"><tt>inline</tt></a> SPL instruction.)
 				</li>
 				<li>
-					If <tt>Cause</tt> it is 0 indicating a Page Fault, the following actions have to be performed.
+					If <tt>Cause</tt> is 0 indicating a Page Fault, the following actions have to be performed.
 					<ol style="list-style-type:lower-roman">
 
-						<li> Allocate a free page by searching through the memory free list. If a free page is found, update the memory free list entry for this page by incrementing it to 1 (indicating used). The page number is stored to a register. </li>
-						<li> If a free page is not found, follow the page replacement technique like <i>Second Chance Algorithm</i> to find a free page. The page replacement technique is explained in detail below. 
+						<li> If the <b>Physical Page Number</b> field of the <a href="xos-spec.html#navpromgmt_page">Per-Process Page Table</a> corresponding to the <b>VPagenum</b> is -1, indicating that a reference to an invalid address was made by the user, the currently running process is made to exit</li>
+
+						<li> Otherwise, allocate a free page by searching through the memory free list. If a free page is found, update the memory free list entry for this page by incrementing it to 1 (indicating used). The page number is stored to a register. </li>
+						<li> If a free page is not found, follow the page replacement technique like the <i>Second Chance Algorithm</i> to find a free page. The page replacement technique is explained in detail below. 
 						<br/><br/>
+
 						<h6>Page-Replacement Algorithm</h6>	
-						<p>The page replacement technique used in XOS is a <i>Second Chance Algorithm</i> which uses the <i>reference bits</i> in the auxiliary information. The victim page or the page to be replaced is selected by first searching the per-process page tables of all processes. The first page with <b>Reference bit</b> of the Auxiliary information as 0 is selected. While searching it sets the reference bit of auxiliary information of all pages with 0. This gives the page which is accessed recently a second chance before getting replaced. 
+						<p>The page replacement technique used in XOS is the <i>Second Chance Algorithm</i> which uses the <i>reference bits</i> in the auxiliary information. The victim page or the page to be replaced is selected by first searching the per-process page tables of all processes. The first page with <b>Reference bit</b> of the Auxiliary information as 0 is selected. While searching for the page with reference bit 0, it sets the reference bit to 0 for every page table entry that is traversed during the search. This gives the page which is accessed recently a second chance before getting replaced. 
 						<ol style="list-style-type:lower-alpha">
 							<li>
-							It scans the valid entries in the  Per-Process Page Tables of all processes in a circular manner and checks for a page with reference bit 0. The 4th entry in each page table is for stack and it needs to be present in the memory always. Hence the 4th entry of the page table is skipped in this search and will NOT be selected for replacement.
+							It scans the valid entries in the  Per-Process Page Tables of all processes in a circular manner and checks for a page with reference bit 0. <b>The 4th entry in each page table is for stack and it needs to be present in the memory always. Hence the 4th entry of the page table is skipped in this search and will NOT be selected for replacement.</b>
 							</li>
 							<li>
 							The scanning starts from the current page table entry which issued a page fault.
 							</li>
-							<li> Whenever a page with reference bit 1 is encountered it is set to 0 and goes to the next page, giving a referenced page a second chance. </li>
+							<li> Whenever a page with reference bit 1 is encountered it is set to 0 and goes to the next page. </li>
 							<li> When a page with reference bit 0 is encountered, it is selected as the victim page. The steps to swap out the victim page is given as follows </li>
 								<ul>
 									<li> This page which is identified as the victim page, must be swapped out. Swapping out means storing it in the Swap area of the disk and freeing the memory page. The Memory copy of Disk Free List is scanned for a free block in the swap area (blocks 448 - 511). </li>
-									<li> If no free block is found the corresponding process will be made to exit following the steps in Exit system call.	</li>
+									<li> If no free block is found the corresponding process will be made to exit.	</li>
 									<li> If a free block is found, the victim page in memory is stored in this disk block. </li>
 									<li>The Disk Free List is updated by incrementing the entry for the swap disk block as 1, indicating used. </li>
 									<li>The entry for the victim page in the Per-Process Page Table is updated with the address of this block in the swap area of the disk and is set as invalid (Valid bit in the auxiliary information is set to 0). </li>
@@ -1847,11 +1853,11 @@ Ip_addr = (EFR/1000);		//Gets value of IP at the point of exception
 
 						<li> If the <b>Physical Page Number</b> field of the <a href="xos-spec.html#navpromgmt_page">Per-Process Page Table</a> is the swap disk block number, load the disk block to the free page allocated. Decrement the corresponding entry  in the Disk Free List for this disk block by 1. This is because this swap disk block is not used by this process and sharing count is reduced by 1. Swap Disk block can vary from 448 to 511.
 
-						<li> If the <b>Physical Page Number</b> field of the <a href="xos-spec.html#navpromgmt_page">Per-Process Page Table</a> is -1, indicating that a reference to an invalid address was made by the user, exit from the current process by following the steps in Exit system call </li>
 
-						<li> Set the  <b>VPagenum</b> with the page number of memory page allocated and set the <b>Auxiliary information</b> as "11". (Referenced and Valid) </li>
 
-						<li> Increment SP by 1 because a new value needs to be placed on top of the stack. Place <b>Ip_addr</b> obtained from the EFR on top of the stack of the current process. The <b>Ip_addr</b> gives the address of the instruction which issued the page fault. This instruction must be executed again, and hence IP value must be set to point to this instruction. The <tt>IRET</tt> instruction will correctly set IP to this value. </li>
+						<li> Set the Physical Page Number corresponding to the <b>VPagenum</b> in the page table with the page number of memory page allocated and set the <b>Auxiliary information</b> as "11". (Referenced and Valid) </li>
+
+						<li> Increment SP by 1 because a new value needs to be placed on top of the stack. Place <b>Ip_addr</b> obtained from the EFR on top of the stack of the current process. The <b>Ip_addr</b> gives the address of the instruction which issued the page fault. The <tt>IRET</tt> instruction will correctly set IP to this value and re-execute the instruction which caused the exception.</li>
 
 						<li> Return to USER Mode using <b>ireturn</b> instruction. </li>
 					</ol>
@@ -1864,7 +1870,28 @@ Ip_addr = (EFR/1000);		//Gets value of IP at the point of exception
 		
 			<br/><br/>
 			<h6>Testing</h6>
-			Do the same tests as you have done for Fork and Exec. It will run correctly if your virtual memory implementation is proper.
+			<p>
+			</p>
+			
+			<p> The sample APL program given below must be compiled, and loaded to disk as the INIT program and an executable program named "sample.xsm". This program forks and invokes Exec to itself within the child process (indicated with <tt>child_pid</tt> value -2). It prints the PID of the child in an infinite loop </p>
+
+			<div class="syntax">
+<pre>integer main()
+{
+	integer child_pid;
+	child_pid = Fork();
+	if(child_pid == -2) then
+		Exec("sample.xsm")
+	else
+		while(child_pid != -1) then
+			print(child_pid);
+		endwhile;
+	endif;
+
+}</pre>
+			</div>
+
+			<p> The output you get will print process ids from 1 to 32 repeatedly in an infinite loop. 32 is the maximum number of processes in XOS.
 
 			</article>
 			<div class="up grid col-one-third" style="float:right">

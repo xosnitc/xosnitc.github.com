@@ -286,15 +286,9 @@
 				<h2>Instructions</h2>
 				<h4>Introduction</h4>
 				<p>
-				Every instruction in XSM is 2 words long. The instructions provided by the XSM architecture can be classified into privileged 
-				and unprivileged instructions.
+				Every instruction in XSM is 2 words long. The instructions provided by the XSM architecture can be classified into privileged and unprivileged instructions.
 				</p>
-				
-				<table class="doctable">
-					<tr> <th>0 - 511</th> <th>512 - 1023</th> <th> ... </th> <th>261632 - 262143</th></tr>
-					<tr> <td>Block 0</td> <td>Block 1</td> <td> ... </td> <td>Block 511 </td> </tr>
-				</table>
-				
+			
 			</article>
 			
 			<div class="up grid col-one-third" style="float:right">
@@ -576,7 +570,7 @@
 				<h4>Timer Interrupt</h4> 
 				<p> Timer Interrupt is automatically triggered by the machine, at set intervals of instructions.
 				This interrupt cannot be invoked using an <tt>INT</tt> instruction.
-				It transfers control of execution, i.e. changes the value of <tt>IP</tt> to page number 8 (address = 4096). 
+				It transfers control of execution, i.e. changes the value of <tt>IP</tt> to page number 9 (address = 4608). 
 				This is the timer interrupt which interrupts the processor. 
 				Generally it is supposed to contain the code for the scheduler of the operating system, 
 				which schedules the CPU time among the various active processes.</p>			
@@ -600,31 +594,66 @@
 				Syntax : <tt>INT n</tt><br/>
 				The <tt>INT</tt> instruction passes control to the Interrupt Service Routine (ISR) for this interrupt located at the 
 				physical address computed using the value n. 
-				The physical address of the ISR corresponding to interrupt number n is given by:<br/>
-					<tt>Physical Address = (8 + n) x Page Size </tt><br/>
+				The physical address of the ISR corresponding to interrupt number <i>n</i> is given by:<br/>
+					<tt>Physical Address = (9 + 2<i>n</i>) x Page Size </tt><br/>
 				Note that the interrupts are disabled once this instruction is executed as interrupts cannot be executed in kernel mode.<br/>
 				The 7 <tt>INT</tt> instructions are :</p>
 				
 				<ul>
 					<li><p> <tt>INT 1</tt><br/>
-					It transfers control of execution to page number 9 (address = 4608) </p></li>
-					<li><p> <tt>INT 2</tt><br/>
-					It transfers control of execution to page number 10 (address = 5120) </p></li>
-					<li><p> <tt>INT 3</tt><br/>
 					It transfers control of execution to page number 11 (address = 5632) </p></li>
-					<li><p> <tt>INT 4</tt><br/>
-					It transfers control of execution to page number 12 (address = 6144) </p></li>
-					<li><p> <tt>INT 5</tt><br/>
+					<li><p> <tt>INT 2</tt><br/>
 					It transfers control of execution to page number 13 (address = 6656) </p></li>
+					<li><p> <tt>INT 3</tt><br/>
+					It transfers control of execution to page number 15 (address = 7680) </p></li>
+					<li><p> <tt>INT 4</tt><br/>
+					It transfers control of execution to page number 17 (address = 8704) </p></li>
+					<li><p> <tt>INT 5</tt><br/>
+					It transfers control of execution to page number 19 (address = 9728) </p></li>
 					<li><p> <tt>INT 6</tt><br/>
-					It transfers control of execution to page number 14 (address = 7168) </p></li>
+					It transfers control of execution to page number 21 (address = 10752) </p></li>
 					<li><p> <tt>INT 7</tt><br/>
-					It transfers control of execution to page number 15 (address = 7680). </p></li>
+					It transfers control of execution to page number 23 (address = 11776). </p></li>
 				</ul>
 				<br/>
 				Brief memory outline for XSM is given below.<br/><br/>
-				<img src="doc/Interrupt-layout.png" style="width:70%" width="5%" />	
+<table class="doctable">
+	<tr> <th>Page No</th> 	<th>Contents</th> 			<th>Word Address</th> <th> # of Words</th></tr>
+	<tr> <td>0</td> 		<td>ROM Code</td> 				<td>0 - 511</td>	 <td> 512 </td></tr>
+	<tr> <td>1</td> 		<td>OS Startup Code</td>  <td>512 - 1023</td>		<td> 512 </td> </tr>
+	<tr> <td>2 - 7</td> 		<td>OS Structures</td> <td>1024 - 3583</td>		<td>2560</td></tr>
+
+	<tr> <td  >7</td> 		<td  >Exception Handler 	<td  >3584 - 4607</td>  <td  >1024</td> </tr>
+
+
+	<tr> <td  >9 - 10</td> 		<td  >Timer Interrupt Routine 	<td  >4608 - 5631</td>  <td  >1024</td> </tr>
+
+	<tr> <td  >11 - 12</td> 		<td  >Interrupt 1 Routine 	<td  >5632 - 6655</td>  <td  >1024</td> </tr>
+
+
+	<tr> <td  >13 - 14</td> 		<td  >Interrupt 2 Routine 	<td  >6656 - 7679</td>  <td  >1024</td> </tr>
+
+
+	<tr> <td  >15 - 16</td> 		<td  >Interrupt 3 Routine 	<td  >7680 - 8703</td>  <td  >1024</td> </tr>
+
+
+	<tr> <td  >17 - 18</td> 		<td  >Interrupt 4 Routine 	<td  >8704 - 9727</td>  <td  >1024</td> </tr>
+
+
+	<tr> <td  >19 - 20</td> 		<td  >Interrupt 5 Routine 	<td  >9728 - 10751</td>  <td  >1024</td> </tr>
+
+
+	<tr> <td  >21 - 22</td> 		<td  >Interrupt 6 Routine 	<td  >10752 - 11775</td>  <td  >1024</td> </tr>
+
+
+	<tr> <td  >23 - 24</td> 		<td  >Interrupt 7 Routine 	<td  >11776 - 12799</td>  <td  >1024</td> </tr>
+
+	
+	<tr > <td  >25 - 63</td> 		<td  >INIT and User Programs 	<td  >12800 - 32767</td>  <td  >19968</td> </tr>
+
+</table>
 			</article>
+			<br/><br/>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>

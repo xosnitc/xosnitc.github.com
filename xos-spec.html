@@ -135,25 +135,54 @@
 			<article id="navmemorg" class="grid col-full">			
 				<h2>Memory Organization</h2>
 				<p>The operating system organizes memory as given below</p>
-				<img src="doc/memorg.png" />
+				
 
-				<table class="doctable">
-					<tr> <th>Block No</th> <th>Contents</th> <th>Word Address</th> <th> of Words</th></tr>
-					<tr> <td>0</td> <td>OS Startup Code</td> </tr>
-					<tr> <td>1</td> <td>Exception Handler</td> </tr>
-					<tr> <td>2</td> <td>Timer Interrupt Routine </td> </tr>
-					<tr> <td>3</td> <td>Interrupt 1 Routine </td> </tr>
-					<tr> <td>...</td> <td>...</td> </tr>
-					<tr> <td>9</td> <td>Interrupt 7 Routine </td> </tr>
-					<tr> <td>10</td> <td>File Allocation Table (FAT) </td> </tr>
-					<tr> <td>11</td> <td>Disk Free List </td> </tr>
-					<tr> <td>12</td> <td>Unallocated </td> </tr>
-					<tr> <td>13 -- 15</td> <td>INIT Code </td> </tr>
-					<tr> <td>16 -- 447</td> <td>User Blocks </td> </tr>
-					<tr> <td>448 -- 511</td> <td>Swap Area </td> </tr>
-				</table>
+<table class="doctable">
+	<tr> <th>Page No</th> 	<th>Contents</th> 			<th>Word Address</th> <th> # of Words</th></tr>
+	<tr> <td>0</td> 		<td>ROM Code</td> 				<td>0 - 511</td>	    <td> 512 </td></tr>
+	<tr> <td>1</td> 		<td>OS Startup Code*/Scratchpad</td>  <td>512 - 1023</td><td> 512 </td> </tr>
+	<tr> <td rowspan="4" style="vertical-align:middle">2</td> 		<td>Per-process page tables 	<td>1024 - 1279</td>  <td>256</td> </tr>
+	<tr> 		<td>Memory Free List</td>			<td>1280 - 1343</td>  <td>64</td> </tr>
+	<tr> 		<td>System-wide open file table</td><td>1344 - 1471</td>  <td>128</td> </tr>
+	<tr> 		<td>Unallocated</td>		 		<td>1472 - 1535</td>  <td>64</td> </tr>
 
+	<tr> <td >3</td> 		<td rowspan="2" style="vertical-align:middle">Ready list of PCBs 	<td rowspan="2" style="vertical-align:middle">1536 - 2559</td>  <td rowspan="2" style="vertical-align:middle">1024</td> </tr>
+	<tr> <td>4</td>			 </tr>
 
+	<tr> <td>5</td>	<td>File Allocation Table</td>		 <td>2560 - 3071</td>  <td>512</td> </tr>
+	<tr> <td>6</td>	<td>Disk Free List</td>		 		<td>3072 - 3583</td>  <td>512</td> </tr>
+
+	<tr> <td >7</td> 		<td rowspan="2" style="vertical-align:middle">Exception Handler 	<td rowspan="2" style="vertical-align:middle">3584 - 4607</td>  <td rowspan="2" style="vertical-align:middle">1024</td> </tr>
+	<tr> <td>8</td>			 </tr>
+
+	<tr> <td >9</td> 		<td rowspan="2" style="vertical-align:middle">Timer Interrupt Routine 	<td rowspan="2" style="vertical-align:middle">4608 - 5631</td>  <td rowspan="2" style="vertical-align:middle">1024</td> </tr>
+	<tr> <td>10</td>			 </tr>
+
+	<tr> <td >11</td> 		<td rowspan="2" style="vertical-align:middle">Interrupt 1 Routine 	<td rowspan="2" style="vertical-align:middle">5632 - 6655</td>  <td rowspan="2" style="vertical-align:middle">1024</td> </tr>
+	<tr> <td>12</td>			 </tr>
+
+	<tr> <td >13</td> 		<td rowspan="2" style="vertical-align:middle">Interrupt 2 Routine 	<td rowspan="2" style="vertical-align:middle">6656 - 7679</td>  <td rowspan="2" style="vertical-align:middle">1024</td> </tr>
+	<tr> <td>14</td>			 </tr>
+
+	<tr> <td >15</td> 		<td rowspan="2" style="vertical-align:middle">Interrupt 3 Routine 	<td rowspan="2" style="vertical-align:middle">7680 - 8703</td>  <td rowspan="2" style="vertical-align:middle">1024</td> </tr>
+	<tr> <td>16</td>			 </tr>
+
+	<tr> <td >17</td> 		<td rowspan="2" style="vertical-align:middle">Interrupt 4 Routine 	<td rowspan="2" style="vertical-align:middle">8704 - 9727</td>  <td rowspan="2" style="vertical-align:middle">1024</td> </tr>
+	<tr> <td>18</td>			 </tr>
+
+	<tr> <td >19</td> 		<td rowspan="2" style="vertical-align:middle">Interrupt 5 Routine 	<td rowspan="2" style="vertical-align:middle">9728 - 10751</td>  <td rowspan="2" style="vertical-align:middle">1024</td> </tr>
+	<tr> <td>20</td>			 </tr>
+
+	<tr> <td >21</td> 		<td rowspan="2" style="vertical-align:middle">Interrupt 6 Routine 	<td rowspan="2" style="vertical-align:middle">10752 - 11775</td>  <td rowspan="2" style="vertical-align:middle">1024</td> </tr>
+	<tr> <td>22</td>			 </tr>
+
+	<tr> <td >23</td> 		<td rowspan="2" style="vertical-align:middle">Interrupt 7 Routine 	<td rowspan="2" style="vertical-align:middle">11776 - 12799</td>  <td rowspan="2" style="vertical-align:middle">1024</td> </tr>
+	<tr> <td>24</td>			 </tr>
+	
+	<tr > <td>25</td> 		<td rowspan="2" style="vertical-align:middle">INIT and User Programs 	<td rowspan="2" style="vertical-align:middle">12800 - 32767</td>  <td rowspan="2" style="vertical-align:middle">19968</td> </tr>
+	<tr> <td>... 63</td></tr>
+</table>
+		<p>* Page Number 1 (OS Startup Code) will be used as scratchpad after bootup
 				<ul>
 				<li> <a href="#navsysroutines_osstartup" >OS Startup Code</a> loads the INIT process to memory and sets up data structures like FAT, Disk Free List, and Memory Free List. It also loads the Interrupt Routines and Exception handler from the disk to the memory.</li>
 				<li>  <a href="#navpromgmt_pagetbl" >The Per-Process Page Tables</a>. used for address translation of logical addresses to physical address. </li>
@@ -324,7 +353,7 @@
 				<p>The operating system allows multiple processes to be run on the machine and manages the system resources among these processes. This process of simultaneous execution of multiple processes is known as multiprogramming.
 				</p>
 				<p>  
-				To support multiprogramming in the system, the kernel makes use of the scheduler which is present in the Timer Interrupt Service Routine in Page 8 of the memory.
+				To support multiprogramming in the system, the kernel makes use of the scheduler which is present in the Timer Interrupt Routine in pages 9 and 10 of the memory.
 				</p>
 				</article>			
 				<div class="up grid col-one-third" style="float:right">
@@ -333,7 +362,7 @@
 				
 				<article id="navpromgmt_init" class="grid col-full">
 				<h4><tt>INIT</tt> and other user programs</h4>
-The INIT process is the first user program that is loaded by the OS after start up. The INIT and other user processes uses the memory pages 16 - 63 for execution (Code Area and Stack).
+The INIT process is the first user program that is loaded by the OS after start up. The INIT and other user processes uses the memory pages 25 to 63 for execution.
 
 				</article>			
 				<div class="up grid col-one-third" style="float:right">
@@ -405,7 +434,7 @@ Apart from the file system data structures XOS maintains details about files ope
 			
 			<article id="navfiles_fat" class="grid col-full">
 			<h4>File Allocation Table</h4>
-			<p> <i>File allocation table (FAT)</i> is a table that has an entry for each file present in the disk. FAT is stored in disk block 10 in the XFS disk. FAT is loaded into page number 5 of the memory when the OS starts. </p>
+			<p> <i>File allocation table (FAT)</i> is a table that has an entry for each file present in the disk. FAT is stored in disk block 19 in the XFS disk. FAT is loaded into page number 5 of the memory when the OS starts. </p>
 			<p>The structure of FAT entry is given below</p>
 			<table class="doctable" >
 			<tr><th>0</th><th>1</th><th>2</th><th>3 - 7</th></tr>
@@ -420,7 +449,7 @@ Apart from the file system data structures XOS maintains details about files ope
 
 			<article id="navfiles_dfl" class="grid col-full">
 			<h4>Disk Free List</h4>
-			<p> The Disk Free List is a data structure used for keeping track of unused blocks in the disk. The memory copy of Disk Free List is stored in the <i>page number</i> 6. It is stored in <i>block number</i> 11 in the disk.
+			<p> The Disk Free List is a data structure used for keeping track of unused blocks in the disk. The memory copy of Disk Free List is stored in the <i>page number</i> 6. It is stored in <i>block number</i> 20 in the disk.
  </p>	
 			</article>	
 			<div class="up grid col-one-third" style="float:right">
@@ -475,7 +504,7 @@ Apart from the file system data structures XOS maintains details about files ope
 
 			<article id="navsyscalls_file" class="grid col-full">
 			<h4>File System Calls</h4>
-			<p>File system calls are used by a process when it has to create, delete or manipulate Data files that reside on the disk(file system). There are seven file system calls. An interrupt is associated with each system call. All the necessary arguments for a system call are available in the user stack with the system call number as the last argument. </p>
+			<p>File system calls are used by a process when it has to create, delete or manipulate Data files that reside on the disk (file system). There are seven file system calls. An interrupt is associated with each system call. All the necessary arguments for a system call are available in the user stack with the system call number as the last argument. </p>
 			<p><b>NOTE:</b> Filenames must not exceed 10 characters </p>
 			<b>Create</b></br>
 			<i>APL Syntax </i>: <tt>int Create(fileName)</tt> <br/>
@@ -574,7 +603,7 @@ Apart from the file system data structures XOS maintains details about files ope
 			
 			<article id="navsysroutines_exhandler" class="grid col-full">
 			<h4>Exception Handler</h4>
-			<p>When the machine encounters an exception it sets EFR (Exception Flag Register) with details corresponding to the exception and calls the exception handler routine (Page No. 7 in memory). (Refer <a href="xsm-spec.html#navexcep" target="blank"> Exceptions in XSM</a>) </p>
+			<p>When the machine encounters an exception it sets EFR (Exception Flag Register) with details corresponding to the exception and calls the exception handler routine (pages 7 and 8 in memory). (Refer <a href="xsm-spec.html#navexcep" target="blank"> Exceptions in XSM</a>) </p>
 			<p>The structure of EFR is given below </p>
 
 			<img src="doc/EFR-structure.png" style="width:40%" width="20%">
@@ -590,7 +619,7 @@ which caused the exception.
 
 			<article id="navsysroutines_timer" class="grid col-full">
 			<h4>Timer Interrupt Routine</h4>
-			<p>The Timer Interrupt Routine is responsible for context switch, i.e. storing the state (values of the registers) of the currently executing process to the PCB, and setting the registers with values from the PCB of the next ready process in the Ready List of PCBs. A scheduler is responsible for selecting a ready process from this list. The Scheduler code is also contained in the Timer Interrupt Routine. The Timer Interrupt routine resides in page 8 of the memory.</p>
+			<p>The Timer Interrupt Routine is responsible for context switch, i.e. storing the state (values of the registers) of the currently executing process to the PCB, and setting the registers with values from the PCB of the next ready process in the Ready List of PCBs. A scheduler is responsible for selecting a ready process from this list. The Scheduler code is also contained in the Timer Interrupt Routine. The Timer Interrupt routine resides in pages 9 and 10 of the memory.</p>
 			</article>		
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -598,7 +627,7 @@ which caused the exception.
 			
 			<article id="navsysroutines_interrupt" class="grid col-full">
 			<h4>Interrupt Routines</h4>
-			<p>The Interrupts from 1 to 7 are invoked by the user processes through system calls. Each interrupt routine has code corresponding to one or more system calls. Interrupt routines for interrupts 1 to 7 reside in memory pages 9 to 15. Refer <a href="#navsyscalls" >System Calls</a>. </p>
+			<p>The Interrupts from 1 to 7 are invoked by the user processes through system calls. Each interrupt routine has code corresponding to one or more system calls. Every interrupt routine occupies 2 pages in memory. Interrupt routines for interrupts 1 to 7 reside in memory pages 11 to 24. Refer <a href="#navsyscalls" >System Calls</a>. </p>
 			</article>		
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>

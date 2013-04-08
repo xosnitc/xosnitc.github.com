@@ -496,7 +496,7 @@ Machine is halting
 				<ol>
 					Interrupt 7 Routine, Exception Handler routine and the program to print primes must be loaded from the XFS disk to the memory  by the OS Startup Code. The OS Startup Code executes in kernel mode and hence must be written in <a href="spl-spec.html">SPL</a>, compiled and loaded to the disk as done in stage 3. The new OS Startup Code must do the following tasks. </br><br/>
 
-					<li> <p>Load Exception Handler from disk block 1 and 2 to memory page 7 and 8 respectively. Load Interrupt 7 Routine from disk blocks 17 and 18 to memory page 23 and 24 using <a href="spl-spec.html#navlsstmt" >load</a> instruction.  These programs are responsible for halting the machine on exceptions and upon finishing execution of the process respectively. 
+					<li> <p>Load Exception Handler from disk blocks 1 and 2 to memory pages 7 and 8 respectively. Load Interrupt 7 Routine from disk blocks 17 and 18 to memory page 23 and 24 using <a href="spl-spec.html#navlsstmt" >load</a> instruction.  These programs are responsible for halting the machine on exceptions and upon finishing execution of the process respectively. 
 		
 						<div class="syntax">
 							load (page_number, block_number);
@@ -631,7 +631,7 @@ Machine is halting</pre>
 			<article  id="navstage5" class="grid col-full">
 			<h2>Stage 5: Interrupt Routines </h2>
 			<p> When an interrupt occurs while the XSM simulator is running, it transfers control to specific memory locations corresponding to the interrupt. Interrupts can be invoked either by software (through INT instruction) or by hardware. In XSM, the only hardware interrupt is the timer interrupt, which is triggered in fixed intervals of instructions. (In real machines, a timer interrupt is triggered in fixed intervals of time using a timer device). There are seven software interrupts in XSM, invoked using machine instructions <tt>INT 1</tt> to <tt>INT 7</tt>. </p>
-			<p>Interrupts can only be triggered or invoked in user mode. In Kernel mode interrupts are disabled. Upon encountering an interrupt, the machine transfers control to specific locations in memory and changes from user mode to kernel mode. These memory locations contains Interrupt Routines. Since interrupt routines are executed in kernel mode, use SPL to write them.  User programs can access operating system services by invoking software interrupts.  Memory page 9 and 10 contains the Timer Interrupt Routine. Memory page (11 and 12) to (23 and 24) contain Interrupt Routines 1 to 7 (See <a href="xos-spec.html#navmemorg">Memory Organization</a>). Each interrupt routine has 2 pages in memory. These are invoked using <tt>INT 1</tt> to <tt>INT 7</tt> machine instructions respectively. </p>
+			<p>Interrupts can only be triggered or invoked in user mode. In Kernel mode interrupts are disabled. Upon encountering an interrupt, the machine transfers control to specific locations in memory and changes from user mode to kernel mode. These memory locations contains Interrupt Routines. Since interrupt routines are executed in kernel mode, use SPL to write them.  User programs can access operating system services by invoking software interrupts.  Memory pages 9 and 10 contains the Timer Interrupt Routine. Memory page (11 and 12) to (23 and 24) contain Interrupt Routines 1 to 7 (See <a href="xos-spec.html#navmemorg">Memory Organization</a>). Each interrupt routine has 2 pages in memory. These are invoked using <tt>INT 1</tt> to <tt>INT 7</tt> machine instructions respectively. </p>
 
 			<p>(<b>NOTE:</b> The interrupt instructions <tt>INT 1</tt> to <tt>INT 7</tt> can be invoked from an APL program using system call interfaces. You will be implementing system calls in the subsequent stages. If you are curious, jump ahead and read about <A href="xos-spec.html#navsyscalls">System Calls</a> )</p> 
 			<p>
@@ -669,7 +669,7 @@ Machine is halting</pre>
 				 		HALT
 				 	</div>
 				 </p>
-				 <p>T0 to T3 are registers are used by the SPL compiler to translate SPL code to machine instructions. This information is not relevant when you design and implement the OS in SPL. (See <a href="xsm-spec.html#navregset">Register Set</a> in XSM if you are interested to know more )</p>
+				 <p>T0 to T3 are registers used by the SPL compiler to translate SPL code to machine instructions. This information is not relevant when you design and implement the OS in SPL. (See <a href="xsm-spec.html#navregset">Register Set</a> in XSM if you are interested to know more )</p>
 				<li> Load this file to the XFS disk as interrupt 1 using xfs-interface. </li>
 					<div class="syntax">
 						# load --int=1 $HOME/myxos/spl/spl_progs/int1.xsm <br/>
@@ -740,7 +740,7 @@ Machine is halting
 				<li> Load this file to XFS disk as Timer Interrupt Routine using XFS Interface.</li>
 				<li> Compile the sample program to print numbers upto 20 using APL compiler. The sample program is available at <b>$HOME/myxos/apl/samples/printnum.apl</b>. Load the compiled output as the INIT program to XFS disk.  </li>
 				
-				<li> Modify the OS Startup Code to load the <b>Timer Interrupt Routine</b> from disk blocks 3 and 4 (See <a href="xfs-spec.html#navdiskorg">Disk Organization</a>) to memory page 9 and 10 (see <a href="xos-spec.html#navmemorg">Memory Organization</a>).  Add the following line to OS startup code before the <tt>ireturn;</tt> instruction.
+				<li> Modify the OS Startup Code to load the <b>Timer Interrupt Routine</b> from disk blocks 3 and 4 (See <a href="xfs-spec.html#navdiskorg">Disk Organization</a>) to memory pages 9 and 10 (see <a href="xos-spec.html#navmemorg">Memory Organization</a>).  Add the following line to OS startup code before the <tt>ireturn;</tt> instruction.
 				<div class="syntax">load (9, 3);<br/>load (10, 4);<br/></div>
 				</li>
 				<li> Compile the new OS Startup Code using SPL Compiler, and load it to the XFS disk using XFS Interface.</li>
@@ -816,7 +816,7 @@ Machine is halting
 						<li> Write another APL program to print all even numbers from 1 to 20 and save it as <b>$HOME/myxos/apl/apl_progs/even.apl</b> </li>
 						<li> Compile this program using APL compiler and load the <b>$HOME/myxos/apl/apl_progs/even.xsm</b> file generated to the disk using XFS Interface as an executable file. </li>
 						<div class="syntax"># load --exec $HOME/myxos/apl/apl_progs/even.xsm </div>
-						<li> Use the XFS interface to find the data blocks to which this file is loaded as done in Stage 2. In this roadmap, we assume that the basic block of the file is in block 16 and it has a single data block with block number 17. Note that this may not be the actual scenario if you have other files loaded in the disk. </li>
+						<li> Use the XFS interface to find the data blocks to which this file is loaded as done in Stage 2. In this roadmap, we assume that the basic block of the file is in block 24 and it has a single data block with block number 25. Note that this may not be the actual scenario if you have other files loaded in the disk. </li>
 					</ol>
 			<br/>
 			
@@ -832,9 +832,9 @@ Machine is halting
 								[READY_LIST + 32] = 1; 		// Sets the entry for PID as 1<br/>
 							</div>
 						</li>
-						<li> Load the code blocks of the second program from disk to memory (In this roadmap, we have assumed that the file has only one code block which is stored in block 17.  See Step 5 of the previous section. Note that, you must use the XFS interface to find the actual block numbers in your disk. There can be a maximum of 3 code blocks for any executable file). Note that the pages allocated for user processes start from page number 16 onwards and  pages 16 to 19 have already been allocated for the INIT process. So the second, process can be allocated pages after 19. For convenience we have used page 20 in the memory to load the code block for our program. (See <a href="xos-spec.html#navmemorg">Memory Organization</a>). Page 20 will contain the code corresponding to this program and page 21 will be used as the stack (See <a href="xos-spec.html#navpromgmt_prostruct">Process Structure</a>).
+						<li> Load the code blocks of the second program from disk to memory (In this roadmap, we have assumed that the file has only one code block which is stored in block 25.  See Step 5 of the previous section. Note that, you must use the XFS interface to find the actual block numbers in your disk. There can be a maximum of 3 code blocks for any executable file). Note that the pages allocated for user processes start from page number 25 onwards and  pages 25 to 28 have already been allocated for the INIT process. So the second, process can be allocated pages after 28. For convenience we have used page 29 in the memory to load the code block for our program. (See <a href="xos-spec.html#navmemorg">Memory Organization</a>). Page 29 will contain the code corresponding to this program and page 30 will be used as the stack (See <a href="xos-spec.html#navpromgmt_prostruct">Process Structure</a>).
 							<div class="syntax">
-								load(20,21 );<br/>	// 
+								load(29,25 );<br/>	// 
 							//	</div>
 						</li>
 						<li><p>Page Table for this process must be setup. The starting address of the page table of a process is calculated using the formula discussed in stage 4. </p>
@@ -846,17 +846,19 @@ Machine is halting
 						PTBR_Process1 = 1024 + 1 * 8;
 						</div>
 						</li>
-						<li><p>Setup page table entries for memory pages 20 to 22 (3 pages are used for code) as well as one entry for memory page 23 (1 page is used for stack) as shown below. First word of each entry is the physical page number and the 2nd word is the auxiliary information (See <a href="xsm-spec.html#navaddr">Address Translation</a>).
+						<li><p>Setup page table entries for memory page 29 (If only 1 pages is used for code) as well as one entry for memory page 30 (1 page is used for stack) as shown below. First word of each entry is the physical page number and the 2nd word is the auxiliary information (See <a href="xsm-spec.html#navaddr">Address Translation</a>).
 
 	<div class="syntax">
 								// Setting up page table for 2nd process<br/><br/>
 
-								[PTBR_Process1 + 0] = 20;  // Physical Page Number for Logical Page 0<br/>
+								[PTBR_Process1 + 0] = 29;  // Physical Page Number for Logical Page 0<br/>
 								[PTBR_Process1 + 1] = "01";  // Not referenced and Valid<br/>
+								[PTBR_Process1 + 2] = -1;  // Invalid Page Number for Logical Page 1<br/>
+								[PTBR_Process1 + 3] = "00";  // Not referenced and Not Valid<br/>
 								.	<br/>
 								.	<br/>
 								.	<br/>
-								[PTBR_Process1 + 6] = 23;  // Physical Page Number for Logical Page 3 <br/>
+								[PTBR_Process1 + 6] = 30;  // Physical Page Number for Logical Page 3 <br/>
 								[PTBR_Process1 + 7] = "01";  // Not referenced and Valid<br/>
 							</div>						
 
@@ -887,9 +889,9 @@ Machine is halting
 							The rest of the entries of the PCB may not be set now. You will deal with them in subsequent stages.
 							</ul>
 						</li> <br/>
-						<li> Before switching to user mode, the timer interrupt routine must be loaded to memory. Add the instruction to load the timer interrupt routine from disk block 2 to memory page 8. See <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization </a>. 
+						<li> Before switching to user mode, the timer interrupt routine must be loaded to memory. Add the instruction to load the timer interrupt routine from disk blocks 3 and 4 to memory pages 9 and 10. See <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization </a>. 
 							<div class="syntax">
-								load(8,2);
+								load(9,3);<br/>load(10,4);
 							</div>
 						</li>
 					
@@ -1090,12 +1092,12 @@ POP <i>Argument_1</i></div></pre>
 				<li> <p>When a file is created by the system call, a new FAT entry is to be created. The OS maintains a memory copy of the filesystem structures like FAT and Disk Free List. The Disk Free List is a file system data structure which keeps track of used and unused blocks in the disk. (See <a href="xos-spec.html#navfiles_fat" class="imp">FAT</a> and <a href="xfs-spec.html#navdfl" class="imp">Disk Free List</a> in XFS). The memory copy of these structures are changed by the OS when File System Calls are performed, and it is then committed back to the disk (see <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization </a>). 
 				<ul>
 					<li>
-						Load FAT from disk block 10 to memory page 5 </li>
-					<li> Load Disk Free List from the disk block 11 to memory page 6</li>
+						Load FAT from disk block 19 to memory page 5 </li>
+					<li> Load Disk Free List from the disk block 20 to memory page 6</li>
 				</ul>
 				</li>
 				</p>
-				<li> You already have the instruction to load Interrupt 1 Routine from the disk to the memory in stage 5.  Check if this instruction <tt><b>load (9, 3)</b></tt> is present in the OS Startup Code.  This instruction loads the Interrupt 1 routine residing in disk block 3 to memory page 9. (See <a href="xos-spec.html#navmemorg" >Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization</a>).
+				<li> You already have the instruction to load Interrupt 1 Routine from the disk to the memory in stage 5.  Check if the instructions <tt><b>load (11, 5)</b></tt> and <tt><b>load (12, 6)</b></tt> are present in the OS Startup Code.  These instructions loads the Interrupt 1 routine residing in disk blocks 5 and 6 to memory pages 11 and 12. (See <a href="xos-spec.html#navmemorg" >Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization</a>).
 					
 				</li>
 				</ol>
@@ -1142,7 +1144,7 @@ endif;	</pre>
 
 
 				<ol>
-				<li><p> First of all, the memory copy of the <a href="xfs-spec.html#navdfl">disk free list</a> (loaded to page 6 by the OS Startup Code) is searched till block number 447 to find a free block. Blocks 448 - 511  are reserved for <a href="xfs-spec.html#navdiskorg">swap area</a> which will be used for virtual memory management (<a href="roadmap.html#navstage9">Stage 10</a>). A free block is indicated by a 0 entry in the Disk Free List. The index of such an entry gives the block number of the free block. (A disk formatted using XFS will have 1(used) for blocks 0 - 15 and 0(unused) for blocks 16 - 512 in its disk free list). 
+				<li><p> First of all, the memory copy of the <a href="xfs-spec.html#navdfl">disk free list</a> (loaded to page 6 by the OS Startup Code) is searched till block number 447 to find a free block. Blocks 448 - 511  are reserved for <a href="xfs-spec.html#navdiskorg">swap area</a> which will be used for virtual memory management (<a href="roadmap.html#navstage9">Stage 10</a>). A free block is indicated by a 0 entry in the Disk Free List. The index of such an entry gives the block number of the free block. (A disk formatted using XFS will have 1(used) for blocks 0 - 23 and 0(unused) for blocks 24 - 512 in its disk free list). 
 				
 				</li></p>
 				<li> <p> If no free block is found, return from the system call with return value -1, indicating failure. To do this, put -1 at the 2nd position from the top of stack as shown in Figure 2, and use <b>ireturn;</b> instruction. This will pass the control back to the user program. The user program will fetch the return value from the appropriate position in the stack. </li></p>
@@ -1224,7 +1226,7 @@ Machine is halting     </pre>
 				
 
 
-			<p>XOS uses four data structures to maintain information about files and disk blocks. They are FAT, Disk Free List, System-wide open file table, and per-process open file tables. The <a href="xfs-spec.html#navfat">FAT</a> and <a href="xfs-spec.html#dfl">Disk Free List</a> are permanent data structures on the disk, i.e. the data structures will be stored in the disk and will be retained after machine shuts down. FAT maintains a list of all files in the disk. The Disk Free List keeps track of the used and unused blocks of the disk. A memory copy of these structures are maintained by XOS when it is run. Recall that the OS Startup Code copies FAT from disk block 10 to memory page 5 and the Disk Free List from disk block 11 to memory page 6. XOS commits these data structures to disk whenever changes are made to them. You have already read about FAT and Disk Free List in the previous stage. </p>
+			<p>XOS uses four data structures to maintain information about files and disk blocks. They are FAT, Disk Free List, System-wide open file table, and per-process open file tables. The <a href="xfs-spec.html#navfat">FAT</a> and <a href="xfs-spec.html#dfl">Disk Free List</a> are permanent data structures on the disk, i.e. the data structures will be stored in the disk and will be retained after machine shuts down. FAT maintains a list of all files in the disk. The Disk Free List keeps track of the used and unused blocks of the disk. A memory copy of these structures are maintained by XOS when it is run. Recall that the OS Startup Code copies FAT from disk block 19 to memory page 5 and the Disk Free List from disk block 20 to memory page 6. XOS commits these data structures to disk whenever changes are made to them. You have already read about FAT and Disk Free List in the previous stage. </p>
 
 			<p>The other two data structures,  <a href="xos-spec.html#navfiles_swoft">System-Wide Open File Table</a> and <a href="xos-spec.html#navpromgmt_pcb">Per-Process Open-File Tables</a> are used by XOS to maintain information about files opened by processes. These data structures are stored in the main memory of the machine and are required only when the operating system is running. They are lost when the system shuts down.  </p>
 
@@ -1538,7 +1540,7 @@ endwhile;					</pre>
 					<tr><td>Exit</td>				<td>10</td>				<td> 7</td> </tr>
 				</table>
 			</p>
-			<p> The OS maintains information about free memory pages in the <a href="xos-spec.html#navmemmgmt_mfl">memory free list</a> just like the disk maintains information about free disk blocks in the disk free list. Since Fork and Exec system calls, loads a new process in memory, it must check for free memory pages in the <i>memory free list</i> to allocate memory for this process. The OS Startup code is responsible for initializing the the memory free list. During initialization, the entries for system reserved pages (0 - 15) must be set as used in the memory free list (see <a href="xos-spec.html#navmemorg">memory organization</a>). Since the OS startup code loads the INIT process to memory pages 16 to 19, these pages must also be marked as used in the memory free list. The interrupt 5, 6 and 7 routines must be loaded by the OS startup code.
+			<p> The OS maintains information about free memory pages in the <a href="xos-spec.html#navmemmgmt_mfl">memory free list</a> just like the disk maintains information about free disk blocks in the disk free list. Since Fork and Exec system calls, loads a new process in memory, it must check for free memory pages in the <i>memory free list</i> to allocate memory for this process. The OS Startup code is responsible for initializing the the memory free list. During initialization, the entries for system reserved pages (0 - 24) must be set as used in the memory free list (see <a href="xos-spec.html#navmemorg">memory organization</a>). Since the OS startup code loads the INIT process to memory pages 25 to 28, these pages must also be marked as used in the memory free list. The interrupt 5, 6 and 7 routines must be loaded by the OS startup code.
 			</p>
 			
 			<p>After programming the OS Startup Code and the interrupt routines, compile and load them to the disk. To check if the system calls are functioning properly, make user programs which invoke these system calls. Compile these programs using APL compiler and load it to disk. Run the machine <b>with the timer enabled</b>.
@@ -1552,7 +1554,7 @@ endwhile;					</pre>
 		  		<ol>
 		  			<li><p>The OS Startup Code should load Interrupt 5, 6 and 7 Routines from disk to memory. (See <a href="xos-spec.html#navmemorg" >memory organization</a> and <a href="xfs-spec.html#navdiskorg">disk organization</a>). These interrupt routines in the disk will contain the process system call implementations. Your task in this stage will be to program interrupt 5, 6 and 7 routines.
 		  			</li> </p>
-		  			<li> <p>Pages 0 to 15 in the memory are reserved for operating system.  (See <a href="xos-spec.html#navmemorg" >memory organization</a>). The pages 16 to 19 are allocated for the INIT process by the OS Startup Code. These pages must be marked as used in the memory free list and the remaining pages must be marked as unused. Used pages are indicated with 1 and unused pages are indicated with 0 in the memory free list.
+		  			<li> <p>Pages 0 to 24 in the memory are reserved for operating system.  (See <a href="xos-spec.html#navmemorg" >memory organization</a>). The pages 25 to 28 are allocated for the INIT process by the OS Startup Code. These pages must be marked as used in the memory free list and the remaining pages must be marked as unused. Used pages are indicated with 1 and unused pages are indicated with 0 in the memory free list.
 		  			</li> </p>
 		  			<li><p> Initialize all PCBs with STATE field 0. This will be necessary to search for a free PCB in memory. A free PCB in XOS is indicated by STATE 0 (terminated or free) in its PCB. 
 		  			</li></p>
@@ -1738,7 +1740,7 @@ endwhile;					</pre>
 			<article  id="navstage10" class="grid col-full">
 			<h2>Stage 10: Exception Handling and Demand Paging</h2>
 			<p> 
-				<a href="xos-spec.html#navsysroutines_exhandler">Exception Handler</a> in XOS handles exceptions caused by machine. When an exception occurs, the machine sets the <tt>EFR</tt> (Exception Flag Register) and calls the Exception Handler in Page 7. You must read about <a href="xsm-spec.html#navexcep" class="imp">Exceptions</a> before proceeding .
+				<a href="xos-spec.html#navsysroutines_exhandler">Exception Handler</a> in XOS handles exceptions caused by machine. When an exception occurs, the machine sets the <tt>EFR</tt> (Exception Flag Register) and calls the Exception Handler in Page 7 (Exception handler resides in memory pages 7 and 8). You must read about <a href="xsm-spec.html#navexcep" class="imp">Exceptions</a> before proceeding .
 			</p>
 
 
@@ -1748,7 +1750,7 @@ endwhile;					</pre>
 
 
 			<h6>Modifications to OS Startup Code</h6>
-			The OS startup code must load the exception handler routine from disk block 1 to memory page 7. This was already done in the previous stages. When the INIT process is loaded, only the disk addresses of the code blocks needs to be set in the page table and its <b>Auxiliary Information</b> is set to "00" (Invalid and Unreferenced). The disk blocks need not be loaded initially. It will be loaded by the exception handler following the <a href="xos-spec.html#navmemmgmt_vm">pure demand paging strategy</a> as and when required. However the stack of the INIT process needs to be allocated as done in previous stages. This is because stack must be always present in the memory as an IRET instruction within any system routine will need to access the stack and page fault handler will not be invoked in KERNEL mode. Set the entry in the memory free list for the page allocated for the stack to 1 (indicating used). As code pages for INIT process are not loaded currently, the memory free list entries for the code pages must be set to 0 (unused).
+			The OS startup code must load the exception handler routine from disk blocks 1 and 2 to memory pages 7 and 8. This was already done in the previous stages. When the INIT process is loaded, only the disk addresses of the code blocks needs to be set in the page table and its <b>Auxiliary Information</b> is set to "00" (Invalid and Unreferenced). The disk blocks need not be loaded initially. It will be loaded by the exception handler following the <a href="xos-spec.html#navmemmgmt_vm">pure demand paging strategy</a> as and when required. However the stack of the INIT process needs to be allocated as done in previous stages. This is because stack must be always present in the memory as an IRET instruction within any system routine will need to access the stack and page fault handler will not be invoked in KERNEL mode. Set the entry in the memory free list for the page allocated for the stack to 1 (indicating used). As code pages for INIT process are not loaded currently, the memory free list entries for the code pages must be set to 0 (unused).
 
 			<br/><br/>
 
@@ -1860,7 +1862,7 @@ Ip_addr = (EFR/1000);		//Gets value of IP at the point of exception
 						<li> Get the <b>physical page number</b> field corresponding to <b>VPagenum</b> of EFR,  from the Per-Process page table of process that caused the exception. The <b>VPagenum</b> obtained from EFR is the logical page number which caused the Page Fault. The <b>Physical page number</b> field can be obtained by checking the per-process page table.</li>
 
 
-						<li> If the <b>Physical Page Number</b> field of the <a href="xos-spec.html#navpromgmt_page">Per-Process Page Table</a> is the actual disk block number corresponding to the code, load the disk block to the free page allocated. Disk block number for code blocks of programs can vary from 13 to 447. Disk blocks 0 to 12 are reserved for the operating system, and blocks 448 to 512, is for the Swap Area.  </li>
+						<li> If the <b>Physical Page Number</b> field of the <a href="xos-spec.html#navpromgmt_page">Per-Process Page Table</a> is the actual disk block number corresponding to the code, load the disk block to the free page allocated. Disk block number for code blocks of programs can vary from 21 to 447. Disk blocks 0 to 20 are reserved for the operating system, and blocks 448 to 512, is for the Swap Area.  </li>
 
 						<li> If the <b>Physical Page Number</b> field of the <a href="xos-spec.html#navpromgmt_page">Per-Process Page Table</a> is the swap disk block number, load the disk block to the free page allocated. Decrement the corresponding entry  in the Disk Free List for this disk block by 1. This is because this swap disk block is not used by this process and sharing count is reduced by 1. Swap Disk block can vary from 448 to 511.
 

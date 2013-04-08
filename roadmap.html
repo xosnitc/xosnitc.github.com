@@ -1889,13 +1889,13 @@ Ip_addr = (EFR/1000);		//Gets value of IP at the point of exception
 			<div class="syntax">
 <pre>integer main()
 {
-	integer child_pid;
-	child_pid = Fork();
-	if(child_pid == -2) then
-		Exec("sample.xsm")
+	integer childpid, retval;
+	childpid = Fork();
+	if(childpid == -2) then
+		retval = Exec("sample.xsm");
 	else
-		while(child_pid != -1) then
-			print(child_pid);
+		while(childpid != -1) do
+			print(childpid);
 		endwhile;
 	endif;
 

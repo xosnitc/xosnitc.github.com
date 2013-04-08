@@ -191,10 +191,21 @@
 			<article  id="navregset" class="grid col-full">
 				<h2>Register Set</h2>
 				<p>	SPL doesn’t allow the use of declared variables. Instead a fixed set of registers is provided. 
-				The register set in SPL contains 30 registers. There is a direct mapping between these registers and the machine registers in XSM.</p>
-				
-				<img src="doc/register-set.png" style="width:40%"/>
+				The register set in SPL contains 30 registers. There is a direct mapping between these registers and the machine registers in XSM.
+			
+			<table class="doctable">
+					<tbody><tr> <th>Name</th> <th>Register</th> </tr>
+					<tr> <td>Program Registers</td> <td>R0 - R7</td> </tr>
+					<tr> <td>Kernel Registers</td> <td>S0 - S15</td> </tr>
+					<tr> <td>Base Pointer</td> <td>BP </td> </tr>
+					<tr> <td>Stack Pointer</td> <td>SP</td> </tr>
+					<tr> <td>Instruction Pointer</td> <td>IP </td> </tr>
+					<tr> <td>Page Table Base Register</td> <td>PTBR </td> </tr>
+					<tr> <td>Page Table Length Register</td> <td>PTLR </td> </tr>
+					<tr> <td>Exception Flag Register</td> <td>EFR </td> </tr>
+				</tbody></table>
 			</article>
+</p><br/>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>	
@@ -234,7 +245,7 @@
 					<tr> <td>PAGE_TABLE</td> 	<td>1024</td> </tr>
 					<tr> <td>MEM_LIST</td> 		<td>1280</td> </tr>
 					<tr> <td>FILE_TABLE</td> 	<td>1344 </td> </tr>
-					<tr> <td>READY_LIST</td> 	<td>1356</td> </tr>
+					<tr> <td>READY_LIST</td> 	<td>1536</td> </tr>
 					<tr> <td>FAT</td> 		  	<td>2560 </td> </tr>
 					<tr> <td>DISK_LIST</td> 	<td>3072 </td> </tr>
 					<tr> <td>EX_HANDLER</td> 	<td>3584 </td> </tr>

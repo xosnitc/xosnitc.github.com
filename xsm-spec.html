@@ -442,7 +442,7 @@
 					
 					<li> <p> <tt>INT</tt><br/>
 					<i>Syntax</i> : <tt>INT n</tt><br/>
-					Generates an interrupt to the kernel with n (1 to 6) as a parameter.
+					Generates an interrupt to the kernel with n (1 to 7) as a parameter.
 					It also disables the interrupts. <a href="#navintrrupt"> (Refer Section: Interrupts)</a></p> </li>
 				</ol>
 				<br/>
@@ -529,7 +529,7 @@
 				<p> Exceptions are anomalous situations which changes the normal flow of execution. 
 				There is a flag associated with each exception and the details corresponding to the exception that occured is stored in <tt>EFR</tt> (Exception Flag Register). 
 				If an exception occurs in User Mode, the machine transfers control of execution, i.e. 
-				changes the value of <tt>IP</tt> to page number 7 (address = 3584) where the Exception Handler Routine resides. 
+				changes the value of <tt>IP</tt> to page number 23 (address = 11776) where the Exception Handler Routine resides. 
 				However in Kernel Mode, the machine halts when it encounters an exception.<br/>
 				The structure of <tt>EFR</tt> is given below</p>			
 				
@@ -586,8 +586,7 @@
 			<article id="navsoft" class="grid col-full">		
 				<h4>Software Interrupts</h4> 
 				<p> Software Interrupts interrupts are unprivileged and can be called from user mode. 
-				7 Interrupt instructions are provided by the machine which causes the execution of ISR (Interrupt Service Routines) 
-				in 7 different pages in the memory.</p>
+				7 Interrupt instructions are provided by the machine which transfers control to specific locations in memory, where the interrupt service routines (ISR) of the operating system is expected to be present.</p>
 				
 				<p> <b>The <tt>INT</tt> instruction</b><br/>
 				The instruction used to generate a software interrupt is <tt>INT</tt>.<br/>
@@ -621,9 +620,9 @@
 	<tr> <th>Page No</th> 	<th>Contents</th> 			<th>Word Address</th> <th> # of Words</th></tr>
 	<tr> <td>0</td> 		<td>ROM Code</td> 				<td>0 - 511</td>	 <td> 512 </td></tr>
 	<tr> <td>1</td> 		<td>OS Startup Code</td>  <td>512 - 1023</td>		<td> 512 </td> </tr>
-	<tr> <td>2 - 7</td> 		<td>OS Structures</td> <td>1024 - 3583</td>		<td>2560</td></tr>
+	<tr> <td>2 - 6</td> 		<td>OS Structures</td> <td>1024 - 3583</td>		<td>2560</td></tr>
 
-	<tr> <td  >7</td> 		<td  >Exception Handler 	<td  >3584 - 4607</td>  <td  >1024</td> </tr>
+	<tr> <td  >7 - 8</td> 		<td  >Exception Handler 	<td  >3584 - 4607</td>  <td  >1024</td> </tr>
 
 
 	<tr> <td  >9 - 10</td> 		<td  >Timer Interrupt Routine 	<td  >4608 - 5631</td>  <td  >1024</td> </tr>

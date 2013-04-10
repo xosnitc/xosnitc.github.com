@@ -418,7 +418,19 @@ Enter n:
 Machine is halting
 </tt></pre>
 
-				<p> You may also write a few SPL programs on your own and run it on the machine to get familiarized with SPL syntax. Try using the instructions like <a href="spl-spec.html#navbreakpointstmt"><i>breakpoint</i></a> which translates to <a href="xsm-spec.html#navinstr_brkp">BRKP</a> machine instruction. This instruction is useful for debugging. Refer <a href="usage-spec.html#navxsm">XSM Debugger</a></p>
+				<p> You may also write a few SPL programs on your own and run it on the machine to get familiarized with SPL syntax. </p> 
+
+				<h6> Using the Debugger :</h6>
+				<p> SPL has the  <a href="spl-spec.html#navbreakpointstmt"><i>breakpoint</i></a> instruction which translates to <a href="xsm-spec.html#navinstr_brkp">BRKP</a> machine instruction. This instruction is executed when the machine is run with the --debug flag. The machine pauses at the <b>BRKP</b> instrcution and the debug prompt is displayed. Refer <a href="usage-spec.html#navxsm">XSM Debugger</a> for the commands and usage instructions.   </p>
+				<p> Finding the line number in the source code from the value of IP : <br/>
+					One SPL instruction gets translated into more than one machine instruction. Hence to find which instruction of SPL is currently running, we need to find the line number in the SPL code. In debug mode we can get the value of <b>IP</b> by using the reg command. The following formula gets the line number in the SPL source code for the current value of IP.
+<pre>
+Line_Number = (IP - (Starting Address of OS Startup Code))/2
+</pre>
+				Try using the breakpoint instruction to understand how the machine works.
+				Note : APL (Application Programmer's Language) also has the breakpoint instruction. APL will be used in the next stage to run user programs.
+
+				</p>	
 
 			<p><h6>Assignment</h6> Read and understand the <a href="runtime.html">Runtime environment </a>.</p>
 			</article>

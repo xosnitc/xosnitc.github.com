@@ -1807,7 +1807,7 @@ endwhile;					</pre>
 				</p>
 				
 			<h6>Modifications to Exit</h6>
-			Exit must not set the pages in the memory free list as 0 (or unused) directly. It must decrement the entry of the memory free list by 1. Modify Step 2 (iv) in Exit system call implementation accordingly. Moreover, if the page table entry is a disk block in the swap area of the disk, decrement the disk free list entry for this block by 1. This indicates that this block is no longer shared by the process which is about to Exit now. Commit the disk free list back to the disk.
+			Exit must check the page table entries to check if it is a memory page, disk or swap block. If the page table entry is a memory page, Exit must not set its entry in the memory free list as 0 (or unused) directly. It must decrement the entry of the memory free list by 1. Modify Step 2 (iv) in Exit system call implementation accordingly. Moreover, if the page table entry is a disk block in the swap area of the disk, decrement the disk free list entry for this block by 1. This indicates that this block is no longer shared by the process which is about to Exit now. Commit the disk free list back to the disk.
 
 <br/><br/>
 

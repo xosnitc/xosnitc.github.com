@@ -559,8 +559,7 @@
 			
 			<article  id="navfork" class="grid col-full">
 				<h4>Fork</h4>
-				<p>This system call is used to create a copy of the current process in the system. 
-				The return value of this system call is the PID of the child process for the parent, and 0 for the child.<br/>
+				<p>This system call is used to create a copy of the current process in the system. The return value of this system call is the PID of the child process for the parent, and an appropriate code for the child.<br/>
 				<tt>&nbsp&nbsp&nbsp	
 					integer <b>Fork</b> ();</tt></p>
 			</article>
@@ -570,8 +569,7 @@
 			
 			<article  id="navexec" class="grid col-full">
 				<h4>Exec</h4>
-				<p>This system call is used to load the program, whose name is specified in the argument, 
-				in the memory space of the current process (overwriting existing contents) and start its execution. The return value of this system call is 1 in case of failure. <br/>
+				<p>This system call is used to load the program, whose name is specified in the argument, in the memory space of the current process (overwriting existing contents) and start its execution. An appropriate error code is returned in case of failure. <br/>
 				<tt>&nbsp&nbsp&nbsp	
 					integer <b>Exec</b> (string fileName);</tt></p>
 			</article>
@@ -587,12 +585,58 @@
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
-			</div>
+			</div>	
+
+
+
+			<article  id="navgetpid" class="grid col-full">
+				<h4>Getpid</h4>
+				<p>This system call returns the processID or thbe PID of the current process on success and an appropriate error code is returned in case of failure. <br/>
+				<tt>&nbsp&nbsp&nbsp	
+					integer <b>Getpid</b> ();</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+
+
+
+			<article  id="navgetppid" class="grid col-full">
+				<h4>Getppid</h4>
+				<p>This system call returns the processId of the parent process of the current process and an appropriate error code is returned in case of failure. <br/>
+				<tt>&nbsp&nbsp&nbsp	
+					integer <b>Getppid</b> ();</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+
+
+
+			<article  id="navwait" class="grid col-full">
+				<h4>Wait</h4>
+				<p>This system call blocks the current process till the process with processID given as argument signals or exits.  The return value of this system call is 0 in case of success and the appropriate error code in case of failure. \\ <br/>
+				<tt>&nbsp&nbsp&nbsp	
+					integer <b>Wait</b> (integer processID);</tt></p>
+			</article>
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+
 			
+			<article  id="navsignal" class="grid col-full">
+				<h4>Signal</h4>
+				<p>This system call is used to resume execution of all process waiting for the current process. The return value of this system call is 0 in case of success and the appropriate error code in case of failure. \\ <br/>
+				<tt>&nbsp&nbsp&nbsp	
+					integer <b>Signal</b> ();</tt></p>
+			</article>
 
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>
+
+
+
 			
 			<article  id="navexamples" class="grid col-full">
 			<h2>Sample Programs</h2>

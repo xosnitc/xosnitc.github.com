@@ -85,9 +85,15 @@
 			
 			<div class="grid-wrap">
 			
-			<h3>How to use this Roadmap? </h3>
+			<article  id="navstage1" class="grid col-full">
+			<h2>Using the Roadmap </h2>
 			<p>	This roadmap is divided into stages. Each stage is to be done in the sequential order. Incrementally you will build XOS according to its specification. Links are provided throughout the document for further reference. There are two kinds of links, <a href="#" class="imp">important links</a> and <a href="#">informative links</a>. You must visit the <a href="#" class="imp">Important links</a>  the read the immediate section to which the link points to,  in order to proceed with the roadmap. <a href="#">Informative links</a> may be clicked if you want more information at a particular point. However this information may not be necessary at that point. You can proceed with the roadmap without visiting these links also. </p> 
+			</article>
 
+			<div class="up grid col-one-third" style="float:right">
+			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			</div>	
+	
 
 <!---  **************************** STAGE 1 *************************************************** -->
 
@@ -401,7 +407,8 @@ endwhile; </pre>
 					<p>Note that the <tt>--os</tt> option loads the file to Block 0 of the XFS disk </p>
 					<li> Run the machine using the command 
 						<div class="syntax">
-$HOME/myxos/xsm/xsm
+cd $HOME/myxos/xsm
+./xsm
 						</div>
 						<p></p>
 					</li>
@@ -513,7 +520,7 @@ Machine is halting
 					Each PCB is of size 32 words. Hence, PID x 32 will give the index of the PCB within the Ready List of PCBs. Adding 1536, which is the starting address of the Ready List, will give the physical address of the PCB.  While writing SPL programs, you may use the <a href="spl-spec.html#navconst">predefined constant</a> <tt>READY_LIST</tt> instead of the value 1536 . PID of INIT process is set to 0, and hence its PCB's starting address is 1536.
 					The first word in the PCB stores the PID of the corresponding process. Set the 1st word of the PCB with the value 0 (which is the PID for INIT Process)
 							<div class="syntax">
-								[READY_LIST + 0] = 0 // Sets the entry for PID as 0
+								[READY_LIST + 0] = 0; // Sets the entry for PID as 0
 							</div>	
 					<li>Load the <b>INIT program</b> (program to print primes) from the disk to the memory. In the memory, user programs are stored in pages 25-63. Since INIT is the first process, we will allocate the first 3 pages (pages 25-27) for code. Every running process will require a stack. (Understanding the <a href="runtime.html" class="imp">Runtime Environment</a> is a MUST at this point). Memory page 28 can be allocated for the stack. (See <a href="xos-spec.html#navpromgmt_prostruct">Process Structure</a>) . The blocks 21-23 from disk is to be loaded to the memory pages 25-27. ( See <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization )</a></li>
 							<div class="syntax">
@@ -603,7 +610,7 @@ Machine is halting
 					<div class="syntax"># load --os $HOME/myxos/spl/spl_progs/os_startup.xsm<br/># exit
 					</div>
 			<p> Run the machine by disabling the timer. The machine has a timer which interrupts the execution at specific intervals while running a user program. It passes the control to timer interrupt routine. We will be dealing with the timer in stage 5 (Interrupts). Until then we will run the machine with the timer disabled.  The <i>--timer=0</i> flag is used to disable the timer (See <A href="/usage-spec.html#navxsm">Usage Instructions</a>). </p>
-			<div class="syntax">$HOME/myxos/xsm/xsm --timer=0<br/></div>
+			<div class="syntax">cd $HOME/myxos/xsm/<br/> ./xsm --timer=0</div>
 			If the timer is not disabled, the machine will get stuck when a timer interrupt occurs. This is because the control gets passed to the Timer Interrupt Routine which has no valid code loaded in the memory. 
 			<br/><br/>
 			The output will be similar to the one given below,
@@ -1914,6 +1921,7 @@ Ip_addr = (EFR/1000);		//Gets value of IP at the point of exception
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
+			
 			</div>
 
 
@@ -1928,18 +1936,84 @@ Ip_addr = (EFR/1000);		//Gets value of IP at the point of exception
 
 
 			<article  id="navstage11" class="grid col-full">
-			<h2>Stage 11: Making a console </h2>
-			<p> 
-				The final stage is to make the INIT  process act like a console. INIT written in APL, should be an infinite loop, which takes in  filenames. This filename should correspond to the program to be executed.
-				It should <a href="apl-spec.html#navfork"><b>Fork</b></a> itself and <a href="apl-spec.html#navexec"><b>Exec</b></a> using the filename. Appropriate errors must be reported. 
-			 </p>
+			<h2>Stage 11: Enhancements to XOS</h2>
+
+			<h3>New Process System Calls</h3>
+			<p>A few additional process system calls have been added to provide support for 2 process synchronization. The new set of process system calls are
+		
+			<table class="doctable" style="width:50%">
+					<tbody><tr><th>System Call Name</th><th>System Call #</th><th>Interrupt Routine #</th></tr>
+					<tr><td>Fork</td>				<td>8</td>				<td> 5</td> </tr>
+					<tr><td>Exec</td>				<td>9</td>				<td> 6</td> </tr>
+					<tr><td>Exit</td>				<td>10</td>				<td> 7</td> 
+					<tr><td>Getpid</td>				<td>11</td>				<td> 6</td> </tr>
+					<tr><td>Getppid</td>			<td>12</td>				<td> 6</td> </tr>
+					<tr><td>Wait</td>				<td>13</td>				<td> 7</td> </tr>
+					<tr><td>Signal</td>				<td>14</td>				<td> 7</td> </tr>
+			</tbody></table>
+			<br/>
+			<h5>Getpid System Call :</h5>
+					
+			<i>Description</i>: Gives the ProcessId of the process which invoked this system call. <br/> 
+			<i>System Call No</i>:  11 <br/>
+			<i>Interrupt Routine No</i>: 6 <br/>
+			<i>Arguments</i>: None<br/>
+			<i>Return Value</i>: PID of the process which invoked the system call (success) or -1 (failure). <br/><br/><p>(See how APL translates Getpid system call in <a href="runtime.html#navsyscallsgetpid" class="imp">Getpid system call translation</a>)</p>
+			
+			<p>The interrupt 6 routine for Exec system call must be modified to obtain the system call number and take actions according for getting pid of the process, if system call number is 11. The Getpid system call implementation can use the value of PTBR to compute PID as described in the previous stages. This value should be returned to the user program. </p>
+	
+			<h5>Getppid System Call :</h5>
+					
+			<i>Description</i>: Gives the ProcessId of the parent process of the process which invoked this system call. <br/> 
+			<i>System Call No</i>:  12 <br/>
+			<i>Interrupt Routine No</i>: 6 <br/>
+			<i>Arguments</i>: None<br/>
+			<i>Return Value</i>: PID of the parent process of the process which invoked the system call (success) or -1 (failure). <br/>			
+			
+			<br/><p>(See how APL translates Getppid system call in <a href="runtime.html#navsyscallsgetppid" class="imp">Getppid system call translation</a>)</p>
+			
+			<p>Getppid is also implemented along with Exec and Getpid in the Interrupt 6 routine. Tom implement Getpid the parent process of any process must be stored in its PCB. For this, you may use the 31st word of PCB. The 31st word of the PCB is free in XOS Specification. The new structure of PCB is as shown below. </p>	
+			
+			<table class="doctable"><tbody><tr><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7-14</th><th>15-30</th><th>31</th></tr>
+				<tr><td><tt>PID</tt></td><td><tt>STATE</tt></td><td><tt>BP</tt></td><td><tt>SP</tt></td><td><tt>IP</tt></td><td><tt>PTBR</tt></td><td><tt>PTLR</tt></td><td><tt>R0 - R7</tt></td><td><tt>Per-Process <br>Open File Table</tt></td><td><tt><b>Parent PID</b></tt></td></tr>
+			</tbody></table>
+			<br/>
+			<p> The <b>Fork</b> system call implementation must be modified, to store the PID of the parent in the <b>Parent PID</b> field in the PCB of the child process created. The OS Startup Code must be modified to set the <b>Parent PID</b> of INIT process as -1. Hence, Getppid of INIT will return -1, corresponding to an error, as INIT does not have a parent.	</p>
+			
+			<p> The Getpid system call implementation should fetch this value from the PCB of the current process and return this value from the system call. </p>
+			
+			
+			<h5>Wait System Call :</h5>
+
+			<i>Description</i>: The current process is blocked till the process with PID given as argument signals or exits. <br/>
+			<i>System Call No</i>: 13 <br/>
+			<i>Interrupt Routine No</i>: 7 <br/>
+			<i>Arguments</i>: ProcessId <br/>
+			<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>		
+			<br/><p>(See how APL translates Wait system call in <a href="runtime.html#navsyscallswait" class="imp">Wait system call translation</a>)</p>	
+			
+			<p>Wait system call must be handled by the Interrupt 7 routine along with the Exit system call. The Wait system call will need to fetch an argument from the stack corresponding to the process identifier (PID) of the process that it should wait for. We have used the alias <tt>WaitingPID</tt>in the roadmap for this argument. The <b>STATE</b> field in the PCB of the current process must indicate that it is waiting for a process with the given PID. Change the <b>STATE</b> field in the PCB of the current process to <tt>100 + WaitingPID</tt>. For example, 125 indicates that the current process is waiting for the process with PID 25 and STATE value as 100 for a process, indicates that this process is waiting for the INIT process. </p>
+			<p> The <b>Exit</b> system call must be modified to resume all the processes waiting for the exiting process. This is done by searching for a process with <b>STATE</b> value as 100+processID in its PCB. processID is the PID of the current process obtained as described in previous stages. If such a PCB is encountered, set its <b>STATE</b> field to 1, indicating ready. Traverse through entire ready list. </p>
+			
+			<h5>Signal System Call :</h5>
+			<i>Description</i>: All processes waiting for the current process are resumed. <br/> 
+			<i>System Call No</i>:  14<br/>
+			<i>Interrupt Routine No</i>: 7 <br/>
+			<i>Arguments</i>: None<br/>
+			<i>Return Value</i>: 0 (Success) or -1 (Failure) <br/>		
+			<br/><p>(See how APL translates Signal system call in <a href="runtime.html#navsyscallssignal" class="imp">Wait system call translation</a>)</p>	
+			
+			<p>Signal system call must be handled by the Interrupt 7 routine along with Wait and Exit system calls. As done for Exit in the implementation of Wait system call, the Signal system call implementation must traverse through the Ready List of PCBs, and on finding PCBs with <b>STATE</b> value as <tt>100 + processID</tt>, it must update it to <b>1</b> indicating ready.</p>
+			
+			<h3>Making a console</h3>
+			
+			The final stage is to make the INIT process act like a console. INIT written in APL, should be an loop which takes in a filename of a program to execute. It should Fork itself and Exec using the filename. It should wait for this process to finish execution or issue a Signal system call. On the resuming, the console will repeat the steps to execute another program. Appropriate errors must be reported.
 
 			
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>
-			 <br/><br/>
- 			<center><h6>AND THAT'S YOUR OWN </h6><img src="img/logo-img.jpeg" style="margin:0;  width:40px"></center>
+	
 			</article>
 							
 							

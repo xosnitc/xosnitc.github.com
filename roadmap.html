@@ -1939,7 +1939,7 @@ Ip_addr = (EFR/1000);		//Gets value of IP at the point of exception
 			<h2>Stage 11: Enhancements to XOS</h2>
 
 			<h3>New Process System Calls</h3>
-			<p>A few additional process system calls have been added to provide support for 2 process synchronization. The new set of process system calls are
+			<p>A few additional process system calls have been added to provide support for process synchronization. The complete set of process system calls are
 		
 			<table class="doctable" style="width:50%">
 					<tbody><tr><th>System Call Name</th><th>System Call #</th><th>Interrupt Routine #</th></tr>
@@ -1972,28 +1972,32 @@ Ip_addr = (EFR/1000);		//Gets value of IP at the point of exception
 			
 			<br/><p>(See how APL translates Getppid system call in <a href="runtime.html#navsyscallsgetppid" class="imp">Getppid system call translation</a>)</p>
 			
-			<p>Getppid is also implemented along with Exec and Getpid in the Interrupt 6 routine. Tom implement Getpid the parent process of any process must be stored in its PCB. For this, you may use the 31st word of PCB. The 31st word of the PCB is free in XOS Specification. The new structure of PCB is as shown below. </p>	
+			<p>Getppid is also implemented along with Exec and Getpid in the Interrupt 6 routine. To implement Getppid, the PID of the parent process must be stored in the PCB of a process. For this, you may use the 31st word of PCB. The 31st word of the PCB is free in XOS Specification. The new structure of PCB is as shown below. </p>	
 			
 			<table class="doctable"><tbody><tr><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7-14</th><th>15-30</th><th>31</th></tr>
 				<tr><td><tt>PID</tt></td><td><tt>STATE</tt></td><td><tt>BP</tt></td><td><tt>SP</tt></td><td><tt>IP</tt></td><td><tt>PTBR</tt></td><td><tt>PTLR</tt></td><td><tt>R0 - R7</tt></td><td><tt>Per-Process <br>Open File Table</tt></td><td><tt><b>Parent PID</b></tt></td></tr>
 			</tbody></table>
 			<br/>
-			<p> The <b>Fork</b> system call implementation must be modified, to store the PID of the parent in the <b>Parent PID</b> field in the PCB of the child process created. The OS Startup Code must be modified to set the <b>Parent PID</b> of INIT process as -1. Hence, Getppid of INIT will return -1, corresponding to an error, as INIT does not have a parent.	</p>
+			<p> The <b>Fork</b> system call implementation must be modified, to store the PID of the parent in the <b>Parent PID</b> field in the PCB of the child process created. The OS Startup Code must be modified to set the <b>Parent PID</b> of INIT process as 0. The parent process of INIT is considered to be itself.	</p>
 			
-			<p> The Getpid system call implementation should fetch this value from the PCB of the current process and return this value from the system call. </p>
+			<p> The Getppid system call implementation should fetch this value from the PCB of the current process and return this value from the system call. </p>
 			
 			
 			<h5>Wait System Call :</h5>
 
-			<i>Description</i>: The current process is blocked till the process with PID given as argument signals or exits. <br/>
+			<i>Description</i>: The current process is blocked till the process with PID given as argument executes a Signal system call or exits. <br/>
 			<i>System Call No</i>: 13 <br/>
 			<i>Interrupt Routine No</i>: 7 <br/>
 			<i>Arguments</i>: ProcessId <br/>
 			<i>Return Value</i>: 0 (Success) or -1 (Failure) </br>		
 			<br/><p>(See how APL translates Wait system call in <a href="runtime.html#navsyscallswait" class="imp">Wait system call translation</a>)</p>	
 			
-			<p>Wait system call must be handled by the Interrupt 7 routine along with the Exit system call. The Wait system call will need to fetch an argument from the stack corresponding to the process identifier (PID) of the process that it should wait for. We have used the alias <tt>WaitingPID</tt>in the roadmap for this argument. The <b>STATE</b> field in the PCB of the current process must indicate that it is waiting for a process with the given PID. Change the <b>STATE</b> field in the PCB of the current process to <tt>100 + WaitingPID</tt>. For example, 125 indicates that the current process is waiting for the process with PID 25 and STATE value as 100 for a process, indicates that this process is waiting for the INIT process. </p>
-			<p> The <b>Exit</b> system call must be modified to resume all the processes waiting for the exiting process. This is done by searching for a process with <b>STATE</b> value as 100+processID in its PCB. processID is the PID of the current process obtained as described in previous stages. If such a PCB is encountered, set its <b>STATE</b> field to 1, indicating ready. Traverse through entire ready list. </p>
+			<p>Wait system call must be handled by the Interrupt 7 routine along with the Exit system call. The Wait system call will need to fetch an argument from the stack corresponding to the process identifier (PID) of the process that it should wait for. We have used the alias <tt>WaitingPID</tt>in the roadmap for this argument. The PCB of the process with PID as <tt>WaitingPID</tt> should be checked to see if it is not a running process or a terminated process. If it is the running process, the process is intending to wait for itself. In this case, the system call should return an error value of -1. If the STATE is 0, it indicates that it is a terminated process. Waiting cannot be done on terminated processes, hence, this should also return an error value of -1.</p>
+			
+			<p>	The <b>STATE</b> field in the PCB of the current process must indicate that it is waiting for a process with the given PID. Change the <b>STATE</b> field in the PCB of the current process to <tt>100 + WaitingPID</tt>. For example, 125 indicates that the current process is waiting for the process with PID 25. Similarly, a STATE value as 100 for a process, indicates that this process is waiting for the INIT process. Since this process has switched into waiting mode, another process must be scheduled for execution. To do this, scheduler must be implemented to schedule the next ready process. Scheduler has already been implemented for the Exit system call. Control may be trasferred to the scheduler code in the Exit system call implementation for scheduling a new process for execution. </p>
+			
+			
+			<p> The <b>Exit</b> system call must be modified to resume all the processes waiting for the exiting process. This is done by searching for all processes with <b>STATE</b> value as 100+processID in  the PCB. Set the <b>STATE</b> field of such processes to 1. Return from the system call with 0, indicating success. </p>
 			
 			<h5>Signal System Call :</h5>
 			<i>Description</i>: All processes waiting for the current process are resumed. <br/> 
@@ -2001,7 +2005,7 @@ Ip_addr = (EFR/1000);		//Gets value of IP at the point of exception
 			<i>Interrupt Routine No</i>: 7 <br/>
 			<i>Arguments</i>: None<br/>
 			<i>Return Value</i>: 0 (Success) or -1 (Failure) <br/>		
-			<br/><p>(See how APL translates Signal system call in <a href="runtime.html#navsyscallssignal" class="imp">Wait system call translation</a>)</p>	
+			<br/><p>(See how APL translates Signal system call in <a href="runtime.html#navsyscallssignal" class="imp">Signal system call translation</a>)</p>	
 			
 			<p>Signal system call must be handled by the Interrupt 7 routine along with Wait and Exit system calls. As done for Exit in the implementation of Wait system call, the Signal system call implementation must traverse through the Ready List of PCBs, and on finding PCBs with <b>STATE</b> value as <tt>100 + processID</tt>, it must update it to <b>1</b> indicating ready.</p>
 			

@@ -407,8 +407,8 @@ endwhile; </pre>
 					<p>Note that the <tt>--os</tt> option loads the file to Block 0 of the XFS disk </p>
 					<li> Run the machine using the command 
 						<div class="syntax">
-cd $HOME/myxos/xsm
-./xsm
+<pre>cd $HOME/myxos/xsm
+./xsm</pre>
 						</div>
 						<p></p>
 					</li>
@@ -711,7 +711,7 @@ Machine is halting</pre>
 				
 				<li> Load the compiled output file $HOME/myxos/spl/spl_progs/os_startup.xsm to the XFS disk using XFS interface</li>
 				<li> Run the machine by disabling the timer.
-					<div class="syntax"> $HOME/myxos/xsm/xsm --timer=0 </div>
+					<div class="syntax"> cd $HOME/myxos/xsm <br/>./xsm --timer=0 </div>
 					You'll get the following output on the screen.
 <pre><tt>
 Before INT
@@ -758,7 +758,7 @@ Machine is halting
 				<li> Compile the new OS Startup Code using SPL Compiler, and load it to the XFS disk using XFS Interface.</li>
 				<li> <p>Now, run the machine <b>without</b> disabling the timer, to see the timer interrupt routine in action. To enable the timer, omit the &nbsp; &nbsp; &nbsp; <tt>--timer</tt> flag. You can specify the interval of instructions after which the timer interrupt is triggered by specifying a <tt>value</tt> in the <tt>--timer=&lt;value&gt;</value></tt>. The default <tt>value</tt> is 10 instructions.</p>
 				
-					<div class="syntax">$HOME/myxos/xsm/xsm </div>
+					<div class="syntax">cd $HOME/myxos/xsm <br/> ./xsm </div>
 					You'll get the following output on the screen
 <pre><tt>1
 2
@@ -846,8 +846,8 @@ Machine is halting
 						</li>
 						<li> Load the code blocks of the second program from disk to memory (In this roadmap, we have assumed that the file has only one code block which is stored in block 25.  See Step 5 of the previous section. Note that, you must use the XFS interface to find the actual block numbers in your disk. There can be a maximum of 3 code blocks for any executable file). Note that the pages allocated for user processes start from page number 25 onwards and  pages 25 to 28 have already been allocated for the INIT process. So the second, process can be allocated pages after 28. For convenience we have used page 29 in the memory to load the code block for our program. (See <a href="xos-spec.html#navmemorg">Memory Organization</a>). Page 29 will contain the code corresponding to this program and page 30 will be used as the stack (See <a href="xos-spec.html#navpromgmt_prostruct">Process Structure</a>).
 							<div class="syntax">
-								load(29,25 );<br/>	// 
-							//	</div>
+								load(29,25 );
+							</div>
 						</li>
 						<li><p>Page Table for this process must be setup. The starting address of the page table of a process is calculated using the formula discussed in stage 4. </p>
 						<tt>1024 + PID * 8</tt>
@@ -999,7 +999,7 @@ physicalSP = ([PTBR + 2 * (SP / 512)] * 512) + (SP % 512);
 				<li> Compile the OS Startup Code and Timer interrupt Routine using the SPL Compiler.  </li>
 				<li> Load the compiled output .xsm files corresponding to  OS Startup code and timer interrupt routine to the XFS disk using XFS interface. </li>
 				<li> Run the machine without disabling timer </li>
-				<div class="syntax">$HOME/myxos/xsm/xsm</div>
+				<div class="syntax">cd $HOME/myxos/xsm <br/>./xsm</div>
 				
 			</ol>
 			The output will have odd and even numbers printed in an interleaved fashion. This indicates that both programs, i.e. program to print odd numbers and the program to print even numbers executed concurrently on the machine. Vary the timer value using the <tt>--timer</tt> flag and observe the variation in the output.
@@ -1204,7 +1204,7 @@ integer main()
 </div> This program invokes Create system call to create a file named <tt>myfile.dat</tt>. It prints the value returned by the Create system call.
 </p></li>
 				<li> <p> Compile the above given APL program using APL compiler. Load it as the INIT program to XFS Disk using the XFS interface.</p></li>
-				<li><p> Run the machine with the timer disabled</p><div class="syntax"> $HOME/myxos/xsm/xsm --timer=0</div></li>
+				<li><p> Run the machine with the timer disabled</p><div class="syntax"> cd $HOME/myxos/xsm <br/> ./xsm --timer=0</div></li>
 				
 			</ol>
 			<p>If the system call execution did not fail in between, 0 will be printed and the machine will halt. The correct output is given below</p>
@@ -1293,7 +1293,7 @@ endwhile;					</pre>
 			<p>To check if the system call is functioning properly, make user programs which invoke the system call. Compile it using APL compiler and load it to disk as the INIT program. Run the machine by <b>disabling the timer</b>. You may use the XFS interface to check the working of file system calls.</p>
 			
 			
-			<p><b>WARNING:</b> Use maxinum number of registers (from the set S0 - S15) and avoid repeated computation of values to limit the number of instructions in an interrupt routine. An interrupt routine cannot exceed more than 256 instructions (or 256 x 2 = 512 words), as only one page is allocated for each interrupt routine.</p>
+			<p><b>WARNING:</b> Avoid repeated computation of values (by storing the values in register S0 - S15), to limit the number of instructions in an interrupt routine. An interrupt routine cannot exceed more than 512 instructions (or 512 x 2 = 1024 words), as only two page is allocated for each interrupt routine.</p>
 
 
 			<p> Detailed information and actions corresponding to each system call is given below.</p>
@@ -1557,7 +1557,7 @@ endwhile;					</pre>
 			
 			<p>After programming the OS Startup Code and the interrupt routines, compile and load them to the disk. To check if the system calls are functioning properly, make user programs which invoke these system calls. Compile these programs using APL compiler and load it to disk. Run the machine <b>with the timer enabled</b>.
 
-			<div class="syntax"> $HOME/myxos/xsm/xsm</div> You have already programmed the timer interrupt routine in stage 6. Make sure it is loaded to the disk and the OS Startup Code loads the timer interrupt routine to the memory. </p>
+			<div class="syntax"> cd $HOME/myxos/xsm <br/>./xsm</div> You have already programmed the timer interrupt routine in stage 6. Make sure it is loaded to the disk and the OS Startup Code loads the timer interrupt routine to the memory. </p>
 			
 			<p> Detailed instructions on modifying the OS startup Code and programming the interrupt routines are given below </p>
 
@@ -2009,7 +2009,7 @@ Ip_addr = (EFR/1000);		//Gets value of IP at the point of exception
 			
 			<p>Signal system call must be handled by the Interrupt 7 routine along with Wait and Exit system calls. As done for Exit in the implementation of Wait system call, the Signal system call implementation must traverse through the Ready List of PCBs, and on finding PCBs with <b>STATE</b> value as <tt>100 + processID</tt>, it must update it to <b>1</b> indicating ready.</p>
 			
-			<h3>Making a console</h3>
+			<h3>Making a Shell</h3>
 			
 			The final stage is to make the INIT process act like a console. INIT written in APL, should be an loop which takes in a filename of a program to execute. It should Fork itself and Exec using the filename. It should wait for this process to finish execution or issue a Signal system call. On the resuming, the console will repeat the steps to execute another program. Appropriate errors must be reported.
 

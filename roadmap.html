@@ -901,7 +901,7 @@ Machine is halting
 							The rest of the entries of the PCB may not be set now. You will deal with them in subsequent stages.
 							</ul>
 						</li> <br/>
-						<li> Before switching to user mode, the timer interrupt routine must be loaded to memory. Add the instruction to load the timer interrupt routine from disk blocks 3 and 4 to memory pages 9 and 10. See <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization </a>. 
+						<li> Before switching to user mode, the timer interrupt routine must be loaded to memory. Add the instruction to load the timer interrupt routine from disk blocks 3 and 4 to memory pages 9 and 10. See <a href="xos-spec.html#navmemorg">Memory Organization</a> and <a href="xfs-spec.html#navdiskorg">Disk Organization </a>. You have already modified the os startup code to load the timer interrupt routine in the previous stage. So this is not to be done again. 
 							<div class="syntax">
 								load(9,3);<br/>load(10,4);
 							</div>

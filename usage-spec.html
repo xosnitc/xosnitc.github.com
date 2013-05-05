@@ -439,8 +439,8 @@ Now open test to see the contents of os_startup.xsm
 					<li><p> <tt> diskfreelist / df </tt> :<br/> Displays the Memory copy of Disk Free List.</p></li>
 					<li><p> <tt> fat </tt> :<br/> Displays the memory copy of the File Allocation Table (FAT).</p></li>
 					<li><p> <tt> location / l &ltaddress&gt </tt> :<br/> Displays the content at memory address (Address Translation takes place if used in USER mode). </p></li>
-					<li><p> <tt> watch  / w &ltphysical_address&gt </tt> :<br/> Sets the watch point to this address. Watch point is used to track changes of a particular memory location. Whenever the word at the watch point is altered, debug interface is invoked. </p></li>
-					
+					<li><p> <tt> watch  / w &ltphysical_address&gt </tt> :<br/> Sets a watch point to this address. Watch point is used to track changes of a particular memory location. Whenever a word which is watched is altered, debug interface is invoked. Atmost 16 watch points can be set.</p></li>
+					<li><p> <tt> watchclear  / wc </tt> :<br/> Clears all the watch points. </p></li>
 					<li><p> <tt> exit / e </tt> :<br/>  Exits the debug prompt and halts the machine.</p></li>
 					<li><p> <tt> help / h </tt> :<br/> Displays commands.</p></li>
 

@@ -108,19 +108,19 @@
 			<article  id="navintro" class="grid col-full">
 				<h2>Introduction</h2>
 				<p>
-				XOS (Experimental Operating System) is an experimental operating system  which is designed to be run on the  XSM  (Experimental String Machine) architecture which is a simulated machine hardware. XOS is 	intended as an instructional tool to help students learn various aspects about operating systems.
+				XOS (eXperimental Operating System) is an experimental operating system  which is designed to be run on the  XSM  (eXperimental String Machine) architecture which is a simulated machine hardware. XOS is 	intended as an instructional tool to help students learn various aspects about operating systems.
 				</p>
 				<p>
 				XOS is programmed using a custom language, SPL (System Programmer's Language) which compiles to XSM compatible code. (Refer <a href="spl-spec.html" target="_blank" >SPL Specification</a>) Application programs for XSM are written in APL (Application Programmer's Language). (Refer <a href="apl-spec.html" target="_blank" >APL Specification</a>) 
 				</p>
 				<p>
-				The programs, data and operating system code is stored on a disk which has an XFS (Experimental File 					System) in it. (Refer <a href="xfs-spec.html" target="_blank" >XFS Specification</a>)
+				The programs, data and operating system code is stored on a disk which has an XFS (eXperimental File 					System) in it. (Refer <a href="xfs-spec.html" target="_blank" >XFS Specification</a>)
 				</p>
 				
 				
 				The various functionalities of XOS include
 				<ul>
-				<li> <b>Process Management</b>, includes scheduling and dispatching processes to the CPU. XOS is capable of multiprogramming}(the ability to run more than one process simultaneously).	 					(Refer <a href="#navpromgmt" >Process Management</a>)
+				<li> <b>Process Management</b>, includes scheduling and dispatching processes to the CPU. XOS is capable of multiprogramming (the ability to run more than one process simultaneously).	 					(Refer <a href="#navpromgmt" >Process Management</a>)
 				</li>
 				<li> <b>Memory Management</b>, involves allocating memory for processes, demand paging (loading 				memory pages from the disk as and when required). (Refer <a href="#navmemmgmt"  >Memory 				Management</a>) </li>
 				<li> <b>System Calls</b>. XOS provides various system calls for the user processes to execute certain 					kernel level operations. (Refer <a href="#navsyscalls"  >System Calls</a> ) </li>
@@ -188,8 +188,8 @@
 				<li>  <a href="#navpromgmt_pagetbl" >The Per-Process Page Tables</a>. used for address translation of logical addresses to physical address. </li>
 				<li><a href="#navmemmgmt_mfl">Memory Free List</a> is a list of free memory locations in the memory. </li>
 				<li><a href="#navfiles_swoft" >System Wide Open File Table</a>  contains a details of files which are opened by the processes.  </li>
-				<li><a href="#navpromgmt_readylist" >Ready List</a> of <a href="#navpromgmt_pcb" >Process Control Block (PCB)</a>s, is a list of Process Control Blocks, which indicates the ready and terminated processes.</li>
-				<li><a href="#navfiles_fat" >Memory copy of File Allocation Table (FAT)</a>contains details about files stored on the disk. See <a href="xfs-spec.html#navfat">FAT in XFS</a></li>
+				<li><a href="#navpromgmt_readylist" >Ready List</a> of <a href="#navpromgmt_pcb" >Process Control Blocks (PCB)</a>, is a list of Process Control Blocks, which indicates the ready and terminated processes.</li>
+				<li><a href="#navfiles_fat" >Memory copy of File Allocation Table (FAT)</a> contains details about files stored on the disk. See <a href="xfs-spec.html#navfat">FAT in XFS</a></li>
 				<li> <a href="#navfiles_dfl" >Memory copy of Disk Free List</a>  contains details about used and used blocks in the disk. See <a href="xfs-spec.html#navdfl">Disk Free List in XFS</a> </li>
 				<li><a href="#navsysroutines_exhandler" >Exception Handler</a>  contains the kernel code to be executed during various exceptions. </li>
 				<li> <a href="#navsysroutines_timer" >Timer Interrupt Routine</a> contains the kernel code to be executed during a timer interrupt. </li>
@@ -222,10 +222,10 @@
 				<h4>Process Structure</h4>
 				A process in the memory has the following structure.
 				<ul>
-				<li><b>Code Area</b> : These are pages of the memory that contain the executable code loaded from the disk.</li>
-				<li><b>Stack</b> : This is the user stack used for program execution. The variables and data used during execution of program is stored in the stack. It grows in the direction of increasing word address. The location of the stack is fixed at the 4th page of the process.</li> 
+				<li><b>Code Area</b>: These are pages of the memory that contain the executable code loaded from the disk.</li>
+				<li><b>Stack</b>: This is the user stack used for program execution. The variables and data used during execution of program is stored in the stack. It grows in the direction of increasing word address. The location of the stack is fixed at the 4th page of the process.</li> 
 				</ul>
-				The structure of a process is as shown<br/>
+				The structure of a process is as shown:<br/>
 				<img src="doc/prostruct.png"/>
 				</article>			
 				<div class="up grid col-one-third" style="float:right">
@@ -258,7 +258,7 @@
 					<h5>Registers</h5>
 					<ul>	
 					<li><tt>IP</tt>: The word address of the currently executing instruction is stored in the IP (Instruction Pointer) register. The value of this instruction cannot be changed explicitly by any instruction. </li>
-					<li><tt>BP</tt>: The base address of the user stack is stored in the BP (Base Pointer)register.</li>
+					<li><tt>BP</tt>: The base address of the user stack is stored in the BP (Base Pointer) register.</li>
 					<li><tt>SP</tt>: The address of the stack top is stored in the SP (Stack Pointer)</li>
 					<li><tt>PTBR</tt>: The physical address of the Per-Process Page Table of the process is stored in the PTBR (Page Table Base Register).</li>
 					<li><tt>PTLR</tt>: The length of the Per-Process Page Table (No. of entries) is stored in the PTLR (Page Table Length Register). It is fixed as 4 for every process in XOS.</li>		
@@ -314,26 +314,26 @@
 				</p>
 				<p>
 					When a process is loaded, the actual pages are not loaded into memory. In <b>demand paging</b>, the actual pages are loaded only when the pages are accessed for the first time . Once all pages are loaded, the first word of each entry contains the physical page number where the data specified by the logical address resides in the memory.
-					<p> The second word contains <b>auxiliary information</b>. The first two bits of auxiliary information are reserved as reference(R) bit and valid/invalid(V) bit. The remaining bits are not used by XOS, but can be used for future enhancements. The details of bits in Auxiliary information is given below. <br/></p>
+					<p> The second word contains <b>auxiliary information</b>. The first two bits of auxiliary information are reserved as reference (R) bit and valid/invalid (V) bit. The remaining bits are not used by XOS, but can be used for future enhancements. The details of bits in Auxiliary information is given below. <br/></p>
 
 					<img src="doc/auxinfo.png" />
 					<ul>
 					<li> <i>Reference Bit (R)</i>: Initially, this bit is set to 0 (unreferenced) by the machine. On a page access, this bit is set to 1 by the machine. This bit is used for page replacement by the OS. (Refer <a href="#navmemmgmt_paging">Paging</a> and <a href="#navmemmgmt_vm">Virtual Memory</a>)
 
-					<li> <i>Valid/Invalid Bit (V) :</i> This bit indicates whether the entry of the page table is valid or invalid. The Valid/Invalid bit has value 1 if the first word of this  entry corresponds to a valid physical page number. It has value 0 if the entry is invalid. The first word of an invalid Per-process page table entry is either -1 (indicates that there is no physical page corresponding to the logical address) or a disk block number (the physical page corresponding to the logical address resides in this disk block and needs to be loaded to memory). The Valid/Invalid bit is set by the OS. If memory access is made to a page whose page table entry is invalid, the machine transfers control to the <a href="#navsysroutines_exhandler">Exception Handler</a> routine, which is responsible for loading the correct physical page.   </li>
+					<li> <i>Valid/Invalid Bit (V):</i> This bit indicates whether the entry of the page table is valid or invalid. The Valid/Invalid bit has value 1 if the first word of this  entry corresponds to a valid physical page number. It has value 0 if the entry is invalid. The first word of an invalid Per-process page table entry is either -1 (indicates that there is no physical page corresponding to the logical address) or a disk block number (the physical page corresponding to the logical address resides in this disk block and needs to be loaded to memory). The Valid/Invalid bit is set by the OS. If memory access is made to a page whose page table entry is invalid, the machine transfers control to the <a href="#navsysroutines_exhandler">Exception Handler</a> routine, which is responsible for loading the correct physical page.   </li>
 					</li>
 					</ul>	
 				</p>
 				<p> An example of page table is given below </p>
 				<table class="doctable" style="width:50%">
-					<tr>  <th>Physical Page Number</th>  <th> Auxiliary information <br/>(referenced and valid bit)</th> </tr>
+					<tr>  <th>Physical Page Number</th>  <th> Auxiliary information <br/>(reference and valid bit)</th> </tr>
 					<tr> <td>36 </td> <td> 01</td> </tr>
 					<tr> <td>311</td> <td> 00</td> </tr>
 					<tr> <td>-1</td> <td> 00</td> </tr>
 					<tr> <td>490</td> <td> 00</td> </tr>
 				</table>
 
-				In the above example : 
+				In the above example: 
 				<ul>
 					<li> Reference bit of every entry is set as 0, indicating unreferenced</li>
 					<li> The 1st entry is a valid page in memory as the valid bit is 1.</li>
@@ -410,7 +410,7 @@ The INIT process is the first user program that is loaded by the OS after start 
 				<h4>Virtual Memory</h4>
 				<p>XOS allows virtual memory management, i.e. running processes without having all the pages in memory. It makes use of a backing store or swap in the disk to replace pages from the memory and allocate the emptied memory to another process. This increases the total number of processes that can be run simultaneously on the OS.</p>
 				<p>
-				When a process starts executing, no memory pages are allocated for it. Initially its, Per-process page tables are set with the  block numbers of the disk blocks which contain the data blocks of the program. For each page table entry, the Auxiliary Information are intialized to 0 (invalid) and 0 (unreferenced). When a page is referenced for the first time, it triggers a page fault exception (since valid bit is set as 0). The Exception Handler Routine is responsible for loading the required page from the disk to the memory. This strategy of loading pages when accessed for the first time, is known as <b>Pure Demand Paging</b>. </p>
+				When a process starts executing, no memory pages are allocated for it. Initially its per-process page tables are set with the  block numbers of the disk blocks which contain the data blocks of the program. For each page table entry, the Auxiliary Information are intialized to 0 (invalid) and 0 (unreferenced). When a page is referenced for the first time, it triggers a page fault exception (since valid bit is set as 0). The Exception Handler Routine is responsible for loading the required page from the disk to the memory. This strategy of loading pages when accessed for the first time, is known as <b>Pure Demand Paging</b>. </p>
 				<p>
 				On encountering a page fault exception, the Exception Handler Routine loads the required page from the disk to a free page in the memory. If no free page is available in the memory, a page replacement technique is used to select a victim page. The page replacement technique used in XOS is a second chance algorithm (Refer Silberschatz, Galvin, Gagne: Operating System Concepts) which uses the reference bits in the auxiliary information. The victim page is swapped out to to the disk (swap area) to accommodate the required page.</p>
 			</article> 
@@ -423,7 +423,7 @@ The INIT process is the first user program that is loaded by the OS after start 
 
 			<article id="navfiles" class="grid col-full">
 			<h2>Files</h2>
-			<p>The operating system requires accessing the file system (XFS) while loading programs, and reading data from the files. The operating system maintains a memory copy of the file system data structures like FAT(File Allocation Table) and Disk Free List. It is loaded from the disk to the memory during operating system boot. </p>
+			<p>The operating system requires accessing the file system (XFS) while loading programs, and reading data from the files. The operating system maintains a memory copy of the file system data structures like FAT (File Allocation Table) and Disk Free List. It is loaded from the disk to the memory during operating system boot. </p>
 			<p>
 Apart from the file system data structures XOS maintains details about files opened by all processes in the System-wide Open File Table. XOS uses a scratchpad to access files in the memory which will be explained further in this chapter.	</p>
 			</article>	
@@ -465,8 +465,8 @@ Apart from the file system data structures XOS maintains details about files ope
 			<tr><td>FAT Index </td> <td>File Open Count</td></tr>			
 			</table>
 			<ul>
-			<li> <b>FAT index </b>: It stores the index of the corresponding file in the FAT. An invalid entry is denoted by -1. </li>		
-			<li>  <b>File Open Count</b> : File Open Count is the number of open instances of the file. When this becomes zero, the entry for the file is invalidated in the System Wide Open File Table.</li>	
+			<li> <b>FAT index</b>: It stores the index of the corresponding file in the FAT. An invalid entry is denoted by -1. </li>
+			<li>  <b>File Open Count</b>: File Open Count is the number of open instances of the file. When this becomes zero, the entry for the file is invalidated in the System Wide Open File Table.</li>	
 			</ul>
 			
 			<p>	The Per-Process Open File Table in the PCB of each process stores information about files opened by the corresponding process. Each entry in the Per-Process Open File Table has the index to the file’s entry in the System-wide Open File Table.</p>
@@ -493,7 +493,7 @@ Apart from the file system data structures XOS maintains details about files ope
 	
 			<article id="navsyscalls_intro" class="grid col-full">
 			<h4>Introduction</h4>
-			<p>System calls are interfaces through which a process communicates with the OS. Each system call has a unique name associated with it ( Open, Read, Fork etc). Each of these names maps to a unique system call number. Each system call in turn causes a software interrupt to occur. Note that multiple system calls can be mapped to the same interrupt.</p>
+			<p>System calls are interfaces through which a process communicates with the OS. Each system call has a unique name associated with it (Open, Read, Fork, etc). Each of these names maps to a unique system call number. Each system call in turn causes a software interrupt to occur. Note that multiple system calls can be mapped to the same interrupt.</p>
 			<p> All the arguments to the system call are pushed into the user stack of the process which invokes the system call. The system call number is pushed as the last argument. (Refer <a href="apl-spec.html#navsyscalls" target="_blank" >System Calls</a> in APL Specification)  </p>
 			</article>			
 			<div class="up grid col-one-third" style="float:right">
@@ -535,7 +535,7 @@ Apart from the file system data structures XOS maintains details about files ope
 			<i>APL Syntax </i>: <tt>int Write(fileDescriptor, wordToWrite)</tt> <br/>
 			<i>System Call No. </i>: 5<br/>
 			
-			<p>This system call is used to write one word at the current seek position, into an open file ( identified by <tt>fileDescriptor</tt> ) from a string/integer variable ( identified by <tt>wordToWrite</tt> ). The return value of the <tt>Write()</tt> system call is 0 if it is a success or -1 otherwise. It invokes Interrupt 4 Routine. </p>
+			<p>This system call is used to write one word at the current seek position, into an open file (identified by <tt>fileDescriptor</tt>) from a string/integer variable (identified by <tt>wordToWrite</tt>). The return value of the <tt>Write()</tt> system call is 0 if it is a success or -1 otherwise. It invokes Interrupt 4 Routine. </p>
 
 			<b>Seek</b></br>
 			<i>APL Syntax </i>: <tt>int Seek(fileDescriptor, newLseek)</tt> <br/>
@@ -547,7 +547,7 @@ Apart from the file system data structures XOS maintains details about files ope
 			<i>APL Syntax </i>: <tt>int Read(fileDescriptor, wordRead)</tt> <br/>
 			<i>System Call No. </i>: 7 <br/>
 			
-			<p>This system call is used to read one word at the current seek position, from an open file ( identified by <tt>fileDescriptor</tt> ) and store the word to a string/integer variable ( identified by <tt>wordRead</tt> ). The return value of the <tt>Read()</tt> system call is 0 if it is a success or -1 otherwise. It invokes Interrupt 3 Routine. </p>
+			<p>This system call is used to read one word at the current seek position, from an open file (identified by <tt>fileDescriptor</tt>) and store the word to a string/integer variable (identified by <tt>wordRead</tt>). The return value of the <tt>Read()</tt> system call is 0 if it is a success or -1 otherwise. It invokes Interrupt 3 Routine. </p>
 		
 			</article>	
 			<div class="up grid col-one-third" style="float:right">

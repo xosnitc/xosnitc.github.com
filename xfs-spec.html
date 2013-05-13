@@ -211,7 +211,7 @@
 				<br/>
 				2. <b>File Size</b>: It indicates the number of words required for the data
 				blocks of the file. The number of data blocks of the file can vary from
-				0 to 255, and so the maximum file size is 131072 words (256 × 512).
+				0 to 256, and so the maximum file size is 131072 words (256 × 512).
 				It occupies one word in the FAT entry. <br/>
 				3. <b>Block number of basic block</b>: It contains the block number where
 				the basic block of a file resides in the disk. It occupies one word in the
@@ -233,8 +233,8 @@
 			<li>It is present in block 20 of the disk. Refer <a href="xfs-spec.html#navdiskorg">Disk Organization</a>.</li>
 			<li>For each block in the disk there is an entry in the Disk Free List which
 			contains a value of either 0 or 1 indicating whether the corresponding
-			block in the disk is free or used, respectively. <!-- Each entry in the Disk
-			Free List is of size one word. (Repeated info!)--></li>
+			block in the disk is free or used, respectively. Each entry in the Disk
+			Free List is of size one word.</li>
 			<li>Blocks 0 to 20 are system reserved and are marked as 1 in the Disk
 			Free List so that they cannot be used for saving user files. The file
 			system also ensures that user files are not stored on the Swap Area.</li>

@@ -83,11 +83,11 @@
 			<article  id="navintro" class="grid col-full">
 				<h2>Introduction</h2>
 				<p>
-				XFS or Experimental File System is a file system architecture designed for XOS (Experimental Operating System). 
+				XFS or eXperimental File System is a file system architecture designed for XOS (eXperimental Operating System).
 				XFS is a simple filesystem which has no directory structure. </br>
-				XFS spans the entire disk in XSM (Experimental String Machine). 
+				XFS spans the entire disk in XSM (eXperimental String Machine).
 				The disk consists of a linear sequence of 512 blocks. 
-				The basic unit of disk in XSM is a <b><i>block</i></b>. 
+				The basic unit of disk storage in XSM is a <b><i>block</i></b>.
 				The size of the block is equal to that of page in memory (512 words). 
 				The total capacity of the disk is 512 * 512  = <b>262144</b> words. </br>
 				Any particular block in the disk is addressed by the corresponding number in the sequence 0 to 511 known as the <em>block number</em>. 
@@ -123,13 +123,13 @@
 				
 				<br/><br/>
 				<ul style="list-style-type:disc">
-					<li> <p> <b>OS Startup Code</b> : Block 0 is the location of operating system code required during machine boot.  </p> </li>
-					<li> <p> <b>Exception and Interrupt Handler</b> : Blocks from 1 - 18 are intended for Interrupt Routines for interrupt and exception handling which is done by the Operating System. </p> </li>
-					<li> <p> <b>FAT</b> or File Allocation table contains details about the files stored on the disk. </p> </li>
+					<li> <p> <b>OS Startup Code</b>: Block 0 is the location of operating system code required during machine boot.  </p> </li>
+					<li> <p> <b>Exception and Interrupt Handler</b>: Blocks from 1 - 18 are intended for Interrupt Routines for interrupt and exception handling which is done by the Operating System. </p> </li>
+					<li> <p> <b>FAT</b> or File Allocation Table contains details about the files stored on the disk. </p> </li>
 					<li> <p> <b>Disk Free List</b> has 512 entries, one entry for each block in the disk, indicating whether it is used or unused. </p> </li>
 					<li> <p> <b>INIT</b> Code It has the code for INIT process, which is the first user program run by the OS after startup. </p> </li>
-					<li> <p> <b>User Blocks</b>. Blocks from 24 to 447 are used to store user data files and user programs. </p> </li>
-					<li> <p> <b>Swap Area</b> The file system also provides a swap area for the operating system to implement demand paging. Swap Area is reserved exclusively for use by the operating system. </p> </li>
+					<li> <p> <b>User Blocks</b>: Blocks from 24 to 447 are used to store user data files and user programs. </p> </li>
+					<li> <p> <b>Swap Area</b>: The file system also provides a swap area for the operating system to implement demand paging. Swap Area is reserved exclusively for use by the operating system. </p> </li>
 				</ul>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -143,8 +143,8 @@
 				Every file in the disk has a <i>Basic Block</i> and several <i>Data Blocks</i>. 
 				They are defined as follows:</p>
 				<ul style="list-style-type:disc">
-					<li><p> <b>Data Blocks</b> : These blocks contain the actual data of a file. </p></li>
-					<li><p> <b>Basic Block</b> : It consists of information about the data in a file.</p>
+					<li><p> <b>Basic Block</b>: It consists of information about the data in a file.</p>
+					<li><p> <b>Data Blocks</b>: These blocks contain the actual data of a file. </p></li>
 						<p> The structure of the basic block is given below.</p>
 						<table class="doctable">
 							<tr> <td><b>Index</b></td> <td> 0--255 </td><td> 256--511 </td></tr>
@@ -152,7 +152,7 @@
 						</table>
 						<br/>
 						<ul>
-							<li> <b>Block List</b> : It contains block addresses of all data blocks in the file.
+							<li> <b>Block List</b>: It contains block addresses of all data blocks in the file.
 								<ul>
 									<li>The block list consists of 256 entries.</li>
 									<li>Each entry is of size one word.</li>
@@ -160,15 +160,15 @@
 									All invalid entries are marked with -1.</li>
 								</ul>
 							</li>
-							<li> <b>Header</b>  The header contains the meta information relating to the file. The header fields is 256 words long. It can be used to store details like permissions, ownership etc related to a file, similar to inode in Linux and UNIX operating systems. However XOS does not use the header field.
+							<li> <b>Header</b>: The header contains meta information related to the file. The header field is 256 words long. It can be used to store details like permissions, ownership, etc related to a file, similar to inode in Linux and UNIX operating systems. However, XOS does not use the header field.
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<img src="doc/basic_block_example.png" style="max-width:70%" /> 
 				<br/><b> Example </b>
+				<p>Consider the example illustrated by figure 3. From the figure, we infer the following:</p>
 				<ul>
-					<li>Consider the example illustrated by figure 3. From the figure, we infer the following.</li>
 					<li>The zeroth data block of the file resides in the disk in block number 240</li>
 					<li>The first data block of the file resides in the disk in block number 420. The second data block of the file resides in the disk in block number 101. The third data block of the file resides in the disk in block number 315 </li>
 					<li> There are no more data blocks for the file. So rest of the entries of the basic block are marked as -1.</li>
@@ -180,7 +180,7 @@
 					These files contain data or information that is used by the programs. They can occupy a maximum of 257 blocks (1  basic block + maximum 256 data blocks). Data files have an extension <b>.dat</b> in the filename.
 
 				<h5>Executable files</h5>
-					These contain programs that the user wishes to run on the machine. They occupy 4 blocks (1 basic block + 3 data blocks) of the disk. Executable files have an extension .xsm in the filename.
+				These contain programs that the user wishes to run on the machine. They occupy 4 blocks (1 basic block + 3 data blocks) of the disk. Executable files have an extension <b>.xsm</b> in the filename.
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -205,15 +205,15 @@
 
 				<br/><br/>
 				The FAT entry consists of  <br/>
-				1. <b>File Name</b> : It is an identification of a file. It can be of maxi-
-				mum 15 characters (and thus requires 1 word). Typical file names are
+				1. <b>File Name</b>: It is an identification of a file. It can be of maximum
+				15 characters (and thus requires 1 word). Typical file names are
 				student.dat, calc.xsm.
 				<br/>
-				2. <b>File Size</b> : It indicates the number of words required for the data
+				2. <b>File Size</b>: It indicates the number of words required for the data
 				blocks of the file. The number of data blocks of the file can vary from
-				0 to 256, and so the maximum file size is 131072 words (256 × 512).
+				0 to 255, and so the maximum file size is 131072 words (256 × 512).
 				It occupies one word in the FAT entry. <br/>
-				3. <b>Block number of basic block</b> : It contains the block number where
+				3. <b>Block number of basic block</b>: It contains the block number where
 				the basic block of a file resides in the disk. It occupies one word in the
 				FAT entry. <br/>
 				<br/>
@@ -225,16 +225,16 @@
 
 			<article id="navdfl"  class="grid col-full">			
 		<h2>Disk Free List</h2>
-			The Disk Free List is a data structure used for keeping tracking of unused blocks in the disk.
+			The Disk Free List is a data structure used for keeping track of unused blocks in the disk.
 			<ul>
 			<li>The Free List of the disk consists of 512 entries. Each entry is of size
 			one word.</li>
 			<li>The size of the free list is thus 1 block or 512 words.</li>
-			<li>It is present in blocks 20 of the disk. Refer <a href="xfs-spec.html#navdiskorg">Disk Organization</a>.</li>
+			<li>It is present in block 20 of the disk. Refer <a href="xfs-spec.html#navdiskorg">Disk Organization</a>.</li>
 			<li>For each block in the disk there is an entry in the Disk Free List which
 			contains a value of either 0 or 1 indicating whether the corresponding
-			block in the disk is free or used respectively. Each entry in the Disk
-			Free List is of size one word.</li>
+			block in the disk is free or used, respectively. <!-- Each entry in the Disk
+			Free List is of size one word. (Repeated info!)--></li>
 			<li>Blocks 0 to 20 are system reserved and are marked as 1 in the Disk
 			Free List so that they cannot be used for saving user files. The file
 			system also ensures that user files are not stored on the Swap Area.</li>

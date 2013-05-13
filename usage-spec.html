@@ -120,8 +120,8 @@
 				<div class="syntax">
 					cd $HOME/myxos
 				</div>	
-				<li> Make sure all the pre-requisites which include <b>gcc</b>, <b>flex/lex</b> and <b>bison/yacc</b> are installed. </li>	
-				In Ubuntu/Debian systems use <b>apt</b> to install flex and bison.
+				<li> Make sure all the prerequisites which include <b>gcc</b>, <b>flex/lex</b> and <b>bison/yacc</b> are installed. </li>
+				In Ubuntu/Debian systems, use <b>apt</b> to install flex and bison.
 				<div class="syntax">
 					sudo apt-get install flex bison
 				</div>	
@@ -177,7 +177,7 @@
 				<ul>
 					<li><p> <tt>--os</tt> : Compile OS Code. The compiled output filename will be <b>os_startup.xsm</b></p></li>
 					<li><p> <tt>--int=timer</tt> : Compile Timer Interrupt code. The compiled output filename will be <b>timer.xsm</b></p></li>
-					<li><p> <tt>--int=[1-7]</tt> : Compile Interrupt routines. The compiled output filename will be <b>int1.xsm, int2.xsm</b>...etc.</p></li>
+					<li><p> <tt>--int=[1-7]</tt> : Compile Interrupt routines. The compiled output filename will be <b>int1.xsm, int2.xsm</b>...</p></li>
 					<li><p> <tt>--exhandler</tt> : Compile Exception Handler. The compiled output filename will be <b>exhandler.xsm</b></p> </li>
 
 				</ul>	
@@ -248,7 +248,7 @@ The file largest.apl is a sample APL program which finds largest of 4 numbers. T
 				<h2>XFS Interface</h2>
 				<h4>Introduction</h4>
 				<p><b>XFS Interface</b> (eXperimental File System Interface) is an external interface to access the filesystem of the XOS. 
-				The filesystem is simulated on a binary file called <b>”disk.xfs”</b>. The interface can format the disk, 
+				The filesystem is simulated on a binary file called <b>disk.xfs</b>. The interface can format the disk, 
 				load/remove files, list files and copy blocks to a UNIX file. See <a href="xfs-spec.html">Filesystem specification</a>.</p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -280,54 +280,54 @@ The file largest.apl is a sample APL program which finds largest of 4 numbers. T
 				<h6> Format the disk </h6>
 				<p>The command <b>fdisk</b> is used to create the disk (”disk.xfs”) or to format the disk if already created. 
 				On a newly created disk or formatted disk the Disk Free List and FAT entries are initialized. <br/>
-				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt><b>fdisk</b> </tt></p>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>Syntax:</i> <tt><b>fdisk</b> </tt></p>
 				
 				<h6> Load Files </h6>
 				<p>The command <b>load</b> is used to load files from the UNIX filesystem to the XFS disk.
-				The type of the file that is loaded is specified by the first argument. The second argument &ltpathname&gt 
+				The type of the file that is loaded is specified by the first argument. The second argument &lt;pathname&gt; 
 				is the path to the UNIX file which is to be loaded to the filesystem. <br/>
 				The command checks the size of the file (executable or data files) and allocates blocks to it. 
-				A corresponding FAT entry is created for the file. For the OS Startup code, Interrupt routines and 
-				Exception Handler, the file is loaded to the corresponding location in the disk ( Refer <a href="xfs-spec.html#navdiskorg">disk organization</a> ).</p>
+				A corresponding FAT entry is created for the file. For the OS startup code, interrupt routines and 
+				exception handler, the file is loaded to the corresponding location in the disk ( Refer <a href="xfs-spec.html#navdiskorg">disk organization</a> ).</p>
 				
 				<ul>
-					<li><p> <i>Syntax :</i> <tt><b>load</b> --exec &ltpathname&gt </tt><br/>
-					&nbsp&nbsp&nbsp&nbsp Loads an executable file to XFS disk </p></li>
-					<li><p> <i>Syntax :</i> <tt><b>load</b> --init &ltpathname&gt </tt><br/>
-					&nbsp&nbsp&nbsp&nbsp Loads INIT code to XFS disk </p></li>
-					<li><p> <i>Syntax :</i> <tt><b>load</b> --data &ltpathname&gt </tt><br/>
-					&nbsp&nbsp&nbsp&nbsp Loads a data file to XFS disk </p></li>
-					<li><p> <i>Syntax :</i> <tt><b>load</b> --os &ltpathname&gt </tt><br/>
-					&nbsp&nbsp&nbsp&nbsp Loads OS startup code to XFS disk </p></li>
-					<li><p> <i>Syntax :</i> <tt><b>load</b> --int=timer &ltpathname&gt </tt><br/>
-					&nbsp&nbsp&nbsp&nbsp Loads Timer Interrupt routine to XFS disk </p></li>
-					<li><p> <i>Syntax :</i> <tt><b>load</b> --int=[1-7] &ltpathname&gt </tt><br/>
-					&nbsp&nbsp&nbsp&nbsp Loads the specified Interrupt routine to XFS disk </p></li>
-					<li><p> <i>Syntax :</i> <tt><b>load</b> --exhandler &ltpathname&gt </tt><br/>
-					&nbsp&nbsp&nbsp&nbsp Loads exception handler routine to XFS disk</p></li>
+					<li><p> <i>Syntax:</i> <tt><b>load</b> --exec &lt;pathname&gt; </tt><br/>
+					&nbsp;&nbsp;&nbsp;&nbsp; Loads an executable file to XFS disk </p></li>
+					<li><p> <i>Syntax:</i> <tt><b>load</b> --init &lt;pathname&gt; </tt><br/>
+					&nbsp;&nbsp;&nbsp;&nbsp; Loads INIT code to XFS disk </p></li>
+					<li><p> <i>Syntax:</i> <tt><b>load</b> --data &lt;pathname&gt; </tt><br/>
+					&nbsp;&nbsp;&nbsp;&nbsp; Loads a data file to XFS disk </p></li>
+					<li><p> <i>Syntax:</i> <tt><b>load</b> --os &lt;pathname&gt; </tt><br/>
+					&nbsp;&nbsp;&nbsp;&nbsp; Loads OS startup code to XFS disk </p></li>
+					<li><p> <i>Syntax:</i> <tt><b>load</b> --int=timer &lt;pathname&gt; </tt><br/>
+					&nbsp;&nbsp;&nbsp;&nbsp; Loads Timer Interrupt routine to XFS disk </p></li>
+					<li><p> <i>Syntax:</i> <tt><b>load</b> --int=[1-7] &lt;pathname&gt; </tt><br/>
+					&nbsp;&nbsp;&nbsp;&nbsp; Loads the specified Interrupt routine to XFS disk </p></li>
+					<li><p> <i>Syntax:</i> <tt><b>load</b> --exhandler &lt;pathname&gt; </tt><br/>
+					&nbsp;&nbsp;&nbsp;&nbsp; Loads exception handler routine to XFS disk</p></li>
 				</ul>
 				
 				<h6> Remove Files </h6>
 				<p> The command <b>rm</b> is used to remove files from the filesystem. The first argument specifies the type of file 
-				to be removed. The argument &ltxfs_filename&gt specifies the file which is to be removed.<br/>
+				to be removed. The argument &lt;xfs_filename&gt; specifies the file which is to be removed.<br/>
 				The command searches the FAT entries for the file (executable/data file) and clears the blocks 
-				corresponding to the file. In the case of OS Startup code, Interrupt routines and Exception Handler 
+				corresponding to the file. In the case of OS startup code, interrupt routines and exception handler 
 				the corresponding blocks in the disk are cleared. </p>
 				<ul>
-					<li><p> <i>Syntax :</i> <tt><b>rm</b> --exec &ltxfs_filename&gt </tt><br/>
-					&nbsp&nbsp&nbsp&nbsp Removes an executable file from XFS disk </p></li>
-					<li><p> <i>Syntax :</i> <tt><b>rm</b> --init </tt><br/>
-					&nbsp&nbsp&nbsp&nbsp Removes INIT code from XFS disk </p></li>
-					<li><p> <i>Syntax :</i> <tt><b>rm</b> --data &ltxfs_filename&gt </tt><br/>
-					&nbsp&nbsp&nbsp&nbsp Removes a data file from XFS disk </p></li>
-					<li><p> <i>Syntax :</i> <tt><b>rm</b> --os </tt><br/>
-					&nbsp&nbsp&nbsp&nbsp Removes OS startup code from XFS disk </p></li>
-					<li><p> <i>Syntax :</i> <tt><b>rm</b> --int=timer </tt><br/>
-					&nbsp&nbsp&nbsp&nbsp Removes the Timer Interrupt routine from XFS disk </p></li>
-					<li><p> <i>Syntax :</i> <tt><b>rm</b> --int=[1-7] </tt><br/>
-					&nbsp&nbsp&nbsp&nbsp Removes the specified Interrupt routine from XFS disk </p></li>
-					<li><p> <i>Syntax :</i> <tt><b>rm</b> --exhandler </tt><br/>
-					&nbsp&nbsp&nbsp&nbsp Removes the exception handler routine from XFS disk </p></li>
+					<li><p> <i>Syntax:</i> <tt><b>rm</b> --exec &lt;xfs_filename&gt; </tt><br/>
+					&nbsp;&nbsp;&nbsp;&nbsp; Removes an executable file from XFS disk </p></li>
+					<li><p> <i>Syntax:</i> <tt><b>rm</b> --init </tt><br/>
+					&nbsp;&nbsp;&nbsp;&nbsp; Removes INIT code from XFS disk </p></li>
+					<li><p> <i>Syntax:</i> <tt><b>rm</b> --data &lt;xfs_filename&gt; </tt><br/>
+					&nbsp;&nbsp;&nbsp;&nbsp; Removes a data file from XFS disk </p></li>
+					<li><p> <i>Syntax:</i> <tt><b>rm</b> --os </tt><br/>
+					&nbsp;&nbsp;&nbsp;&nbsp; Removes OS startup code from XFS disk </p></li>
+					<li><p> <i>Syntax:</i> <tt><b>rm</b> --int=timer </tt><br/>
+					&nbsp;&nbsp;&nbsp;&nbsp; Removes the Timer Interrupt routine from XFS disk </p></li>
+					<li><p> <i>Syntax:</i> <tt><b>rm</b> --int=[1-7] </tt><br/>
+					&nbsp;&nbsp;&nbsp;&nbsp; Removes the specified Interrupt routine from XFS disk </p></li>
+					<li><p> <i>Syntax:</i> <tt><b>rm</b> --exhandler </tt><br/>
+					&nbsp;&nbsp;&nbsp;&nbsp; Removes the exception handler routine from XFS disk </p></li>
 				</ul>
 
 
@@ -335,31 +335,31 @@ The file largest.apl is a sample APL program which finds largest of 4 numbers. T
 				<p>The command <b>ls</b> lists all the files which are loaded into the filesystem. 
 				The size of the file is also displayed in number of words.
 				The FAT entries are traversed and all the files and their corresponding sizes are displayed.<br/>
-				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt><b>ls</b></tt></p>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>Syntax:</i> <tt><b>ls</b></tt></p>
 				
 				<h6> Display Disk Free List </h6>
 				<p>The command <b>df</b> displays the disk free list. 
 				It also displays the total number of blocks and the number of free blocks.<br/>
-				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt><b>df</b></tt></p>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>Syntax:</i> <tt><b>df</b></tt></p>
 				
 				<h6> Display File contents </h6>
 				<p>The command <b>cat</b> displays the contents of a file in the filesystem.
 				The FAT entries are searched to get the blocks corresponding to the file. The blocks are displayed.<br/>
-				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt><b>cat</b> &ltxfs_filename&gt</tt></p>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>Syntax:</i> <tt><b>cat</b> &lt;xfs_filename&gt;</tt></p>
 				
 				<h6> Copy disk blocks to a UNIX file </h6>
 				<p>The command <b>copy</b> copies the contents of specified blocks in the filesystem to an 
-				external UNIX file. The arguments &ltstart_block&gt and &ltend_block&gt denotes the range of blocks to be copied 
-				(including both). &ltunix_filename&gt specifes the destination UNIX file to which the contents are copied to.<br/>
-				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt><b>copy</b> &ltstart_block&gt &ltend_block&gt &ltunix_filename&gt</tt></p>
+				external UNIX file. The arguments &lt;start_block&gt; and &lt;end_block&gt; denotes the range of blocks to be copied 
+				(including both). &lt;unix_filename&gt; specifes the destination UNIX file to which the contents are copied to.<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>Syntax:</i> <tt><b>copy</b> &lt;start_block&gt; &lt;end_block&gt; &lt;unix_filename&gt;</tt></p>
 				
 				<h6> Display help </h6>
 				<p>The command <b>help</b> displays the general syntax and function of all the commands.<br/>
-				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt><b>help</b></tt></p>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>Syntax:</i> <tt><b>help</b></tt></p>
 				
 				<h6> Exit Interface </h6>
 				<p>The command <b>exit</b> quits the inteface.<br/>
-				&nbsp&nbsp&nbsp&nbsp&nbsp<i>Syntax :</i> <tt><b>exit</b></tt></p>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>Syntax:</i> <tt><b>exit</b></tt></p>
 <h6>Example Usage</h6>
 To load a file <tt>os_startup.xsm</tt> ( which you created using <b>SPL</b> compiler ) located in <tt>$HOME/myxos/spl</tt> into the <tt>xfs</tt> filesystem	
 <div class="syntax">
@@ -415,8 +415,8 @@ Now open test to see the contents of os_startup.xsm
 				<h6> Running </h6>
 				<p> Within your XSM directory, use the following command to run the simulator </p>
 				<ul>
-					<li><p> <tt>--debug </tt>: This flag sets the machine into DEBUG mode when it encounters a <tt>BRKP</tt> machine instruction. Further details are given in the section below.</p></li>
-					<li><p> <tt>--timer=value</tt>: This flag sets the number of instructions after which timer interrupt is triggered to <tt>value</tt>. <b>--timer=0</b> disables the timer. The range of value is from 0 to 1024   </p></li>
+					<li><p> <tt>--debug </tt> : This flag sets the machine into DEBUG mode when it encounters a <tt>BRKP</tt> machine instruction. Further details are given in the section below.</p></li>
+					<li><p> <tt>--timer=value </tt> : This flag sets the number of instructions after which timer interrupt is triggered to <tt>value</tt>. <b>--timer=0</b> disables the timer. The range of value is from 0 to 1024   </p></li>
 				</ul>
 
 				<h6> Debugging </h6>
@@ -425,21 +425,21 @@ Now open test to see the contents of os_startup.xsm
 				<ul>
 					<li><p> <tt> step / s </tt> :<br/> The execution proceeds by a single step</p> </li>
 					<li><p> <tt> continue / c </tt> :<br/> The execution proceeds till the next <tt>breakpoint</tt> instruction. </p> </li>
-					<li><p> <tt> reg / r </tt> :<br/> Displays the contents of all the registers in the machine namely <tt>IP, SP, BP, PTBR, PTLR, EFR, R0-R7, S0-S15 and T0-T3</tt>. <br/> Sample usage : <tt>reg </tt></p> </li>
-					<li><p> <tt> reg / r &ltregister_name&gt </tt> :<br/> Displayes the content of the specified register. <br/> Sample usage : <tt>r R5, reg PTLR</tt></p> </li>
-					<li><p> <tt> reg / r &ltregister_name_1&gt &ltregister_name_1&gt </tt> : <br/>Displays the contents of the registers from &ltregister_name_1&gt to &ltregister_name_1&gt.</p> </li>
-					<li><p> <tt> mem / m &ltpage_num&gt </tt> :<br/> Displays contents of the memory page &ltpage_num&gt. <br/> Sample usage : <tt>mem 5, m 20 </tt> </p> </li>
-					<li><p> <tt> mem / m &ltpage_num_1&gt &ltpage_num_2&gt </tt> :<br/> Displays the contents of the memory from pages &ltpage_num_1&gt to &ltpage_num_2&gt. <br/> Sample usage : <tt>mem 5 8, m 0 10 </tt></p> </li>
+					<li><p> <tt> reg / r </tt> :<br/> Displays the contents of all the registers in the machine namely <tt>IP, SP, BP, PTBR, PTLR, EFR, R0-R7, S0-S15 and T0-T3</tt>. <br/> Sample usage: <tt>reg </tt></p> </li>
+					<li><p> <tt> reg / r &lt;register_name&gt; </tt> :<br/> Displayes the content of the specified register. <br/> Sample usage: <tt>r R5, reg PTLR</tt></p> </li>
+					<li><p> <tt> reg / r &lt;register_name_1&gt; &lt;register_name_1&gt; </tt> : <br/>Displays the contents of the registers from &lt;register_name_1&gt; to &lt;register_name_1&gt;.</p> </li>
+					<li><p> <tt> mem / m &lt;page_num&gt; </tt> :<br/> Displays contents of the memory page &lt;page_num&gt;. <br/> Sample usage: <tt>mem 5, m 20 </tt> </p> </li>
+					<li><p> <tt> mem / m &lt;page_num_1&gt; &lt;page_num_2&gt; </tt> :<br/> Displays the contents of the memory from pages &lt;page_num_1&gt; to &lt;page_num_2&gt;. <br/> Sample usage: <tt>mem 5 8, m 0 10 </tt></p> </li>
 					<li><p> <tt> pcb / p </tt> :<br/> Displays the Process Control Block of the process with the state as RUNNING.</p> </li>
-					<li><p> <tt> pcb / p &ltpid&gt </tt> :<br/> Displays the Process Control Block of the process with the given <tt>&ltpid&gt</tt>. </p> </li>
+					<li><p> <tt> pcb / p &lt;pid&gt; </tt> :<br/> Displays the Process Control Block of the process with the given <tt>&lt;pid&gt;</tt>. </p> </li>
 					<li><p> <tt> pagetable / pt </tt> :<br/>Displays the Page Table at the location pointed by <tt>PTBR</tt> (Page Table Base Register). </p></li>
-					<li><p> <tt> pagetable / pt &ltpid&gt </tt> :<br/> Displays the &ltpid&gt<sup>th</sup> Page Table. </p></li>
+					<li><p> <tt> pagetable / pt &lt;pid&gt; </tt> :<br/> Displays the &lt;pid&gt;<sup>th</sup> Page Table. </p></li>
 					<li><p> <tt> filetable / ft </tt> :<br/> Displays the System Wide Open File Table.</p></li>
 					<li><p> <tt> memfreelist / mf </tt> :<br/> Displays the Memory Free List.</p></li>
 					<li><p> <tt> diskfreelist / df </tt> :<br/> Displays the Memory copy of Disk Free List.</p></li>
 					<li><p> <tt> fat </tt> :<br/> Displays the memory copy of the File Allocation Table (FAT).</p></li>
-					<li><p> <tt> location / l &ltaddress&gt </tt> :<br/> Displays the content at memory address (Address Translation takes place if used in USER mode). </p></li>
-					<li><p> <tt> watch  / w &ltphysical_address&gt </tt> :<br/> Sets a watch point to this address. Watch point is used to track changes of a particular memory location. Whenever a word which is watched is altered, debug interface is invoked. Atmost 16 watch points can be set.</p></li>
+					<li><p> <tt> location / l &lt;address&gt; </tt> :<br/> Displays the content at memory address (Address Translation takes place if used in USER mode). </p></li>
+					<li><p> <tt> watch  / w &lt;physical_address&gt; </tt> :<br/> Sets a watch point to this address. Watch point is used to track changes of a particular memory location. Whenever a word which is watched is altered, debug interface is invoked. Atmost 16 watch points can be set.</p></li>
 					<li><p> <tt> watchclear  / wc </tt> :<br/> Clears all the watch points. </p></li>
 					<li><p> <tt> exit / e </tt> :<br/>  Exits the debug prompt and halts the machine.</p></li>
 					<li><p> <tt> help / h </tt> :<br/> Displays commands.</p></li>

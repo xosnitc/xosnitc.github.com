@@ -109,7 +109,7 @@
 			<article  id="navintro" class="grid col-full">
 				<h2>Introduction</h2>
 				<p>	<b>SPL</b> or <i>System Programmer’s Language</i> is an untyped programming language designed for implementation of an operating system on <b>XSM</b> 
-				<i>(Experimental String Machine)</i> architecture. The language is minimalistic and consists only of basic constructs required for the implementation. 
+				<i>(eXperimental String Machine)</i> architecture. The language is minimalistic and consists only of basic constructs required for the implementation. 
 				Programming using SPL requires a basic understanding of the underlying XSM architecture and operating system concepts.</p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -180,7 +180,7 @@
 				<p>	Integer and String literals are permitted in SPL. An integer literal is a sequence of digits representing an integer. 
 				Negative integers are represented with a negative sign preceding the sequence of digits. <br/>
 				A string literal is a sequence of characters which are enclosed within double quotes (" ").
-				  eg : <tt> "alice"</tt>
+				  e.g. <tt> "alice"</tt>
 
 				</p>
 			</article>
@@ -286,9 +286,9 @@
 				>, <, >=, <=, !=, ==
 				</tt><br/>
 				Standard meanings apply to these operators. A relational operator will take in two arguments and return 1 if the relation is valid and 0 otherwise. <br/>
-				The relational operators can also be applied to strings. <tt> <, >, <=, >= </tt> compares two strings lexicographically. <tt>!= </tt> and <tt>==</tt> checks for equality in the case of strings. eg:<br/>
-				&nbsp&nbsp&nbsp&nbsp <tt> "adam" < "apple"      // This returns 1 </tt> <br/>
-				&nbsp&nbsp&nbsp&nbsp <tt> "hansel" == "gretel"     // This returns 0 </tt><br/>
+				The relational operators can also be applied to strings. <tt> <, >, <=, >= </tt> compares two strings lexicographically. <tt>!= </tt> and <tt>==</tt> checks for equality in the case of strings. e.g.:<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; <tt> "adam" < "apple"      // This returns 1 </tt> <br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; <tt> "hansel" == "gretel"     // This returns 0 </tt><br/>
 				Logical expressions themselves may be combined using logical operators, && (logical and) , || (logical or) and ! (not).</p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -298,7 +298,7 @@
 						
 			<article  id="navaddrexp" class="grid col-full">
 				<h4>Addressing Expressions</h4>
-				<p>	Memory of the meachine can be directly accessed in an SPL program. 
+				<p>	Memory of the machine can be directly accessed in an SPL program. 
 				A word in the memory is accessed by specifying the addressing element, i.e. memory location within [ ]. 
 				This corresponds to the value stored in the given address. An arithmetic expression or an addressing expression can be used to specify the address.<br/>
 				Examples of addressing expressions:<br/>
@@ -321,7 +321,7 @@
 				<p>	Define statement is used to define a symbolic name for a value. Define statements should be used <b>before any other statement</b> in an SPL program. 
 				The keyword <b>define</b> is used to associate a literal to a symbolic name.<br/>
 				
-				<tt>&nbsp&nbsp&nbsp <b>define</b> constant name value;</tt></p>
+				<tt>&nbsp;&nbsp;&nbsp; <b>define</b> constant name value;</tt></p>
 
 			<div class="syntax">
 				define DISK_BLOCK 437;
@@ -335,7 +335,7 @@
 				<h4>Alias Statement</h4>
 				<p>	An <b>alias</b> statement is used to associate a register with a name. Alias statements can be used anywhere in the program.<br/>
 				
-				<tt>&nbsp&nbsp&nbsp <b>alias</b> alias_name register_name ;</tt></p>
+				<tt>&nbsp;&nbsp;&nbsp; <b>alias</b> alias_name register_name ;</tt></p>
 			
 			<div class="syntax">
 				alias counter S0;
@@ -349,7 +349,7 @@
 				<h4>Breakpoint Statement</h4>
 				<p>	The <b>Breakpoint</b> statement is used to debug the program. The program when run in debug mode pauses the execution at this instruction.<br/>
 				
-					<tt>&nbsp&nbsp&nbsp<b>breakpoint</b>;</tt>
+					<tt>&nbsp;&nbsp;&nbsp;<b>breakpoint</b>;</tt>
 					</br> This instruction translates to BRKP machine instruction.</p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -362,7 +362,7 @@
 				= is the assignment operator used in SPL. The operand on the right hand side of the operator is assigned to the left hand side. 
 				The general syntax is as follows<br/>
 				
-				<tt>&nbsp&nbsp&nbsp Register / Alias / [Address] = Register / Number / String / Expression / [Address] ;</tt></p>
+				<tt>&nbsp;&nbsp;&nbsp; Register / Alias / [Address] = Register / Number / String / Expression / [Address] ;</tt></p>
 			 <div class="syntax">
 				S0 = S2 * 10 + 5; <br/>
 				counter = counter + 1; <br/>
@@ -382,12 +382,12 @@
 				If the expression evaluates to 1, the <b>if</b> branch is executed, otherwise the <b>else</b> branch is executed. The <b>else</b> part is optional. 
 				The general syntax is as follows<br/>
 				
-				<tt>&nbsp&nbsp&nbsp
+				<tt>&nbsp;&nbsp;&nbsp;
 				<b>if</b> (logical expression) <b>then</b><br/>
-					&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp statements;<br/>
-				<b>&nbsp&nbsp&nbsp else</b><br/>
-					&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp statements;<br/>
-				<b>&nbsp&nbsp&nbsp endif</b>;</tt></p>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; statements;<br/>
+				<b>&nbsp;&nbsp;&nbsp; else</b><br/>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; statements;<br/>
+				<b>&nbsp;&nbsp;&nbsp; endif</b>;</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -399,10 +399,10 @@
 				The condition is defined using a logical expression. 
 				The statements are iteratively executed as long as the condition is true.<br/>
 				
-				<tt>&nbsp&nbsp&nbsp
+				<tt>&nbsp;&nbsp;&nbsp;
 				<b>while</b> (logical expression) <b>do</b><br/>
-					&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp statements;<br/>
-				<b>&nbsp&nbsp&nbsp endwhile</b>;</tt></p>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; statements;<br/>
+				<b>&nbsp;&nbsp;&nbsp; endwhile</b>;</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -414,7 +414,7 @@
 				This statement stops the execution of the loop in which it is used and passes the control of execution to the next statement after the loop. 
 				This statement cannot be used anywhere else other than while loop. The syntax is as follows<br/>
 				
-					<tt>&nbsp&nbsp&nbsp<b>break</b> ;</tt></p>
+					<tt>&nbsp;&nbsp;&nbsp;<b>break</b> ;</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -426,16 +426,16 @@
 				This statement skips the current iteration of the loop and passes the control to the next iteration after checking the loop condition. 
 				The syntax is as follows<br/>
 					
-					<tt>&nbsp&nbsp&nbsp<b>continue</b> ;</tt></p>
+					<tt>&nbsp;&nbsp;&nbsp;<b>continue</b> ;</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>	
 			
 			<article  id="naviretstmt" class="grid col-full">
-				<h4>ireturnStatement</h4>
+				<h4>ireturn Statement</h4>
 				<p>	<b>ireturn</b> statement or the Interrupt Return statement is used to pass control from kernel mode to user mode.
-						<tt>&nbsp&nbsp&nbsp<b>ireturn</b>;</tt>
+						<tt>&nbsp;&nbsp;&nbsp;<b>ireturn</b>;</tt>
 				The <b>ireturn</b> is generally used at the end of an interrupt code.<br/>
 				
 					
@@ -451,8 +451,8 @@
 					<p><b>NOTE:</b> String read or printed must not exceed 10 characters </p>
 					<br/>
 					The <b>print</b> statement outputs value of a register or an integer/string literal or value of a memory location.<br/>
-					<tt>&nbsp&nbsp&nbsp<b>read</b> Register;</tt> <br/>
-					<tt>&nbsp&nbsp&nbsp<b>print</b> Register / Number / String / Expression / [Address];</tt></p>
+					<tt>&nbsp;&nbsp;&nbsp;<b>read</b> Register;</tt> <br/>
+					<tt>&nbsp;&nbsp;&nbsp;<b>print</b> Register / Number / String / Expression / [Address];</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -465,9 +465,9 @@
 				<b>store</b> statement stores the page specified by <i>page_number</i> in the memory to the the block specified by the <i>block_number</i> in the disk.
 				The <i>page_number</i> and <i>block_number</i> can be specified using arithmetic expressions.<br/>
 				
-				<tt>&nbsp&nbsp&nbsp
+				<tt>&nbsp;&nbsp;&nbsp;
 					<b>load</b> (page_number, block_number);<br/>
-					&nbsp&nbsp&nbsp&nbsp<b>store</b> (page_number, block_number);</tt></p>
+					&nbsp;&nbsp;&nbsp;&nbsp;<b>store</b> (page_number, block_number);</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -477,7 +477,7 @@
 				<h4>Halt Statement</h4>
 				<p>The <b>Halt</b> statement is used to halt the machine.<br/>
 				
-					<tt>&nbsp&nbsp&nbsp<b>halt</b>;</tt>
+					<tt>&nbsp;&nbsp;&nbsp;<b>halt</b>;</tt>
 					</br> This instruction translates to HALT machine instruction.</p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -488,7 +488,7 @@
 				<h4>Inline Statement</h4>
 				<p>The <b>inline</b> statement is used give XSM machine instructions directly within an SPL program.<br/></p>
 				
-					<tt>&nbsp&nbsp&nbsp<b>inline</b> "<i>MACHINE INSTRUCTION</i>";</tt>
+					<tt>&nbsp;&nbsp;&nbsp;<b>inline</b> "<i>MACHINE INSTRUCTION</i>";</tt>
 					<br/><br/>
 				<p>e.g. <tt>inline "JMP 11776";</tt></p>
 			</article>

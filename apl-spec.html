@@ -127,11 +127,11 @@
 				The compiler of APL runs on <b>XSM</b> <i>(eXperimental String Machine)</i> architecture. This document describes the programming constructs, syntax and semantics of APL. The structure of APL is similar in some aspects to programming languages like C and Java.
 				A typical APL program is orgnaized in the following way.<br/>
 				<tt>
-					&nbsp&nbsp&nbspGlobal Declarations<br/>
-					&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp...<br/>
-					&nbsp&nbsp&nbspFunction Definitions<br/>
-					&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp...<br/>
-					&nbsp&nbsp&nbspMain Function</tt></p>
+					&nbsp;&nbsp;&nbsp;Global Declarations<br/>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br/>
+					&nbsp;&nbsp;&nbsp;Function Definitions<br/>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br/>
+					&nbsp;&nbsp;&nbsp;Main Function</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -181,7 +181,7 @@
 				<h4>Identifiers</h4>
 				<p>Identifiers are names of variables and user-defined functions. Identifiers should start with an alphabet, and may contain both alphabets and digits. 
 				Special characters are not allowed in identifiers.<br/>
-				<tt>&nbsp&nbsp&nbsp identifier -> (alphabet)(alphabet | digit)*</tt></p>
+				<tt>&nbsp;&nbsp;&nbsp; identifier -> (alphabet)(alphabet | digit)*</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -205,8 +205,8 @@
 				<p>There are two primitive datatypes in APL.</p>
 				
 				<ol style="list-style-type:decimal">
-					<li><p> <b>Integer</b> : An integer value can range from -32767 to +32768. An integer type variable is declared using the keyword integer</p></li>
-					<li><p> <b>String</b> : A string type represents the set of string values. A string value can be atmost 16 characters long. 
+					<li><p> <b>Integer</b>: An integer value can range from -32767 to +32768. An integer type variable is declared using the keyword integer</p></li>
+					<li><p> <b>String</b>: A string type represents the set of string values. A string value can be atmost 16 characters long. 
 					String type variables is declared using the keyword string.</p></li>
 				</ol>
 			</article>
@@ -240,8 +240,8 @@
 				If the variable refers to an array the size of the array must be given in square brackets. 
 				The general form of declarations is as follows<br/>
 				
-					<tt>&nbsp&nbsp&nbsp type variable name;<br/>
-					&nbsp&nbsp&nbsp type variable name[size];</tt></p>
+					<tt>&nbsp;&nbsp;&nbsp; type variable name;<br/>
+					&nbsp;&nbsp;&nbsp; type variable name[size];</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -251,22 +251,22 @@
 				<h4>Function Declaration</h4>
 				<p>For every function except the <b>main()</b> function defined in a APL program, there must be a declaration. 
 				All functions have global scope and is declared in the first section within <b>decl ... enddecl</b> block, along with the global variables.<br/>
-				&nbsp&nbsp&nbsp A function declaration should specify the name of the function, the name and type of each of its arguments and the return type of the function. 
+				&nbsp;&nbsp;&nbsp; A function declaration should specify the name of the function, the name and type of each of its arguments and the return type of the function. 
 				A function can have integer/string arguments. Parameters may be passed by value or reference. Arrays cannot be passed as arguments. 
 				If a global variable name appears as an argument, then within the scope of the function, the new declaration will be valid and global variable declaration is suppressed. 
-				Different functions may have arguments of the same name. For arguments that are passed by reference, the argument name is preceded by an ampersand(&) in the 
+				Different functions may have arguments of the same name. For arguments that are passed by reference, the argument name is preceded by an ampersand (&) in the 
 				function declaration. The return type of a function must be either integer or string. <br/>
 				The general form of declarations is as follows<br/>
 				
-					<tt>&nbsp&nbsp&nbsp type function name (type1 argument1,argument2,...; type2 argument1,argument2,...;...);</tt><br/>
+					<tt>&nbsp;&nbsp;&nbsp; type function name (type1 argument1,argument2,...; type2 argument1,argument2,...;...);</tt><br/>
 				Examples for global declarations<br/>
-				<tt>&nbsp&nbsp&nbsp
+				<tt>&nbsp;&nbsp;&nbsp;
 				decl<br/>
-				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp integer x, y, a[10], b[20];<br/>
-				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp integer f1(integer a1, a2; string b1; integer &c1), f2();<br/>
-				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp string t, q[10], f3(integer x);<br/>
-				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp integer swap(inter\ger &x, &y);	<br/>			
-				&nbsp&nbsp&nbsp enddecl</tt></p>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; integer x, y, a[10], b[20];<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; integer f1(integer a1, a2; string b1; integer &c1), f2();<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; string t, q[10], f3(integer x);<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; integer swap(inter\ger &x, &y);	<br/>
+				&nbsp;&nbsp;&nbsp; enddecl</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -279,7 +279,7 @@
 				Arguments of a function are treated as local variables. Local variables can be integer or string. Arrays cannot be declared locally. 
 				All globally declared variables are visible inside a function, unless suppressed by a re-declaration. 
 				The general form of declarations is as follows<br/>
-					<tt>&nbsp&nbsp&nbsp type variable name;</tt></p>
+					<tt>&nbsp;&nbsp;&nbsp; type variable name;</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -290,11 +290,11 @@
 				<p>Every APL program must have a <b>main()</b> function and zero or more user-defined functions. 
 				Every function other than the <b>main()</b> function must be declared within the <b>decl ... enddecl</b> block. 
 				The general form of a function definition is given below<br/>
-				<tt>&nbsp&nbsp&nbsp
+				<tt>&nbsp;&nbsp;&nbsp;
 					type function name(ArgumentList)<br/>
-					&nbsp&nbsp&nbsp {<br/>
-						&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Function Body<br/>
-					&nbsp&nbsp&nbsp }</tt><br/>
+					&nbsp;&nbsp;&nbsp; {<br/>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Function Body<br/>
+					&nbsp;&nbsp;&nbsp; }</tt><br/>
 					The function body must contain a return statement and the return value must be of the return type of the function. 
 					The arguments and return type of each function definition should match exactly with the corresponding declaration. 
 					Every declared function must have a definition. The signature of the function in the delcaration should match the definition of the function 
@@ -339,10 +339,10 @@
 			<article  id="navlogicexp" class="grid col-full">
 				<h4>Logical Expressions</h4>
 				<p>Logical expressions may be formed by combining arithmetic expressions using relational operators. The relational operators supported by APL are<br/>
-				<tt>&nbsp&nbsp&nbsp <, >, <=, >=, ==, !=</tt><br/>
+				<tt>&nbsp;&nbsp;&nbsp; <, >, <=, >=, ==, !=</tt><br/>
 				Standard meanings apply to these operators. The operators take two arithmetic expressions as operands and the result will be a boolean value, 
-				either of 1(true) or 0(false). Only realational operator that can be applied to two strings is == (to check equality). 
-				This also considered as a Logical expression. Logical expressions themselves may be combined using logical operators, && (logical and) , || (logical or) and ! (not).</p>
+				either of 1 (true) or 0 (false). Only relational operator that can be applied to two strings is == (to check equality). 
+				This is also considered as a logical expression. Logical expressions themselves may be combined using logical operators && (logical and) , || (logical or) and ! (not).</p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -350,8 +350,8 @@
 			
 			<article  id="navfunccall" class="grid col-full">
 				<h4>Function Call</h4>
-				<p>All functions except the <b>main()</b> function can be invoked from any other function including itself.The general form of a function call is<br/>
-						<tt>&nbsp&nbsp&nbsp function name(value1,value1...)</tt>;<br/>
+				<p>All functions except the <b>main()</b> function can be invoked from any other function including itself. The general form of a function call is<br/>
+						<tt>&nbsp;&nbsp;&nbsp; function name(value1,value1...)</tt>;<br/>
 					Function calls are treated as expressions. The function takes in the values of its arguments and returns a value of type equal to the return type of the function. 
 					This value is treated as the evaluated result of the function call.</p>
 			</article>
@@ -372,7 +372,7 @@
 				<p>The APL assignment statement assigns the value of an expression to a variable, 
 				or an indexed array of the same type or a string value to a string variable. = is known as the assignment operator.
 				Initialization during declaration is not allowed in APL. The general syntax is as follows<br/>
-					<tt>&nbsp&nbsp&nbsp variable name = string value / array variable / expression</tt></p>
+					<tt>&nbsp;&nbsp;&nbsp; variable name = string value / array variable / expression</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -383,12 +383,12 @@
 				<p><b>If</b> statements specify the conditional execution of two branches according to the value of a boolean expression. 
 				If the expression evaluates to true, the <b>if</b> branch is executed, otherwise, if present, the <b>else</b>  branch is executed. 
 				The <b>else</b>  part is optional. The general syntax is as follows<br/>
-				<tt>&nbsp&nbsp&nbsp
+				<tt>&nbsp;&nbsp;&nbsp;
 					<b>if</b> (logical expression) <b>then</b><br/>
-						&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp statements;<br/>
-					&nbsp&nbsp&nbsp <b>else</b> <br/>
-						&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp statements;<br/>
-					&nbsp&nbsp&nbsp <b>endif</b>;</tt></p>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; statements;<br/>
+					&nbsp;&nbsp;&nbsp; <b>else</b> <br/>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; statements;<br/>
+					&nbsp;&nbsp;&nbsp; <b>endif</b>;</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -398,10 +398,10 @@
 				<h4>While Statement</h4>
 				<p><b>While</b>  statement iteratively executes a set of statements based on a condition which is a logical expression. 
 				The statements are iteratively executed as long as the logical expression evaluates to true.<br/>
-				<tt>&nbsp&nbsp&nbsp
+				<tt>&nbsp;&nbsp;&nbsp;
 					<b>while</b>  (logical expression) <b>do</b><br/>
-					&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp	statements;<br/>
-					&nbsp&nbsp&nbsp&nbsp<b>endwhile</b>;</tt></p>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	statements;<br/>
+					&nbsp;&nbsp;&nbsp;&nbsp;<b>endwhile</b>;</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
@@ -412,7 +412,7 @@
 				<p><b>Break</b> statement is a statement which is used in a <b>while</b>  loop block. This statement stops the execution of the loop 
 				in which it is used and passes the control of execution to the next statement after the loop. 
 				This statement cannot be used anywhere else other than <b>while</b>  loop. The syntax is as follows<br/>
-				<tt>&nbsp&nbsp&nbsp
+				<tt>&nbsp;&nbsp;&nbsp;
 					<b>break</b> ;</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -424,7 +424,7 @@
 				<p><b>Continue</b> statement is a statement which is also used only in a <b>while</b>  loop block. 
 				This statement skips the current iteration of the loop and passes the control to the next iteration after checking the loop condition.      
 				The syntax is as follows<br/>
-				<tt>&nbsp&nbsp&nbsp
+				<tt>&nbsp;&nbsp;&nbsp;
 					<b>continue</b> ;</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -436,7 +436,7 @@
 				<p><b>Return</b> statement in a function passes the control from the callee to the caller function and returns a value to the caller function. 
 				All functions including the <b>main()</b> must have exactly one <b>return</b> statement and it should be the last statement in the funtion body. 
 				The return type of the function should match the type of the expression. The return type of main is integer. The syntax is as follows<br/>
-				<tt>&nbsp&nbsp&nbsp
+				<tt>&nbsp;&nbsp;&nbsp;
 					<b>return</b> expression;</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -447,19 +447,19 @@
 				<h4>Read/Print Statement</h4>
 				<p>The standard input and output statements in APL are <b>read</b> and <b>print</b> respectively. 
 				The read statement reads an integer value from the standard input device into an integer variable or 
-				an indexed array variable or a string value into a string variable. The Print statement outputs a string literal 
+				an indexed array variable or a string value into a string variable. The print statement outputs a string literal 
 				or the value of string variable or an arithmetic expression into the standard output.  <br/>
 				<p><b>NOTE:</b> String read or printed must not exceed 10 characters </p>
-				<tt>&nbsp&nbsp&nbsp	
+				<tt>&nbsp;&nbsp;&nbsp;	
 					<b>read</b> variable name;<br/>
-					&nbsp&nbsp&nbsp	<b>print</b> expression / string;</tt></p><br/>
+					&nbsp;&nbsp;&nbsp;	<b>print</b> expression / string;</tt></p><br/>
 			</article>
 
 			<article  id="navbreakpointstmt" class="grid col-full">
 				<h4>Breakpoint Statement</h4>
 				<p> A <b>Breakpoint</b> statement is used to debug the program. The program when run in debug mode pauses the execution at this instruction.<br/>
 			</p>
-				<tt>&nbsp&nbsp&nbsp
+				<tt>&nbsp;&nbsp;&nbsp;
 					<b>breakpoint</b>;</tt></p>
 			</article>
 		
@@ -482,7 +482,7 @@
 				<p>Creates a file with the specified filename in the filesystem. The return value of this system call is 0 in case of success 
 				and the appropriate error code in case of failure.<br/>
 				
-				<tt>&nbsp&nbsp&nbsp	
+				<tt>&nbsp;&nbsp;&nbsp;	
 					integer <b>Create</b> (string filename);</tt></p>
 				<p><b>NOTE:</b> filename must not exceed 10 characters </p>
 			</article>
@@ -494,7 +494,7 @@
 				<h4>Open</h4>
 				<p>Returns a file descriptor of the file in the filesystem with the specified filename. 
 				The file descriptor is an integer value. If the <b>Open</b>  fails, an appropriate error code is returned. <br/>
-				<tt>&nbsp&nbsp&nbsp	
+				<tt>&nbsp;&nbsp;&nbsp;	
 					integer <b>Open</b> (string fileName);</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -508,7 +508,7 @@
 					If the <b>Read</b> fails, an appropriate error code is returned.
 
 					<br/>
-				<tt>&nbsp&nbsp&nbsp	
+				<tt>&nbsp;&nbsp;&nbsp;	
 					integer <b>Read</b> (integer fileDescriptor, string/integer variable);</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -521,7 +521,7 @@
 					Writes one word from a string/integer variable, to a file in the filesystem with the specified file descriptor. The return value of this system call is 0, if it is a success. 
 					If the  <b>Write</b> fails, an appropriate error code is returned.
 					<br/>
-				<tt>&nbsp&nbsp&nbsp	
+				<tt>&nbsp;&nbsp;&nbsp;	
 					integer <b>Write</b> (integer fileDescriptor, string/integer variable);</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -533,7 +533,7 @@
 				<p><b>Seek</b>  is used to change the read/write head position in a file. 
 				It moves the head to the specified number of words from the beginning of the file. 
 				The return value of this system call is 0 in case of success and the appropriate error code in case of failure.<br/>
-				<tt>&nbsp&nbsp&nbsp	
+				<tt>&nbsp;&nbsp;&nbsp;	
 					integer <b>Seek</b> (integer fileDescriptor, integer numWords);</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -544,7 +544,7 @@
 				<h4>Close</h4>
 				<p>This system call is used to close an open file. 
 				The return value of this system call is 0 in case of success and the appropriate error code in case of failure.<br/>
-				<tt>&nbsp&nbsp&nbsp	
+				<tt>&nbsp;&nbsp;&nbsp;	
 					integer <b>Close</b> (integer fileDescriptor);</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -555,7 +555,7 @@
 				<h4>Delete</h4>
 				<p>This system call is used to delete the file from the file system whose name is specified in the argument. 
 				The return value of this system call is 0 in case of success and the appropriate error code in case of failure.<br/>
-				<tt>&nbsp&nbsp&nbsp	
+				<tt>&nbsp;&nbsp;&nbsp;	
 					integer <b>Delete</b> (string fileName);</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -565,7 +565,7 @@
 			<article  id="navfork" class="grid col-full">
 				<h4>Fork</h4>
 				<p>This system call is used to create a copy of the current process in the system. The return value of this system call is the PID of the child process for the parent, and an appropriate code for the child.<br/>
-				<tt>&nbsp&nbsp&nbsp	
+				<tt>&nbsp;&nbsp;&nbsp;	
 					integer <b>Fork</b> ();</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -575,7 +575,7 @@
 			<article  id="navexec" class="grid col-full">
 				<h4>Exec</h4>
 				<p>This system call is used to load the program, whose name is specified in the argument, in the memory space of the current process (overwriting existing contents) and start its execution. An appropriate error code is returned in case of failure. <br/>
-				<tt>&nbsp&nbsp&nbsp	
+				<tt>&nbsp;&nbsp;&nbsp;	
 					integer <b>Exec</b> (string fileName);</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -585,7 +585,7 @@
 			<article  id="navexit" class="grid col-full">
 				<h4>Exit</h4>
 				<p>This system call is used to terminate the execution of the process which invoked it and remove it from the memory.<br/>
-				<tt>&nbsp&nbsp&nbsp	
+				<tt>&nbsp;&nbsp;&nbsp;	
 					void <b>Exit</b> ();</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -596,8 +596,8 @@
 
 			<article  id="navgetpid" class="grid col-full">
 				<h4>Getpid</h4>
-				<p>This system call returns the processID or thbe PID of the current process on success and an appropriate error code is returned in case of failure. <br/>
-				<tt>&nbsp&nbsp&nbsp	
+				<p>This system call returns the processID or the PID of the current process on success and an appropriate error code is returned in case of failure. <br/>
+				<tt>&nbsp;&nbsp;&nbsp;	
 					integer <b>Getpid</b> ();</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -609,7 +609,7 @@
 			<article  id="navgetppid" class="grid col-full">
 				<h4>Getppid</h4>
 				<p>This system call returns the processId of the parent process of the current process and an appropriate error code is returned in case of failure. <br/>
-				<tt>&nbsp&nbsp&nbsp	
+				<tt>&nbsp;&nbsp;&nbsp;	
 					integer <b>Getppid</b> ();</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -621,7 +621,7 @@
 			<article  id="navwait" class="grid col-full">
 				<h4>Wait</h4>
 				<p>This system call blocks the current process till the process with processID given as argument signals or exits.  The return value of this system call is 0 in case of success and the appropriate error code in case of failure. \\ <br/>
-				<tt>&nbsp&nbsp&nbsp	
+				<tt>&nbsp;&nbsp;&nbsp;	
 					integer <b>Wait</b> (integer processID);</tt></p>
 			</article>
 			<div class="up grid col-one-third" style="float:right">
@@ -632,7 +632,7 @@
 			<article  id="navsignal" class="grid col-full">
 				<h4>Signal</h4>
 				<p>This system call is used to resume execution of all process waiting for the current process. The return value of this system call is 0 in case of success and the appropriate error code in case of failure. \\ <br/>
-				<tt>&nbsp&nbsp&nbsp	
+				<tt>&nbsp;&nbsp;&nbsp;	
 					integer <b>Signal</b> ();</tt></p>
 			</article>
 

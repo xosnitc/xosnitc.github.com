@@ -106,7 +106,7 @@
 			<article  id="navstage1" class="grid col-full">
 			<h2>Stage 1: Setting up the System </h2>
 
-			<p> Follow the instructions in the <a href="usage-spec.html#navsetup" class="imp">setting up</a> instructions of the usage documentation to setup the system. This roadmap assumes that the entire package is extracted to $HOME/myxos. If the setting up of the system is done correctly the following directories will be created.
+			<p> Follow the instructions in the <a href="usage-spec.html#navsetup" class="imp">setting up</a> section of the usage documentation to setup the system. This roadmap assumes that the entire package is extracted to $HOME/myxos. If the setting up of the system is done correctly the following directories will be created.
 			</p>
 
 			<ul>
@@ -127,15 +127,15 @@
 				</li>
 				
 				<li><b> $HOME/myxos/xfs-interface </b><br/>
-				This directory contains an interface through which files from your UNIX machine can be loaded into the File System of XSM (<a href="xfs-spec.html">XFS</a> or Experimental File System). The interface also provides options for formatting the disk, listing the files loaded into the disk, removing files from the disk, copying continuous blocks from the disk to a UNIX file and displaying a file in the XFS disk. Usage instructions and examples can be found <a href="usage-spec.html#navxfs" > here</a>. </li>
+				This directory contains an interface through which files from your UNIX machine can be loaded into the File System of XSM (<a href="xfs-spec.html">XFS</a> or eXperimental File System). The interface also provides options for formatting the disk, listing the files loaded into the disk, removing files from the disk, copying continuous blocks from the disk to a UNIX file and displaying a file in the XFS disk. Usage instructions and examples can be found <a href="usage-spec.html#navxfs" > here</a>. </li>
 
 				<li><b> $HOME/myxos/xsm </b><br/>
-				This directory contains the machine simulator (<a href="xsm-spec.html">XSM</a> or Experimental String Machine). Usage instructions and examples can be found <a href="usage-spec.html#navxsm"> here</a>. </li>
+				This directory contains the machine simulator (<a href="xsm-spec.html">XSM</a> or eXperimental String Machine). Usage instructions and examples can be found <a href="usage-spec.html#navxsm"> here</a>. </li>
 
 				<li><b> $HOME/myxos/doc </b><br/>
-				This directory contains the complete specification for <a href="xos-spec.html">XOS</a> (Experimental Operating System), <a href="xsm-spec.html">XSM</a> (Experimental String Machine), <a href="xfs-spec.html">XFS</a> (Experimental File System), <a href="apl-spec.html">APL</a> (Application Programmers Language) and <a hre="spl-spec.html">SPL</a>(System Programmers Language) and <a href="usage-spec.html">Usage Documentation</a> </li>
+				This directory contains the complete specification for <a href="xos-spec.html">XOS</a> (eXperimental Operating System), <a href="xsm-spec.html">XSM</a> (eXperimental String Machine), <a href="xfs-spec.html">XFS</a> (eXperimental File System), <a href="apl-spec.html">APL</a> (Application Programmers Language) and <a hre="spl-spec.html">SPL</a>(System Programmers Language) and <a href="usage-spec.html">Usage Documentation</a> </li>
 			</ul>
-					<p><h6>Assignment</h6> Read and understand the <a href="xfs-spec.html">Filesystem(XFS) Specification</a>.</p>
+					<p><h6>Assignment</h6> Read and understand the <a href="xfs-spec.html">Filesystem (XFS) Specification</a>.</p>
 			</article>
 
 			<div class="up grid col-one-third" style="float:right">
@@ -159,7 +159,7 @@
 			
 			<article id="navstage2" class="grid col-full">
 				<h2>Stage 2: Understanding the Filesystem </h2>
-				 <p><a href="xfs-spec.html">Experimental Filesystem (XFS)</a> is a simulated file system. A UNIX file named "disk.xfs" simulates a hard disk for the machine simulator (XSM). Building XOS begins with understanding the underlying <a href="xfs-spec.html">Filesystem (XFS)</a> and its <a href="usage-spec.html#navxfs">interface</a>. In this stage, you will create an UNIX file and load it to the XFS disk using the XFS-Interface</p>
+				 <p><a href="xfs-spec.html">eXperimental Filesystem (XFS)</a> is a simulated file system. A UNIX file named "disk.xfs" simulates a hard disk for the machine simulator (XSM). Building XOS begins with understanding the underlying <a href="xfs-spec.html">Filesystem (XFS)</a> and its <a href="usage-spec.html#navxfs">interface</a>. In this stage, you will create an UNIX file and load it to the XFS disk using the XFS-Interface</p>
 					<ol>
 					<li> Run the XFS Interface
 							<div class="syntax">
@@ -175,7 +175,7 @@
 # exit</pre>
 						</div>
 
-						You will be back in the UNIX shell and a file named <b>disk.xfs</b> is created in the location <b>$HOME/myxos/xfs-interface/</b>. This UNIX file simulates the hard disk for the machine simulator. The disk is formatted as XFS or Experimental File System. See <a href="xfs-spec.html#navintro"> XFS Specification </a>
+						You will be back in the UNIX shell and a file named <b>disk.xfs</b> is created in the location <b>$HOME/myxos/xfs-interface/</b>. This UNIX file simulates the hard disk for the machine simulator. The disk is formatted as XFS or eXperimental File System. See <a href="xfs-spec.html#navintro"> XFS Specification </a>
 					</li>
 					<li>
 					<p>The <a href="xfs-spec.html#navdfl" class="imp">Disk Free List</a> in XFS is a data structure which keeps track of used and unused blocks in the disk. An unused block is indicated by 0 and a used block is indicated by 1. Check the contents of the Disk Free List after formatting the disk. Use the <b>df</b> command to view the Disk Free List (Disk Free List is stored in disk block number 20). The output will be as follows:</p>		
@@ -241,7 +241,7 @@ To cool in the peppermint wind.</pre>
 							<div class="syntax"> 
 <pre># load --data $HOME/myxos/sample.dat</pre>
 							</div>
-						This will load the file to the XFS disk. A FAT entry will be created for this file. <a href="xfs-spec.html#navfat">FAT</a> or File Allocation Table contains information such as the file name, file size and the block number of <a href="xfs-spec.html#navfile">basic block</a>. The basic block corresponding to a file will contain locations of the file blocks. Read about  <a href="xfs-spec.html#navfile" class="imp">XFS (Experimental File System)</a> before proceeding in the roadmap.
+						This will load the file to the XFS disk. A FAT entry will be created for this file. <a href="xfs-spec.html#navfat">FAT</a> or File Allocation Table contains information such as the file name, file size and the block number of <a href="xfs-spec.html#navfile">basic block</a>. The basic block corresponding to a file will contain locations of the file blocks. Read about  <a href="xfs-spec.html#navfile" class="imp">XFS (eXperimental File System)</a> before proceeding in the roadmap.
 						</li> </p>
 
 

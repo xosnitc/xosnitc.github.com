@@ -6,6 +6,9 @@ mkdir myxos
 # Make a direcotry for doc in myxos
 mkdir ./myxos/doc
 
+
+##### APL COMPILER #######
+
 # Download apl pack
 wget https://github.com/xosnitc/apl/archive/master.zip -P ./myxos
 
@@ -23,10 +26,9 @@ rm -rf ./myxos/apl/.gitignore
 # Add folder apl_progs
 mkdir ./myxos/apl/apl_progs
 
-# Move APL document to do cfolder
-mv ./myxos/apl/doc/spec.pdf ./myxos/doc/apl.pdf
-rm -rf ./myxos/apl/doc
 
+
+##### SPL COMPILER #######
 
 # Download spl pack
 wget https://github.com/xosnitc/spl/archive/master.zip -P ./myxos
@@ -45,12 +47,10 @@ rm -rf ./myxos/spl/.gitignore
 # Add folder spl_progs
 mkdir ./myxos/spl/spl_progs
 
-# Move spl document to doc folder
-mv ./myxos/spl/doc/spec.pdf ./myxos/doc/spl.pdf
-rm -rf ./myxos/spl/doc
 
 
-# XFS INTERFACE
+##### XFS INTERFACE #######
+
 # Download xfs-interface pack
 wget https://github.com/xosnitc/xfs-interface/archive/master.zip -P ./myxos
 
@@ -65,7 +65,10 @@ mv ./myxos/xfs-interface-master ./myxos/xfs-interface
 rm -rf ./myxos/xfs-interface/.git
 rm -rf ./myxos/xfs-interface/.gitignore
 
-# XSM
+
+
+
+##### XSM SIMULATOR #######
 
 # Download xsm pack
 wget https://github.com/xosnitc/xsm/archive/master.zip -P ./myxos
@@ -82,29 +85,44 @@ rm -rf ./myxos/xsm/.git
 rm -rf ./myxos/xsm/.gitignore
 
 
-wget https://github.com/xosnitc/xosdoc/blob/master/filesystem/filesystem.pdf?raw=true -P ./myxos/doc/ --no-check-certificate
-mv ./myxos/doc/filesystem.pdf?raw=true ./myxos/doc/filesystem.pdf
 
-wget https://github.com/xosnitc/xosdoc/blob/master/machine/machine.pdf?raw=true -P ./myxos/doc/ --no-check-certificate
-mv ./myxos/doc/machine.pdf?raw=true ./myxos/doc/machine.pdf
+###### DOCUMENTATION #######
 
-wget https://github.com/xosnitc/xosdoc/blob/master/os/os.pdf?raw=true -P ./myxos/doc/ --no-check-certificate
-mv ./myxos/doc/os.pdf?raw=true ./myxos/doc/os.pdf
+# XFS Documentation
+wget https://github.com/xosnitc/xosdoc/blob/master/xfs/xfs.pdf?raw=true -P ./myxos/doc/ --no-check-certificate
+mv ./myxos/doc/xfs.pdf?raw=true ./myxos/doc/xfs.pdf
 
-wget https://github.com/xosnitc/xosdoc/blob/master/usage/usage.pdf?raw=true -P ./myxos/doc/ --no-check-certificate
-mv ./myxos/doc/usage.pdf?raw=true ./myxos/doc/usage.pdf
+# XSM Documentation
+wget https://github.com/xosnitc/xosdoc/blob/master/xsm/xsm.pdf?raw=true -P ./myxos/doc/ --no-check-certificate
+mv ./myxos/doc/xsm.pdf?raw=true ./myxos/doc/xsm.pdf
+
+# XOS Documentation
+wget https://github.com/xosnitc/xosdoc/blob/master/xos/xos.pdf?raw=true -P ./myxos/doc/ --no-check-certificate
+mv ./myxos/doc/xos.pdf?raw=true ./myxos/doc/xos.pdf
+
+# APL Documentation
+wget https://github.com/xosnitc/xosdoc/blob/master/apl/apl.pdf?raw=true -P ./myxos/doc/ --no-check-certificate
+mv ./myxos/doc/apl.pdf?raw=true ./myxos/doc/apl.pdf
+
+# SPL Documentation
+wget https://github.com/xosnitc/xosdoc/blob/master/xos/spl.pdf?raw=true -P ./myxos/doc/ --no-check-certificate
+mv ./myxos/doc/spl.pdf?raw=true ./myxos/doc/spl.pdf
 
 
 cp ./files/Makefile ./myxos/
 cp ./files/README ./myxos/
 
 
+# Edit the README file
 nano ./myxos/README
 
+# Compress myxos directory
 tar c myxos  | gzip > myxos.tar.gz
 
+# Move myxos tar
 mv -f ./myxos.tar.gz ./files/
 
+# Remove myxos directory
 rm -rf ./myxos
 
 echo "Finished."

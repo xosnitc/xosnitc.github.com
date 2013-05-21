@@ -105,7 +105,7 @@ wget https://github.com/xosnitc/xosdoc/blob/master/apl/apl.pdf?raw=true -P ./myx
 mv ./myxos/doc/apl.pdf?raw=true ./myxos/doc/apl.pdf
 
 # SPL Documentation
-wget https://github.com/xosnitc/xosdoc/blob/master/xos/spl.pdf?raw=true -P ./myxos/doc/ --no-check-certificate
+wget https://github.com/xosnitc/xosdoc/blob/master/spl/spl.pdf?raw=true -P ./myxos/doc/ --no-check-certificate
 mv ./myxos/doc/spl.pdf?raw=true ./myxos/doc/spl.pdf
 
 

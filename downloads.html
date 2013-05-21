@@ -39,7 +39,7 @@
 
 	<header id="navtop">
 		<a href="index.html" class="logo fleft">
-			<img src="img/logo.png" alt="Designa Studio">
+			<img src="img/logo.png">
 		</a>
 		
 		<nav class="fright">
@@ -57,117 +57,87 @@
 
 		<header class="grid col-full">
 			<hr>
-			<p class="fleft">Downloads</p>
+			<p class="fleft">Download</p>
 		</header>
 
 <section class="grid col-three-quarters mq2-col-full">
 		
-			You can download the full tar package from <a href="files/myxos.tar.gz" class="imp">here</a><br/><br/><br/>
-			To download individual components: <br/><br/>
+			
+			
 			<div class="grid-wrap">
 
-			<article id="navtabs" class="grid col-full">
 
+					    
+			<article id="navtabs" class="grid col-full">
+			<h5>Downloading Complete Package </h5>
+	
+			To get the latest complete package, click on <a href="files/myxos.tar.gz" class="button"> Download </a>
+			 
+	
+		         <br/> 
+			 <br/><br/>
+			 <h5>Downloading Components </h5>
+			
+			
 				<div class="">
 					<ul class="tabs clearfix">
-					    <li><a href="#tab1">SPL Compiler</a></li>
-					    <li><a href="#tab2">APL Compiler</a></li>
-					    <li><a href="#tab3">XFS Interface</a></li>
-					    <li><a href="#tab4">XSM Simulator</a></li>
+					    <li><a href="#tab1">Via Browser</a></li>
+					    <li><a href="#tab2">Via Git</a></li>
+				
 					</ul>
+					
 					<div class="tab_container">
 					    <article id="tab1" class="tab_content">
-					        <p>SPL or System Programmer's Language is a high level language for programming XOS.  </p>
-					    <h5> Prerequisites </h5>
+				 	    
+					   <br/>
+					    To download the up-to-date versions of components as ZIP individually,  use the following links
 					    <ul>
-					    <li> GCC </li>
-					    <li> Flex / Lex </li>
-					    <li> Bison / Yacc </li>
+					    <li><a href="https://github.com/xosnitc/xsm/archive/master.zip" > XSM Simulator </a> </li>
+					    <li><a href="https://github.com/xosnitc/xfs-interface/archive/master.zip" > XFS Interface</a> </li>
+					    <li><a href="https://github.com/xosnitc/spl/archive/master.zip" > SPL Compiler </a> </li>
+					    <li><a href="https://github.com/xosnitc/apl/archive/master.zip" > APL Compiler </a> </li>
+					    
 					    </ul>
-					    <h5> Using the compiler </h5>
+ 					    </article>
+					        		    
+					    <article id="tab2" class="tab_content">
+				       	<br/>	
+					    Git is a version controlling system to manage the source code. Project XOS is version controlled using Git. It is hosted on Github. Visit <a href="http://github.com/xosnitc">Project Page</a>. 
+					    <br/><br/>
+					    To download the package using Git, you must have Git installed on your computer. See <a href="https://help.github.com/articles/set-up-git">Github Help</a> for installing Git.
+					    <br/><br/>
 					    
-					    1.  <tt> make </tt> </li> <br/>
-					    2. <tt> ./spl < <i>path-to-file</i> </tt></li> <br/>
-					    </ol>
-					    </br></br>
-					    <h5> Download </h5>
-					    You can download with <b>Git</b>  using
-					    <div class="syntax">
-					    	git clone https://github.com/xosnitc/spl
-					    </div>	
-					    <br/> or by clicking 
-					    <a href="https://github.com/xosnitc/spl/archive/master.zip" class="button"> Download </a>
-					    </article>
-					    
-						<article id="tab2" class="tab_content">
-		        		<p> APL or Application Programmer's Language is a high level language for writing application programs which run on XOS (eXperimental Operating System).   </p>
-					    <h5> Prerequisites </h5>
-					    <ul>
-					    <li> GCC </li>
-					    <li> Flex / Lex </li>
-					    <li> Bison / Yacc </li>
-					    </ul>
-					    <h5> Using the compiler </h5>
-					    
-					    1.  <tt> make </tt> </li> <br/>
-					    2. <tt> ./apl < <i>path-to-file</i> </tt></li> <br/>
-					    </ol>
-					    </br></br>
-					     <h5> Download </h5>
-					    You can download with <b>Git</b>  using
-					    <div class="syntax">
-					    	git clone https://github.com/xosnitc/apl
-					    </div>	
-					    <br/> or by clicking 
-					    <a href="https://github.com/xosnitc/apl/archive/master.zip" class="button"> Download </a>
-					    </article>
-					    
-					    <article id="tab3" class="tab_content">
-				        <p> XFS-Interface is used as an interface to access XFS Filesystem from UNIX. The interface has functionalities to load, remove, copy, and list files in an XFS formatted disk.   </p>
-					    <h5> Prerequisites </h5>
-					    <ul>
-					    <li> GCC </li>
-					    </ul>
-						<h5> Using the interface </h5>
-					    
-					    1.  <tt> make </tt> </li> <br/>
-					    2. <tt> ./fileSystem </tt> <br/>
-					    3. Type <tt>"help"</tt> for list of commands.
-					    </ol>
-					    </br></br>
-					     <h5> Download </h5>	
-					    You can download with <b>Git</b>  using
-					    <div class="syntax">
-					    	git clone https://github.com/xosnitc/xfs-interface
-					    </div>	
-					    <br/> or by clicking 
-					    <a href="https://github.com/xosnitc/xfs-interface/archive/master.zip" class="button"> Download </a>
-					    
-					    </article>
-					    
-						<article id="tab4" class="tab_content">
-				        <p>XSM Machine simulator simulates XSM hardware. </p>
-				  	  	<h5> Prerequisites </h5>
-				  		<ul>
-					    <li> GCC </li>
-					    <li> Flex / Lex </li>
-					    <li> Bison / Yacc </li>
-					    </ul>
-						<h5> Running the machine simulator </h5>
-					    
-					    1.  <tt> make </tt> </li> <br/>
-					    2. <tt> ./xsm  < path-to-disk-file </tt> <br/>
-					    </ol>
-					    
-					    </br></br>
-					   <h5> Download </h5>
-					    You can download with <b>Git</b>  using
-					    <div class="syntax">
+					    <h6>Downloading Compononets</h6>
+					    You can download updated compenents of the project individually using <b>Git</b>. Use <tt>git clone</tt> command to download a component completely. 
+						<br/><br/>
+						Machine (XSM) Simulator		   
+						 <div class="syntax">
 					    	git clone https://github.com/xosnitc/xsm
 					    </div>	
-					    <br/> or by clicking 
-					    <a href="https://github.com/xosnitc/xsm/archive/master.zip" class="button"> Download </a>
-					    					    
+
+						Filesystem (XFS) Interface		   
+						 <div class="syntax">
+					    	git clone https://github.com/xosnitc/xfs-interface
+					    </div>	
+					    
+						SPL Compiler		   
+						 <div class="syntax">
+					    	git clone https://github.com/xosnitc/spl
+					    </div>	
+					    
+						APL Compiler
+						 <div class="syntax">
+					    	git clone https://github.com/xosnitc/apl
+					    </div>	
+					    
+					    <h6>Keeping up-to-date</h6>
+					    To keep your repository up-to-date with the latest changes, <tt>cd</tt> into the corresponding directory. Use, 
+					    <div class="syntax">
+					    git pull
+					    </div>
+						
+					    			    			
+					    				    
 
 					   
 					    </article>

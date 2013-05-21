@@ -116,11 +116,17 @@ cp ./files/README ./myxos/
 # Edit the README file
 nano ./myxos/README
 
+#Enter Version Number
+echo "Enter Version Number:"
+read version
+
+
 # Compress myxos directory
-tar c myxos  | gzip > myxos.tar.gz
+filename="myxos"-$version."tar.gz"
+tar c myxos  | gzip > $filename
 
 # Move myxos tar
-mv -f ./myxos.tar.gz ./files/
+mv -f $filename ./files/
 
 # Remove myxos directory
 rm -rf ./myxos

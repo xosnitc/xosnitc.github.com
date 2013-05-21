@@ -1,5 +1,9 @@
 Experimental Operating System (XOS)
 ===================================
+This is a platform for building a simple operating system upon a simulated machine hardware. Various components have been provided in this development package. 
+
+For instructions and detailed documentation, visit
+http://xosnitc.github.com/
 
 
 Components
@@ -11,9 +15,20 @@ XSM
 
 
 
-Compiling Components
-====================
+Compiling
+=========
+* Use 'make' from the base directory to compile all components
 
-Use 'make' to compile all components
+* To compile each component separately, cd into the corresponding directory
+and use 'make' command.
 
+* To recompile each component, within the corresponding directory, first use 'make clean' and then use 'make' command.
+
+Mailing Lists
+=============
+* Users
+xos-users@googlegroups.com
+
+* Contributors
+xos-developers@googlegroups.com
 

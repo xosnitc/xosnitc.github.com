@@ -378,7 +378,7 @@ fdisk
 
 Now use the <tt>load</tt> command to load the <tt>os_startup.xsm</tt>.
 <div class="syntax">
-load --os $HOME/myxos/spl/os_startup.xsm
+load --os $HOME/myxos/spl/samples/os_startup.xsm
 </div>
 
 If you want to see whether load command works properly, copy the block 0 (from 0 to 0) in <b>disk.xfs</b> back to a unix file, say <tt>$HOME/myxos/xfs-interface/test </tt>			
@@ -414,6 +414,10 @@ Now open test to see the contents of os_startup.xsm
 				
 				<h6> Running </h6>
 				<p> Within your XSM directory, use the following command to run the simulator </p>
+				<ul>
+					<li><p><tt>./xsm <i>flag</i></tt></p></li>
+				</ul>
+				<h6> Flags </h6>
 				<ul>
 					<li><p> <tt>--debug </tt> : This flag sets the machine into DEBUG mode when it encounters a <tt>BRKP</tt> machine instruction. Further details are given in the section below.</p></li>
 					<li><p> <tt>--timer=value </tt> : This flag sets the number of instructions after which timer interrupt is triggered to <tt>value</tt>. <b>--timer=0</b> disables the timer. The range of value is from 0 to 1024   </p></li>

@@ -1004,15 +1004,16 @@ physicalSP = ([PTBR + 2 * (SP / 512)] * 512) + (SP % 512);
 			</ol>
 			The output will have odd and even numbers printed in an interleaved fashion. This indicates that both programs, i.e. program to print odd numbers and the program to print even numbers executed concurrently on the machine. Vary the timer value using the <tt>--timer</tt> flag and observe the variation in the output.
 
+
+
+			<h6><b>NOTE:</b></h6>
+			<p> In this stage, as soon as one process completes execution, both the processes stop execution and the machine halts. The APL compiler adds the INT 7 instruction at the end of every compiled user program. The interrupt 7 routine, that has been written in stage 4, contains the HALT instruction, which is used to halt the machine.So, on completion of execution of any process, the interrupt 7 routine is invoked, which halts the machine. This anomaly will be corrected in Stage 9 of the roadmap.</p>
+
+
 			</article>
 			<div class="up grid col-one-third" style="float:right">
 			<a href="#navtop" title="Go back up"> top &uarr;</a>
 			</div>
-
-
-
-
-
 
 
 

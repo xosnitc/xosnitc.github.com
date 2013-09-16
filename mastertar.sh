@@ -89,24 +89,24 @@ rm -rf ./myxos/xsm/.gitignore
 ###### DOCUMENTATION #######
 
 # XFS Documentation
-wget https://github.com/xosnitc/xosdoc/blob/master/xfs/xfs.pdf?raw=true -P ./myxos/doc/ --no-check-certificate
-mv ./myxos/doc/xfs.pdf?raw=true ./myxos/doc/xfs.pdf
+#wget https://github.com/xosnitc/xosdoc/blob/master/xfs/xfs.pdf?raw=true -P ./myxos/doc/ --no-check-certificate
+#mv ./myxos/doc/xfs.pdf?raw=true ./myxos/doc/xfs.pdf
 
 # XSM Documentation
-wget https://github.com/xosnitc/xosdoc/blob/master/xsm/xsm.pdf?raw=true -P ./myxos/doc/ --no-check-certificate
-mv ./myxos/doc/xsm.pdf?raw=true ./myxos/doc/xsm.pdf
-
+#wget https://github.com/xosnitc/xosdoc/blob/master/xsm/xsm.pdf?raw=true -P ./myxos/doc/ --no-check-certificate
+#mv ./myxos/doc/xsm.pdf?raw=true ./myxos/doc/xsm.pdf
+#
 # XOS Documentation
-wget https://github.com/xosnitc/xosdoc/blob/master/xos/xos.pdf?raw=true -P ./myxos/doc/ --no-check-certificate
-mv ./myxos/doc/xos.pdf?raw=true ./myxos/doc/xos.pdf
+#wget https://github.com/xosnitc/xosdoc/blob/master/xos/xos.pdf?raw=true -P ./myxos/doc/ --no-check-certificate
+#mv ./myxos/doc/xos.pdf?raw=true ./myxos/doc/xos.pdf
 
 # APL Documentation
-wget https://github.com/xosnitc/xosdoc/blob/master/apl/apl.pdf?raw=true -P ./myxos/doc/ --no-check-certificate
-mv ./myxos/doc/apl.pdf?raw=true ./myxos/doc/apl.pdf
+#wget https://github.com/xosnitc/xosdoc/blob/master/apl/apl.pdf?raw=true -P ./myxos/doc/ --no-check-certificate
+#mv ./myxos/doc/apl.pdf?raw=true ./myxos/doc/apl.pdf
 
 # SPL Documentation
-wget https://github.com/xosnitc/xosdoc/blob/master/spl/spl.pdf?raw=true -P ./myxos/doc/ --no-check-certificate
-mv ./myxos/doc/spl.pdf?raw=true ./myxos/doc/spl.pdf
+#wget https://github.com/xosnitc/xosdoc/blob/master/spl/spl.pdf?raw=true -P ./myxos/doc/ --no-check-certificate
+#mv ./myxos/doc/spl.pdf?raw=true ./myxos/doc/spl.pdf
 
 
 cp ./files/Makefile ./myxos/

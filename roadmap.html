@@ -1157,20 +1157,19 @@ endif;	</pre>
 
 
 				<ol>
-				<li><p> First of all, the memory copy of the <a href="xfs-spec.html#navdfl">disk free list</a> (loaded to page 6 by the OS Startup Code) is searched till block number 447 to find a free block. Blocks 448 - 511  are reserved for <a href="xfs-spec.html#navdiskorg">swap area</a> which will be used for virtual memory management (<a href="roadmap.html#navstage9">Stage 10</a>). A free block is indicated by a 0 entry in the Disk Free List. The index of such an entry gives the block number of the free block. (A disk formatted using XFS will have 1(used) for blocks 0 - 23 and 0(unused) for blocks 24 - 512 in its disk free list). 
+				<li> <p>Create system call has only 1 argument, <b>filename</b>. You have already fetched the arguments and placed them in registers. 
+				</li></p>
+
+				<li> <p>First of all, the memory copy of the <a href="xos-spec.html#navfiles_fat">FAT</a> is to be searched with this <tt>filename</tt> to check if a file with the same name already exists. If it exists, return from the system call with 0, indicating success. According specification, trying to a create a file which exists returns success without any action being performed. For convenience you may use the <a href="spl-spec.html#navconst">predefined constant</a> <tt>FAT</tt> in SPL which stores the address of memory copy of FAT.
+				</li></p>
+
+				<li><p> If the file does not already exist, a file with this filename is to be created. To do this, the memory copy of the <a href="xfs-spec.html#navdfl">disk free list</a> (loaded to page 6 by the OS Startup Code) is searched till block number 447 to find a free block. Blocks 448 - 511  are reserved for <a href="xfs-spec.html#navdiskorg">swap area</a> which will be used for virtual memory management (<a href="roadmap.html#navstage9">Stage 10</a>). A free block is indicated by a 0 entry in the Disk Free List. The index of such an entry gives the block number of the free block. (A disk formatted using XFS will have 1(used) for blocks 0 - 23 and 0(unused) for blocks 24 - 512 in its disk free list). 
 				
 				</li></p>
 				<li> <p> If no free block is found, return from the system call with return value -1, indicating failure. To do this, put -1 at the 2nd position from the top of stack as shown in Figure 2, and use <b>ireturn;</b> instruction. This will pass the control back to the user program. The user program will fetch the return value from the appropriate position in the stack. </li></p>
 				
 				<li>If a free block is found, it is used as the <a href="xfs-spec.html#navfile">basic block</a> of the file to be created. A basic block of the file stores the block numbers of the data blocks of the file. The data blocks will have the contents of the file. </li></p>
 				
-			
-
-				<li> <p>Create system call has only 1 argument, <b>filename</b>. You have already fetched the arguments and placed them in registers. 
-				</li></p>
-				
-				<li> <p>The memory copy of the <a href="xos-spec.html#navfiles_fat">FAT</a> is to be searched with this <tt>filename</tt> to check if a file with the same name already exists. If it exists, return from the system call with 0, indicating success. According specification, trying to a create a file which exists returns success without any action being performed. For convenience you may use the <a href="spl-spec.html#navconst">predefined constant</a> <tt>FAT</tt> in SPL which stores the address of memory copy of FAT.
-				</li></p>
 
 				<li> <p>Next, the memory copy of the <a href="xos-spec.html#navfiles_fat">FAT</a> is searched for a free entry. A free entry in the FAT is indicated by -1 in the entry for basic block (word 2 of each FAT entry). If no free entry is found, return with -1, indicating failure.  </li></p>
 				

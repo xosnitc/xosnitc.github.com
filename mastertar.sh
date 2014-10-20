@@ -128,6 +128,9 @@ tar c myxos  | gzip > $filename
 # Move myxos tar
 mv -f $filename ./files/
 
+# Create symbolic link
+ln -s ./files/$filename ./files/myxos.tar.gz
+
 # Remove myxos directory
 rm -rf ./myxos
 

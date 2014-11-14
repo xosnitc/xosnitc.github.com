@@ -1108,7 +1108,7 @@ MOV R0, 1
 MOV R1, BP
 ADD R0, R1	// address of 'a' is in R0
 // preparing stack for system call
-MOV R1, 0	// Pushing argument fileDescriptor
+MOV R1, 0	// Pushing the process id 
 PUSH R1		// ...
 PUSH R0		// Pushing space for RETURN VALUE
 MOV R1, 13	// Pushing system call number = 13

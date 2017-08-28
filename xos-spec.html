@@ -250,7 +250,7 @@
 					<h5>Process State (<tt>STATE</tt>)</h5>
 					The process state corresponding to a process, indicated by STATE in the PCB stores the state of that process in the memory. A process can be in one of the following states.
 					<ul>
-					<li>0 for terminated, i.e. process has completed execution</li>
+					<li>0 for terminated or free, i.e. process has completed execution or the PCB slot is free.</li>
 					<li>1 for ready, i.e. process is waiting for the CPU to start execution.</li>
 					<li>2 for running, i.e. the process is currently running in the CPU</li>
 					</ul>
